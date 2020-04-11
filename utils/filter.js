@@ -12,7 +12,7 @@ const safe = unsafe => {
 };
 
 module.exports = (obj, fields, all = false) => {
-    if (all || !Array.isArray(fields) || !fields.length) return obj;
+    if (all) return obj;
 
     const newObj = {};
     safe(fields).forEach(field => {

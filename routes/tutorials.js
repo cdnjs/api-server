@@ -55,14 +55,8 @@ module.exports = app => {
                     ...data,
                     content,
                 },
-                [
-                    // Always return id
-                    'id',
-                    // Send back whatever else was requested
-                    ...requestedFields,
-                ],
-                // If they requested no fields, send them all
-                !requestedFields.length,
+                requestedFields,
+                !requestedFields.length, // If they requested no fields, send them all
             );
 
             // Send the response

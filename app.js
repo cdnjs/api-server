@@ -8,6 +8,7 @@ const librariesUtil = require('./utils/libraries');
 // Routes imports
 const librariesRoutes = require('./routes/libraries');
 const tutorialsRoutes = require('./routes/tutorials');
+const libraryRoutes = require('./routes/library');
 const errorsRoutes = require('./routes/errors');
 
 // App constants
@@ -54,6 +55,7 @@ module.exports = () => {
     // Setup our routes
     librariesRoutes(app);
     tutorialsRoutes(app);
+    libraryRoutes(app);
     errorsRoutes(app);
 
     // START!
