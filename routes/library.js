@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Local imports
+const cache = require('../utils/cache');
 const tutorials = require('../utils/tutorials');
 const filter = require('../utils/filter');
 const respond = require('../utils/respond');
@@ -10,8 +11,9 @@ const respond = require('../utils/respond');
 module.exports = app => {
     // Library version
     app.get('/libraries/:library/:version', (req, res) => {
-        // Set a 2 week life on this response
-        res.setHeader('Expires', new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toUTCString());
+        // Set a 355 day (same as CDN) life on this response
+        // This is also immutable as a version will never change
+        cache(res, 355 * 24 * 60 * 60, true);
 
         // Get the library
         const lib = app.get('LIBRARIES')[req.params.library];
@@ -68,7 +70,7 @@ module.exports = app => {
     // Library
     app.get('/libraries/:library', (req, res) => {
         // Set a 6 hour life on this response
-        res.setHeader('Expires', new Date(Date.now() + 6 * 60 * 60 * 1000).toUTCString());
+        cache(res, 6 * 60 * 60);
 
         // Get the library
         const lib = app.get('LIBRARIES')[req.params.library];

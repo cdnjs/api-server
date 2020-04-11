@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Local imports
+const cache = require('../utils/cache');
 const tutorials = require('../utils/tutorials');
 const filter = require('../utils/filter');
 const respond = require('../utils/respond');
@@ -10,8 +11,8 @@ const respond = require('../utils/respond');
 module.exports = app => {
     // Library tutorials
     app.get('/libraries/:library/tutorials', (req, res) => {
-        // Set a 12 hour life on this response
-        res.setHeader('Expires', new Date(Date.now() + 12 * 60 * 60 * 1000).toUTCString());
+        // Set a 24 hour life on this response
+        cache(res, 24 * 60 * 60);
 
         // Get the tutorial data
         const results = tutorials(req.params.library);
@@ -39,7 +40,7 @@ module.exports = app => {
     // Library tutorial
     app.get('/libraries/:library/tutorials/:tutorial', (req, res) => {
         // Set a 2 week life on this response
-        res.setHeader('Expires', new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toUTCString());
+        cache(res, 14 * 24 * 60 * 60);
 
         // Get the tutorial, if we fail to find it, assume 404
         try {

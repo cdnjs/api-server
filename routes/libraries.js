@@ -2,6 +2,7 @@
 const algoliasearch = require('algoliasearch');
 
 // Local imports
+const cache = require('../utils/cache');
 const filter = require('../utils/filter');
 const respond = require('../utils/respond');
 
@@ -23,7 +24,7 @@ const algolia = async query => {
 module.exports = app => {
     app.get('/libraries', async (req, res) => {
         // Set a 6 hour life on this response
-        res.setHeader('Expires', new Date(Date.now() + 6 * 60 * 60 * 1000).toUTCString());
+        cache(res, 6 * 60 * 60);
 
         // Get the index results
         const results = await algolia(req.query.search || '');
