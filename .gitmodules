@@ -3,4 +3,4 @@
 	url = https://github.com/cdnjs/tutorials.git
 [submodule "data/sri"]
 	path = data/sri
-	url = https://github.com/cdnjs/sri.git
+	url = https://github.com/cdnjs/SRIs.git
