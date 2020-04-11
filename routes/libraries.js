@@ -38,14 +38,14 @@ module.exports = app => {
                     // Custom latest prop
                     latest: 'https://cdnjs.cloudflare.com/ajax/libs/' + hit.name + '/' + hit.version + '/' + hit.filename,
                     // All other hit props
-                    ...hit
+                    ...hit,
                 },
                 [
                     // Always send back name & latest
                     'name',
                     'latest',
                     // Send back whatever else was requested
-                    ...((req.query.fields && req.query.fields.split(',')) || [])
+                    ...((req.query.fields && req.query.fields.split(',')) || []),
                 ],
             );
         });

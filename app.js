@@ -62,4 +62,4 @@ module.exports = () => {
     app.listen(port, () => {
         console.log('Listening on ' + (localMode ? 'http://0.0.0.0:' : '') + port);
     });
-}
+};
