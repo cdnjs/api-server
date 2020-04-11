@@ -1,0 +1,25 @@
+{
+  "name": "api-server",
+  "version": "1.0.0",
+  "description": "The new API server for api.cdnjs.com",
+  "main": "index.js",
+  "scripts": {
+    "dev": "LOCAL=true node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cdnjs/api-server.git"
+  },
+  "author": "cdnjs",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cdnjs/api-server/issues"
+  },
+  "homepage": "https://github.com/cdnjs/api-server#readme",
+  "dependencies": {
+    "algoliasearch": "^4.1.0",
+    "body-parser": "^1.19.0",
+    "compression": "^1.7.4",
+    "express": "^4.17.1"
+  }
+}
