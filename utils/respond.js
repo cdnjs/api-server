@@ -10,7 +10,7 @@ const human = (res, data) => {
         'document.write("<pre><code class=\'json\'>" + JSON.stringify(output,null,2) + "</code></pre>");</script>' +
         '<script defer>console.log("%cThanks for using cdnjs! 😊", "font: 5em roboto; color: #e95420;");</script>' +
         '</body></html>');
-}
+};
 
 module.exports = (req, res, data) => {
     if (req.query.output && req.query.output === 'human') {
@@ -18,4 +18,4 @@ module.exports = (req, res, data) => {
     } else {
         res.json(data);
     }
-}
+};

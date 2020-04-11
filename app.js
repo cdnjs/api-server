@@ -7,10 +7,11 @@ const librariesUtil = require('./utils/libraries');
 
 // Routes imports
 const librariesRoutes = require('./routes/libraries');
+const tutorialsRoutes = require('./routes/tutorials');
 const errorsRoutes = require('./routes/errors');
 
 // App constants
-const port = Number(process.env.PORT || 5500);
+const port = Number(process.env.PORT || 5050);
 const args = process.argv.slice(2);
 
 // Local mode state
@@ -52,6 +53,7 @@ module.exports = () => {
 
     // Setup our routes
     librariesRoutes(app);
+    tutorialsRoutes(app);
     errorsRoutes(app);
 
     // START!

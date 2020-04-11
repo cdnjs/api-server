@@ -18,12 +18,12 @@ const algolia = async query => {
         },
     });
     return hits;
-}
+};
 
 module.exports = app => {
     app.get('/libraries', async (req, res) => {
         // Set a 6 hour life on this response
-        res.setHeader('Expires', new Date(Date.now() + 360 * 60 * 1000).toUTCString());
+        res.setHeader('Expires', new Date(Date.now() + 6 * 60 * 60 * 1000).toUTCString());
 
         // Get the index results
         const results = await algolia(req.query.search || '');
@@ -32,22 +32,32 @@ module.exports = app => {
         const response = results.map(hit => {
             return filter(
                 {
+                    // Ensure name is first prop
                     name: hit.name,
+                    // Custom latest prop
                     latest: 'https://cdnjs.cloudflare.com/ajax/libs/' + hit.name + '/' + hit.version + '/' + hit.filename,
+                    // All other hit props
                     ...hit
                 },
                 [
+                    // Always send back name & latest
                     'name',
                     'latest',
+                    // Send back whatever else was requested
                     ...((req.query.fields && req.query.fields.split(',')) || [])
                 ],
             );
         });
 
+        // If they want less data, allow that
+        const limit = (req.query.limit && Number(req.query.limit));
+        const trimmed = limit ? response.slice(0, limit) : response;
+
         // Send the response
         respond(req, res, {
-            results: response,
-            total: response.length
+            results: trimmed,
+            total: trimmed.length, // Total results we're sending back
+            available: response.length, // Total number available without trimming
         });
     });
-}
+};
