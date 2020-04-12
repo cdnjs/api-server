@@ -30,6 +30,7 @@ module.exports = app => {
         const results = await algolia(req.query.search || '');
 
         // Transform the results into our filtered array
+        const requestedFields = (req.query.fields && req.query.fields.split(',')) || [];
         const response = results.map(hit => {
             return filter(
                 {
@@ -45,8 +46,9 @@ module.exports = app => {
                     'name',
                     'latest',
                     // Send back whatever else was requested
-                    ...((req.query.fields && req.query.fields.split(',')) || []),
+                    ...requestedFields,
                 ],
+                requestedFields.includes('*'), // Send all if they have '*'
             );
         });
 

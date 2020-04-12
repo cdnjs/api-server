@@ -4,10 +4,12 @@
     "description": "The new API server for api.cdnjs.com",
     "main": "index.js",
     "scripts": {
-        "test": "npm run test:echint && npm run test:eslint",
+        "test": "npm run test:echint && npm run test:eslint && npm run test:mocha",
         "test:echint": "echint -i \"data/**/*\" -v",
         "test:eslint": "eslint \"**/*.js\"",
         "test:eslint:fix": "npm run test:eslint -- --fix",
+        "test:mocha": "node tests/run.js",
+        "test:mocha:run": "mocha tests/suite",
         "dev": "LOCAL=true node index.js"
     },
     "repository": {
@@ -27,7 +29,10 @@
         "express": "^4.17.1"
     },
     "devDependencies": {
+        "chai": "^4.2.0",
+        "chai-http": "^4.3.0",
         "echint": "^4.0.2",
-        "eslint": "^6.8.0"
+        "eslint": "^6.8.0",
+        "mocha": "^7.1.1"
     }
 }

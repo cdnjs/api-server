@@ -50,7 +50,8 @@ module.exports = app => {
         const response = filter(
             results,
             requestedFields,
-            !requestedFields.length, // If they requested no fields, send them all
+            // If they requested no fields or '*', send them all
+            !requestedFields.length || requestedFields.includes('*'),
         );
 
         // Load SRI data if needed
@@ -97,7 +98,8 @@ module.exports = app => {
                 tutorials: null,
             },
             requestedFields,
-            !requestedFields.length, // If they requested no fields, send them all
+            // If they requested no fields or '*', send them all
+            !requestedFields.length || requestedFields.includes('*'),
         );
 
         // Load tutorials if we need them

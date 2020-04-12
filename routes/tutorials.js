@@ -28,8 +28,8 @@ module.exports = app => {
                     // Send back whatever else was requested
                     ...requestedFields,
                 ],
-                // If they requested no fields, send them all
-                !requestedFields.length,
+                // If they requested no fields or '*', send them all
+                !requestedFields.length || requestedFields.includes('*'),
             );
         });
 
@@ -57,7 +57,8 @@ module.exports = app => {
                     content,
                 },
                 requestedFields,
-                !requestedFields.length, // If they requested no fields, send them all
+                // If they requested no fields or '*', send them all
+                !requestedFields.length || requestedFields.includes('*'),
             );
 
             // Send the response
