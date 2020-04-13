@@ -12,11 +12,22 @@ const main = () => {
         const tests = spawnSync('npm', ['run', 'test:mocha:run']);
 
         // Log test results
-        console.error(tests.stderr.toString());
-        console.error(tests.stdout.toString());
+        const err = tests.stderr.toString().trim();
+        console.error(err);
+        console.log(tests.stdout.toString().trim());
 
         // Kill server
+        console.info('Killing API server...');
         server.kill();
+        try {
+            process.kill(server.pid);
+        } catch (_) {
+            // This is a backup call, if it fails all is fine
+        }
+
+        // Exit
+        console.info(`Exiting with exit code ${err ? 1 : 0}...`);
+        process.exit(err ? 1 : 0);
     }, 5000);
 };
 
