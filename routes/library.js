@@ -11,13 +11,13 @@ const respond = require('../utils/respond');
 module.exports = app => {
     // Library version
     app.get('/libraries/:library/:version', (req, res) => {
-        // Set a 355 day (same as CDN) life on this response
-        // This is also immutable as a version will never change
-        cache(res, 355 * 24 * 60 * 60, true);
-
         // Get the library
         const lib = app.get('LIBRARIES')[req.params.library];
         if (!lib) {
+            // Set a 1 hour on this response
+            cache(res, 60 * 60);
+
+            // Send the error response
             res.status(404).json({
                 error: true,
                 status: 404,
@@ -29,6 +29,10 @@ module.exports = app => {
         // Get the version
         const matches = lib.assets.filter(x => x.version === req.params.version);
         if (!matches.length) {
+            // Set a 1 hour on this response
+            cache(res, 60 * 60);
+
+            // Send the error response
             res.status(404).json({
                 error: true,
                 status: 404,
@@ -64,18 +68,23 @@ module.exports = app => {
             }
         }
 
+        // Set a 355 day (same as CDN) life on this response
+        // This is also immutable as a version will never change
+        cache(res, 355 * 24 * 60 * 60, true);
+
         // Send the response
         respond(req, res, response);
     });
 
     // Library
     app.get('/libraries/:library', (req, res) => {
-        // Set a 6 hour life on this response
-        cache(res, 6 * 60 * 60);
-
         // Get the library
         const lib = app.get('LIBRARIES')[req.params.library];
         if (!lib) {
+            // Set a 1 hour on this response
+            cache(res, 60 * 60);
+
+            // Send the error response
             res.status(404).json({
                 error: true,
                 status: 404,
@@ -128,6 +137,9 @@ module.exports = app => {
                 return asset;
             });
         }
+
+        // Set a 6 hour life on this response
+        cache(res, 6 * 60 * 60);
 
         // Send the response
         respond(req, res, response);

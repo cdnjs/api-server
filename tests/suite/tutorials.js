@@ -140,7 +140,7 @@ describe('/libraries/:library/tutorials', () => {
 });
 
 describe('/libraries/:library/tutorials/:tutorial (:library = backbone.js)', () => {
-    describe('Requesting a valid tutorial (:tutorial=what-is-a-view)', () => {
+    describe('Requesting a valid tutorial (:tutorial = what-is-a-view)', () => {
         describe('No query params', () => {
             const test = () => request().get('/libraries/backbone.js/tutorials/what-is-a-view');
             let response;
@@ -233,7 +233,7 @@ describe('/libraries/:library/tutorials/:tutorial (:library = backbone.js)', () 
         });
     });
 
-    describe('Requesting a non-existent tutorial (:tutorial=this-tutorial-doesnt-exist)', () => {
+    describe('Requesting a non-existent tutorial (:tutorial = this-tutorial-doesnt-exist)', () => {
         describe('No query params', () => {
             const test = () => request().get('/libraries/backbone.js/tutorials/this-tutorial-doesnt-exist');
             let response;
