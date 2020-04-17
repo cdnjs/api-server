@@ -39,9 +39,6 @@ module.exports = app => {
 
     // Library tutorial
     app.get('/libraries/:library/tutorials/:tutorial', (req, res) => {
-        // Set a 2 week life on this response
-        cache(res, 14 * 24 * 60 * 60);
-
         // Get the tutorial, if we fail to find it, assume 404
         try {
             const base  = path.join(__dirname, '..', 'data', 'tutorials', req.params.library);
@@ -61,9 +58,16 @@ module.exports = app => {
                 !requestedFields.length || requestedFields.includes('*'),
             );
 
+            // Set a 2 week life on this response
+            cache(res, 14 * 24 * 60 * 60);
+
             // Send the response
             respond(req, res, response);
         } catch (_) {
+            // Set a 1 hour on this response
+            cache(res, 60 * 60);
+
+            // Send the error response
             res.status(404).json({
                 error: true,
                 status: 404,
