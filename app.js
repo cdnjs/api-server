@@ -4,6 +4,7 @@ const compress = require('compression');
 
 // Local imports
 const librariesUtil = require('./utils/libraries');
+const cacheUtil = require('./utils/cache');
 
 // Routes imports
 const librariesRoutes = require('./routes/libraries');
@@ -56,6 +57,18 @@ module.exports = () => {
     librariesRoutes(app);
     tutorialsRoutes(app);
     libraryRoutes(app);
+
+    // Redirect root the API docs
+    app.get('/', (req, res) => {
+        // Set a 355 day (same as CDN) life on this response
+        // This is also immutable
+        cacheUtil(res, 355 * 24 * 60 * 60, true);
+
+        // Redirect to the API docs
+        res.redirect(301, 'https://cdnjs.com/api');
+    });
+
+    // Catch-all errors
     errorsRoutes(app);
 
     // START!
