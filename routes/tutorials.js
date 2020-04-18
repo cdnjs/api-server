@@ -11,8 +11,19 @@ const respond = require('../utils/respond');
 module.exports = app => {
     // Library tutorials
     app.get('/libraries/:library/tutorials', (req, res) => {
-        // Set a 24 hour life on this response
-        cache(res, 24 * 60 * 60);
+        // Check the library exists
+        if (!app.get('LIBRARIES')[req.params.library]) {
+            // Set a 1 hour on this response
+            cache(res, 60 * 60);
+
+            // Send the error response
+            res.status(404).json({
+                error: true,
+                status: 404,
+                message: 'Library not found',
+            });
+            return;
+        }
 
         // Get the tutorial data
         const results = tutorials(req.params.library);
@@ -33,12 +44,29 @@ module.exports = app => {
             );
         });
 
+        // Set a 24 hour life on this response
+        cache(res, 24 * 60 * 60);
+
         // Send the response
         respond(req, res, response);
     });
 
     // Library tutorial
     app.get('/libraries/:library/tutorials/:tutorial', (req, res) => {
+        // Check the library exists
+        if (!app.get('LIBRARIES')[req.params.library]) {
+            // Set a 1 hour on this response
+            cache(res, 60 * 60);
+
+            // Send the error response
+            res.status(404).json({
+                error: true,
+                status: 404,
+                message: 'Library not found',
+            });
+            return;
+        }
+
         // Get the tutorial, if we fail to find it, assume 404
         try {
             const base  = path.join(__dirname, '..', 'data', 'tutorials', req.params.library);
