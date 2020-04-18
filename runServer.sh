@@ -8,7 +8,7 @@ wget -O ./data/packages.min.json https://storage.googleapis.com/cdnjs-assets/pac
 
 # Get the latest SRI data
 rm -rf ./data/sri
-git clone https://github.com/cdnjs/SRIs.git ./data/sri
+git clone --depth=1 https://github.com/cdnjs/SRIs.git ./data/sri
 
 # Log SRI version
 (
@@ -19,7 +19,7 @@ git clone https://github.com/cdnjs/SRIs.git ./data/sri
 
 # Get the latest tutorials
 rm -rf ./data/tutorials
-git clone https://github.com/cdnjs/tutorials.git ./data/tutorials
+git clone --depth=1 https://github.com/cdnjs/tutorials.git ./data/tutorials
 
 # Log tutorials version
 (
