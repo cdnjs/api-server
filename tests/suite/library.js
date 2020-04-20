@@ -25,15 +25,16 @@ describe('/libraries/:library/:version', () => {
                     done();
                 });
                 describe('Library version object', () => {
-                    it('is an object with \'name\', \'version\', \'files\' and \'sri\' properties', done => {
+                    it('is an object with \'name\', \'version\', \'files\', \'rawFiles\' and \'sri\' properties', done => {
                         expect(response.body).to.have.property('name', 'backbone.js');
                         expect(response.body).to.have.property('version', '1.1.0');
                         expect(response.body).to.have.property('files').that.is.an('array');
+                        expect(response.body).to.have.property('rawFiles').that.is.an('array');
                         expect(response.body).to.have.property('sri').that.is.an('object');
                         done();
                     });
                     it('has no other properties', done => {
-                        expect(Object.keys(response.body)).to.have.lengthOf(4);
+                        expect(Object.keys(response.body)).to.have.lengthOf(5);
                         done();
                     });
                 });
@@ -90,15 +91,16 @@ describe('/libraries/:library/:version', () => {
                     done();
                 });
                 describe('Library version object', () => {
-                    it('is an object with \'name\', \'version\', \'files\' and \'sri\' properties', done => {
+                    it('is an object with \'name\', \'version\', \'files\', \'rawFiles\' and \'sri\' properties', done => {
                         expect(response.body).to.have.property('name', 'backbone.js');
                         expect(response.body).to.have.property('version', '1.1.0');
                         expect(response.body).to.have.property('files').that.is.an('array');
+                        expect(response.body).to.have.property('rawFiles').that.is.an('array');
                         expect(response.body).to.have.property('sri').that.is.an('object');
                         done();
                     });
                     it('has no other properties', done => {
-                        expect(Object.keys(response.body)).to.have.lengthOf(4);
+                        expect(Object.keys(response.body)).to.have.lengthOf(5);
                         done();
                     });
                 });
@@ -213,10 +215,11 @@ describe('/libraries/:library', () => {
                     done();
                 });
                 describe('Assets array', () => {
-                    it('has \'version\', \'files\' and \'sri\' properties for each entry', done => {
+                    it('has \'version\', \'files\', \'rawFiles\' and \'sri\' properties for each entry', done => {
                         for (const result of response.body.assets) {
                             expect(result).to.have.property('version').that.is.a('string');
                             expect(result).to.have.property('files').that.is.an('array');
+                            expect(result).to.have.property('rawFiles').that.is.an('array');
                             expect(result).to.have.property('sri').that.is.an('object');
                         }
                         done();

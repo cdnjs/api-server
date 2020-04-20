@@ -7,6 +7,10 @@ const cache = require('../utils/cache');
 const tutorials = require('../utils/tutorials');
 const filter = require('../utils/filter');
 const respond = require('../utils/respond');
+const files = require('../utils/files');
+
+// Filter util
+const isWhitelisted = file => Object.keys(files).includes(path.extname(file));
 
 module.exports = app => {
     // Library version
@@ -45,7 +49,9 @@ module.exports = app => {
         // Build the object
         const results = {
             name: lib.name,
-            ...version,
+            version: version.version,
+            files: version.files.filter(isWhitelisted),
+            rawFiles: version.files,
             sri: null,
         };
 
@@ -125,9 +131,12 @@ module.exports = app => {
             }
         }
 
-        // Inject SRI into assets if in results
+        // Inject SRI into assets if in results and do whitelist filtering
         if ('assets' in response) {
             response.assets = response.assets.map(asset => {
+                asset.rawFiles = asset.files;
+                asset.files = asset.files.filter(isWhitelisted);
+
                 try {
                     asset.sri = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'sri', req.params.library, `${asset.version}.json`), 'utf8'));
                 } catch (_) {
