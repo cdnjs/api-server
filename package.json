@@ -24,6 +24,7 @@
     },
     "homepage": "https://github.com/cdnjs/api-server#readme",
     "dependencies": {
+        "@sentry/node": "^5.15.4",
         "algoliasearch": "^4.1.0",
         "body-parser": "^1.19.0",
         "compression": "^1.7.4",

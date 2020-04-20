@@ -1,6 +1,7 @@
 // Library imports
 const express = require('express');
 const compress = require('compression');
+const Sentry = require('@sentry/node');
 
 // Local imports
 const librariesUtil = require('./utils/libraries');
@@ -31,10 +32,14 @@ if (!localMode && (typeof global.gc !== 'undefined')) {
     global.gc();
 }
 
+// Start sentry
+Sentry.init({ dsn: 'https://1ac0f4ae33304c22a586f099ac5cdb7d@o51786.ingest.sentry.io/5206370' });
+
 module.exports = () => {
     // Basic app configuration
     const app = express();
     app.disable('x-powered-by');
+    app.use(Sentry.Handlers.requestHandler());
 
     // Load the library data
     librariesUtil.set(app);
@@ -71,6 +76,7 @@ module.exports = () => {
     });
 
     // Catch-all errors
+    app.use(Sentry.Handlers.errorHandler());
     errorsRoutes(app);
 
     // START!
