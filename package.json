@@ -5,11 +5,12 @@
     "main": "index.js",
     "scripts": {
         "test": "npm run test:echint && npm run test:eslint && npm run test:mocha",
+        "test:with-server": "npm run test:echint && npm run test:eslint && npm run test:mocha:with-server",
         "test:echint": "echint -i \"data/**/*\" -v",
         "test:eslint": "eslint \"**/*.js\"",
         "test:eslint:fix": "npm run test:eslint -- --fix",
-        "test:mocha": "node tests/run.js",
-        "test:mocha:run": "mocha tests/suite",
+        "test:mocha": "mocha tests/suite",
+        "test:mocha:with-server": "node tests/run.js",
         "dev": "LOCAL=true node index.js"
     },
     "repository": {

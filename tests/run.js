@@ -9,7 +9,7 @@ const main = () => {
     setTimeout(() => {
         // Run the tests
         console.info('Starting API tests via mocha...');
-        const tests = spawnSync('npm', ['run', 'test:mocha:run']);
+        const tests = spawnSync('npm', ['run', 'test:mocha']);
 
         // Log test results
         const err = tests.stderr.toString().trim();

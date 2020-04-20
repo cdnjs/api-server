@@ -83,16 +83,16 @@ configured with the included [`Procfile`](Procfile).
 The [`runServer.sh`](runServer.sh) script performs the following actions to deploy and start the app:
 
 - Update packages data
-  - Remove development packages data
-  - Download latest packages data
+    - Remove development packages data
+    - Download latest packages data
 - Update SRI data
-  - Remove the outdated SRI submodule data
-  - Clone latest SRI data from [cdnjs/SRIs](https://github.com/cdnjs/SRIs)
-  - Log the SRI commit that was cloned
+    - Remove the outdated SRI submodule data
+    - Clone latest SRI data from [cdnjs/SRIs](https://github.com/cdnjs/SRIs)
+    - Log the SRI commit that was cloned
 - Update tutorials
-  - Remove the outdated tutorials submodule data
-  - Clone the latest tutorials from [cdnjs/tutorials](https://github.com/cdnjs/tutorials)
-  - Log the tutorials commit that was cloned
+    - Remove the outdated tutorials submodule data
+    - Clone the latest tutorials from [cdnjs/tutorials](https://github.com/cdnjs/tutorials)
+    - Log the tutorials commit that was cloned
 - Start the API server with GC enabled and additional memory allocated
 
 To change the port that the app binds to, set the `PORT` environment var when running the script.
