@@ -5,7 +5,11 @@ const main = () => {
     console.info('Starting API server for testing...');
     const server = spawn('npm', ['run', 'dev']);
 
-    // Give the server time to start (5s)
+    // Log server messages
+    server.stdout.on('data', data => console.log(`server: ${data}`));
+    server.stderr.on('data', data => console.error(`server: error: ${data}`));
+
+    // Give the server time to start (10s)
     setTimeout(() => {
         // Run the tests
         console.info('Starting API tests via mocha...');
@@ -28,7 +32,7 @@ const main = () => {
         // Exit
         console.info(`Exiting with exit code ${err ? 1 : 0}...`);
         process.exit(err ? 1 : 0);
-    }, 5000);
+    }, 10 * 1000);
 };
 
 main();
