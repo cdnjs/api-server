@@ -3,7 +3,6 @@ module.exports = {
     js:     'JavaScript',
     ts:     'TypeScript',
     wasm:   'WebAssembly',
-    hpb:    'Binary Hyphenation Patterns',
     map:    'Source Maps',
     swf:    'Flash',
     json:   'JSON',
@@ -28,5 +27,8 @@ module.exports = {
     aac:    'Audio',
     mp3:    'Audio',
     ogg:    'Audio',
+
+    lang:   'Other',
+    hpb:    'Other',
 };
 /* eslint-enable key-spacing */
