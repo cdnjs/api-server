@@ -10,6 +10,7 @@ const cacheUtil = require('./utils/cache');
 const librariesRoutes = require('./routes/libraries');
 const tutorialsRoutes = require('./routes/tutorials');
 const libraryRoutes = require('./routes/library');
+const whitelistRoutes = require('./routes/whitelist');
 const errorsRoutes = require('./routes/errors');
 
 // App constants
@@ -57,6 +58,7 @@ module.exports = () => {
     librariesRoutes(app);
     tutorialsRoutes(app);
     libraryRoutes(app);
+    whitelistRoutes(app);
 
     // Redirect root the API docs
     app.get('/', (req, res) => {
