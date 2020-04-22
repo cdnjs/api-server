@@ -104,4 +104,62 @@ initialised Git repo.
 
 ## Testing and Linting
 
-TODO
+Our full set of tests (linting & test suite) can be run at any time with:
+
+```shell script
+npm test
+```
+
+You can also run the tests with their own API server running in development mode using:
+
+```shell script
+npm run test:with-server
+```
+
+(This is what the CI in this repository uses for every commit).
+
+### Linting
+
+Included in this repository are an [eslint config file](.eslintrc.js) as well as an
+[editorconfig file](.editorconfig) to help with ensuring a consistent style in the codebase for the
+API server.
+
+To help enforce this, we use both eslint and echint in our testing. To run eslint at any time, which
+checks the code style of any JavaScript, you can use:
+
+```shell script
+npm run test:eslint
+```
+
+eslint also provides automatic fixing capabilities, these can be run against the codebase with:
+
+```shell script
+npm run test:eslint:fix
+```
+
+The more generic rules defined in the [editorconfig file](.editorconfig) apply to all files in the
+repository and this is enforced by echint, which can be run at any time with:
+
+```shell script
+npm run test:echint
+```
+
+### Testing
+
+This project uses Mocha and Chai (http) to test the API server. The tests attempt to validate every
+route on the API to ensure that no breaking changes have been made, though there is no promise that
+this is perfect, a human should always review changes!
+
+The mocha test suite can be run at any time with the following command, assuming that the API server
+is running locally on port 5050 (or on the port defined with the environment variable `PORT`):
+
+```shell script
+npm run test:mocha
+```
+
+You can also start the mocha test suite with a dedicated API server running in development mode on
+port 5050 (or on the port defined with the environment variable `PORT`) by running:
+
+```shell script
+npm run test:mocha:with-server
+```
