@@ -12,6 +12,7 @@ const librariesRoutes = require('./routes/libraries');
 const tutorialsRoutes = require('./routes/tutorials');
 const libraryRoutes = require('./routes/library');
 const whitelistRoutes = require('./routes/whitelist');
+const updateRoutes = require('./routes/update');
 const errorsRoutes = require('./routes/errors');
 
 // App constants
@@ -21,7 +22,7 @@ const args = process.argv.slice(2);
 // Local mode state
 let localMode = false;
 if (process.env.LOCAL === 'true' || (args.length > 0 && (args[0] === '--local' || args[2] === '--local'))) {
-    console.log('local mode: on, gc() and Public-Key-Pins headers disabled!');
+    console.log('local mode: on, gc(), updater and Public-Key-Pins headers disabled!');
     localMode = true;
 } else {
     console.log('local mode: off');
@@ -64,6 +65,7 @@ module.exports = () => {
     tutorialsRoutes(app);
     libraryRoutes(app);
     whitelistRoutes(app);
+    if (!localMode) updateRoutes(app);
 
     // Redirect root the API docs
     app.get('/', (req, res) => {
