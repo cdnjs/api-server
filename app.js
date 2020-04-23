@@ -65,7 +65,7 @@ module.exports = () => {
     tutorialsRoutes(app);
     libraryRoutes(app);
     whitelistRoutes(app);
-    if (!localMode) updateRoutes(app);
+    updateRoutes(app, localMode);
 
     // Redirect root the API docs
     app.get('/', (req, res) => {
