@@ -1,13 +1,18 @@
 // Local imports
 const cache = require('../utils/cache');
 const update = require('../utils/update');
+const libraries = require('../utils/libraries');
 const respond = require('../utils/respond');
 
 module.exports = app => {
     // Start the updater, every 5 mins
     app.set('UPDATE', {});
-    setTimeout(() => {
+    setInterval(() => {
+        // Run the update
         app.set('UPDATE', update());
+
+        // Load latest libraries into memory
+        libraries.set(app);
     }, 5 * 60 * 1000);
 
     // Update log

@@ -4,7 +4,7 @@ export WEB_CONCURRENCY=1
 
 # Get the latest packages data
 rm -f ./data/packages.min.json
-wget -O ./data/packages.min.json https://storage.googleapis.com/cdnjs-assets/package.min.js
+wget -nv -O ./data/packages.min.json https://storage.googleapis.com/cdnjs-assets/package.min.js
 
 # Get the latest SRI data
 rm -rf ./data/sri

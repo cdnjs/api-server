@@ -2,7 +2,7 @@
 
 # Get the latest packages data
 rm -f ./data/packages.min.json
-wget -O ./data/packages.min.json https://storage.googleapis.com/cdnjs-assets/package.min.js
+wget -nv -O ./data/packages.min.json https://storage.googleapis.com/cdnjs-assets/package.min.js
 
 # Update SRI (assumes a valid git repo, not using rm as the app reads from this continually)
 (
