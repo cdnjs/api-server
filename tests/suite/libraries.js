@@ -2,7 +2,10 @@ const { describe, it, before } = require('mocha');
 const { expect } = require('chai');
 const request = require('../base');
 
-describe('/libraries', () => {
+describe('/libraries', function () {
+    // This route is a bit slower due to Algolia
+    this.timeout(5000);
+
     describe('No query params', () => {
         const test = () => request().get('/libraries');
         let response;

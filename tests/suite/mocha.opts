@@ -1,5 +1,5 @@
 # mocha.opts
-    --timeout 5000
+    --timeout 2000
     --color true
     --diff true
     --ui bdd
