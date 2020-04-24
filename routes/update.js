@@ -1,7 +1,6 @@
 // Local imports
 const cache = require('../utils/cache');
 const update = require('../utils/update');
-const libraries = require('../utils/libraries');
 const respond = require('../utils/respond');
 
 module.exports = (app, localMode) => {
@@ -10,11 +9,7 @@ module.exports = (app, localMode) => {
     // Start the updater, every 10 mins, if not in local mode
     if (!localMode) {
         setInterval(() => {
-            // Run the update
-            app.set('UPDATE', update());
-
-            // Load latest libraries into memory
-            libraries.set(app);
+            update(app);
         }, 10 * 60 * 1000);
     }
 
