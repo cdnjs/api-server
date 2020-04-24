@@ -25,7 +25,7 @@ module.exports = app => {
     });
 
     result.on('close', code => {
-        data.code = code;
+        data.exit = code;
         data.ended = (new Date()).toUTCString();
         app.set('UPDATE', data);
 
