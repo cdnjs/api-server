@@ -16,12 +16,12 @@ module.exports = app => {
 
     const result = spawn(path.join(__dirname, '..', 'updateServer.sh'));
 
-    result.stdout.on('data', data => {
-        data.stdout += `${data}`;
+    result.stdout.on('data', d => {
+        data.stdout += `${d}`;
     });
 
-    result.stderr.on('data', data => {
-        data.stderr += `${data}`;
+    result.stderr.on('data', d => {
+        data.stderr += `${d}`;
     });
 
     result.on('close', code => {
