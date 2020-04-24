@@ -10,7 +10,10 @@ const respond = require('../utils/respond');
 const files = require('../utils/files');
 
 // Filter util
-const isWhitelisted = file => Object.keys(files).includes(path.extname(file));
+const isWhitelisted = file => {
+    const ext = path.extname(file).replace(/^\.+/g, '');
+    return Object.keys(files).includes(ext);
+};
 
 module.exports = app => {
     // Library version
@@ -50,8 +53,8 @@ module.exports = app => {
         const results = {
             name: lib.name,
             version: version.version,
+            rawFiles: [...version.files],
             files: version.files.filter(isWhitelisted),
-            rawFiles: version.files,
             sri: null,
         };
 
@@ -134,7 +137,7 @@ module.exports = app => {
         // Inject SRI into assets if in results and do whitelist filtering
         if ('assets' in response) {
             response.assets = response.assets.map(asset => {
-                asset.rawFiles = asset.files;
+                asset.rawFiles = [...asset.files];
                 asset.files = asset.files.filter(isWhitelisted);
 
                 try {
