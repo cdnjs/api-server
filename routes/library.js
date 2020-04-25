@@ -113,12 +113,18 @@ module.exports = app => {
                 sri: null,
                 // All other lib props
                 ...lib,
+                versions: null,
                 tutorials: null,
             },
             requestedFields,
             // If they requested no fields or '*', send them all
             !requestedFields.length || requestedFields.includes('*'),
         );
+
+        // Compute versions if needed
+        if ('versions' in response) {
+            response.versions = response.assets.map(asset => asset.version);
+        }
 
         // Load tutorials if we need them
         if ('tutorials' in response) {

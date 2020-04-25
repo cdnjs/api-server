@@ -197,6 +197,7 @@ describe('/libraries/:library', () => {
                     expect(response.body).to.have.property('author').that.is.a('string');
                     expect(response.body).to.have.property('autoupdate').that.is.an('object');
                     expect(response.body).to.have.property('assets').that.is.an('array');
+                    expect(response.body).to.have.property('versions').that.is.an('array');
                     expect(response.body).to.have.property('tutorials').that.is.an('array');
                     done();
                 });
@@ -305,6 +306,7 @@ describe('/libraries/:library', () => {
                     expect(response.body).to.have.property('author').that.is.a('string');
                     expect(response.body).to.have.property('autoupdate').that.is.an('object');
                     expect(response.body).to.have.property('assets').that.is.an('array');
+                    expect(response.body).to.have.property('versions').that.is.an('array');
                     expect(response.body).to.have.property('tutorials').that.is.an('array');
                     done();
                 });
