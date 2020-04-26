@@ -29,4 +29,4 @@ git clone --depth=1 https://github.com/cdnjs/tutorials.git ./data/tutorials
 )
 
 # Run the API server
-node --expose-gc --max-old-space-size=2048 index.js
+npm run prod
