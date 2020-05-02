@@ -14,7 +14,7 @@ module.exports = app => {
         stderr: '',
     };
 
-    const result = spawn(path.join(__dirname, '..', 'updateServer.sh'));
+    const result = spawn(path.join(__dirname, '..', 'bin', 'updateServer.sh'));
 
     result.stdout.on('data', d => {
         data.stdout += `${d}`;

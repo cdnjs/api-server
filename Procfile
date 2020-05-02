@@ -1,1 +1,1 @@
-web: ./runServer.sh
+web: ./bin/runServer.sh

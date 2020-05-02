@@ -39,17 +39,17 @@ npm run dev
 
 The data included with this repository may not be up-to-date and is intended to be used when doing
 development work on the API server. In production this data is updated before every deployment by
-the [runServer.sh](runServer.sh) script.
+the [`bin/runServer.sh`](bin/runServer.sh) script and then by
+[`bin/updateServer.sh`](bin/updateServer.sh) every ten minutes once deployed.
 
 The data consists of three parts that can all be updated individually if needed:
 
 ### Packages
 
-Use the following command to pull down the latest packages data:
+Use the [`bin/packages.sh`](bin/packages.sh) script to pull down the latest packages data:
 
 ```shell script
-rm -f ./data/packages.min.json
-wget -O ./data/packages.min.json https://storage.googleapis.com/cdnjs-assets/package.min.js
+./bin/packages.sh
 ```
 
 ### SRI
@@ -74,13 +74,20 @@ To update this submodule, you can run:
 git submodule update --force --checkout -- data/tutorials
 ```
 
+Once this is done, the last modified data log should also be updated, which can be done by running:
+
+```shell script
+./bin/tutorialsModified.sh
+```
+
 ## Production Deployment
 
 To deploy this API server to production, it should be as simple as cloning this repository and
-running the [`runServer.sh`](runServer.sh) file. For deployments to Heroku, running this script is
-configured with the included [`Procfile`](Procfile).
+running the [`bin/runServer.sh`](bin/runServer.sh) file (from the root of the repository). For
+deployments to Heroku, running this script is configured with the included [`Procfile`](Procfile).
 
-The [`runServer.sh`](runServer.sh) script performs the following actions to deploy and start the app:
+The [`bin/runServer.sh`](bin/runServer.sh) script performs the following actions to deploy and
+start the app:
 
 - Update packages data
     - Remove development packages data
@@ -93,6 +100,8 @@ The [`runServer.sh`](runServer.sh) script performs the following actions to depl
     - Remove the outdated tutorials submodule data
     - Clone the latest tutorials from [cdnjs/tutorials](https://github.com/cdnjs/tutorials)
     - Log the tutorials commit that was cloned
+    - Save the last modified info for the tutorials to
+    [`data/tutorialsModified.txt`](data/tutorialsModified.txt)
 - Start the API server with GC enabled and additional memory allocated
 
 To change the port that the app binds to, set the `PORT` environment var when running the script.

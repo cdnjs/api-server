@@ -69,15 +69,22 @@ module.exports = app => {
 
         // Get the tutorial, if we fail to find it, assume 404
         try {
-            const base  = path.join(__dirname, '..', 'data', 'tutorials', req.params.library);
+            // Get the tutorial meta & content
+            const base = path.join(__dirname, '..', 'data', 'tutorials', req.params.library);
             const data = JSON.parse(fs.readFileSync(path.join(base, req.params.tutorial, 'tutorial.json'), 'utf8'));
             const content = fs.readFileSync(path.join(base, req.params.tutorial, 'index.md'), 'utf8');
+
+            // Get the tutorial modified date
+            const modified = fs.readFileSync(path.join(__dirname, '..', 'data', 'tutorialsModified.txt'), 'utf8');
+            const modifiedReg = new RegExp(`(?:^|\n)${path.join(req.params.library, req.params.tutorial, 'tutorial.json')}: (.+)(?:$|\n)`);
+            const modifiedMatch = modified.match(modifiedReg);
 
             // Build the response and filter it
             const requestedFields = (req.query.fields && req.query.fields.split(',')) || [];
             const response = filter(
                 {
                     id: req.params.tutorial,
+                    modified: modifiedMatch && modifiedMatch.length ? new Date(modifiedMatch[1]) : new Date(),
                     ...data,
                     content,
                 },

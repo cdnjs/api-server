@@ -1,8 +1,7 @@
 #!/bin/sh
 
 # Get the latest packages data
-rm -f ./data/packages.min.json
-wget -nv -O ./data/packages.min.json https://storage.googleapis.com/cdnjs-assets/package.min.js
+. ./bin/packages.sh || exit 1
 
 # Update SRI (assumes a valid git repo, not using rm as the app reads from this continually)
 (
@@ -27,3 +26,6 @@ wget -nv -O ./data/packages.min.json https://storage.googleapis.com/cdnjs-assets
     echo "Tutorials at:"
     git log -n 1 | cat
 )
+
+# Get last modified data for tutorials
+. ./bin/tutorialsModified.sh || exit 1

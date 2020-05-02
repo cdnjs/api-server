@@ -3,8 +3,7 @@
 export WEB_CONCURRENCY=1
 
 # Get the latest packages data
-rm -f ./data/packages.min.json
-wget -nv -O ./data/packages.min.json https://storage.googleapis.com/cdnjs-assets/package.min.js
+. ./bin/packages.sh || exit 1
 
 # Get the latest SRI data
 rm -rf ./data/sri
@@ -19,7 +18,7 @@ git clone --depth=1 https://github.com/cdnjs/SRIs.git ./data/sri
 
 # Get the latest tutorials
 rm -rf ./data/tutorials
-git clone --depth=1 https://github.com/cdnjs/tutorials.git ./data/tutorials
+git clone https://github.com/cdnjs/tutorials.git ./data/tutorials
 
 # Log tutorials version
 (
@@ -27,6 +26,9 @@ git clone --depth=1 https://github.com/cdnjs/tutorials.git ./data/tutorials
     echo "Tutorials at:"
     git log -n 1 | cat
 )
+
+# Get last modified data for tutorials
+. ./bin/tutorialsModified.sh || exit 1
 
 # Run the API server
 npm run prod
