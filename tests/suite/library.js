@@ -210,8 +210,12 @@ describe('/libraries/:library', () => {
                     expect(response.body.repository).to.have.property('url').that.is.a('string');
                     done();
                 });
-                it('has a \'type\' and \'target\' property for \'autoupdate\'', done => {
-                    expect(response.body.autoupdate).to.have.property('type').that.is.a('string');
+                it('has a \'type\'/\'source\' and \'target\' property for \'autoupdate\'', done => {
+                    try {
+                        expect(response.body.autoupdate).to.have.property('type').that.is.a('string');
+                    } catch (_) {
+                        expect(response.body.autoupdate).to.have.property('source').that.is.a('string');
+                    }
                     expect(response.body.autoupdate).to.have.property('target').that.is.a('string');
                     done();
                 });
@@ -227,10 +231,12 @@ describe('/libraries/:library', () => {
                     });
                 });
                 describe('Tutorials array', () => {
-                    it('has \'id\', \'name\' and \'content\' properties for each entry', done => {
+                    it('has \'id\', \'modified\', \'name\' and \'content\' properties for each entry', done => {
                         // and any properties from the tutorial metadata
                         for (const result of response.body.tutorials) {
                             expect(result).to.have.property('id').that.is.a('string');
+                            expect(result).to.have.property('modified').that.is.a('string');
+                            expect(result.modified).to.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/);
                             expect(result).to.have.property('name').that.is.a('string');
                             expect(result).to.have.property('content').that.is.a('string');
                         }

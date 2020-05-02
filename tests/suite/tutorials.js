@@ -27,10 +27,12 @@ describe('/libraries/:library/tutorials', () => {
                 done();
             });
             describe('Tutorial object', () => {
-                it('is an object with \'id\', \'name\' and \'content\' properties', done => {
+                it('is an object with \'id\', \'modified\', \'name\' and \'content\' properties', done => {
                     // and any properties from the tutorial metadata
                     for (const result of response.body) {
                         expect(result).to.have.property('id').that.is.a('string');
+                        expect(result).to.have.property('modified').that.is.a('string');
+                        expect(result.modified).to.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/);
                         expect(result).to.have.property('name').that.is.a('string');
                         expect(result).to.have.property('content').that.is.a('string');
                     }
@@ -165,9 +167,11 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
                     done();
                 });
                 describe('Tutorial object', () => {
-                    it('is an object with \'id\', \'name\' and \'content\' properties', done => {
+                    it('is an object with \'id\', \'modified\', \'name\' and \'content\' properties', done => {
                         // and any properties from the tutorial metadata
                         expect(response.body).to.have.property('id').that.is.a('string');
+                        expect(response.body).to.have.property('modified').that.is.a('string');
+                        expect(response.body.modified).to.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/);
                         expect(response.body).to.have.property('name').that.is.a('string');
                         expect(response.body).to.have.property('content').that.is.a('string');
                         done();
@@ -227,9 +231,11 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
                 });
                 describe('Tutorial object', () => {
                     // Behaves the same as not including the fields query param
-                    it('is an object with \'id\', \'name\' and \'content\' properties', done => {
+                    it('is an object with \'id\', \'modified\', \'name\' and \'content\' properties', done => {
                         // and any properties from the tutorial metadata
                         expect(response.body).to.have.property('id').that.is.a('string');
+                        expect(response.body).to.have.property('modified').that.is.a('string');
+                        expect(response.body.modified).to.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/);
                         expect(response.body).to.have.property('name').that.is.a('string');
                         expect(response.body).to.have.property('content').that.is.a('string');
                         done();
