@@ -8,16 +8,19 @@ const respond = require('../utils/respond');
 
 // App constants
 const index = algoliasearch('2QWLVLXZB6', 'e16bd99a5c7a8fccae13ad40762eec3c').initIndex('libraries');
+const validSearchFields = ['name', 'alternativeNames', 'github.​repo', 'description', 'keywords', 'filename',
+    'repositories.​url', 'github.​user', 'maintainers.​name'];
 
 // Search the algolia index in browser mode
-const algolia = async query => {
+const algolia = async (query, searchFields) => {
     const hits = [];
     await index.browseObjects({
         query,
+        restrictSearchableAttributes: searchFields.filter(field => validSearchFields.includes(field)),
         batch: batch => {
             hits.push(...batch);
         },
-    });
+    }).catch(e => console.log(e));
     return hits;
 };
 
@@ -27,7 +30,11 @@ module.exports = app => {
         cache(res, 6 * 60 * 60);
 
         // Get the index results
-        const results = await algolia(req.query.search || '');
+        const searchFields = (req.query.search_fields && req.query.search_fields.split(',')) || [];
+        const results = await algolia(
+            req.query.search || '',
+            searchFields.includes('*') ? [] : searchFields,
+        );
 
         // Transform the results into our filtered array
         const requestedFields = (req.query.fields && req.query.fields.split(',')) || [];
