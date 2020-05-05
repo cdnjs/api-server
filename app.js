@@ -2,6 +2,7 @@
 const express = require('express');
 const compress = require('compression');
 const Sentry = require('@sentry/node');
+const morgan = require('morgan');
 
 // Local imports
 const librariesUtil = require('./utils/libraries');
@@ -41,6 +42,8 @@ module.exports = () => {
     const app = express();
     app.disable('x-powered-by');
     if (!localMode) app.use(Sentry.Handlers.requestHandler());
+
+    app.use(morgan('combined'));
 
     // Load the library data
     librariesUtil.set(app);
