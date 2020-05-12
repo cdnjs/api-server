@@ -26,10 +26,15 @@ You can install the Node dependencies following this lock file by running:
 npm ci
 ```
 
-Once the dependencies are installed, the API server is ready to run in development mode. All the
-data required for the server is included in this repository (though it may not be the latest).
+Once the dependencies are installed, you need to  get a copy of all the data that the API server
+requires to run. This can be done with the [`bin/initialData.sh`](bin/initialData.sh) script:
 
-To start the server in development mode, run:
+```shell script
+. ./bin/initialData.sh
+```
+
+With the data fetched, the API server is ready to run in development mode. To start the server in
+development mode, run:
 
 ```shell script
 npm run dev
@@ -37,10 +42,14 @@ npm run dev
 
 ## Updating Data
 
-The data included with this repository may not be up-to-date and is intended to be used when doing
-development work on the API server. In production this data is updated before every deployment by
-the [`bin/runServer.sh`](bin/runServer.sh) script and then by
-[`bin/updateServer.sh`](bin/updateServer.sh) every ten minutes once deployed.
+In development, you initially fetch a set of data using the
+[`bin/initialData.sh`](bin/initialData.sh) script (in production this script is run as part of the
+[`bin/runServer.sh`](bin/runServer.sh) script). This downloads the latests package JSON data, as
+well as making a local clone of the tutorials & SRI repos.
+
+To update your data, you can run the [`bin/updateData.sh`](bin/updateData.sh) script, which will
+fetch the latest package data as well as update the SRI & tutorial repo clones. In production, this
+script is automatically run every ten minutes once deployed.
 
 The data consists of three parts that can all be updated individually if needed:
 
@@ -49,35 +58,38 @@ The data consists of three parts that can all be updated individually if needed:
 Use the [`bin/packages.sh`](bin/packages.sh) script to pull down the latest packages data:
 
 ```shell script
-./bin/packages.sh
+. ./bin/packages.sh
 ```
 
 ### SRI
 
-The SRI data is contained within another cdnjs repository and is included in this repository as a
-git submodule.
-
-To update this submodule, you can run:
+The SRI data is contained within another cdnjs repository and is cloned locally by the
+[`bin/initialData.sh`](bin/initialData.sh) script. You can update this at any time by updating that
+cloned repository:
 
 ```shell script
-git submodule update --force --checkout -- data/sri
+cd data/sri
+git fetch origin
+git git reset --hard origin/master
 ```
 
 ### Tutorials
 
-All the tutorials for the libraries that are available via the API are also contained in another
-cdnjs repository and submoduled into this project with git.
+Similarly, all the tutorials for the libraries that are available via the API are also contained in
+another cdnjs repository and cloned by the [`bin/initialData.sh`](bin/initialData.sh) script.
 
-To update this submodule, you can run:
+You can update that cloned repository by running:
 
 ```shell script
-git submodule update --force --checkout -- data/tutorials
+cd data/tutorials
+git fetch origin
+git git reset --hard origin/master
 ```
 
 Once this is done, the last modified data log should also be updated, which can be done by running:
 
 ```shell script
-./bin/tutorialsModified.sh
+. ./bin/tutorialsModified.sh
 ```
 
 ## Production Deployment
