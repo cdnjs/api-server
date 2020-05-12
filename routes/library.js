@@ -123,7 +123,7 @@ module.exports = app => {
 
         // Compute versions if needed
         if ('versions' in response) {
-            response.versions = response.assets.map(asset => asset.version);
+            response.versions = lib.assets.map(asset => asset.version);
         }
 
         // Load tutorials if we need them
