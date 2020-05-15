@@ -23,5 +23,8 @@ jobs:
     - name: Install Dependencies
       run: npm ci
 
+    - name: Clone Data
+      run: . ./bin/initialData.sh
+
     - name: Run Tests
       run: npm run test:with-server

@@ -1,6 +1,0 @@
-[submodule "data/tutorials"]
-	path = data/tutorials
-	url = https://github.com/cdnjs/tutorials.git
-[submodule "data/sri"]
-	path = data/sri
-	url = https://github.com/cdnjs/SRIs.git
