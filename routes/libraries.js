@@ -10,6 +10,7 @@ const respond = require('../utils/respond');
 const index = algoliasearch('2QWLVLXZB6', 'e16bd99a5c7a8fccae13ad40762eec3c').initIndex('libraries');
 const validSearchFields = ['name', 'alternativeNames', 'github.​repo', 'description', 'keywords', 'filename',
     'repositories.​url', 'github.​user', 'maintainers.​name'];
+const maxQueryLength = 512;
 
 // Search the algolia index in browser mode
 const algolia = async (query, searchFields) => {
@@ -20,21 +21,29 @@ const algolia = async (query, searchFields) => {
         batch: batch => {
             hits.push(...batch);
         },
-    }).catch(e => console.log(e));
+    });
     return hits;
 };
 
 module.exports = app => {
     app.get('/libraries', async (req, res) => {
-        // Set a 6 hour life on this response
-        cache(res, 6 * 60 * 60);
-
         // Get the index results
         const searchFields = (req.query.search_fields && req.query.search_fields.split(',')) || [];
-        const results = await algolia(
-            req.query.search || '',
-            searchFields.includes('*') ? [] : searchFields,
-        );
+        let results;
+        try {
+            results = await algolia(
+                (req.query.search || '').slice(0, maxQueryLength),
+                searchFields.includes('*') ? [] : searchFields,
+            );
+        } catch (err) {
+            console.error(err.stack);
+            res.status(500).json({
+                error: true,
+                status: 500,
+                message: err.message,
+            });
+            return;
+        }
 
         // Transform the results into our filtered array
         const requestedFields = (req.query.fields && req.query.fields.split(',')) || [];
@@ -62,6 +71,9 @@ module.exports = app => {
         // If they want less data, allow that
         const limit = (req.query.limit && Number(req.query.limit));
         const trimmed = limit ? response.slice(0, limit) : response;
+
+        // Set a 6 hour life on this response
+        cache(res, 6 * 60 * 60);
 
         // Send the response
         respond(req, res, {

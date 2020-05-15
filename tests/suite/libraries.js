@@ -187,53 +187,86 @@ describe('/libraries', function () {
         });
     });
 
-    describe('Searching for libraries (?search=hi-sven)', () => {
+    describe('Searching for libraries', () => {
         // This set of tests is incredibly fragile
         // Testing of the searching functionality should be done by hand
         // TODO: Make this set of tests more robust
-        const test = () => request().get('/libraries?search=hi-sven');
-        let response;
-        before('fetch endpoint', done => {
-            test().end((err, res) => {
-                response = res;
+
+        describe('Providing a short query (?search=hi-sven)', () => {
+            const test = () => request().get('/libraries?search=hi-sven');
+            let response;
+            before('fetch endpoint', done => {
+                test().end((err, res) => {
+                    response = res;
+                    done();
+                });
+            });
+            it('returns the correct CORS and Cache headers', done => {
+                expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+                expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
                 done();
             });
-        });
-        it('returns the correct CORS and Cache headers', done => {
-            expect(response).to.have.header('Access-Control-Allow-Origin', '*');
-            expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
-            done();
-        });
-        it('returns a JSON body with \'results\', \'total\' and \'available\' properties', done => {
-            expect(response).to.be.json;
-            expect(response.body).to.have.property('results').that.is.an('array');
-            expect(response.body).to.have.property('total').that.is.a('number');
-            expect(response.body).to.have.property('available').that.is.a('number');
-            done();
-        });
-        it('returns all available hits', done => {
-            expect(response.body.results).to.have.lengthOf(response.body.total);
-            expect(response.body.results).to.have.lengthOf(response.body.available);
-            done();
-        });
-        describe('Library object', () => {
-            it('returns the \'hi-sven\' package as the first object', done => {
-                expect(response.body.results[0]).to.have.property('name', 'hi-sven');
+            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', done => {
+                expect(response).to.be.json;
+                expect(response.body).to.have.property('results').that.is.an('array');
+                expect(response.body).to.have.property('total').that.is.a('number');
+                expect(response.body).to.have.property('available').that.is.a('number');
                 done();
             });
-            it('is an object with \'name\' and \'latest\' properties', done => {
-                for (const result of response.body.results) {
-                    expect(result).to.have.property('name').that.is.a('string');
-                    expect(result).to.have.property('latest').that.is.a('string');
-                }
+            it('returns all available hits', done => {
+                expect(response.body.results).to.have.lengthOf(response.body.total);
+                expect(response.body.results).to.have.lengthOf(response.body.available);
                 done();
             });
-            it('has no other properties', done => {
-                for (const result of response.body.results) {
-                    expect(Object.keys(result)).to.have.lengthOf(2);
-                }
+            describe('Library object', () => {
+                it('returns the \'hi-sven\' package as the first object', done => {
+                    expect(response.body.results[0]).to.have.property('name', 'hi-sven');
+                    done();
+                });
+                it('is an object with \'name\' and \'latest\' properties', done => {
+                    for (const result of response.body.results) {
+                        expect(result).to.have.property('name').that.is.a('string');
+                        expect(result).to.have.property('latest').that.is.a('string');
+                    }
+                    done();
+                });
+                it('has no other properties', done => {
+                    for (const result of response.body.results) {
+                        expect(Object.keys(result)).to.have.lengthOf(2);
+                    }
+                    done();
+                });
+            });
+        });
+
+        describe('Providing a query that is longer than max that Algolia allows (?search=this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet-this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet)', () => {
+            const test = () => request().get('/libraries?search=this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet-this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet');
+            let response;
+            before('fetch endpoint', done => {
+                test().end((err, res) => {
+                    response = res;
+                    done();
+                });
+            });
+            it('returns the correct CORS and Cache headers', done => {
+                expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+                expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
                 done();
             });
+            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', done => {
+                expect(response).to.be.json;
+                expect(response.body).to.have.property('results').that.is.an('array');
+                expect(response.body).to.have.property('total').that.is.a('number');
+                expect(response.body).to.have.property('available').that.is.a('number');
+                done();
+            });
+            it('returns all available hits', done => {
+                expect(response.body.results).to.have.lengthOf(response.body.total);
+                expect(response.body.results).to.have.lengthOf(response.body.available);
+                done();
+            });
+            // No library object as it's rather likely this won't match anything
+            // But this test is just to ensure it doesn't return an error
         });
     });
 
