@@ -16,6 +16,13 @@ describe('/', () => {
         expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
         done();
     });
+    it('returns the correct CORS and Cache headers for OPTIONS', done => {
+        request().options('/').redirects(0).end((err, res) => {
+            expect(res).to.have.header('Access-Control-Allow-Origin', '*');
+            expect(res).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
+            done();
+        });
+    });
     it('redirects to the cdnjs.com API docs as a 301', done => {
         expect(response).to.have.status(301);
         expect(response).to.redirectTo('https://cdnjs.com/api');
