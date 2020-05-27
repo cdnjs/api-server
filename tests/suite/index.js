@@ -16,10 +16,9 @@ describe('/', () => {
         expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
         done();
     });
-    it('returns the correct CORS and Cache headers for OPTIONS', done => {
+    it('returns the correct CORS headers for OPTIONS', done => {
         request().options('/').redirects(0).end((err, res) => {
             expect(res).to.have.header('Access-Control-Allow-Origin', '*');
-            expect(res).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
             done();
         });
     });
