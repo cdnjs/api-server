@@ -1,6 +1,5 @@
 // Library imports
 const express = require('express');
-const cors = require('cors');
 const compress = require('compression');
 const Sentry = require('@sentry/node');
 const morgan = require('morgan');
@@ -8,6 +7,7 @@ const morgan = require('morgan');
 // Local imports
 const librariesUtil = require('./utils/libraries');
 const cacheUtil = require('./utils/cache');
+const cors = require('./utils/cors');
 
 // Routes imports
 const librariesRoutes = require('./routes/libraries');
@@ -50,12 +50,7 @@ module.exports = () => {
     librariesUtil.set(app);
 
     // Set up cors headers
-    app.use(cors({
-        origin: '*',
-        credentials: true,
-        methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
-        allowedHeaders: ['X-CSRF-Token', 'X-Requested-With', 'Accept', 'Accept-Version', 'Content-Length', 'Content-MD5', 'Content-Type', 'Date', 'X-Api-Version'],
-    }));
+    cors(app);
 
     if (!localMode) {
         app.use((req, res, next) => {
