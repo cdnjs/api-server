@@ -1,13 +1,15 @@
 const { describe, it, before } = require('mocha');
 const { expect } = require('chai');
 const request = require('../base');
+const testCors = require('../cors');
 
 describe('/libraries', function () {
     // This route is a bit slower due to Algolia
     this.timeout(5000);
 
     describe('No query params', () => {
-        const test = () => request().get('/libraries');
+        const path = '/libraries';
+        const test = () => request().get(path);
         let response;
         before('fetch endpoint', done => {
             test().end((err, res) => {
@@ -15,6 +17,7 @@ describe('/libraries', function () {
                 done();
             });
         });
+        testCors(path, () => response);
         it('returns the correct Cache headers', done => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
             done();
@@ -55,7 +58,8 @@ describe('/libraries', function () {
     });
 
     describe('Limiting number of results (?limit=10)', () => {
-        const test = () => request().get('/libraries?limit=10');
+        const path = '/libraries?limit=10';
+        const test = () => request().get(path);
         let response;
         before('fetch endpoint', done => {
             test().end((err, res) => {
@@ -63,6 +67,7 @@ describe('/libraries', function () {
                 done();
             });
         });
+        testCors(path, () => response);
         it('returns the correct Cache headers', done => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
             done();
@@ -83,7 +88,8 @@ describe('/libraries', function () {
     });
 
     describe('Requesting a field (?fields=version)', () => {
-        const test = () => request().get('/libraries?fields=version');
+        const path = '/libraries?fields=version';
+        const test = () => request().get(path);
         let response;
         before('fetch endpoint', done => {
             test().end((err, res) => {
@@ -91,6 +97,7 @@ describe('/libraries', function () {
                 done();
             });
         });
+        testCors(path, () => response);
         it('returns the correct Cache headers', done => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
             done();
@@ -126,7 +133,8 @@ describe('/libraries', function () {
     });
 
     describe('Requesting all fields (?fields=*)', () => {
-        const test = () => request().get('/libraries?fields=*');
+        const path = '/libraries?fields=*';
+        const test = () => request().get(path);
         let response;
         before('fetch endpoint', done => {
             test().end((err, res) => {
@@ -134,6 +142,7 @@ describe('/libraries', function () {
                 done();
             });
         });
+        testCors(path, () => response);
         it('returns the correct Cache headers', done => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
             done();
@@ -189,7 +198,8 @@ describe('/libraries', function () {
         // TODO: Make this set of tests more robust
 
         describe('Providing a short query (?search=hi-sven)', () => {
-            const test = () => request().get('/libraries?search=hi-sven');
+            const path = '/libraries?search=hi-sven';
+            const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
                 test().end((err, res) => {
@@ -235,7 +245,8 @@ describe('/libraries', function () {
         });
 
         describe('Providing a query that is longer than max that Algolia allows (?search=this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet-this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet)', () => {
-            const test = () => request().get('/libraries?search=this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet-this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet');
+            const path = '/libraries?search=this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet-this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet';
+            const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
                 test().end((err, res) => {
@@ -270,7 +281,8 @@ describe('/libraries', function () {
         // TODO: Make this set of tests more robust
 
         describe('Providing search fields that are valid (?search=backbone.js&search_fields=keywords)', () => {
-            const test = () => request().get('/libraries?search=backbone.js&search_fields=keywords');
+            const path = '/libraries?search=backbone.js&search_fields=keywords';
+            const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
                 test().end((err, res) => {
@@ -320,7 +332,8 @@ describe('/libraries', function () {
 
         describe('Providing search fields that are invalid (?search=backbone.js&search_fields=this-field-doesnt-exist)', () => {
             // If invalid fields make it to Aloglia, it will error, so this tests that we're filtering them first
-            const test = () => request().get('/libraries?search=backbone.js&search_fields=this-field-doesnt-exist');
+            const path = '/libraries?search=backbone.js&search_fields=this-field-doesnt-exist';
+            const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
                 test().end((err, res) => {

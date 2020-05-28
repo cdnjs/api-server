@@ -4,7 +4,8 @@ const request = require('../base');
 const testCors = require('../cors');
 
 describe('/', () => {
-    const test = () => request().get('/').redirects(0);
+    const path = '/';
+    const test = () => request().get(path).redirects(0);
     let response;
     before('fetch endpoint', done => {
         test().end((err, res) => {
@@ -13,7 +14,7 @@ describe('/', () => {
         });
     });
 
-    testCors('/', () => response);
+    testCors(path, () => response);
 
     it('returns the correct Cache headers', done => {
         expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
@@ -27,7 +28,8 @@ describe('/', () => {
 });
 
 describe('/this-route-doesnt-exist', () => {
-    const test = () => request().get('/this-route-doesnt-exist');
+    const path = '/this-route-doesnt-exist';
+    const test = () => request().get(path);
     let response;
     before('fetch endpoint', done => {
         test().end((err, res) => {
@@ -36,7 +38,7 @@ describe('/this-route-doesnt-exist', () => {
         });
     });
 
-    testCors('/', () => response);
+    testCors(path, () => response);
 
     it('returns the correct Cache headers', done => {
         expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
