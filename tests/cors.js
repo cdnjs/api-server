@@ -26,8 +26,7 @@ const testCors = (path, getResponse) => {
             .options(path)
             .redirects(0)
             .end((err, res) => {
-                const expectedStatus = corsOptions.optionsSuccessStatus;
-                expect(res.status).to.equal(expectedStatus, `Expected OPTIONS to return ${expectedStatus} status, got ${res.status}`);
+                expect(res).to.have.status(corsOptions.optionsSuccessStatus);
                 expectCORSHeaders(res);
                 done();
             });
