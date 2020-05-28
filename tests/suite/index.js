@@ -1,6 +1,7 @@
 const { describe, it, before } = require('mocha');
 const { expect } = require('chai');
 const request = require('../base');
+const testCors = require('../cors');
 
 describe('/', () => {
     const test = () => request().get('/').redirects(0);
@@ -11,16 +12,12 @@ describe('/', () => {
             done();
         });
     });
-    it('returns the correct CORS and Cache headers', done => {
-        expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+
+    testCors('/', () => response);
+
+    it('returns the correct Cache headers', done => {
         expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
         done();
-    });
-    it('returns the correct CORS headers for OPTIONS', done => {
-        request().options('/').redirects(0).end((err, res) => {
-            expect(res).to.have.header('Access-Control-Allow-Origin', '*');
-            done();
-        });
     });
     it('redirects to the cdnjs.com API docs as a 301', done => {
         expect(response).to.have.status(301);
