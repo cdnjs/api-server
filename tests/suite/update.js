@@ -12,8 +12,7 @@ describe('/update', () => {
             done();
         });
     });
-    it('returns the correct CORS and Cache headers', done => {
-        expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+    it('returns the correct Cache headers', done => {
         expect(response).to.have.header('Cache-Control', 'public, max-age=300'); // 5 minutes
         done();
     });

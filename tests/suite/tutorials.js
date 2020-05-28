@@ -13,8 +13,7 @@ describe('/libraries/:library/tutorials', () => {
                     done();
                 });
             });
-            it('returns the correct CORS and Cache headers', done => {
-                expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+            it('returns the correct Cache headers', done => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=86400'); // 24 hours
                 done();
             });
@@ -50,8 +49,7 @@ describe('/libraries/:library/tutorials', () => {
                     done();
                 });
             });
-            it('returns the correct CORS and Cache headers', done => {
-                expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+            it('returns the correct Cache headers', done => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=86400'); // 24 hours
                 done();
             });
@@ -89,8 +87,7 @@ describe('/libraries/:library/tutorials', () => {
                     done();
                 });
             });
-            it('returns the correct CORS and Cache headers', done => {
-                expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+            it('returns the correct Cache headers', done => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=86400'); // 24 hours
                 done();
             });
@@ -127,8 +124,7 @@ describe('/libraries/:library/tutorials', () => {
                     done();
                 });
             });
-            it('returns the correct CORS and Cache headers', done => {
-                expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+            it('returns the correct Cache headers', done => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
                 done();
             });
@@ -156,8 +152,7 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
                         done();
                     });
                 });
-                it('returns the correct CORS and Cache headers', done => {
-                    expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+                it('returns the correct Cache headers', done => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=1209600'); // 2 weeks
                     done();
                 });
@@ -188,8 +183,7 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
                         done();
                     });
                 });
-                it('returns the correct CORS and Cache headers', done => {
-                    expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+                it('returns the correct Cache headers', done => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=1209600'); // 2 weeks
                     done();
                 });
@@ -219,8 +213,7 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
                         done();
                     });
                 });
-                it('returns the correct CORS and Cache headers', done => {
-                    expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+                it('returns the correct Cache headers', done => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=1209600'); // 2 weeks
                     done();
                 });
@@ -254,8 +247,7 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
                         done();
                     });
                 });
-                it('returns the correct CORS and Cache headers', done => {
-                    expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+                it('returns the correct Cache headers', done => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
                     done();
                 });
@@ -282,8 +274,7 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
                         done();
                     });
                 });
-                it('returns the correct CORS and Cache headers', done => {
-                    expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+                it('returns the correct Cache headers', done => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
                     done();
                 });
