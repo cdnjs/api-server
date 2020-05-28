@@ -8,7 +8,7 @@ const expectCORSHeaders = (response) => {
     expect(response).to.have.header('Access-Control-Allow-Credentials', corsOptions.credentials.toString());
 
     // testing allowed methods and headers only makes sense in case of options
-    if (response.request.method.toLowerCase === 'options') {
+    if (response.request.method.toLowerCase() === 'options') {
         expect(response).to.have.header('Access-Control-Allow-Headers', corsOptions.allowedHeaders.join(','));
         expect(response).to.have.header('Access-Control-Allow-Methods', corsOptions.methods.join(','));
     }

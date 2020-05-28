@@ -1,10 +1,12 @@
 const { describe, it, before } = require('mocha');
 const { expect } = require('chai');
 const request = require('../base');
+const testCors = require('../cors');
 
 describe('/whitelist', () => {
     describe('No query params', () => {
-        const test = () => request().get('/whitelist');
+        const path = '/whitelist';
+        const test = () => request().get(path);
         let response;
         before('fetch endpoint', done => {
             test().end((err, res) => {
@@ -12,6 +14,7 @@ describe('/whitelist', () => {
                 done();
             });
         });
+        testCors(path, () => response);
         it('returns the correct Cache headers', done => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
             done();
@@ -53,7 +56,8 @@ describe('/whitelist', () => {
     });
 
     describe('Requesting a field (?fields=extensions)', () => {
-        const test = () => request().get('/whitelist?fields=extensions');
+        const path = '/whitelist?fields=extensions';
+        const test = () => request().get(path);
         let response;
         before('fetch endpoint', done => {
             test().end((err, res) => {
@@ -61,6 +65,7 @@ describe('/whitelist', () => {
                 done();
             });
         });
+        testCors(path, () => response);
         it('returns the correct Cache headers', done => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
             done();
@@ -78,7 +83,8 @@ describe('/whitelist', () => {
     });
 
     describe('Requesting all fields (?fields=*)', () => {
-        const test = () => request().get('/whitelist?fields=*');
+        const path = '/whitelist?fields=*';
+        const test = () => request().get(path);
         let response;
         before('fetch endpoint', done => {
             test().end((err, res) => {
@@ -86,6 +92,7 @@ describe('/whitelist', () => {
                 done();
             });
         });
+        testCors(path, () => response);
         it('returns the correct Cache headers', done => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
             done();
