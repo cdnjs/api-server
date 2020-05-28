@@ -1,11 +1,13 @@
 const { describe, it, before } = require('mocha');
 const { expect } = require('chai');
 const request = require('../base');
+const testCors = require('../cors');
 
 describe('/libraries/:library/tutorials', () => {
     describe('Requesting for a valid library (:library = backbone.js)', () => {
         describe('No query params', () => {
-            const test = () => request().get('/libraries/backbone.js/tutorials');
+            const path = '/libraries/backbone.js/tutorials';
+            const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
                 test().end((err, res) => {
@@ -13,6 +15,7 @@ describe('/libraries/:library/tutorials', () => {
                     done();
                 });
             });
+            testCors(path, () => response);
             it('returns the correct Cache headers', done => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=86400'); // 24 hours
                 done();
@@ -41,7 +44,8 @@ describe('/libraries/:library/tutorials', () => {
         });
 
         describe('Requesting a field (?fields=name)', () => {
-            const test = () => request().get('/libraries/backbone.js/tutorials?fields=name');
+            const path = '/libraries/backbone.js/tutorials?fields=name';
+            const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
                 test().end((err, res) => {
@@ -49,6 +53,7 @@ describe('/libraries/:library/tutorials', () => {
                     done();
                 });
             });
+            testCors(path, () => response);
             it('returns the correct Cache headers', done => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=86400'); // 24 hours
                 done();
@@ -79,7 +84,8 @@ describe('/libraries/:library/tutorials', () => {
         });
 
         describe('Requesting all fields (?fields=*)', () => {
-            const test = () => request().get('/libraries/backbone.js/tutorials?fields=*');
+            const path = '/libraries/backbone.js/tutorials?fields=*';
+            const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
                 test().end((err, res) => {
@@ -87,6 +93,7 @@ describe('/libraries/:library/tutorials', () => {
                     done();
                 });
             });
+            testCors(path, () => response);
             it('returns the correct Cache headers', done => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=86400'); // 24 hours
                 done();
@@ -116,7 +123,8 @@ describe('/libraries/:library/tutorials', () => {
 
     describe('Requesting for a non-existent library (:library = this-library-doesnt-exist)', () => {
         describe('No query params', () => {
-            const test = () => request().get('/libraries/this-library-doesnt-exist/tutorials');
+            const path = '/libraries/this-library-doesnt-exist/tutorials';
+            const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
                 test().end((err, res) => {
@@ -124,6 +132,7 @@ describe('/libraries/:library/tutorials', () => {
                     done();
                 });
             });
+            testCors(path, () => response);
             it('returns the correct Cache headers', done => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
                 done();
@@ -144,7 +153,8 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
     describe('Requesting for a valid library (:library = backbone.js)', () => {
         describe('Requesting a valid tutorial (:tutorial = what-is-a-view)', () => {
             describe('No query params', () => {
-                const test = () => request().get('/libraries/backbone.js/tutorials/what-is-a-view');
+                const path = '/libraries/backbone.js/tutorials/what-is-a-view';
+                const test = () => request().get(path);
                 let response;
                 before('fetch endpoint', done => {
                     test().end((err, res) => {
@@ -175,7 +185,8 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
             });
 
             describe('Requesting a field (?fields=name)', () => {
-                const test = () => request().get('/libraries/backbone.js/tutorials/what-is-a-view?fields=name');
+                const path = '/libraries/backbone.js/tutorials/what-is-a-view?fields=name';
+                const test = () => request().get(path);
                 let response;
                 before('fetch endpoint', done => {
                     test().end((err, res) => {
@@ -205,7 +216,8 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
             });
 
             describe('Requesting all fields (?fields=*)', () => {
-                const test = () => request().get('/libraries/backbone.js/tutorials/what-is-a-view?fields=*');
+                const path = '/libraries/backbone.js/tutorials/what-is-a-view?fields=*';
+                const test = () => request().get(path);
                 let response;
                 before('fetch endpoint', done => {
                     test().end((err, res) => {
@@ -239,7 +251,8 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
 
         describe('Requesting a non-existent tutorial (:tutorial = this-tutorial-doesnt-exist)', () => {
             describe('No query params', () => {
-                const test = () => request().get('/libraries/backbone.js/tutorials/this-tutorial-doesnt-exist');
+                const path = '/libraries/backbone.js/tutorials/this-tutorial-doesnt-exist';
+                const test = () => request().get(path);
                 let response;
                 before('fetch endpoint', done => {
                     test().end((err, res) => {
@@ -266,7 +279,8 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
     describe('Requesting for a non-existent library (:library = this-library-doesnt-exist)', () => {
         describe('Requesting a non-existent tutorial (:tutorial = this-tutorial-doesnt-exist)', () => {
             describe('No query params', () => {
-                const test = () => request().get('/libraries/this-library-doesnt-exist/tutorials/this-tutorial-doesnt-exist');
+                const path = '/libraries/this-library-doesnt-exist/tutorials/this-tutorial-doesnt-exist';
+                const test = () => request().get(path);
                 let response;
                 before('fetch endpoint', done => {
                     test().end((err, res) => {
