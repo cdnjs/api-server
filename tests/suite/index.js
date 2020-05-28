@@ -13,9 +13,7 @@ describe('/', () => {
             done();
         });
     });
-
     testCors(path, () => response);
-
     it('returns the correct Cache headers', done => {
         expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
         done();
@@ -37,9 +35,7 @@ describe('/this-route-doesnt-exist', () => {
             done();
         });
     });
-
     testCors(path, () => response);
-
     it('returns the correct Cache headers', done => {
         expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
         done();
