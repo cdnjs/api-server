@@ -5,6 +5,7 @@ const algoliasearch = require('algoliasearch');
 const cache = require('../utils/cache');
 const filter = require('../utils/filter');
 const respond = require('../utils/respond');
+const queryArray = require('../utils/query_array');
 
 // App constants
 const index = algoliasearch('2QWLVLXZB6', 'e16bd99a5c7a8fccae13ad40762eec3c').initIndex('libraries');
@@ -28,11 +29,11 @@ const algolia = async (query, searchFields) => {
 module.exports = app => {
     app.get('/libraries', async (req, res) => {
         // Get the index results
-        const searchFields = (req.query.search_fields && req.query.search_fields.split(',')) || [];
+        const searchFields = queryArray(req.query, 'search_fields');
         let results;
         try {
             results = await algolia(
-                (req.query.search || '').slice(0, maxQueryLength),
+                (req.query.search || '').toString().slice(0, maxQueryLength),
                 searchFields.includes('*') ? [] : searchFields,
             );
         } catch (err) {
@@ -46,7 +47,7 @@ module.exports = app => {
         }
 
         // Transform the results into our filtered array
-        const requestedFields = (req.query.fields && req.query.fields.split(',')) || [];
+        const requestedFields = queryArray(req.query, 'fields');
         const response = results.map(hit => {
             return filter(
                 {
