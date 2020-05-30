@@ -3,7 +3,7 @@ const { expect } = require('chai');
 const request = require('./base');
 const { corsOptions } = require('../utils/cors');
 
-const expectCORSHeaders = (response) => {
+const expectCORSHeaders = response => {
     expect(response).to.have.header('Access-Control-Allow-Origin', corsOptions.origin);
     expect(response).to.have.header('Access-Control-Allow-Credentials', corsOptions.credentials.toString());
 
