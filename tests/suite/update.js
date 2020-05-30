@@ -6,7 +6,7 @@ const testCors = require('../cors');
 // This endpoint is a prod-only endpoint for monitoring the API auto-update job by maintainers
 describe('/update', () => {
     const path = '/update';
-    const test = () => request().get('/update');
+    const test = () => request().get(path);
     let response;
     before('fetch endpoint', done => {
         test().end((err, res) => {
