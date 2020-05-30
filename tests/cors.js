@@ -21,7 +21,7 @@ const testCors = (path, getResponse) => {
         done();
     });
 
-    it('returns the correct CORS headers for OPTIONS request', (done) => {
+    it('returns the correct CORS headers for OPTIONS request', done => {
         request()
             .options(path)
             .redirects(0)
