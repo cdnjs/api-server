@@ -3,6 +3,7 @@ const cache = require('../utils/cache');
 const files = require('../utils/files');
 const filter = require('../utils/filter');
 const respond = require('../utils/respond');
+const queryArray = require('../utils/query_array');
 
 module.exports = app => {
     // Whitelist
@@ -14,7 +15,7 @@ module.exports = app => {
         };
 
         // Generate the filtered response
-        const requestedFields = (req.query.fields && req.query.fields.split(',')) || [];
+        const requestedFields = queryArray(req.query, 'fields');
         const response = filter(
             results,
             requestedFields,

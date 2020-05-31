@@ -8,6 +8,7 @@ const tutorials = require('../utils/tutorials');
 const filter = require('../utils/filter');
 const respond = require('../utils/respond');
 const files = require('../utils/files');
+const queryArray = require('../utils/query_array');
 
 // Filter util
 const isWhitelisted = file => {
@@ -59,7 +60,7 @@ module.exports = app => {
         };
 
         // Generate the initial filtered response (without SRI data)
-        const requestedFields = (req.query.fields && req.query.fields.split(',')) || [];
+        const requestedFields = queryArray(req.query, 'fields');
         const response = filter(
             results,
             requestedFields,
@@ -103,7 +104,7 @@ module.exports = app => {
         }
 
         // Generate the initial filtered response (without SRI or tutorials data)
-        const requestedFields = (req.query.fields && req.query.fields.split(',')) || [];
+        const requestedFields = queryArray(req.query, 'fields');
         const response = filter(
             {
                 // Ensure name is first prop
