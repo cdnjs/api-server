@@ -5,6 +5,7 @@ wget -nv -O ./data/packages.temp.min.json https://storage.googleapis.com/cdnjs-a
 
 # Validate that it is a valid libraries JSON file
 node ./bin/valid_json.js ./data/packages.temp.min.json >/dev/null 2>&1 || {
+    rm -f ./data/packages.temp.min.json
     echo "Invalid JSON received, aborting packages data update"
     exit 1
 }
