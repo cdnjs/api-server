@@ -7,6 +7,7 @@ const morgan = require('morgan');
 // Local imports
 const librariesUtil = require('./utils/libraries');
 const cacheUtil = require('./utils/cache');
+const cors = require('./utils/cors');
 
 // Routes imports
 const librariesRoutes = require('./routes/libraries');
@@ -48,17 +49,15 @@ module.exports = () => {
     // Load the library data
     librariesUtil.set(app);
 
-    // Set all the relevant headers for the app
-    app.use((req, res, next) => {
-        res.header('Access-Control-Allow-Credentials', true);
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-        res.header('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
-        if (!localMode) {
+    // Set up cors headers
+    cors(app);
+
+    if (!localMode) {
+        app.use((req, res, next) => {
             res.setHeader('Public-Key-Pins', 'pin-sha256="EULHwYvGhknyznoBvyvgbidiBH3JX3eFHHlIO3YK8Ek=";pin-sha256="x9SZw6TwIqfmvrLZ/kz1o0Ossjmn728BnBKpUFqGNVM=";max-age=3456000;report-uri="https://cdnjs.report-uri.io/r/default/hpkp/enforce"');
-        }
-        next();
-    });
+            next();
+        });
+    }
 
     // Always compress whatever we return
     app.use(compress());
