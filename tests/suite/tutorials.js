@@ -85,7 +85,8 @@ describe('/libraries/:library/tutorials', () => {
 
         describe('Requesting multiple fields', () => {
             describe('through comma-separated string (?fields=name,content)', () => {
-                const test = () => request().get('/libraries/backbone.js/tutorials?fields=name,content');
+                const path = '/libraries/backbone.js/tutorials?fields=name,content';
+                const test = () => request().get(path);
                 let response;
                 before('fetch endpoint', done => {
                     test().end((err, res) => {
@@ -93,8 +94,8 @@ describe('/libraries/:library/tutorials', () => {
                         done();
                     });
                 });
-                it('returns the correct CORS and Cache headers', done => {
-                    expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+                testCors(path, () => response);
+                it('returns the correct Cache headers', done => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=86400'); // 24 hours
                     done();
                 });
@@ -125,7 +126,8 @@ describe('/libraries/:library/tutorials', () => {
             });
 
             describe('through multiple query parameters (?fields=name&fields=content)', () => {
-                const test = () => request().get('/libraries/backbone.js/tutorials?fields=name&fields=content');
+                const path = '/libraries/backbone.js/tutorials?fields=name&fields=content';
+                const test = () => request().get(path);
                 let response;
                 before('fetch endpoint', done => {
                     test().end((err, res) => {
@@ -133,8 +135,8 @@ describe('/libraries/:library/tutorials', () => {
                         done();
                     });
                 });
-                it('returns the correct CORS and Cache headers', done => {
-                    expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+                testCors(path, () => response);
+                it('returns the correct Cache headers', done => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=86400'); // 24 hours
                     done();
                 });
@@ -246,6 +248,7 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
                         done();
                     });
                 });
+                testCors(path, () => response);
                 it('returns the correct Cache headers', done => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=1209600'); // 2 weeks
                     done();
@@ -278,6 +281,7 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
                         done();
                     });
                 });
+                testCors(path, () => response);
                 it('returns the correct Cache headers', done => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=1209600'); // 2 weeks
                     done();
@@ -301,7 +305,8 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
 
             describe('Requesting multiple fields', () => {
                 describe('through comma-separated string (?fields=name,content)', () => {
-                    const test = () => request().get('/libraries/backbone.js/tutorials/what-is-a-view?fields=name,content');
+                    const path = '/libraries/backbone.js/tutorials/what-is-a-view?fields=name,content';
+                    const test = () => request().get(path);
                     let response;
                     before('fetch endpoint', done => {
                         test().end((err, res) => {
@@ -309,8 +314,8 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
                             done();
                         });
                     });
-                    it('returns the correct CORS and Cache headers', done => {
-                        expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+                    testCors(path, () => response);
+                    it('returns the correct Cache headers', done => {
                         expect(response).to.have.header('Cache-Control', 'public, max-age=1209600'); // 2 weeks
                         done();
                     });
@@ -333,7 +338,8 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
                 });
 
                 describe('through multiple query parameters (?fields=name&fields=content)', () => {
-                    const test = () => request().get('/libraries/backbone.js/tutorials/what-is-a-view?fields=name&fields=content');
+                    const path = '/libraries/backbone.js/tutorials/what-is-a-view?fields=name&fields=content';
+                    const test = () => request().get(path);
                     let response;
                     before('fetch endpoint', done => {
                         test().end((err, res) => {
@@ -341,8 +347,8 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
                             done();
                         });
                     });
-                    it('returns the correct CORS and Cache headers', done => {
-                        expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+                    testCors(path, () => response);
+                    it('returns the correct Cache headers', done => {
                         expect(response).to.have.header('Cache-Control', 'public, max-age=1209600'); // 2 weeks
                         done();
                     });
@@ -375,6 +381,7 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
                         done();
                     });
                 });
+                testCors(path, () => response);
                 it('returns the correct Cache headers', done => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=1209600'); // 2 weeks
                     done();
@@ -410,6 +417,7 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
                         done();
                     });
                 });
+                testCors(path, () => response);
                 it('returns the correct Cache headers', done => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
                     done();
@@ -438,6 +446,7 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
                         done();
                     });
                 });
+                testCors(path, () => response);
                 it('returns the correct Cache headers', done => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
                     done();

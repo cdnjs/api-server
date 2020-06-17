@@ -134,7 +134,8 @@ describe('/libraries', function () {
 
     describe('Requesting multiple fields', () => {
         describe('through comma-separated string (?fields=filename,version)', () => {
-            const test = () => request().get('/libraries?fields=filename,version');
+            const path = '/libraries?fields=filename,version';
+            const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
                 test().end((err, res) => {
@@ -142,8 +143,8 @@ describe('/libraries', function () {
                     done();
                 });
             });
-            it('returns the correct CORS and Cache headers', done => {
-                expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+            testCors(path, () => response);
+            it('returns the correct Cache headers', done => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
                 done();
             });
@@ -179,7 +180,8 @@ describe('/libraries', function () {
         });
 
         describe('through multiple query parameters (?fields=filename&fields=version)', () => {
-            const test = () => request().get('/libraries?fields=filename&fields=version');
+            const path = '/libraries?fields=filename&fields=version';
+            const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
                 test().end((err, res) => {
@@ -187,8 +189,8 @@ describe('/libraries', function () {
                     done();
                 });
             });
-            it('returns the correct CORS and Cache headers', done => {
-                expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+            testCors(path, () => response);
+            it('returns the correct Cache headers', done => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
                 done();
             });
@@ -299,6 +301,7 @@ describe('/libraries', function () {
                     done();
                 });
             });
+            testCors(path, () => response);
             it('returns the correct Cache headers', done => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
                 done();
@@ -346,6 +349,7 @@ describe('/libraries', function () {
                     done();
                 });
             });
+            testCors(path, () => response);
             it('returns the correct Cache headers', done => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
                 done();
@@ -375,7 +379,8 @@ describe('/libraries', function () {
 
         describe('Providing search fields that are valid', () => {
             describe('through comma-separated string (?search=backbone.js&search_fields=keywords,github.user)', () => {
-                const test = () => request().get('/libraries?search=backbone.js&search_fields=keywords,github.user');
+                const path = '/libraries?search=backbone.js&search_fields=keywords,github.user';
+                const test = () => request().get(path);
                 let response;
                 before('fetch endpoint', done => {
                     test().end((err, res) => {
@@ -383,8 +388,8 @@ describe('/libraries', function () {
                         done();
                     });
                 });
-                it('returns the correct CORS and Cache headers', done => {
-                    expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+                testCors(path, () => response);
+                it('returns the correct Cache headers', done => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
                     done();
                 });
@@ -426,7 +431,8 @@ describe('/libraries', function () {
             });
 
             describe('through multiple query parameters (?search=backbone.js&search_fields=keywords&search_fields=github.user)', () => {
-                const test = () => request().get('/libraries?search=backbone.js&search_fields=keywords&search_fields=github.user');
+                const path = '/libraries?search=backbone.js&search_fields=keywords&search_fields=github.user';
+                const test = () => request().get(path);
                 let response;
                 before('fetch endpoint', done => {
                     test().end((err, res) => {
@@ -434,8 +440,8 @@ describe('/libraries', function () {
                         done();
                     });
                 });
-                it('returns the correct CORS and Cache headers', done => {
-                    expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+                testCors(path, () => response);
+                it('returns the correct Cache headers', done => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
                     done();
                 });
@@ -488,6 +494,7 @@ describe('/libraries', function () {
                     done();
                 });
             });
+            testCors(path, () => response);
             it('returns the correct Cache headers', done => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
                 done();

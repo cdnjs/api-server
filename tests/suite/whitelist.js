@@ -84,7 +84,8 @@ describe('/whitelist', () => {
 
     describe('Requesting multiple fields', () => {
         describe('through comma-separated string (?fields=extensions,categories)', () => {
-            const test = () => request().get('/whitelist?fields=extensions,categories');
+            const path = '/whitelist?fields=extensions,categories';
+            const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
                 test().end((err, res) => {
@@ -92,8 +93,8 @@ describe('/whitelist', () => {
                     done();
                 });
             });
-            it('returns the correct CORS and Cache headers', done => {
-                expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+            testCors(path, ()=> response);
+            it('returns the correct Cache headers', done => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
                 done();
             });
@@ -111,7 +112,8 @@ describe('/whitelist', () => {
         });
 
         describe('through multiple query parameters (?fields=extensions&fields=categories)', () => {
-            const test = () => request().get('/whitelist?fields=extensions&fields=categories');
+            const path = '/whitelist?fields=extensions&fields=categories';
+            const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
                 test().end((err, res) => {
@@ -119,8 +121,8 @@ describe('/whitelist', () => {
                     done();
                 });
             });
-            it('returns the correct CORS and Cache headers', done => {
-                expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+            testCors(path, ()=> response);
+            it('returns the correct Cache headers', done => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
                 done();
             });
