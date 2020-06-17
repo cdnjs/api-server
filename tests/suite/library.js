@@ -74,6 +74,72 @@ describe('/libraries/:library/:version', () => {
                 });
             });
 
+            describe('Requesting multiple fields', () => {
+                describe('through comma-separated string (?fields=files,sri)', () => {
+                    const test = () => request().get('/libraries/backbone.js/1.1.0?fields=files,sri');
+                    let response;
+                    before('fetch endpoint', done => {
+                        test().end((err, res) => {
+                            response = res;
+                            done();
+                        });
+                    });
+                    it('returns the correct CORS and Cache headers', done => {
+                        expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+                        expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
+                        done();
+                    });
+                    it('returns a JSON body that is a library object', done => {
+                        expect(response).to.be.json;
+                        expect(response.body).to.be.an('object');
+                        done();
+                    });
+                    describe('Library version object', () => {
+                        it('is an object with only the \'files\' and \'sri\' properties', done => {
+                            expect(response.body).to.have.property('files').that.is.an('array');
+                            expect(response.body).to.have.property('sri').that.is.an('object');
+                            done();
+                        });
+                        it('has no other properties', done => {
+                            expect(Object.keys(response.body)).to.have.lengthOf(2);
+                            done();
+                        });
+                    });
+                });
+
+                describe('through multiple query parameters (?fields=files&fields=sri)', () => {
+                    const test = () => request().get('/libraries/backbone.js/1.1.0?fields=files&fields=sri');
+                    let response;
+                    before('fetch endpoint', done => {
+                        test().end((err, res) => {
+                            response = res;
+                            done();
+                        });
+                    });
+                    it('returns the correct CORS and Cache headers', done => {
+                        expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+                        expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
+                        done();
+                    });
+                    it('returns a JSON body that is a library object', done => {
+                        expect(response).to.be.json;
+                        expect(response.body).to.be.an('object');
+                        done();
+                    });
+                    describe('Library version object', () => {
+                        it('is an object with only the \'files\' and \'sri\' properties', done => {
+                            expect(response.body).to.have.property('files').that.is.an('array');
+                            expect(response.body).to.have.property('sri').that.is.an('object');
+                            done();
+                        });
+                        it('has no other properties', done => {
+                            expect(Object.keys(response.body)).to.have.lengthOf(2);
+                            done();
+                        });
+                    });
+                });
+            });
+
             describe('Requesting all fields (?fields=*)', () => {
                 const path = '/libraries/backbone.js/1.1.0?fields=*';
                 const test = () => request().get(path);
@@ -270,7 +336,7 @@ describe('/libraries/:library', () => {
                 expect(response.body).to.be.an('object');
                 done();
             });
-            describe('Library version object', () => {
+            describe('Library object', () => {
                 it('is an object with only the \'assets\' property', done => {
                     expect(response.body).to.have.property('assets').that.is.an('array');
                     done();
@@ -278,6 +344,72 @@ describe('/libraries/:library', () => {
                 it('has no other properties', done => {
                     expect(Object.keys(response.body)).to.have.lengthOf(1);
                     done();
+                });
+            });
+        });
+
+        describe('Requesting multiple fields', () => {
+            describe('through comma-separated string (?fields=name,assets)', () => {
+                const test = () => request().get('/libraries/backbone.js?fields=name,assets');
+                let response;
+                before('fetch endpoint', done => {
+                    test().end((err, res) => {
+                        response = res;
+                        done();
+                    });
+                });
+                it('returns the correct CORS and Cache headers', done => {
+                    expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+                    expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
+                    done();
+                });
+                it('returns a JSON body that is a library object', done => {
+                    expect(response).to.be.json;
+                    expect(response.body).to.be.an('object');
+                    done();
+                });
+                describe('Library object', () => {
+                    it('is an object with only the \'name\' and \'assets\' properties', done => {
+                        expect(response.body).to.have.property('name').that.is.a('string');
+                        expect(response.body).to.have.property('assets').that.is.an('array');
+                        done();
+                    });
+                    it('has no other properties', done => {
+                        expect(Object.keys(response.body)).to.have.lengthOf(2);
+                        done();
+                    });
+                });
+            });
+
+            describe('through multiple query parameters (?fields=name&fields=assets)', () => {
+                const test = () => request().get('/libraries/backbone.js?fields=name&fields=assets');
+                let response;
+                before('fetch endpoint', done => {
+                    test().end((err, res) => {
+                        response = res;
+                        done();
+                    });
+                });
+                it('returns the correct CORS and Cache headers', done => {
+                    expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+                    expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
+                    done();
+                });
+                it('returns a JSON body that is a library object', done => {
+                    expect(response).to.be.json;
+                    expect(response.body).to.be.an('object');
+                    done();
+                });
+                describe('Library object', () => {
+                    it('is an object with only the \'name\' and \'assets\' properties', done => {
+                        expect(response.body).to.have.property('name').that.is.a('string');
+                        expect(response.body).to.have.property('assets').that.is.an('array');
+                        done();
+                    });
+                    it('has no other properties', done => {
+                        expect(Object.keys(response.body)).to.have.lengthOf(2);
+                        done();
+                    });
                 });
             });
         });

@@ -83,6 +83,88 @@ describe('/libraries/:library/tutorials', () => {
             });
         });
 
+        describe('Requesting multiple fields', () => {
+            describe('through comma-separated string (?fields=name,content)', () => {
+                const test = () => request().get('/libraries/backbone.js/tutorials?fields=name,content');
+                let response;
+                before('fetch endpoint', done => {
+                    test().end((err, res) => {
+                        response = res;
+                        done();
+                    });
+                });
+                it('returns the correct CORS and Cache headers', done => {
+                    expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+                    expect(response).to.have.header('Cache-Control', 'public, max-age=86400'); // 24 hours
+                    done();
+                });
+                it('returns a JSON body that is an array of tutorial objects', done => {
+                    expect(response).to.be.json;
+                    expect(response.body).to.be.an('array');
+                    for (const result of response.body) {
+                        expect(result).to.be.an('object');
+                    }
+                    done();
+                });
+                describe('Tutorial object', () => {
+                    it('is an object with the \'id\', \'name\' and \'content\' properties', done => {
+                        for (const result of response.body) {
+                            expect(result).to.have.property('id').that.is.a('string');
+                            expect(result).to.have.property('name').that.is.a('string');
+                            expect(result).to.have.property('content').that.is.a('string');
+                        }
+                        done();
+                    });
+                    it('has no other properties', done => {
+                        for (const result of response.body) {
+                            expect(Object.keys(result)).to.have.lengthOf(3);
+                        }
+                        done();
+                    });
+                });
+            });
+
+            describe('through multiple query parameters (?fields=name&fields=content)', () => {
+                const test = () => request().get('/libraries/backbone.js/tutorials?fields=name&fields=content');
+                let response;
+                before('fetch endpoint', done => {
+                    test().end((err, res) => {
+                        response = res;
+                        done();
+                    });
+                });
+                it('returns the correct CORS and Cache headers', done => {
+                    expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+                    expect(response).to.have.header('Cache-Control', 'public, max-age=86400'); // 24 hours
+                    done();
+                });
+                it('returns a JSON body that is an array of tutorial objects', done => {
+                    expect(response).to.be.json;
+                    expect(response.body).to.be.an('array');
+                    for (const result of response.body) {
+                        expect(result).to.be.an('object');
+                    }
+                    done();
+                });
+                describe('Tutorial object', () => {
+                    it('is an object with the \'id\', \'name\' and \'content\' properties', done => {
+                        for (const result of response.body) {
+                            expect(result).to.have.property('id').that.is.a('string');
+                            expect(result).to.have.property('name').that.is.a('string');
+                            expect(result).to.have.property('content').that.is.a('string');
+                        }
+                        done();
+                    });
+                    it('has no other properties', done => {
+                        for (const result of response.body) {
+                            expect(Object.keys(result)).to.have.lengthOf(3);
+                        }
+                        done();
+                    });
+                });
+            });
+        });
+
         describe('Requesting all fields (?fields=*)', () => {
             const path = '/libraries/backbone.js/tutorials?fields=*';
             const test = () => request().get(path);
@@ -108,10 +190,12 @@ describe('/libraries/:library/tutorials', () => {
             });
             describe('Tutorial object', () => {
                 // Behaves the same as not including the fields query param
-                it('is an object with \'id\', \'name\' and \'content\' properties', done => {
+                it('is an object with \'id\', \'modified\', \'name\' and \'content\' properties', done => {
                     // and any properties from the tutorial metadata
                     for (const result of response.body) {
                         expect(result).to.have.property('id').that.is.a('string');
+                        expect(result).to.have.property('modified').that.is.a('string');
+                        expect(result.modified).to.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/);
                         expect(result).to.have.property('name').that.is.a('string');
                         expect(result).to.have.property('content').that.is.a('string');
                     }
@@ -211,6 +295,72 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
                     it('has no other properties', done => {
                         expect(Object.keys(response.body)).to.have.lengthOf(1);
                         done();
+                    });
+                });
+            });
+
+            describe('Requesting multiple fields', () => {
+                describe('through comma-separated string (?fields=name,content)', () => {
+                    const test = () => request().get('/libraries/backbone.js/tutorials/what-is-a-view?fields=name,content');
+                    let response;
+                    before('fetch endpoint', done => {
+                        test().end((err, res) => {
+                            response = res;
+                            done();
+                        });
+                    });
+                    it('returns the correct CORS and Cache headers', done => {
+                        expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+                        expect(response).to.have.header('Cache-Control', 'public, max-age=1209600'); // 2 weeks
+                        done();
+                    });
+                    it('returns a JSON body that is a tutorial objects', done => {
+                        expect(response).to.be.json;
+                        expect(response.body).to.be.an('object');
+                        done();
+                    });
+                    describe('Tutorial object', () => {
+                        it('is an object with only the \'name\' and \'content\' properties', done => {
+                            expect(response.body).to.have.property('name').that.is.a('string');
+                            expect(response.body).to.have.property('content').that.is.a('string');
+                            done();
+                        });
+                        it('has no other properties', done => {
+                            expect(Object.keys(response.body)).to.have.lengthOf(2);
+                            done();
+                        });
+                    });
+                });
+
+                describe('through multiple query parameters (?fields=name&fields=content)', () => {
+                    const test = () => request().get('/libraries/backbone.js/tutorials/what-is-a-view?fields=name&fields=content');
+                    let response;
+                    before('fetch endpoint', done => {
+                        test().end((err, res) => {
+                            response = res;
+                            done();
+                        });
+                    });
+                    it('returns the correct CORS and Cache headers', done => {
+                        expect(response).to.have.header('Access-Control-Allow-Origin', '*');
+                        expect(response).to.have.header('Cache-Control', 'public, max-age=1209600'); // 2 weeks
+                        done();
+                    });
+                    it('returns a JSON body that is a tutorial objects', done => {
+                        expect(response).to.be.json;
+                        expect(response.body).to.be.an('object');
+                        done();
+                    });
+                    describe('Tutorial object', () => {
+                        it('is an object with only the \'name\' and \'content\' properties', done => {
+                            expect(response.body).to.have.property('name').that.is.a('string');
+                            expect(response.body).to.have.property('content').that.is.a('string');
+                            done();
+                        });
+                        it('has no other properties', done => {
+                            expect(Object.keys(response.body)).to.have.lengthOf(2);
+                            done();
+                        });
                     });
                 });
             });

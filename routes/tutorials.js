@@ -7,6 +7,7 @@ const cache = require('../utils/cache');
 const tutorials = require('../utils/tutorials');
 const filter = require('../utils/filter');
 const respond = require('../utils/respond');
+const queryArray = require('../utils/query_array');
 
 module.exports = app => {
     // Library tutorials
@@ -29,7 +30,7 @@ module.exports = app => {
         const results = tutorials(req.params.library);
 
         // Filter the results
-        const requestedFields = (req.query.fields && req.query.fields.split(',')) || [];
+        const requestedFields = queryArray(req.query, 'fields');
         const response = results.map(data => {
             return filter(
                 data,
@@ -80,7 +81,7 @@ module.exports = app => {
             const modifiedMatch = modified.match(modifiedReg);
 
             // Build the response and filter it
-            const requestedFields = (req.query.fields && req.query.fields.split(',')) || [];
+            const requestedFields = queryArray(req.query, 'fields');
             const response = filter(
                 {
                     id: req.params.tutorial,
