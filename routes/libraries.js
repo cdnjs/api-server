@@ -1,5 +1,6 @@
 // Library imports
 const algoliasearch = require('algoliasearch');
+const Sentry = require('@sentry/node');
 
 // Local imports
 const cache = require('../utils/cache');
@@ -52,6 +53,10 @@ module.exports = app => {
             if (hit && hit.name) return true;
             console.warn('Found bad entry in Algolia data');
             console.info(hit);
+            Sentry.captureException({
+                name: 'Bad entry in Algolia data',
+                message: JSON.stringify(hit),
+            });
             return false;
         }).map(hit => {
             return filter(

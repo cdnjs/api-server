@@ -1,6 +1,7 @@
 // Library imports
 const fs = require('fs');
 const path = require('path');
+const Sentry = require('@sentry/node');
 
 // Get all library data
 const all = () => {
@@ -15,6 +16,10 @@ const all = () => {
         } else {
             console.warn('Found bad entry in packages data');
             console.info(lib);
+            Sentry.captureException({
+                name: 'Bad entry in packages data',
+                message: JSON.stringify(lib),
+            });
         }
         return prev;
     }, {});
