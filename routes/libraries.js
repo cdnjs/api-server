@@ -1,5 +1,6 @@
 // Library imports
 const algoliasearch = require('algoliasearch');
+const Sentry = require('@sentry/node');
 
 // Local imports
 const cache = require('../utils/cache');
@@ -48,13 +49,22 @@ module.exports = app => {
 
         // Transform the results into our filtered array
         const requestedFields = queryArray(req.query, 'fields');
-        const response = results.map(hit => {
+        const response = results.filter(hit => {
+            if (hit && hit.name) return true;
+            console.warn('Found bad entry in Algolia data');
+            console.info(hit);
+            Sentry.captureException({
+                name: 'Bad entry in Algolia data',
+                message: JSON.stringify(hit),
+            });
+            return false;
+        }).map(hit => {
             return filter(
                 {
                     // Ensure name is first prop
                     name: hit.name,
                     // Custom latest prop
-                    latest: 'https://cdnjs.cloudflare.com/ajax/libs/' + hit.name + '/' + hit.version + '/' + hit.filename,
+                    latest: hit.filename ? 'https://cdnjs.cloudflare.com/ajax/libs/' + hit.name + '/' + hit.version + '/' + hit.filename : null,
                     // All other hit props
                     ...hit,
                 },

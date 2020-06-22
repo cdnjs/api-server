@@ -38,13 +38,21 @@ describe('/libraries', function () {
             it('is an object with \'name\' and \'latest\' properties', done => {
                 for (const result of response.body.results) {
                     expect(result).to.have.property('name').that.is.a('string');
-                    expect(result).to.have.property('latest').that.is.a('string');
+                    try {
+                        expect(result).to.have.property('latest').that.is.a('string');
+                    } catch (_) {
+                        expect(result).to.have.property('latest').that.is.null;
+                    }
                 }
                 done();
             });
             it('has a CDN url for the \'latest\' property', done => {
                 for (const result of response.body.results) {
-                    expect(result.latest).to.match(/https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/.+\/.+\/.*/);
+                    try {
+                        expect(result.latest).to.match(/https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/.+\/.+\/.*/);
+                    } catch (_) {
+                        expect(result.latest).to.be.null;
+                    }
                 }
                 done();
             });
@@ -118,7 +126,11 @@ describe('/libraries', function () {
             it('is an object with \'name\', \'latest\' and requested \'version\' properties', done => {
                 for (const result of response.body.results) {
                     expect(result).to.have.property('name').that.is.a('string');
-                    expect(result).to.have.property('latest').that.is.a('string');
+                    try {
+                        expect(result).to.have.property('latest').that.is.a('string');
+                    } catch (_) {
+                        expect(result).to.have.property('latest').that.is.null;
+                    }
                     expect(result).to.have.property('version').that.is.a('string');
                 }
                 done();
@@ -257,7 +269,11 @@ describe('/libraries', function () {
             it('is an object with the full set of library properties', done => {
                 for (const result of response.body.results) {
                     expect(result).to.have.property('name').that.is.a('string');
-                    expect(result).to.have.property('latest').that.is.a('string');
+                    try {
+                        expect(result).to.have.property('latest').that.is.a('string');
+                    } catch (_) {
+                        expect(result).to.have.property('latest').that.is.null;
+                    }
                     expect(result).to.have.property('filename').that.is.a('string');
                     expect(result).to.have.property('description').that.is.a('string');
                     expect(result).to.have.property('version').that.is.a('string');

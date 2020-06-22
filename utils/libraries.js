@@ -1,6 +1,7 @@
 // Library imports
 const fs = require('fs');
 const path = require('path');
+const Sentry = require('@sentry/node');
 
 // Get all library data
 const all = () => {
@@ -10,10 +11,15 @@ const all = () => {
 
     // Map libraries array into object for easy access
     return libraries.reduce((prev, lib) => {
-        if (lib !== null) {
+        if (lib && lib.name && lib.version && lib.assets) {
             prev[lib.name] = lib;
         } else {
-            console.warn('found null entry in packages data');
+            console.warn('Found bad entry in packages data');
+            console.info(lib);
+            Sentry.captureException({
+                name: 'Bad entry in packages data',
+                message: JSON.stringify(lib),
+            });
         }
         return prev;
     }, {});
