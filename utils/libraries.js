@@ -10,7 +10,11 @@ const all = () => {
 
     // Map libraries array into object for easy access
     return libraries.reduce((prev, lib) => {
-        prev[lib.name] = lib;
+        if (lib !== null) {
+            prev[lib.name] = lib;
+        } else {
+            console.warn('found null entry in packages data');
+        }
         return prev;
     }, {});
 };
