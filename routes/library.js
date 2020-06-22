@@ -110,7 +110,7 @@ module.exports = app => {
                 // Ensure name is first prop
                 name: lib.name,
                 // Custom latest prop (and SRI value)
-                latest: 'https://cdnjs.cloudflare.com/ajax/libs/' + lib.name + '/' + lib.version + '/' + lib.filename,
+                latest: lib.filename ? 'https://cdnjs.cloudflare.com/ajax/libs/' + lib.name + '/' + lib.version + '/' + lib.filename : null,
                 sri: null,
                 // All other lib props
                 ...lib,
