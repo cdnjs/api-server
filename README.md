@@ -26,7 +26,7 @@ You can install the Node dependencies following this lock file by running:
 npm ci
 ```
 
-Once the dependencies are installed, you need to  get a copy of all the data that the API server
+Once the dependencies are installed, you need to get a copy of all the data that the API server
 requires to run. This can be done with the [`bin/initialData.sh`](bin/initialData.sh) script:
 
 ```shell script
@@ -44,7 +44,7 @@ npm run dev
 
 In development, you initially fetch a set of data using the
 [`bin/initialData.sh`](bin/initialData.sh) script (in production this script is run as part of the
-[`bin/runServer.sh`](bin/runServer.sh) script). This downloads the latests package JSON data, as
+[`bin/runServer.sh`](bin/runServer.sh) script). This downloads the latest package JSON data, as
 well as making a local clone of the tutorials & SRI repos.
 
 To update your data, you can run the [`bin/updateData.sh`](bin/updateData.sh) script, which will
@@ -70,7 +70,7 @@ cloned repository:
 ```shell script
 cd data/sri
 git fetch origin
-git git reset --hard origin/master
+git reset --hard origin/master
 ```
 
 ### Tutorials
@@ -121,7 +121,7 @@ For our Heroku deployment, this is set automatically by Heroku.
 
 Removing submodules and then cloning the respective repositories is used to update data for
 production deployments due to how Heroku sets up the app, with the final app directory not being an
-initialised Git repo.
+initialized Git repo.
 
 ## Testing and Linting
 
