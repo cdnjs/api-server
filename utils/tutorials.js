@@ -2,6 +2,9 @@
 const fs = require('fs');
 const path = require('path');
 
+// Local imports
+const tutorial = require('./tutorial');
+
 module.exports = library => {
     // Base tutorials path
     const base = path.join(__dirname, '..', 'data', 'tutorials', library);
@@ -14,23 +17,10 @@ module.exports = library => {
         // If no tutorials, this will error and results will be an empty array
     }
 
-    // Fetch modified data
-    const modified = fs.readFileSync(path.join(__dirname, '..', 'data', 'tutorialsModified.txt'), 'utf8');
-
     // Get the data & contents of each one, and as a dictionary.
     return results.map(file => {
         try {
-            const data = JSON.parse(fs.readFileSync(path.join(base, file, 'tutorial.json'), 'utf8'));
-            const content = fs.readFileSync(path.join(base, file, 'index.md'), 'utf8');
-            const modifiedReg = new RegExp(`(?:^|\n)${path.join(library, file, 'tutorial.json')}: (.+)(?:$|\n)`);
-            const modifiedMatch = modified.match(modifiedReg);
-
-            return {
-                id: file,
-                modified: modifiedMatch && modifiedMatch.length ? new Date(modifiedMatch[1]) : new Date(),
-                ...data,
-                content,
-            };
+            return tutorial(library, file);
         } catch (_) {
             // If index.md or tutorial.json don't exist (or not valid), just skip this result
         }
