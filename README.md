@@ -86,10 +86,11 @@ git fetch origin
 git git reset --hard origin/master
 ```
 
-Once this is done, the last modified data log should also be updated, which can be done by running:
+Once this is done, the last modified and created at data logs should also be updated, which can be
+done by running:
 
 ```shell script
-. ./bin/tutorialsModified.sh
+. ./bin/tutorialsTimestamps.sh
 ```
 
 ## Production Deployment
@@ -112,8 +113,9 @@ start the app:
     - Remove the outdated tutorials submodule data
     - Clone the latest tutorials from [cdnjs/tutorials](https://github.com/cdnjs/tutorials)
     - Log the tutorials commit that was cloned
-    - Save the last modified info for the tutorials to
-    [`data/tutorialsModified.txt`](data/tutorialsModified.txt)
+    - Save the last modified and created at info for the tutorials to
+    [`data/tutorialsModified.txt`](data/tutorialsModified.txt) and
+    [`data/tutorialsCreated.txt`](data/tutorialsCreated.txt) respectively
 - Start the API server with GC enabled and additional memory allocated
 
 To change the port that the app binds to, set the `PORT` environment var when running the script.

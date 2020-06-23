@@ -27,5 +27,5 @@
     git log -n 1 | cat
 )
 
-# Get last modified data for tutorials
-. ./bin/tutorialsModified.sh || exit 1
+# Get last modified/created data for tutorials
+. ./bin/tutorialsTimestamps.sh || exit 1
