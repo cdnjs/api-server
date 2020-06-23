@@ -121,7 +121,7 @@ For our Heroku deployment, this is set automatically by Heroku.
 
 Removing submodules and then cloning the respective repositories is used to update data for
 production deployments due to how Heroku sets up the app, with the final app directory not being an
-initialized Git repo.
+initialised Git repo.
 
 ## Testing and Linting
 
