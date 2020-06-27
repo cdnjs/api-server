@@ -1,10 +1,7 @@
-// Library imports
-const fs = require('fs');
-const path = require('path');
-
 // Local imports
 const cache = require('../utils/cache');
 const tutorials = require('../utils/tutorials');
+const tutorial = require('../utils/tutorial');
 const filter = require('../utils/filter');
 const respond = require('../utils/respond');
 const queryArray = require('../utils/query_array');
@@ -70,25 +67,13 @@ module.exports = app => {
 
         // Get the tutorial, if we fail to find it, assume 404
         try {
-            // Get the tutorial meta & content
-            const base = path.join(__dirname, '..', 'data', 'tutorials', req.params.library);
-            const data = JSON.parse(fs.readFileSync(path.join(base, req.params.tutorial, 'tutorial.json'), 'utf8'));
-            const content = fs.readFileSync(path.join(base, req.params.tutorial, 'index.md'), 'utf8');
-
-            // Get the tutorial modified date
-            const modified = fs.readFileSync(path.join(__dirname, '..', 'data', 'tutorialsModified.txt'), 'utf8');
-            const modifiedReg = new RegExp(`(?:^|\n)${path.join(req.params.library, req.params.tutorial, 'tutorial.json')}: (.+)(?:$|\n)`);
-            const modifiedMatch = modified.match(modifiedReg);
+            // Get the tutorial data
+            const data = tutorial(req.params.library, req.params.tutorial);
 
             // Build the response and filter it
             const requestedFields = queryArray(req.query, 'fields');
             const response = filter(
-                {
-                    id: req.params.tutorial,
-                    modified: modifiedMatch && modifiedMatch.length ? new Date(modifiedMatch[1]) : new Date(),
-                    ...data,
-                    content,
-                },
+                data,
                 requestedFields,
                 // If they requested no fields or '*', send them all
                 !requestedFields.length || requestedFields.includes('*'),
