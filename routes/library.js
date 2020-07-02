@@ -1,5 +1,4 @@
 // Library imports
-const fs = require('fs');
 const path = require('path');
 
 // Local imports
@@ -9,6 +8,7 @@ const filter = require('../utils/filter');
 const respond = require('../utils/respond');
 const files = require('../utils/files');
 const queryArray = require('../utils/query_array');
+const sriForVersion = require('../utils/sri_for_version');
 
 // Filter util
 const isWhitelisted = file => {
@@ -71,7 +71,7 @@ module.exports = app => {
         // Load SRI data if needed
         if ('sri' in response) {
             try {
-                response.sri = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'sri', req.params.library, `${version.version}.json`), 'utf8'));
+                response.sri = sriForVersion(req.params.library, version.version, version.rawFiles);
             } catch (_) {
                 // If we can't load, set SRI to a blank object
                 response.sri = {};
@@ -135,7 +135,7 @@ module.exports = app => {
         // Load SRI for latest if needed
         if ('sri' in response) {
             try {
-                response.sri = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'sri', req.params.library, `${lib.version}.json`), 'utf8'))[lib.filename];
+                response.sri = sriForVersion(req.params.library, lib.version, [lib.filename])[lib.filename];
             } catch (_) {
                 // If we fail to load, leave it as null
             }
@@ -148,7 +148,7 @@ module.exports = app => {
                 asset.files = asset.files.filter(isWhitelisted);
 
                 try {
-                    asset.sri = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'sri', req.params.library, `${asset.version}.json`), 'utf8'));
+                    asset.sri = sriForVersion(req.params.library, asset.version, asset.rawFiles);
                 } catch (_) {
                     // If we can't load, set SRI to a blank object
                     asset.sri = {};
