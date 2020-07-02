@@ -1,4 +1,6 @@
 // Library imports
+const fs = require('fs');
+const path = require('path');
 const Sentry = require('@sentry/node');
 
 module.exports = (library, version, files) => {
@@ -19,9 +21,7 @@ module.exports = (library, version, files) => {
 
     // Build the SRI object
     const sri = {};
-    for (const file in files) {
-        if (!Object.prototype.hasOwnProperty.call(files, file)) continue;
-
+    for (const file of files) {
         // If we have an SRI entry for this, add it
         if (file in data) {
             sri[file] = data[file];
