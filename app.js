@@ -24,7 +24,7 @@ const args = process.argv.slice(2);
 // Local mode state
 let localMode = false;
 if (process.env.LOCAL === 'true' || (args.length > 0 && (args[0] === '--local' || args[2] === '--local'))) {
-    console.log('local mode: on, gc(), updater and Public-Key-Pins headers disabled!');
+    console.log('local mode: on, gc() and updater disabled!');
     localMode = true;
 } else {
     console.log('local mode: off');
@@ -51,13 +51,6 @@ module.exports = () => {
 
     // Set up cors headers
     cors(app);
-
-    if (!localMode) {
-        app.use((req, res, next) => {
-            res.setHeader('Public-Key-Pins', 'pin-sha256="EULHwYvGhknyznoBvyvgbidiBH3JX3eFHHlIO3YK8Ek=";pin-sha256="x9SZw6TwIqfmvrLZ/kz1o0Ossjmn728BnBKpUFqGNVM=";max-age=3456000;report-uri="https://cdnjs.report-uri.io/r/default/hpkp/enforce"');
-            next();
-        });
-    }
 
     // Always compress whatever we return
     app.use(compress());
