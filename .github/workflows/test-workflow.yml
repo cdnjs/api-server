@@ -1,8 +1,8 @@
 name: Test Latest Commit
 
 on:
-  push
-  pull_request
+  push:
+  pull_request:
   schedule:
     - cron:  '*/30 * * * *'
 
