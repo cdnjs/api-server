@@ -1,6 +1,10 @@
 name: Test Latest Commit
 
-on: [push, pull_request]
+on:
+  push
+  pull_request
+  schedule:
+    - cron:  '*/30 * * * *'
 
 jobs:
   test:
