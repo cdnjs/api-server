@@ -1,6 +1,8 @@
 /* eslint-disable key-spacing */
 module.exports = {
     js:     'JavaScript',
+    mjs:    'JavaScript',
+
     ts:     'TypeScript',
     wasm:   'WebAssembly',
     map:    'Source Maps',
