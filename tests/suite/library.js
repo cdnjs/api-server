@@ -1,6 +1,7 @@
 const { describe, it, before } = require('mocha');
 const { expect } = require('chai');
 const request = require('../base');
+const fetch = require('../fetch');
 const testCors = require('../cors');
 
 describe('/libraries/:library/:version', () => {
@@ -11,7 +12,7 @@ describe('/libraries/:library/:version', () => {
                 const test = () => request().get(path);
                 let response;
                 before('fetch endpoint', done => {
-                    test().end((err, res) => {
+                    fetch(test).then(res => {
                         response = res;
                         done();
                     });
@@ -47,7 +48,7 @@ describe('/libraries/:library/:version', () => {
                 const test = () => request().get(path);
                 let response;
                 before('fetch endpoint', done => {
-                    test().end((err, res) => {
+                    fetch(test).then(res => {
                         response = res;
                         done();
                     });
@@ -80,7 +81,7 @@ describe('/libraries/:library/:version', () => {
                     const test = () => request().get(path);
                     let response;
                     before('fetch endpoint', done => {
-                        test().end((err, res) => {
+                        fetch(test).then(res => {
                             response = res;
                             done();
                         });
@@ -113,7 +114,7 @@ describe('/libraries/:library/:version', () => {
                     const test = () => request().get(path);
                     let response;
                     before('fetch endpoint', done => {
-                        test().end((err, res) => {
+                        fetch(test).then(res => {
                             response = res;
                             done();
                         });
@@ -147,7 +148,7 @@ describe('/libraries/:library/:version', () => {
                 const test = () => request().get(path);
                 let response;
                 before('fetch endpoint', done => {
-                    test().end((err, res) => {
+                    fetch(test).then(res => {
                         response = res;
                         done();
                     });
@@ -185,7 +186,7 @@ describe('/libraries/:library/:version', () => {
                 const test = () => request().get(path);
                 let response;
                 before('fetch endpoint', done => {
-                    test().end((err, res) => {
+                    fetch(test).then(res => {
                         response = res;
                         done();
                     });
@@ -213,7 +214,7 @@ describe('/libraries/:library/:version', () => {
             const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
-                test().end((err, res) => {
+                fetch(test).then(res => {
                     response = res;
                     done();
                 });
@@ -242,7 +243,7 @@ describe('/libraries/:library', () => {
             const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
-                test().end((err, res) => {
+                fetch(test).then(res => {
                     response = res;
                     done();
                 });
@@ -326,7 +327,7 @@ describe('/libraries/:library', () => {
             const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
-                test().end((err, res) => {
+                fetch(test).then(res => {
                     response = res;
                     done();
                 });
@@ -359,7 +360,7 @@ describe('/libraries/:library', () => {
                 const test = () => request().get(path);
                 let response;
                 before('fetch endpoint', done => {
-                    test().end((err, res) => {
+                    fetch(test).then(res => {
                         response = res;
                         done();
                     });
@@ -392,7 +393,7 @@ describe('/libraries/:library', () => {
                 const test = () => request().get(path);
                 let response;
                 before('fetch endpoint', done => {
-                    test().end((err, res) => {
+                    fetch(test).then(res => {
                         response = res;
                         done();
                     });
@@ -426,7 +427,7 @@ describe('/libraries/:library', () => {
             const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
-                test().end((err, res) => {
+                fetch(test).then(res => {
                     response = res;
                     done();
                 });
@@ -471,7 +472,7 @@ describe('/libraries/:library', () => {
             const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
-                test().end((err, res) => {
+                fetch(test).then(res => {
                     response = res;
                     done();
                 });

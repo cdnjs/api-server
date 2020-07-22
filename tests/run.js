@@ -16,9 +16,9 @@ const main = () => {
         const tests = spawnSync('npm', ['run', 'test:mocha']);
 
         // Log test results
+        console.log(tests.stdout.toString().trim());
         const err = tests.stderr.toString().trim();
         console.error(err);
-        console.log(tests.stdout.toString().trim());
 
         // Kill server
         console.info('Killing API server...');

@@ -1,18 +1,16 @@
 const { describe, it, before } = require('mocha');
 const { expect } = require('chai');
 const request = require('../base');
+const fetch = require('../fetch');
 const testCors = require('../cors');
 
-describe('/libraries', function () {
-    // This route is a bit slower due to Algolia
-    this.timeout(5000);
-
+describe('/libraries', () => {
     describe('No query params', () => {
         const path = '/libraries';
         const test = () => request().get(path);
         let response;
         before('fetch endpoint', done => {
-            test().end((err, res) => {
+            fetch(test).then(res => {
                 response = res;
                 done();
             });
@@ -70,7 +68,7 @@ describe('/libraries', function () {
         const test = () => request().get(path);
         let response;
         before('fetch endpoint', done => {
-            test().end((err, res) => {
+            fetch(test).then(res => {
                 response = res;
                 done();
             });
@@ -100,7 +98,7 @@ describe('/libraries', function () {
         const test = () => request().get(path);
         let response;
         before('fetch endpoint', done => {
-            test().end((err, res) => {
+            fetch(test).then(res => {
                 response = res;
                 done();
             });
@@ -150,7 +148,7 @@ describe('/libraries', function () {
             const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
-                test().end((err, res) => {
+                fetch(test).then(res => {
                     response = res;
                     done();
                 });
@@ -196,7 +194,7 @@ describe('/libraries', function () {
             const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
-                test().end((err, res) => {
+                fetch(test).then(res => {
                     response = res;
                     done();
                 });
@@ -243,7 +241,7 @@ describe('/libraries', function () {
         const test = () => request().get(path);
         let response;
         before('fetch endpoint', done => {
-            test().end((err, res) => {
+            fetch(test).then(res => {
                 response = res;
                 done();
             });
@@ -312,7 +310,7 @@ describe('/libraries', function () {
             const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
-                test().end((err, res) => {
+                fetch(test).then(res => {
                     response = res;
                     done();
                 });
@@ -360,7 +358,7 @@ describe('/libraries', function () {
             const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
-                test().end((err, res) => {
+                fetch(test).then(res => {
                     response = res;
                     done();
                 });
@@ -399,7 +397,7 @@ describe('/libraries', function () {
                 const test = () => request().get(path);
                 let response;
                 before('fetch endpoint', done => {
-                    test().end((err, res) => {
+                    fetch(test).then(res => {
                         response = res;
                         done();
                     });
@@ -451,7 +449,7 @@ describe('/libraries', function () {
                 const test = () => request().get(path);
                 let response;
                 before('fetch endpoint', done => {
-                    test().end((err, res) => {
+                    fetch(test).then(res => {
                         response = res;
                         done();
                     });
@@ -505,7 +503,7 @@ describe('/libraries', function () {
             const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
-                test().end((err, res) => {
+                fetch(test).then(res => {
                     response = res;
                     done();
                 });

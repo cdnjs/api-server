@@ -1,6 +1,7 @@
 const { describe, it, before } = require('mocha');
 const { expect } = require('chai');
 const request = require('../base');
+const fetch = require('../fetch');
 const testCors = require('../cors');
 
 describe('/whitelist', () => {
@@ -9,7 +10,7 @@ describe('/whitelist', () => {
         const test = () => request().get(path);
         let response;
         before('fetch endpoint', done => {
-            test().end((err, res) => {
+            fetch(test).then(res => {
                 response = res;
                 done();
             });
@@ -60,7 +61,7 @@ describe('/whitelist', () => {
         const test = () => request().get(path);
         let response;
         before('fetch endpoint', done => {
-            test().end((err, res) => {
+            fetch(test).then(res => {
                 response = res;
                 done();
             });
@@ -88,12 +89,12 @@ describe('/whitelist', () => {
             const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
-                test().end((err, res) => {
+                fetch(test).then(res => {
                     response = res;
                     done();
                 });
             });
-            testCors(path, ()=> response);
+            testCors(path, () => response);
             it('returns the correct Cache headers', done => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
                 done();
@@ -116,12 +117,12 @@ describe('/whitelist', () => {
             const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
-                test().end((err, res) => {
+                fetch(test).then(res => {
                     response = res;
                     done();
                 });
             });
-            testCors(path, ()=> response);
+            testCors(path, () => response);
             it('returns the correct Cache headers', done => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
                 done();
@@ -145,7 +146,7 @@ describe('/whitelist', () => {
         const test = () => request().get(path);
         let response;
         before('fetch endpoint', done => {
-            test().end((err, res) => {
+            fetch(test).then(res => {
                 response = res;
                 done();
             });
