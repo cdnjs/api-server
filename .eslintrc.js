@@ -2,10 +2,10 @@ module.exports = {
     root: true,
     'env': {
         'node': true,
-        'es6': true
+        'es6': true,
     },
     'parserOptions': {
-        'ecmaVersion': 2018
+        'ecmaVersion': 2018,
     },
     'extends': 'eslint:recommended',
     'rules': {
@@ -14,60 +14,69 @@ module.exports = {
             {
                 'anonymous': 'always',
                 'named': 'never',
-                'asyncArrow': 'always'
-            }
+                'asyncArrow': 'always',
+            },
         ],
         'object-curly-spacing': [
             'error',
-            'always'
+            'always',
         ],
         'no-console': 'off',
         'no-var': 'error',
         'prefer-const': 'error',
-        'indent': ['error', 4],
-        'semi': ['error', 'always'],
-        'quotes': ['error', 'single'],
+        'indent': [
+            'error',
+            4,
+        ],
+        'semi': [
+            'error',
+            'always',
+        ],
+        'quotes': [
+            'error',
+            'single',
+        ],
         'object-curly-newline': [
             'error',
             {
                 'multiline': true,
-                'consistent': true
-            }
+                'consistent': true,
+            },
         ],
         'comma-dangle': [
             'error',
-            'always-multiline'
+            'always-multiline',
         ],
         'comma-spacing': [
             'error',
             {
                 'before': false,
-                'after': true
-            }
+                'after': true,
+            },
         ],
         'comma-style': [
             'error',
-            'last'
+            'last',
         ],
         'eol-last': 'error',
         'key-spacing': [
             'error',
             {
                 'beforeColon': false,
-                'afterColon': true
-            }
+                'afterColon': true,
+            },
         ],
         'keyword-spacing': [
             'error',
             {
                 'before': true,
-                'after': true
-            }
+                'after': true,
+            },
         ],
         'block-spacing': 'error',
         'space-in-parens': [
             'error',
-            'never'
+            'never',
         ],
         'space-before-blocks': 'error',
         'no-trailing-spaces': 'error',
@@ -75,9 +84,9 @@ module.exports = {
             'error',
             {
                 'before': false,
-                'after': true
-            }
+                'after': true,
+            },
         ],
-        'space-infix-ops': 'error'
-    }
-}
+        'space-infix-ops': 'error',
+    },
+};
