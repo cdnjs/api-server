@@ -1,8 +1,8 @@
-module.exports = req => new Promise((resolve, reject) => {
+module.exports = (req, threshold = 2000) => new Promise((resolve, reject) => {
     const before = Date.now();
     req().then(data => {
         const diff = Date.now() - before;
-        if (diff > 2000)
+        if (diff > threshold)
             console.error(`Request to ${data.req.method} ${data.req.path} took ${diff}ms`);
 
         resolve(data);
