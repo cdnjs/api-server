@@ -11,7 +11,10 @@ const all = () => {
 
     // Map libraries array into object for easy access
     return libraries.reduce((prev, lib) => {
-        if (lib && lib.name && lib.version && lib.assets) {
+        if (lib && lib.name && lib.version) {
+            // assets might not exist if there are none, but we should make it an empty array by default
+            lib.assets = lib.assets || [];
+            // Store it by name
             prev[lib.name] = lib;
         } else {
             console.warn('Found bad entry in packages data');
