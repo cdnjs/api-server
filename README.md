@@ -93,6 +93,19 @@ done by running:
 . ./bin/tutorialsTimestamps.sh
 ```
 
+## Error Logging
+
+We make use of Sentry to handle our error logging. To enable Sentry in the API server, set the
+`SENTRY_DSN` environment variable to a valid DSN URL from Sentry.
+
+Alongside the normal error catching that Sentry provides in Node.js & Express, we also fire out
+custom error events for certain issues:
+
+- `Failed to load SRI data` is fired if a JSON SRI file cannot be read/parsed
+- `Missing SRI entry` is fired if there is no SRI hash for a file
+- `Bad entry in Algolia data` is fired if an entry in Algolia is falsey, or if its name is falsey
+- `Bad entry in packages data` is fired if a package is falsey, or if its `name`/`version` is falsey
+
 ## Production Deployment
 
 To deploy this API server to production, it should be as simple as cloning this repository and

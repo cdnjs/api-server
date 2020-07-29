@@ -36,13 +36,18 @@ if (!localMode && (typeof global.gc !== 'undefined')) {
 }
 
 // Start sentry
-if (!localMode) Sentry.init({ dsn: 'https://1ac0f4ae33304c22a586f099ac5cdb7d@o51786.ingest.sentry.io/5206370' });
+if (process.env.SENTRY_DSN) {
+    Sentry.init({ dsn: process.env.SENTRY_DSN });
+    console.log('sentry: enabled');
+} else {
+    console.log('sentry: disabled');
+}
 
 module.exports = () => {
     // Basic app configuration
     const app = express();
     app.disable('x-powered-by');
-    if (!localMode) app.use(Sentry.Handlers.requestHandler());
+    if (process.env.SENTRY_DSN) app.use(Sentry.Handlers.requestHandler());
 
     app.use(morgan('combined'));
 
@@ -73,7 +78,7 @@ module.exports = () => {
     });
 
     // Catch-all errors
-    if (!localMode) app.use(Sentry.Handlers.errorHandler());
+    if (process.env.SENTRY_DSN) app.use(Sentry.Handlers.errorHandler());
     errorsRoutes(app);
 
     // START!

@@ -12,10 +12,12 @@ module.exports = (library, version, files) => {
         const fullLibrary = `${library}/${version}`;
         console.warn('Failed to load SRI data for', fullLibrary);
         console.info(e, e.message, e.stack);
-        Sentry.captureException({
-            name: 'Failed to load SRI data',
-            message: `${fullLibrary}: ${e.message}`,
-        });
+        if (process.env.SENTRY_DSN) {
+            Sentry.captureException({
+                name: 'Failed to load SRI data',
+                message: `${fullLibrary}: ${e.message}`,
+            });
+        }
         throw e;
     }
 
@@ -32,10 +34,12 @@ module.exports = (library, version, files) => {
         if (file.endsWith('.js') || file.endsWith('.css')) {
             const fullFile = `${library}/${version}/${file}`;
             console.warn('Missing SRI entry for', fullFile);
-            Sentry.captureException({
-                name: 'Missing SRI entry',
-                message: fullFile,
-            });
+            if (process.env.SENTRY_DSN) {
+                Sentry.captureException({
+                    name: 'Missing SRI entry',
+                    message: fullFile,
+                });
+            }
         }
     }
 
