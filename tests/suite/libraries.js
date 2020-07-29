@@ -289,7 +289,11 @@ describe('/libraries', () => {
                     }
                     expect(result).to.have.property('license').that.is.a('string');
                     expect(result).to.have.property('homepage').that.is.a('string');
-                    expect(result).to.have.property('repository').that.is.an('object');
+                    try {
+                        expect(result).to.have.property('repository').that.is.an('object');
+                    } catch (_) {
+                        expect(result).to.have.property('repository').that.is.null;
+                    }
                     expect(result).to.have.property('author').that.is.a('string');
                     expect(result).to.have.property('originalName').that.is.a('string');
                     expect(result).to.have.property('sri').that.is.a('string');
