@@ -2,6 +2,7 @@
 const cache = require('../utils/cache');
 const update = require('../utils/update');
 const respond = require('../utils/respond');
+const libraries = require('../utils/libraries');
 
 module.exports = (app, localMode) => {
     app.set('UPDATE', {});
@@ -20,5 +21,11 @@ module.exports = (app, localMode) => {
 
         // Send the response
         respond(req, res, app.get('UPDATE'));
+    });
+
+    // Test KV data
+    app.get('/update-kv', async (req, res) => {
+        libraries.kvAll().then(() => {});
+        respond(req, res, {});
     });
 };
