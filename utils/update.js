@@ -44,8 +44,12 @@ module.exports = app => new Promise(resolve => {
         data.libraries.errors = errors;
         data.libraries.result = `Loaded ${Object.keys(libData).length.toLocaleString()} libraries in ${(end - start).toLocaleString()}ms`;
 
+        // Set library data (merge in to old) & store update log
+        app.set('LIBRARIES', {
+            ...(app.get('LIBRARIES') || {}),
+            ...libData,
+        });
         app.set('UPDATE', data);
-        app.set('LIBRARIES', libData);
         resolve();
     });
 });

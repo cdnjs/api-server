@@ -35,7 +35,7 @@ const kvAll = async () => {
 
         // Breaking issues
         if (!data.version) {
-            console.error('Version missing', name);
+            console.error('Version missing', name, data);
             if (process.env.SENTRY_DSN) {
                 Sentry.captureException({
                     name: 'Version missing in package data',
@@ -52,8 +52,9 @@ const kvAll = async () => {
     // Create all the promise functions
     const failed = [];
     const libraryPromises = libraryNames.map(name => (async () => {
-        const data = await kvLibrary(name).catch(() => failed.push(name));
-        if (data) processResponse(name, data);
+        await kvLibrary(name).then(data => {
+            if (data) processResponse(name, data);
+        }).catch(() => failed.push(name));
     }));
 
     // Chunk up the functions to parallelize
@@ -75,7 +76,9 @@ const kvAll = async () => {
     // Fetch any failed requests
     const errors = [];
     for (const name of failed) {
-        const data = await kvLibrary(name).catch(e => {
+        await kvLibrary(name).then(data => {
+            if (data) processResponse(name, data);
+        }).catch(e => {
             errors.push(`${name}: ${e.message}`);
             console.error('Failed to fetch', name, e.message);
             if (process.env.SENTRY_DSN) {
@@ -85,7 +88,6 @@ const kvAll = async () => {
                 });
             }
         });
-        if (data) processResponse(name, data);
     }
 
     // console.log('Time taken (ms):', Date.now() - start);
