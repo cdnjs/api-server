@@ -1,7 +1,4 @@
 // Library imports
-const fs = require('fs');
-const path = require('path');
-const Sentry = require('@sentry/node');
 const fetch = require('node-fetch');
 
 // Get a list of libraries from KV
@@ -20,8 +17,8 @@ const kvLibrary = async library => {
 const kvAll = async () => {
     const libraryNames = await kvLibraries();
 
-    console.log('Libraries to fetch:', libraryNames.length);
-    const start = Date.now();
+    // console.log('Libraries to fetch:', libraryNames.length);
+    // const start = Date.now();
 
     // Create all the promise functions
     const libraries = {};
@@ -41,58 +38,28 @@ const kvAll = async () => {
     // Fetch the chunks
     for (const chunk of libraryPromisesChunked) {
         await Promise.all(chunk.map(func => func()));
-        console.log('Time so far (ms):', Date.now() - start);
-        console.log('Libraries fetched:', Object.keys(libraries).length);
-        console.log('Time per chunk (ms):', (Date.now() - start) / (Object.keys(libraries).length / 30));
-        console.log('Failed requests:', failed.length);
+        // console.log('Time so far (ms):', Date.now() - start);
+        // console.log('Libraries fetched:', Object.keys(libraries).length);
+        // console.log('Time per chunk (ms):', (Date.now() - start) / (Object.keys(libraries).length / 30));
+        // console.log('Failed requests:', failed.length);
     }
 
     // Fetch any failed requests
+    const errors = [];
     for (const name of failed) {
         const data = await kvLibrary(name).catch(e => {
-            console.error(name, e);
+            errors.push(`${name}: ${e.message}`);
         });
         if (data) libraries[name] = data;
     }
 
-    console.log('Time taken (ms):', Date.now() - start);
-    console.log('Libraries fetched:', Object.keys(libraries).length);
-    console.log('Time per chunk (ms):', (Date.now() - start) / (Object.keys(libraries).length / 30));
+    // TODO: Any validation needed to the data
 
-    return libraries;
+    // console.log('Time taken (ms):', Date.now() - start);
+    // console.log('Libraries fetched:', Object.keys(libraries).length);
+    // console.log('Time per chunk (ms):', (Date.now() - start) / (Object.keys(libraries).length / 30));
+
+    return [libraries, errors];
 };
 
-// Get all library data
-const all = () => {
-    // Load the libraries
-    const librariesFile = path.join(__dirname, '..', 'data', 'packages.min.json');
-    const libraries = JSON.parse(fs.readFileSync(librariesFile, 'utf8')).packages;
-
-    // Map libraries array into object for easy access
-    return libraries.reduce((prev, lib) => {
-        if (lib && lib.name && lib.version) {
-            // assets might not exist if there are none, but we should make it an empty array by default
-            lib.assets = lib.assets || [];
-            // Store it by name
-            prev[lib.name] = lib;
-        } else {
-            console.warn('Found bad entry in packages data');
-            console.info(lib);
-            if (process.env.SENTRY_DSN) {
-                Sentry.withScope(scope => {
-                    scope.setTag('library', lib.name);
-                    scope.setTag('library.data', JSON.stringify(lib));
-                    Sentry.captureException(new Error('Bad entry in packages data'));
-                });
-            }
-        }
-        return prev;
-    }, {});
-};
-
-// Set library data within the app
-const set = app => {
-    app.set('LIBRARIES', all());
-};
-
-module.exports = { all, set, kvAll };
+module.exports = { kvAll };

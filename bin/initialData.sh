@@ -3,9 +3,6 @@
 # Create the data directory if it doesn't exist
 mkdir -p ./data
 
-# Get the latest packages data
-. ./bin/packages.sh || exit 1
-
 # Get the latest SRI data
 rm -rf ./data/sri
 git clone --depth=1 https://github.com/cdnjs/SRIs.git ./data/sri

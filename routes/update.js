@@ -2,15 +2,12 @@
 const cache = require('../utils/cache');
 const update = require('../utils/update');
 const respond = require('../utils/respond');
-const libraries = require('../utils/libraries');
 
 module.exports = (app, localMode) => {
-    app.set('UPDATE', {});
-
     // Start the updater, every 10 mins, if not in local mode
     if (!localMode) {
         setInterval(() => {
-            update(app);
+            update(app).then(() => {});
         }, 10 * 60 * 1000);
     }
 
@@ -23,9 +20,9 @@ module.exports = (app, localMode) => {
         respond(req, res, app.get('UPDATE'));
     });
 
-    // Test KV data
-    app.get('/update-kv', async (req, res) => {
-        libraries.kvAll().then(() => {});
+    // Testing!
+    app.get('/run-update', async (req, res) => {
         respond(req, res, {});
+        update(app).then(() => {});
     });
 };

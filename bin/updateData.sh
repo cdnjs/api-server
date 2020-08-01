@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# Get the latest packages data
-. ./bin/packages.sh || exit 1
-
 # Update SRI (assumes a valid git repo, not using rm as the app reads from this continually)
 (
     # Forcibly update to latest

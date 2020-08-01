@@ -5,7 +5,7 @@ const Sentry = require('@sentry/node');
 const morgan = require('morgan');
 
 // Local imports
-const librariesUtil = require('./utils/libraries');
+const updateUtil = require('./utils/update');
 const cacheUtil = require('./utils/cache');
 const cors = require('./utils/cors');
 
@@ -44,7 +44,7 @@ if (process.env.SENTRY_DSN) {
     console.log('sentry: disabled');
 }
 
-module.exports = () => {
+module.exports = async () => {
     // Basic app configuration
     const app = express();
     app.disable('x-powered-by');
@@ -53,7 +53,7 @@ module.exports = () => {
     app.use(morgan('combined'));
 
     // Load the library data
-    librariesUtil.set(app);
+    await updateUtil(app);
 
     // Set up cors headers
     cors(app);

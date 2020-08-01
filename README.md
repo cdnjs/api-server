@@ -44,22 +44,14 @@ npm run dev
 
 In development, you initially fetch a set of data using the
 [`bin/initialData.sh`](bin/initialData.sh) script (in production this script is run as part of the
-[`bin/runServer.sh`](bin/runServer.sh) script). This downloads the latest package JSON data, as
-well as making a local clone of the tutorials & SRI repos.
+[`bin/runServer.sh`](bin/runServer.sh) script). This makes a local clone of the tutorials & SRI
+repos which are needed for the API to serve full responses.
 
 To update your data, you can run the [`bin/updateData.sh`](bin/updateData.sh) script, which will
-fetch the latest package data as well as update the SRI & tutorial repo clones. In production, this
-script is automatically run every ten minutes once deployed.
+update the SRI & tutorial repo clones. In production, this script is automatically run every ten
+minutes once deployed (as well as fetching the latest packages data).
 
-The data consists of three parts that can all be updated individually if needed:
-
-### Packages
-
-Use the [`bin/packages.sh`](bin/packages.sh) script to pull down the latest packages data:
-
-```shell script
-. ./bin/packages.sh
-```
+The data consists of two repository clones that can all be updated individually if needed:
 
 ### SRI
 
@@ -115,9 +107,6 @@ deployments to Heroku, running this script is configured with the included [`Pro
 The [`bin/runServer.sh`](bin/runServer.sh) script performs the following actions to deploy and
 start the app:
 
-- Update packages data
-    - Remove development packages data
-    - Download latest packages data
 - Update SRI data
     - Remove the outdated SRI submodule data
     - Clone latest SRI data from [cdnjs/SRIs](https://github.com/cdnjs/SRIs)
@@ -130,6 +119,7 @@ start the app:
     [`data/tutorialsModified.txt`](data/tutorialsModified.txt) and
     [`data/tutorialsCreated.txt`](data/tutorialsCreated.txt) respectively
 - Start the API server with GC enabled and additional memory allocated
+    - During server start-up it will fetch the latest package data
 
 To change the port that the app binds to, set the `PORT` environment var when running the script.
 For our Heroku deployment, this is set automatically by Heroku.
