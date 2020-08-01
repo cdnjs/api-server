@@ -1,4 +1,5 @@
 // Library imports
+const Sentry = require('@sentry/node');
 const fetch = require('node-fetch');
 
 // Get a list of libraries from KV
@@ -20,15 +21,42 @@ const kvAll = async () => {
     // console.log('Libraries to fetch:', libraryNames.length);
     // const start = Date.now();
 
-    // Create all the promise functions
     const libraries = {};
+    const processResponse = (name, data) => {
+        // Non-breaking issues
+        if (name !== data.name) {
+            console.info('Name mismatch', name, data.name);
+            data.name = name;
+        }
+        if (!data.assets) {
+            console.info('Assets missing', name);
+            data.assets = [];
+        }
+
+        // Breaking issues
+        if (!data.version) {
+            console.error('Version missing', name);
+            if (process.env.SENTRY_DSN) {
+                Sentry.captureException({
+                    name: 'Version missing in package data',
+                    message: JSON.stringify(data),
+                });
+            }
+            return;
+        }
+
+        // Store
+        libraries[name] = data;
+    };
+
+    // Create all the promise functions
     const failed = [];
     const libraryPromises = libraryNames.map(name => (async () => {
         const data = await kvLibrary(name).catch(() => failed.push(name));
-        if (data) libraries[name] = data;
+        if (data) processResponse(name, data);
     }));
 
-    // Chunk up the functions to parallelise
+    // Chunk up the functions to parallelize
     const libraryPromisesChunked = libraryPromises.reduce((prev, cur, i) => {
         if (i % 30 === 0) prev.push([]);
         prev[prev.length - 1].push(cur);
@@ -49,11 +77,16 @@ const kvAll = async () => {
     for (const name of failed) {
         const data = await kvLibrary(name).catch(e => {
             errors.push(`${name}: ${e.message}`);
+            console.error('Failed to fetch', name, e.message);
+            if (process.env.SENTRY_DSN) {
+                Sentry.captureException({
+                    name: 'Failed to fetch package',
+                    message: JSON.stringify([name, e.message, e]),
+                });
+            }
         });
-        if (data) libraries[name] = data;
+        if (data) processResponse(name, data);
     }
-
-    // TODO: Any validation needed to the data
 
     // console.log('Time taken (ms):', Date.now() - start);
     // console.log('Libraries fetched:', Object.keys(libraries).length);
