@@ -28,71 +28,65 @@ const algolia = async (query, searchFields) => {
 };
 
 module.exports = app => {
-    app.get('/libraries', async (req, res) => {
-        // Get the index results
-        const searchFields = queryArray(req.query, 'search_fields');
-        let results;
+    app.get('/libraries', async (req, res, next) => {
         try {
-            results = await algolia(
+            // Get the index results
+            const searchFields = queryArray(req.query, 'search_fields');
+            const results = await algolia(
                 (req.query.search || '').toString().slice(0, maxQueryLength),
                 searchFields.includes('*') ? [] : searchFields,
             );
-        } catch (err) {
-            console.error(err.stack);
-            res.status(500).json({
-                error: true,
-                status: 500,
-                message: err.message,
+
+            // Transform the results into our filtered array
+            const requestedFields = queryArray(req.query, 'fields');
+            const response = results.filter(hit => {
+                if (hit && hit.name) return true;
+                console.warn('Found bad entry in Algolia data');
+                console.info(hit);
+                if (process.env.SENTRY_DSN) {
+                    Sentry.withScope(scope => {
+                        scope.setTag('hit.data', JSON.stringify(hit));
+                        Sentry.captureException(new Error('Bad entry in Algolia data'));
+                    });
+                }
+                return false;
+            }).map(hit => {
+                return filter(
+                    {
+                        // Ensure name is first prop
+                        name: hit.name,
+                        // Custom latest prop
+                        latest: hit.filename && hit.version ? 'https://cdnjs.cloudflare.com/ajax/libs/' + hit.name + '/' + hit.version + '/' + hit.filename : null,
+                        // All other hit props
+                        ...hit,
+                    },
+                    [
+                        // Always send back name & latest
+                        'name',
+                        'latest',
+                        // Send back whatever else was requested
+                        ...requestedFields,
+                    ],
+                    requestedFields.includes('*'), // Send all if they have '*'
+                );
             });
-            return;
+
+            // If they want less data, allow that
+            const limit = (req.query.limit && Number(req.query.limit));
+            const trimmed = limit ? response.slice(0, limit) : response;
+
+            // Set a 6 hour life on this response
+            cache(res, 6 * 60 * 60);
+
+            // Send the response
+            respond(req, res, {
+                results: trimmed,
+                total: trimmed.length, // Total results we're sending back
+                available: response.length, // Total number available without trimming
+            });
+
+        } catch (err) {
+            next(err);
         }
-
-        // Transform the results into our filtered array
-        const requestedFields = queryArray(req.query, 'fields');
-        const response = results.filter(hit => {
-            if (hit && hit.name) return true;
-            console.warn('Found bad entry in Algolia data');
-            console.info(hit);
-            if (process.env.SENTRY_DSN) {
-                Sentry.withScope(scope => {
-                    scope.setTag('hit.data', JSON.stringify(hit));
-                    Sentry.captureException(new Error('Bad entry in Algolia data'));
-                });
-            }
-            return false;
-        }).map(hit => {
-            return filter(
-                {
-                    // Ensure name is first prop
-                    name: hit.name,
-                    // Custom latest prop
-                    latest: hit.filename && hit.version ? 'https://cdnjs.cloudflare.com/ajax/libs/' + hit.name + '/' + hit.version + '/' + hit.filename : null,
-                    // All other hit props
-                    ...hit,
-                },
-                [
-                    // Always send back name & latest
-                    'name',
-                    'latest',
-                    // Send back whatever else was requested
-                    ...requestedFields,
-                ],
-                requestedFields.includes('*'), // Send all if they have '*'
-            );
-        });
-
-        // If they want less data, allow that
-        const limit = (req.query.limit && Number(req.query.limit));
-        const trimmed = limit ? response.slice(0, limit) : response;
-
-        // Set a 6 hour life on this response
-        cache(res, 6 * 60 * 60);
-
-        // Send the response
-        respond(req, res, {
-            results: trimmed,
-            total: trimmed.length, // Total results we're sending back
-            available: response.length, // Total number available without trimming
-        });
     });
 };

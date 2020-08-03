@@ -1,3 +1,6 @@
+// Library imports
+const Sentry = require('@sentry/node');
+
 // Local imports
 const cache = require('../utils/cache');
 
@@ -19,6 +22,7 @@ module.exports = app => {
     // eslint-disable-next-line no-unused-vars
     app.use((err, req, res, next) => {
         console.error(err.stack);
+        Sentry.captureException(err);
 
         // Send the error response
         res.status(500).json({
