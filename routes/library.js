@@ -110,7 +110,7 @@ module.exports = app => {
                 // Ensure name is first prop
                 name: lib.name,
                 // Custom latest prop (and SRI value)
-                latest: lib.filename ? 'https://cdnjs.cloudflare.com/ajax/libs/' + lib.name + '/' + lib.version + '/' + lib.filename : null,
+                latest: lib.filename && lib.version ? 'https://cdnjs.cloudflare.com/ajax/libs/' + lib.name + '/' + lib.version + '/' + lib.filename : null,
                 sri: null,
                 // All other lib props
                 ...lib,
@@ -134,16 +134,18 @@ module.exports = app => {
 
         // Load SRI for latest if needed
         if ('sri' in response) {
-            try {
-                response.sri = sriForVersion(req.params.library, lib.version, [lib.filename])[lib.filename];
-            } catch (_) {
-                // If we fail to load, leave it as null
+            if (lib.filename && lib.version) {
+                try {
+                    response.sri = sriForVersion(req.params.library, lib.version, [lib.filename])[lib.filename];
+                } catch (_) {
+                    // If we fail to load, leave it as null
+                }
             }
         }
 
         // Inject SRI into assets if in results and do whitelist filtering
         if ('assets' in response) {
-            response.assets = response.assets.map(asset => {
+            response.assets = (response.assets || []).map(asset => {
                 asset.rawFiles = [...asset.files];
                 asset.files = asset.files.filter(isWhitelisted);
 

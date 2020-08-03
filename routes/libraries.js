@@ -66,7 +66,7 @@ module.exports = app => {
                     // Ensure name is first prop
                     name: hit.name,
                     // Custom latest prop
-                    latest: hit.filename ? 'https://cdnjs.cloudflare.com/ajax/libs/' + hit.name + '/' + hit.version + '/' + hit.filename : null,
+                    latest: hit.filename && hit.version ? 'https://cdnjs.cloudflare.com/ajax/libs/' + hit.name + '/' + hit.version + '/' + hit.filename : null,
                     // All other hit props
                     ...hit,
                 },
