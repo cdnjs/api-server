@@ -54,9 +54,9 @@ module.exports = app => {
             console.warn('Found bad entry in Algolia data');
             console.info(hit);
             if (process.env.SENTRY_DSN) {
-                Sentry.captureException({
-                    name: 'Bad entry in Algolia data',
-                    message: JSON.stringify(hit),
+                Sentry.withScope(scope => {
+                    scope.setTag('hit.data', JSON.stringify(hit));
+                    Sentry.captureException(new Error('Bad entry in Algolia data'));
                 });
             }
             return false;

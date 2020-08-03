@@ -13,9 +13,13 @@ module.exports = (library, version, files) => {
         console.warn('Failed to load SRI data for', fullLibrary);
         console.info(e, e.message, e.stack);
         if (process.env.SENTRY_DSN) {
-            Sentry.captureException({
-                name: 'Failed to load SRI data',
-                message: `${fullLibrary}: ${e.message}`,
+            Sentry.withScope(scope => {
+                scope.setTag('library', library);
+                scope.setTag('library.version', version);
+                const err = new Error('Failed to load SRI data');
+                err.original = e;
+                err.stack = err.stack.split('\n').slice(0, 2).join('\n') + '\n' + e.stack;
+                Sentry.captureException(err);
             });
         }
         throw e;
@@ -35,9 +39,12 @@ module.exports = (library, version, files) => {
             const fullFile = `${library}/${version}/${file}`;
             console.warn('Missing SRI entry for', fullFile);
             if (process.env.SENTRY_DSN) {
-                Sentry.captureException({
-                    name: 'Missing SRI entry',
-                    message: fullFile,
+                Sentry.withScope(scope => {
+                    scope.setTag('library', library);
+                    scope.setTag('library.version', version);
+                    scope.setTag('library.file', file);
+                    scope.setTag('library.file.full', fullFile);
+                    Sentry.captureException(new Error('Missing SRI entry'));
                 });
             }
         }

@@ -20,9 +20,10 @@ const all = () => {
             console.warn('Found bad entry in packages data');
             console.info(lib);
             if (process.env.SENTRY_DSN) {
-                Sentry.captureException({
-                    name: 'Bad entry in packages data',
-                    message: JSON.stringify(lib),
+                Sentry.withScope(scope => {
+                    scope.setTag('library', lib.name);
+                    scope.setTag('library.data', JSON.stringify(lib));
+                    Sentry.captureException(new Error('Bad entry in packages data'));
                 });
             }
         }
