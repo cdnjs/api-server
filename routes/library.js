@@ -71,7 +71,7 @@ module.exports = app => {
         // Load SRI data if needed
         if ('sri' in response) {
             try {
-                response.sri = sriForVersion(req.params.library, version.version, version.rawFiles);
+                response.sri = sriForVersion(req.params.library, version.version, version.files);
             } catch (_) {
                 // If we can't load, set SRI to a blank object
                 response.sri = {};
