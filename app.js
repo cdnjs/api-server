@@ -14,6 +14,7 @@ const librariesRoutes = require('./routes/libraries');
 const tutorialsRoutes = require('./routes/tutorials');
 const libraryRoutes = require('./routes/library');
 const whitelistRoutes = require('./routes/whitelist');
+const statsRoutes = require('./routes/stats');
 const updateRoutes = require('./routes/update');
 const errorsRoutes = require('./routes/errors');
 
@@ -65,6 +66,7 @@ module.exports = () => {
     tutorialsRoutes(app);
     libraryRoutes(app);
     whitelistRoutes(app);
+    statsRoutes(app);
     updateRoutes(app, localMode);
 
     // Redirect root the API docs
