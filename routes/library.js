@@ -62,9 +62,9 @@ module.exports = app => {
             // Build the object
             const results = {
                 name: lib.name,
-                version: version.version,
-                rawFiles: [...version.files],
-                files: version.files.filter(isWhitelisted),
+                version: req.params.version,
+                rawFiles: version || [],
+                files: (version || []).filter(isWhitelisted),
                 sri: null,
             };
 
@@ -80,7 +80,7 @@ module.exports = app => {
             // Load SRI data if needed
             if ('sri' in response) {
                 try {
-                    response.sri = sriForVersion(req.params.library, version.version, version.files);
+                    response.sri = sriForVersion(req.params.library, req.params.version, (version || []));
                 } catch (_) {
                     // If we can't load, set SRI to a blank object
                     response.sri = {};
