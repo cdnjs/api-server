@@ -34,12 +34,15 @@ const mocha = server => {
 };
 
 const main = () => {
+    let exiting = false;
+
     // Start the API server in the background
     console.info('Starting API server for testing...');
     const server = spawn('npm', ['run', 'dev']);
 
     // Set a 1 minute timeout for the server starting
     const timeout = setTimeout(() => {
+        exiting = true;
         console.error('API server did not start in time, aborting...');
         kill(server);
     }, 3 * 60 * 1000);
@@ -49,7 +52,7 @@ const main = () => {
         `${data}`.trim().split('\n').map(line => console.log(`server: ${line}`));
 
         // Run the mocha tests if the server started
-        if (`${data}`.trim().startsWith('Listening on ')) {
+        if (!exiting && `${data}`.trim().startsWith('Listening on ')) {
             clearTimeout(timeout);
             mocha(server);
         }
