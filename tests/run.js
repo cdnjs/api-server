@@ -26,11 +26,15 @@ const mocha = server => {
     // Log test results
     console.info('API tests results:');
     console.log(`${tests.stdout}`.trim());
+
+    // Log errors
     const err = `${tests.stderr}`.trim();
-    console.error(err);
+    for (const line of err.split('\n')) {
+        console.error(`error: ${line}`);
+    }
 
     // Exit
-    exit(err ? 1 : 0);
+    exit(err.length ? 1 : 0);
 };
 
 const main = () => {
@@ -50,7 +54,9 @@ const main = () => {
 
     server.stdout.on('data', data => {
         // Log any stdout messages
-        `${data}`.trim().split('\n').map(line => console.log(`${(new Date()).toLocaleTimeString()}: server: ${line}`));
+        for (const line of `${data}`.trim().split('\n')) {
+            console.log(`${(new Date()).toLocaleTimeString()}: server: ${line}`);
+        }
 
         // Run the mocha tests if the server started
         if (!exiting && `${data}`.trim().startsWith('Listening on ')) {
@@ -60,8 +66,11 @@ const main = () => {
     });
 
     // Log any stderr messages
-    server.stderr.on('data', data => `${data}`.trim().split('\n')
-        .map(line => console.error(`${(new Date()).toLocaleTimeString()}: server: error: ${line}`)));
+    server.stderr.on('data', data => {
+        for (const line of `${data}`.trim().split('\n')) {
+            console.error(`${(new Date()).toLocaleTimeString()}: server: error: ${line}`);
+        }
+    });
 };
 
 main();
