@@ -21,6 +21,7 @@ const errorsRoutes = require('./routes/errors');
 // App constants
 const port = Number(process.env.PORT || 5050);
 const args = process.argv.slice(2);
+const started = Date.now();
 
 // Local mode state
 let localMode = false;
@@ -85,6 +86,7 @@ module.exports = async () => {
 
     // START!
     app.listen(port, () => {
-        console.log('Listening on ' + (localMode ? 'http://0.0.0.0:' : '') + port);
+        console.log('Listening on ' + (localMode ? 'http://0.0.0.0:' : '') + port
+            + ' after ' + (Date.now() - started).toLocaleString() + 'ms');
     });
 };

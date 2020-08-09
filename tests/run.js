@@ -40,16 +40,17 @@ const main = () => {
     console.info('Starting API server for testing...');
     const server = spawn('npm', ['run', 'dev']);
 
-    // Set a 1 minute timeout for the server starting
+    // Set a 5 minute timeout for the server starting
     const timeout = setTimeout(() => {
         exiting = true;
         console.error('API server did not start in time, aborting...');
         kill(server);
-    }, 3 * 60 * 1000);
+        exit(1);
+    }, 5 * 60 * 1000);
 
     server.stdout.on('data', data => {
         // Log any stdout messages
-        `${data}`.trim().split('\n').map(line => console.log(`server: ${line}`));
+        `${data}`.trim().split('\n').map(line => console.log(`${(new Date()).toLocaleTimeString()}: server: ${line}`));
 
         // Run the mocha tests if the server started
         if (!exiting && `${data}`.trim().startsWith('Listening on ')) {
@@ -59,7 +60,8 @@ const main = () => {
     });
 
     // Log any stderr messages
-    server.stderr.on('data', data => `${data}`.trim().split('\n').map(line => console.error(`server: error: ${line}`)));
+    server.stderr.on('data', data => `${data}`.trim().split('\n')
+        .map(line => console.error(`${(new Date()).toLocaleTimeString()}: server: error: ${line}`)));
 };
 
 main();
