@@ -60,12 +60,12 @@ const kvLibraries = async () => {
 
 // Get the metadata for a library's version on KV
 const kvLibraryVersion = async (library, version) => {
-    return jsonFetch(`${kvBase}/packages/${library}/versions/${version}`);
+    return jsonFetch(`${kvBase}/packages/${encodeURIComponent(library)}/versions/${encodeURIComponent(version)}`);
 };
 
 // Get the metadata for a library's versions on KV
 const kvLibraryVersions = async library => {
-    return jsonFetch(`${kvBase}/packages/${library}/versions`);
+    return jsonFetch(`${kvBase}/packages/${encodeURIComponent(library)}/versions`);
 };
 
 // Get the metadata for a library's assets on KV
@@ -85,7 +85,7 @@ const kvLibraryAssets = async (library, versions = undefined) => {
 
 // Get the metadata for a library on KV
 const kvLibrary = async library => {
-    return jsonFetch(`${kvBase}/packages/${library}`);
+    return jsonFetch(`${kvBase}/packages/${encodeURIComponent(library)}`);
 };
 
 // Get the metadata for all libraries on KV
