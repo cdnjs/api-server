@@ -2,7 +2,7 @@
 const Sentry = require('@sentry/node');
 const fetch = require('node-fetch');
 
-const kvBase = 'https://metadata-staging.speedcdnjs.com';
+const kvBase = 'https://metadata.speedcdnjs.com';
 
 // A custom error for a non-200 request response
 const RequestError = (status, body) => {
