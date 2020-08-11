@@ -92,9 +92,6 @@ const kvLibrary = async library => {
 const kvAll = async () => {
     const libraryNames = await kvLibraries();
 
-    // console.log('Libraries to fetch:', libraryNames.length);
-    // const start = Date.now();
-
     const libraries = {};
     const processResponse = (name, data) => {
         // Non-breaking issues
@@ -141,10 +138,6 @@ const kvAll = async () => {
     // Get the data and process it
     const libraryData = await chunkedAsync(libraryPromises, errorHandler);
     Object.entries(libraryData).forEach(([name, data]) => processResponse(name, data));
-
-    // console.log('Time taken (ms):', Date.now() - start);
-    // console.log('Libraries fetched:', Object.keys(libraries).length);
-    // console.log('Time per chunk (ms):', (Date.now() - start) / (Object.keys(libraries).length / 30));
 
     return [libraries, errors];
 };
