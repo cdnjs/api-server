@@ -104,9 +104,9 @@ const kvAll = async () => {
         if (!data.version) {
             console.error('Version missing', name, data);
             if (process.env.SENTRY_DSN) {
-                Sentry.captureException({
-                    name: 'Version missing in package data',
-                    message: JSON.stringify(data),
+                Sentry.withScope(scope => {
+                    scope.setTag('data', JSON.stringify(data));
+                    Sentry.captureException(new Error('Version missing in package data'));
                 });
             }
             return;
@@ -124,13 +124,16 @@ const kvAll = async () => {
 
     // Setup the error handler
     const errors = [];
-    const errorHandler = (name, err) => {
-        errors.push(`${name}: ${err.message}`);
-        console.error('Failed to fetch', name, err.message);
+    const errorHandler = (name, e) => {
+        errors.push(`${name}: ${e.message}`);
+        console.error('Failed to fetch', name, e.message);
         if (process.env.SENTRY_DSN) {
-            Sentry.captureException({
-                name: 'Failed to fetch package',
-                message: JSON.stringify([name, err.message, err]),
+            Sentry.withScope(scope => {
+                scope.setTag('library', name);
+                const err = new Error('Failed to fetch package');
+                err.original = e;
+                err.stack = err.stack.split('\n').slice(0, 2).join('\n') + '\n' + e.stack;
+                Sentry.captureException(err);
             });
         }
     };
