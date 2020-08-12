@@ -9,6 +9,10 @@ const updateUtil = require('./utils/update');
 const cacheUtil = require('./utils/cache');
 const cors = require('./utils/cors');
 
+// Middleware imports
+const timingMiddleware = require('./middleware/timing');
+const errorsMiddleware = require('./middleware/errors');
+
 // Routes imports
 const librariesRoutes = require('./routes/libraries');
 const tutorialsRoutes = require('./routes/tutorials');
@@ -16,7 +20,7 @@ const libraryRoutes = require('./routes/library');
 const whitelistRoutes = require('./routes/whitelist');
 const statsRoutes = require('./routes/stats');
 const updateRoutes = require('./routes/update');
-const errorsRoutes = require('./routes/errors');
+const testingRoutes = require('./routes/testing');
 
 // App constants
 const port = Number(process.env.PORT || 5050);
@@ -49,8 +53,14 @@ module.exports = async () => {
     // Basic app configuration
     const app = express();
     app.disable('x-powered-by');
+
+    // Setup timing middleware
+    app.use(timingMiddleware);
+
+    // Enable sentry
     if (process.env.SENTRY_DSN) app.use(Sentry.Handlers.requestHandler());
 
+    // Request logging
     app.use(morgan('combined'));
 
     // Load the library data
@@ -69,6 +79,7 @@ module.exports = async () => {
     whitelistRoutes(app);
     statsRoutes(app);
     updateRoutes(app, localMode);
+    testingRoutes(app);
 
     // Redirect root the API docs
     app.get('/', (req, res) => {
@@ -82,7 +93,12 @@ module.exports = async () => {
 
     // Catch-all errors
     if (process.env.SENTRY_DSN) app.use(Sentry.Handlers.errorHandler());
-    errorsRoutes(app);
+
+    // Handle 404s cleanly
+    app.use(errorsMiddleware.notFound);
+
+    // Handle error responses
+    app.use(errorsMiddleware.error);
 
     // START!
     app.listen(port, () => {
