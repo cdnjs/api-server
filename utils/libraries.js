@@ -1,8 +1,9 @@
 // Library imports
 const Sentry = require('@sentry/node');
 const fetch = require('node-fetch');
+const gunzip = require('gunzip-maybe');
 
-const kvBase = 'https://metadata.speedcdnjs.com';
+const kvBase = 'https://metadata-staging.speedcdnjs.com';
 
 // A custom error for a non-200 request response
 const RequestError = (status, body) => {
@@ -12,11 +13,32 @@ const RequestError = (status, body) => {
     return err;
 };
 
+// We're always fetching JSON, but sometimes it's gzipped
+const gunzipBody = (body) => new Promise((resolve, reject) => {
+    const gunzipHandler = gunzip();
+    body.pipe(gunzipHandler);
+    let string = '';
+    gunzipHandler.on('data', (data) => {
+        string += data.toString();
+    }).on('end', () => {
+        resolve(string);
+    }).on('error', (err) => {
+        reject(err);
+    });
+});
+
 // Fetch a JSON endpoint, throw for a non-200 response
 const jsonFetch = async url => {
     const resp = await fetch(url);
-    if (resp.status !== 200) throw RequestError(resp.status, await resp.text());
-    return resp.json();
+    const data = await gunzipBody(resp.body);
+    if (resp.status !== 200) throw RequestError(resp.status, data);
+    let json;
+    try {
+        json = JSON.parse(data);
+    } catch (_) {
+        throw RequestError(resp.status, data);
+    }
+    return json;
 };
 
 // Execute a set of async functions in chunks of 30
@@ -53,22 +75,23 @@ const chunkedAsync = async (asyncFunctionsMap, errorHandler) => {
     return data;
 };
 
-// Get a list of libraries from KV
-const kvLibraries = async () => {
-    return jsonFetch(`${kvBase}/packages`);
-};
-
 // Get the metadata for a library's version on KV
+// This is an endpoint on the API worker that we don't currently use
+// eslint-disable-next-line no-unused-vars
 const kvLibraryVersion = async (library, version) => {
     return jsonFetch(`${kvBase}/packages/${encodeURIComponent(library)}/versions/${encodeURIComponent(version)}`);
 };
 
 // Get the metadata for a library's versions on KV
+// This is an endpoint on the API worker that we don't currently use
+// eslint-disable-next-line no-unused-vars
 const kvLibraryVersions = async library => {
     return jsonFetch(`${kvBase}/packages/${encodeURIComponent(library)}/versions`);
 };
 
 // Get the metadata for a library's assets on KV
+// This is an endpoint on the API worker that we don't currently use
+// eslint-disable-next-line no-unused-vars
 const kvLibraryAssets = async (library, versions = undefined) => {
     versions = versions || await kvLibraryVersions(library);
 
@@ -84,8 +107,20 @@ const kvLibraryAssets = async (library, versions = undefined) => {
 };
 
 // Get the metadata for a library on KV
+// This is an endpoint on the API worker that we don't currently use
+// eslint-disable-next-line no-unused-vars
 const kvLibrary = async library => {
     return jsonFetch(`${kvBase}/packages/${encodeURIComponent(library)}`);
+};
+
+// Get the full metadata for a library incl. versions on KV
+const kvFullLibrary = async library => {
+    return jsonFetch(`${kvBase}/packages/${encodeURIComponent(library)}/all`);
+};
+
+// Get a list of libraries from KV
+const kvLibraries = async () => {
+    return jsonFetch(`${kvBase}/packages`);
 };
 
 // Get the metadata for all libraries on KV
@@ -112,13 +147,15 @@ const kvAll = async () => {
             return;
         }
 
+        // TODO: Check assets
+
         // Store
         libraries[name] = data;
     };
 
     // Create all the promise functions
     const libraryPromises = libraryNames.reduce((prev, name) => {
-        prev[name] = () => kvLibrary(name);
+        prev[name] = () => kvFullLibrary(name);
         return prev;
     }, {});
 
@@ -145,4 +182,4 @@ const kvAll = async () => {
     return [libraries, errors];
 };
 
-module.exports = { kvAll, kvLibraryVersion, kvLibraryVersions, kvLibraryAssets };
+module.exports = { kvAll };

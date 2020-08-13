@@ -12,15 +12,15 @@ module.exports = (req, res, next) => {
     onFinished(res, () => {
         req.end = Date.now();
         const total = req.end - req.start;
-        if (total >= 15000) {
-            console.error(`Request to ${req.originalUrl} took longer than 15s:`, total.toLocaleString());
+        if (total >= 5000) {
+            console.error(`Request to ${req.originalUrl} took longer than 5s:`, total.toLocaleString());
             if (process.env.SENTRY_DSN) {
                 Sentry.withScope(scope => {
                     scope.setTag('originalUrl', req.originalUrl);
                     scope.setTag('time.total', total.toLocaleString());
                     scope.setTag('time.process', (req.startResp - req.start).toLocaleString());
                     scope.setTag('time.response', (req.end - req.startResp).toLocaleString());
-                    Sentry.captureException(new Error('Request took longer than 15s'));
+                    Sentry.captureException(new Error('Request took longer than 5s'));
                 });
             }
         }
