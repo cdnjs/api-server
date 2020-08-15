@@ -3,11 +3,12 @@ const Sentry = require('@sentry/node');
 const fetch = require('node-fetch');
 const gunzip = require('gunzip-maybe');
 
-const kvBase = 'https://metadata-staging.speedcdnjs.com';
+const kvBase = 'https://metadata.speedcdnjs.com';
 
 // A custom error for a non-200 request response
-const RequestError = (status, body) => {
+const RequestError = (url, status, body) => {
     const err = new Error('Request failed');
+    err.url = url;
     err.status = status;
     err.body = body;
     return err;
@@ -31,7 +32,7 @@ const gunzipBody = (body) => new Promise((resolve, reject) => {
 const jsonFetch = async url => {
     const resp = await fetch(url);
     const data = await gunzipBody(resp.body);
-    if (resp.status !== 200) throw RequestError(resp.status, data);
+    if (resp.status !== 200) throw RequestError(url, resp.status, data);
     let json;
     try {
         json = JSON.parse(data);
@@ -163,7 +164,7 @@ const kvAll = async () => {
     const errors = [];
     const errorHandler = (name, e) => {
         errors.push(`${name}: ${e.message}`);
-        console.error('Failed to fetch', name, e.message);
+        console.error('Failed to fetch', name, e.message, e.url, e.status, e.body);
         if (process.env.SENTRY_DSN) {
             Sentry.withScope(scope => {
                 scope.setTag('library', name);

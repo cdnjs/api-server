@@ -44,13 +44,13 @@ const main = () => {
     console.info('Starting API server for testing...');
     const server = spawn('npm', ['run', 'dev']);
 
-    // Set a 5 minute timeout for the server starting
+    // Set a 1 minute timeout for the server starting
     const timeout = setTimeout(() => {
         exiting = true;
         console.error('API server did not start in time, aborting...');
         kill(server);
         exit(1);
-    }, 5 * 60 * 1000);
+    }, 60 * 1000);
 
     server.stdout.on('data', data => {
         // Log any stdout messages
