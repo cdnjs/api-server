@@ -1,11 +1,11 @@
 // Local imports
-const update = require('../utils/update');
+const updateRun = require('../update/run');
 const respond = require('../utils/respond');
 
 module.exports = (app) => {
     app.get('/test-update', (req, res) => {
         respond(req, res, {});
-        update(app).then(() => {});
+        updateRun(app).then(() => {});
     });
 
     // eslint-disable-next-line no-unused-vars

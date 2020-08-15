@@ -5,9 +5,10 @@ const Sentry = require('@sentry/node');
 const morgan = require('morgan');
 
 // Local imports
-const updateUtil = require('./utils/update');
-const cacheUtil = require('./utils/cache');
+const cache = require('./utils/cache');
 const cors = require('./utils/cors');
+const updateRun = require('./update/run');
+const updateJob = require('./update/job');
 
 // Middleware imports
 const timingMiddleware = require('./middleware/timing');
@@ -63,8 +64,9 @@ module.exports = async () => {
     // Request logging
     app.use(morgan('combined'));
 
-    // Load the library data
-    await updateUtil(app);
+    // Load the library data and set recurring job
+    await updateRun(app);
+    updateJob(app, localMode);
 
     // Set up cors headers
     cors(app);
@@ -78,14 +80,14 @@ module.exports = async () => {
     libraryRoutes(app);
     whitelistRoutes(app);
     statsRoutes(app);
-    updateRoutes(app, localMode);
+    updateRoutes(app);
     testingRoutes(app);
 
     // Redirect root the API docs
     app.get('/', (req, res) => {
         // Set a 355 day (same as CDN) life on this response
         // This is also immutable
-        cacheUtil(res, 355 * 24 * 60 * 60, true);
+        cache(res, 355 * 24 * 60 * 60, true);
 
         // Redirect to the API docs
         res.redirect(301, 'https://cdnjs.com/api');
