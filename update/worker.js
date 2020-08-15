@@ -1,7 +1,7 @@
 // Library imports
 const { spawn } = require('child_process');
 const path = require('path');
-const { parentPort } = require('worker_threads');
+const { writeFileSync } = require('fs');
 
 // Local imports
 const libraries = require('../utils/libraries');
@@ -15,7 +15,7 @@ const git = () => new Promise((resolve) => {
         stderr: '',
     };
 
-    const result = spawn(path.join(__dirname, '..', 'bin', 'updateData.sh'));
+    const result = spawn(path.join(__dirname, '..', 'bin', 'cloneUpdateData.sh'));
     result.stdout.on('data', d => {
         data.stdout += `${d}`;
     });
@@ -68,8 +68,11 @@ const main = async () => {
         })(),
     ]);
 
-    // Complete the worker
-    parentPort.postMessage({ libraries, status });
+    // Save the data
+    writeFileSync(path.join(__dirname, '..', 'data', 'data.json'), JSON.stringify({
+        status,
+        libraries,
+    }));
 };
 
 main().then(() => {});

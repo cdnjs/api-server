@@ -7,7 +7,7 @@ const morgan = require('morgan');
 // Local imports
 const cache = require('./utils/cache');
 const cors = require('./utils/cors');
-const updateRun = require('./update/run');
+const updateLoad = require('./update/load');
 const updateJob = require('./update/job');
 
 // Middleware imports
@@ -65,7 +65,7 @@ module.exports = async () => {
     app.use(morgan('combined'));
 
     // Load the library data and set recurring job
-    await updateRun(app);
+    updateLoad(app);
     updateJob(app, localMode);
 
     // Set up cors headers
