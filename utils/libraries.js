@@ -130,6 +130,9 @@ const kvAll = async () => {
 
     const libraries = {};
     const processResponse = (name, data) => {
+        // Assets might not exist if there are none, but we should make it an empty array by default
+        data.assets = data.assets || [];
+
         // Non-breaking issues
         if (name !== data.name) {
             console.info('Name mismatch', name, data.name);
@@ -147,8 +150,6 @@ const kvAll = async () => {
             }
             return;
         }
-
-        // TODO: Check assets
 
         // Store
         libraries[name] = data;
