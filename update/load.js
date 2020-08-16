@@ -2,15 +2,19 @@
 const path = require('path');
 const { readFileSync } = require('fs');
 
-module.exports = (app) => {
-    // Load the data into memory
-    const rawData = readFileSync(path.join(__dirname, '..', 'data', 'data.json'), 'utf8');
-    const jsonData = JSON.parse(rawData);
-
-    // Set library data (merge in to old) & store update log
+module.exports = (app, localMode) => {
+    // Load the new data in
+    const jsonData = JSON.parse(readFileSync(path.join(__dirname, '..', 'data', 'data.json'), 'utf8'));
     app.set('LIBRARIES', {
         ...(app.get('LIBRARIES') || {}),
         ...jsonData.libraries,
     });
     app.set('UPDATE', jsonData.status);
+
+    // Clean mem usage next tick
+    setImmediate(() => {
+        if (!localMode && (typeof global.gc !== 'undefined')) {
+            global.gc();
+        }
+    });
 };

@@ -5,7 +5,7 @@ module.exports = (app, localMode) => {
     // Start the updater, every 10 mins, if not in local mode
     if (!localMode) {
         setInterval(() => {
-            run(app).then(() => {});
+            run(app, localMode).then(() => {});
         }, 10 * 60 * 1000);
     }
 };
