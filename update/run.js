@@ -6,11 +6,13 @@ const { Worker } = require('worker_threads');
 const load = require('./load');
 
 module.exports = (app, localMode) => new Promise((resolve, reject) => {
-    const worker = new Worker(path.join(__dirname, 'worker.js'));
+    console.log('Update worker starting');
+    const worker = new Worker(path.join(__dirname, 'worker.js'), { resourceLimits: { maxOldGenerationSizeMb: 4096 } });
     worker.on('error', reject);
     worker.on('exit', (code) => {
         if (code !== 0) reject(new Error(`Worker stopped with exit code ${code}`));
         load(app, localMode);
+        console.log('Update worker ended');
         resolve();
     });
 });
