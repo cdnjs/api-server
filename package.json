@@ -17,7 +17,7 @@
         "test:mocha:with-server": "node tests/run.js",
         "dev": "LOCAL=true node index.js",
         "start": "node --expose-gc --max-old-space-size=2048 index.js",
-        "build": "node --max-old-space-size=2048 update/worker.js"
+        "build": "node update/worker.js"
     },
     "repository": {
         "type": "git",

@@ -5,10 +5,6 @@ const { readFileSync } = require('fs');
 module.exports = (app, localMode) => {
     // Load the new data in
     const jsonData = JSON.parse(readFileSync(path.join(__dirname, '..', 'data', 'data.json'), 'utf8'));
-    app.set('LIBRARIES', {
-        ...(app.get('LIBRARIES') || {}),
-        ...jsonData.libraries,
-    });
     app.set('UPDATE', jsonData.status);
 
     // Clean mem usage next tick

@@ -4,7 +4,7 @@ const path = require('path');
 const { writeFileSync } = require('fs');
 
 // Local imports
-const libraries = require('../utils/libraries');
+// const libraries = require('../utils/libraries');
 
 const git = () => new Promise((resolve) => {
     const data = {
@@ -29,7 +29,7 @@ const git = () => new Promise((resolve) => {
     });
 });
 
-const libs = async () => {
+/*const libs = async () => {
     const data = {
         started: null,
         ended: null,
@@ -47,31 +47,31 @@ const libs = async () => {
     data.result = `Loaded ${Object.keys(libData).length.toLocaleString()} libraries in ${(end - start).toLocaleString()}ms`;
 
     return [libData, data];
-};
+};*/
 
 const main = async () => {
     const status = {
         git: {},
-        libraries: {},
+        // libraries: {},
     };
-    let libraries;
+    // let libraries;
 
     // Run the two update tasks at the same time
     await Promise.all([
         (async () => {
             status.git = await git();
         })(),
-        (async () => {
+        /*(async () => {
             const [libData, data] = await libs();
             status.libraries = data;
             libraries = libData;
-        })(),
+        })(),*/
     ]);
 
     // Save the data
     writeFileSync(path.join(__dirname, '..', 'data', 'data.json'), JSON.stringify({
         status,
-        libraries,
+        // libraries,
     }));
 };
 

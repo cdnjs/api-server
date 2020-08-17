@@ -184,4 +184,4 @@ const kvAll = async () => {
     return [libraries, errors];
 };
 
-module.exports = { kvAll };
+module.exports = { kvAll, kvLibraries, kvFullLibrary, kvLibrary, kvLibraryVersion };

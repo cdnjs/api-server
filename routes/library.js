@@ -2,6 +2,7 @@
 const path = require('path');
 
 // Local imports
+const { kvFullLibrary, kvLibrary, kvLibraryVersion } = require('../utils/libraries');
 const cache = require('../utils/cache');
 const tutorials = require('../utils/tutorials');
 const filter = require('../utils/filter');
@@ -21,41 +22,53 @@ module.exports = app => {
     app.get('/libraries/:library/:version', async (req, res, next) => {
         try {
             // Get the library
-            const lib = app.get('LIBRARIES')[req.params.library];
-            if (!lib) {
-                // Set a 1 hour on this response
-                cache(res, 60 * 60);
+            let lib;
+            try {
+                lib = await kvLibrary(req.params.library);
+            } catch (err) {
+                if (err.status === 404) {
+                    // Set a 1 hour on this response
+                    cache(res, 60 * 60);
 
-                // Send the error response
-                res.status(404).json({
-                    error: true,
-                    status: 404,
-                    message: 'Library not found',
-                });
-                return;
+                    // Send the error response
+                    res.status(404).json({
+                        error: true,
+                        status: 404,
+                        message: 'Library not found',
+                    });
+                    return;
+                }
+
+                return next(err);
             }
 
             // Get the version
-            const version = lib.assets.find(x => x.version === req.params.version);
-            if (!version) {
-                // Set a 1 hour on this response
-                cache(res, 60 * 60);
+            let version;
+            try {
+                version = await kvLibraryVersion(lib.name, req.params.version);
+            } catch (err) {
+                if (err.status === 404) {
+                    // Set a 1 hour on this response
+                    cache(res, 60 * 60);
 
-                // Send the error response
-                res.status(404).json({
-                    error: true,
-                    status: 404,
-                    message: 'Version not found',
-                });
-                return;
+                    // Send the error response
+                    res.status(404).json({
+                        error: true,
+                        status: 404,
+                        message: 'Version not found',
+                    });
+                    return;
+                }
+
+                return next(err);
             }
 
             // Build the object
             const results = {
                 name: lib.name,
-                version: version.version,
-                rawFiles: [...version.files],
-                files: version.files.filter(isWhitelisted),
+                version: req.params.version,
+                rawFiles: [...(version || [])],
+                files: [...(version || [])].filter(isWhitelisted),
                 sri: null,
             };
 
@@ -71,7 +84,7 @@ module.exports = app => {
             // Load SRI data if needed
             if ('sri' in response) {
                 try {
-                    response.sri = sriForVersion(req.params.library, results.version, results.rawFiles);
+                    response.sri = sriForVersion(lib.name, req.params.version, [...(version || [])]);
                 } catch (_) {
                     // If we can't load, set SRI to a blank object
                     response.sri = {};
@@ -94,18 +107,24 @@ module.exports = app => {
     app.get('/libraries/:library', async (req, res, next) => {
         try {
             // Get the library
-            const lib = app.get('LIBRARIES')[req.params.library];
-            if (!lib) {
-                // Set a 1 hour on this response
-                cache(res, 60 * 60);
+            let lib;
+            try {
+                lib = await kvFullLibrary(req.params.library);
+            } catch (err) {
+                if (err.status === 404) {
+                    // Set a 1 hour on this response
+                    cache(res, 60 * 60);
 
-                // Send the error response
-                res.status(404).json({
-                    error: true,
-                    status: 404,
-                    message: 'Library not found',
-                });
-                return;
+                    // Send the error response
+                    res.status(404).json({
+                        error: true,
+                        status: 404,
+                        message: 'Library not found',
+                    });
+                    return;
+                }
+
+                return next(err);
             }
 
             // Generate the initial filtered response (without SRI or tutorials data)
@@ -151,8 +170,8 @@ module.exports = app => {
             // Inject SRI into assets if in results and do whitelist filtering
             if ('assets' in response) {
                 response.assets = (response.assets || []).map(asset => {
-                    asset.rawFiles = [...asset.files];
-                    asset.files = asset.files.filter(isWhitelisted);
+                    asset.rawFiles = [...(asset.files || [])];
+                    asset.files = [...(asset.files || [])].filter(isWhitelisted);
 
                     try {
                         asset.sri = sriForVersion(req.params.library, asset.version, asset.rawFiles);
