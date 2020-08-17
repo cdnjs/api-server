@@ -3,6 +3,9 @@ const Sentry = require('@sentry/node');
 const fetch = require('node-fetch');
 const gunzip = require('gunzip-maybe');
 
+// Local imports
+const notFound = require('./not_found');
+
 const kvBase = 'https://metadata.speedcdnjs.com';
 
 // A custom error for a non-200 request response
@@ -77,8 +80,6 @@ const chunkedAsync = async (asyncFunctionsMap, errorHandler) => {
 };
 
 // Get the metadata for a library's version on KV
-// This is an endpoint on the API worker that we don't currently use
-// eslint-disable-next-line no-unused-vars
 const kvLibraryVersion = async (library, version) => {
     return jsonFetch(`${kvBase}/packages/${encodeURIComponent(library)}/versions/${encodeURIComponent(version)}`);
 };
@@ -107,16 +108,42 @@ const kvLibraryAssets = async (library, versions = undefined) => {
     return Object.entries(versionData).map(([version, files]) => ({ version, files }));
 };
 
+// Validate the data we get from KV for a library
+const kvLibraryValidate = (library, data) => {
+    // Assets might not exist if there are none, but we should make it an empty array by default
+    data.assets = data.assets || [];
+
+    // Non-breaking issues
+    if (library !== data.name) {
+        console.info('Name mismatch', library, data.name);
+        data.name = library;
+    }
+
+    // Breaking issues
+    if (!data.version) {
+        console.error('Version missing', data.name, data);
+        if (process.env.SENTRY_DSN) {
+            Sentry.withScope(scope => {
+                scope.setTag('data', JSON.stringify(data));
+                Sentry.captureException(new Error('Version missing in package data'));
+            });
+        }
+        throw new Error('Version missing in package data');
+    }
+
+    return data;
+};
+
 // Get the metadata for a library on KV
-// This is an endpoint on the API worker that we don't currently use
-// eslint-disable-next-line no-unused-vars
 const kvLibrary = async library => {
-    return jsonFetch(`${kvBase}/packages/${encodeURIComponent(library)}`);
+    const data = await jsonFetch(`${kvBase}/packages/${encodeURIComponent(library)}`);
+    return kvLibraryValidate(library, data);
 };
 
 // Get the full metadata for a library incl. versions on KV
 const kvFullLibrary = async library => {
-    return jsonFetch(`${kvBase}/packages/${encodeURIComponent(library)}/all`);
+    const data = await jsonFetch(`${kvBase}/packages/${encodeURIComponent(library)}/all`);
+    return kvLibraryValidate(library, data);
 };
 
 // Get a list of libraries from KV
@@ -124,35 +151,39 @@ const kvLibraries = async () => {
     return jsonFetch(`${kvBase}/packages`);
 };
 
+// Fetch data from a KV endpoint cleanly, handling 404 and error responses for Express
+const kvCleanFetch = async (method, parameters, response, errorCallback, notFoundMessage) => {
+    let data;
+    try {
+        data = await method(...parameters);
+    } catch (err) {
+        if (err.status === 404) {
+            notFound(response, notFoundMessage);
+            return;
+        }
+
+        // Otherwise, handle as normal error
+        errorCallback(err);
+        return;
+    }
+
+    // Return the actual data
+    return data;
+};
+
 // Get the metadata for all libraries on KV
+// This is an endpoint on the API worker that we don't currently use
+// eslint-disable-next-line no-unused-vars
 const kvAll = async () => {
     const libraryNames = await kvLibraries();
 
     const libraries = {};
     const processResponse = (name, data) => {
-        // Assets might not exist if there are none, but we should make it an empty array by default
-        data.assets = data.assets || [];
-
-        // Non-breaking issues
-        if (name !== data.name) {
-            console.info('Name mismatch', name, data.name);
-            data.name = name;
+        try {
+            libraries[name] = kvLibraryValidate(name, data);
+        } catch (_) {
+            // If the validation errors, just don't store it
         }
-
-        // Breaking issues
-        if (!data.version) {
-            console.error('Version missing', name, data);
-            if (process.env.SENTRY_DSN) {
-                Sentry.withScope(scope => {
-                    scope.setTag('data', JSON.stringify(data));
-                    Sentry.captureException(new Error('Version missing in package data'));
-                });
-            }
-            return;
-        }
-
-        // Store
-        libraries[name] = data;
     };
 
     // Create all the promise functions
@@ -184,4 +215,4 @@ const kvAll = async () => {
     return [libraries, errors];
 };
 
-module.exports = { kvAll, kvLibraries, kvFullLibrary, kvLibrary, kvLibraryVersion };
+module.exports = { kvLibraries, kvFullLibrary, kvLibrary, kvLibraryVersion, kvCleanFetch };

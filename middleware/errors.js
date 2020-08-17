@@ -2,20 +2,11 @@
 const Sentry = require('@sentry/node');
 
 // Local imports
-const cache = require('../utils/cache');
+const notFound = require('../utils/not_found');
 
 module.exports = {
     notFound: (req, res, next) => {
-        // Set a 1 hour on this response
-        cache(res, 60 * 60);
-
-        // Send the error response
-        res.status(404).json({
-            error: true,
-            status: 404,
-            message: 'Endpoint not found',
-        });
-
+        notFound(res, 'Endpoint');
         next();
     },
     error: (err, req, res, next) => {

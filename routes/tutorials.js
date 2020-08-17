@@ -1,36 +1,26 @@
 // Local imports
-const { kvLibrary } = require('../utils/libraries');
+const { kvLibrary, kvCleanFetch } = require('../utils/libraries');
 const cache = require('../utils/cache');
 const tutorials = require('../utils/tutorials');
 const tutorial = require('../utils/tutorial');
 const filter = require('../utils/filter');
 const respond = require('../utils/respond');
 const queryArray = require('../utils/query_array');
+const notFound = require('../utils/not_found');
 
 module.exports = app => {
     // Library tutorials
     app.get('/libraries/:library/tutorials', async (req, res, next) => {
         try {
             // Get the library
-            let lib;
-            try {
-                lib = await kvLibrary(req.params.library);
-            } catch (err) {
-                if (err.status === 404) {
-                    // Set a 1 hour on this response
-                    cache(res, 60 * 60);
-
-                    // Send the error response
-                    res.status(404).json({
-                        error: true,
-                        status: 404,
-                        message: 'Library not found',
-                    });
-                    return;
-                }
-
-                return next(err);
-            }
+            const lib = await kvCleanFetch(
+                kvLibrary,
+                [ req.params.library ],
+                res,
+                next,
+                'Library',
+            );
+            if (!lib) return;
 
             // Get the tutorial data
             const results = tutorials(lib.name);
@@ -65,25 +55,14 @@ module.exports = app => {
     app.get('/libraries/:library/tutorials/:tutorial', async (req, res, next) => {
         try {
             // Get the library
-            let lib;
-            try {
-                lib = await kvLibrary(req.params.library);
-            } catch (err) {
-                if (err.status === 404) {
-                    // Set a 1 hour on this response
-                    cache(res, 60 * 60);
-
-                    // Send the error response
-                    res.status(404).json({
-                        error: true,
-                        status: 404,
-                        message: 'Library not found',
-                    });
-                    return;
-                }
-
-                return next(err);
-            }
+            const lib = await kvCleanFetch(
+                kvLibrary,
+                [ req.params.library ],
+                res,
+                next,
+                'Library',
+            );
+            if (!lib) return;
 
             // Get the tutorial, if we fail to find it, assume 404
             try {
@@ -105,15 +84,7 @@ module.exports = app => {
                 // Send the response
                 respond(req, res, response);
             } catch (_) {
-                // Set a 1 hour on this response
-                cache(res, 60 * 60);
-
-                // Send the error response
-                res.status(404).json({
-                    error: true,
-                    status: 404,
-                    message: 'Tutorial not found',
-                });
+                notFound(res, 'Tutorial');
             }
         } catch (err) {
             next(err);

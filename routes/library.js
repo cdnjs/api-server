@@ -2,7 +2,7 @@
 const path = require('path');
 
 // Local imports
-const { kvFullLibrary, kvLibrary, kvLibraryVersion } = require('../utils/libraries');
+const { kvFullLibrary, kvLibrary, kvLibraryVersion, kvCleanFetch } = require('../utils/libraries');
 const cache = require('../utils/cache');
 const tutorials = require('../utils/tutorials');
 const filter = require('../utils/filter');
@@ -22,46 +22,24 @@ module.exports = app => {
     app.get('/libraries/:library/:version', async (req, res, next) => {
         try {
             // Get the library
-            let lib;
-            try {
-                lib = await kvLibrary(req.params.library);
-            } catch (err) {
-                if (err.status === 404) {
-                    // Set a 1 hour on this response
-                    cache(res, 60 * 60);
-
-                    // Send the error response
-                    res.status(404).json({
-                        error: true,
-                        status: 404,
-                        message: 'Library not found',
-                    });
-                    return;
-                }
-
-                return next(err);
-            }
+            const lib = await kvCleanFetch(
+                kvLibrary,
+                [ req.params.library ],
+                res,
+                next,
+                'Library',
+            );
+            if (!lib) return;
 
             // Get the version
-            let version;
-            try {
-                version = await kvLibraryVersion(lib.name, req.params.version);
-            } catch (err) {
-                if (err.status === 404) {
-                    // Set a 1 hour on this response
-                    cache(res, 60 * 60);
-
-                    // Send the error response
-                    res.status(404).json({
-                        error: true,
-                        status: 404,
-                        message: 'Version not found',
-                    });
-                    return;
-                }
-
-                return next(err);
-            }
+            const version = await kvCleanFetch(
+                kvLibraryVersion,
+                [ lib.name, req.params.version ],
+                res,
+                next,
+                'Version',
+            );
+            if (!version) return;
 
             // Build the object
             const results = {
@@ -107,25 +85,14 @@ module.exports = app => {
     app.get('/libraries/:library', async (req, res, next) => {
         try {
             // Get the library
-            let lib;
-            try {
-                lib = await kvFullLibrary(req.params.library);
-            } catch (err) {
-                if (err.status === 404) {
-                    // Set a 1 hour on this response
-                    cache(res, 60 * 60);
-
-                    // Send the error response
-                    res.status(404).json({
-                        error: true,
-                        status: 404,
-                        message: 'Library not found',
-                    });
-                    return;
-                }
-
-                return next(err);
-            }
+            const lib = await kvCleanFetch(
+                kvFullLibrary,
+                [ req.params.library ],
+                res,
+                next,
+                'Library',
+            );
+            if (!lib) return;
 
             // Generate the initial filtered response (without SRI or tutorials data)
             const requestedFields = queryArray(req.query, 'fields');

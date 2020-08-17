@@ -64,7 +64,7 @@ module.exports = async () => {
     // Request logging
     app.use(morgan('combined'));
 
-    // Load the library data and set recurring job
+    // Load the update data and set recurring job
     updateLoad(app, localMode);
     updateJob(app, localMode);
 
