@@ -6,7 +6,22 @@ const gunzip = require('gunzip-maybe');
 // Local imports
 const notFound = require('./not_found');
 
+// Globals
 const kvBase = 'https://metadata.speedcdnjs.com';
+const cache = {};
+
+// Clean cache hits that are ready to be purged
+const cleanCache = () => {
+    Object.entries(cache).forEach(([key, value]) => {
+        if (Date.now() < value.purge) return;
+        if (value.fetching) return;
+
+        delete cache[key];
+    });
+};
+
+// Clean cache every 1 minute
+setInterval(cleanCache, 60 * 1000);
 
 // A custom error for a non-200 request response
 const RequestError = (url, status, body) => {
@@ -33,16 +48,47 @@ const gunzipBody = (body) => new Promise((resolve, reject) => {
 
 // Fetch a JSON endpoint, throw for a non-200 response
 const jsonFetch = async url => {
+    // Fetch the URL and gunzip the data
     const resp = await fetch(url);
     const data = await gunzipBody(resp.body);
+
+    // If not 200, throw an error
     if (resp.status !== 200) throw RequestError(url, resp.status, data);
+
+    // Parse data into object
     let json;
     try {
         json = JSON.parse(data);
     } catch (_) {
         throw RequestError(resp.status, data);
     }
+
+    // Store in cache
+    cache[url] = {
+        expires: Date.now() + 5 * 60 * 1000,
+        purge: Date.now() + 10 * 60 * 1000,
+        data: json,
+        fetching: false,
+    };
     return json;
+};
+
+// Fetch a JSON endpoint with caching, throw for a non-200 response
+const jsonCachedFetch = async url => {
+    const cacheHit = cache[url];
+
+    // If no cache data, fetch data
+    if (!cacheHit) {
+        return jsonFetch(url);
+    }
+
+    // If old data, re-fetch in background
+    if (Date.now() > cacheHit.expires && !cacheHit.fetching) {
+        cacheHit.fetching = true;
+        jsonFetch(url).then(() => {}).catch(() => {});
+    }
+
+    return cacheHit.data;
 };
 
 // Execute a set of async functions in chunks of 30
@@ -81,14 +127,14 @@ const chunkedAsync = async (asyncFunctionsMap, errorHandler) => {
 
 // Get the metadata for a library's version on KV
 const kvLibraryVersion = async (library, version) => {
-    return jsonFetch(`${kvBase}/packages/${encodeURIComponent(library)}/versions/${encodeURIComponent(version)}`);
+    return jsonCachedFetch(`${kvBase}/packages/${encodeURIComponent(library)}/versions/${encodeURIComponent(version)}`);
 };
 
 // Get the metadata for a library's versions on KV
 // This is an endpoint on the API worker that we don't currently use
 // eslint-disable-next-line no-unused-vars
 const kvLibraryVersions = async library => {
-    return jsonFetch(`${kvBase}/packages/${encodeURIComponent(library)}/versions`);
+    return jsonCachedFetch(`${kvBase}/packages/${encodeURIComponent(library)}/versions`);
 };
 
 // Get the metadata for a library's assets on KV
@@ -136,19 +182,19 @@ const kvLibraryValidate = (library, data) => {
 
 // Get the metadata for a library on KV
 const kvLibrary = async library => {
-    const data = await jsonFetch(`${kvBase}/packages/${encodeURIComponent(library)}`);
+    const data = await jsonCachedFetch(`${kvBase}/packages/${encodeURIComponent(library)}`);
     return kvLibraryValidate(library, data);
 };
 
 // Get the full metadata for a library incl. versions on KV
 const kvFullLibrary = async library => {
-    const data = await jsonFetch(`${kvBase}/packages/${encodeURIComponent(library)}/all`);
+    const data = await jsonCachedFetch(`${kvBase}/packages/${encodeURIComponent(library)}/all`);
     return kvLibraryValidate(library, data);
 };
 
 // Get a list of libraries from KV
 const kvLibraries = async () => {
-    return jsonFetch(`${kvBase}/packages`);
+    return jsonCachedFetch(`${kvBase}/packages`);
 };
 
 // Fetch data from a KV endpoint cleanly, handling 404 and error responses for Express
