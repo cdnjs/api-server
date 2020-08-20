@@ -42,23 +42,18 @@ npm run dev
 
 ## Updating Data
 
-To update your data, you can simply run `npm run build` again, which will
-update the SRI & tutorial repo clones originally created by this script, as well as fetching and
-saving the latest library data.
+To update your data, you can simply run `npm run build` again, which will update the tutorial repo
+clone originally created by this script.
 
 Once you have updated your data locally, you will need to restart the development server for it to
 pick up the new data. In production, the app includes its own update job that runs every ten
 minutes, calling the same logic as `npm run build` and then loading that data into memory.
 
-The `npm run build` script performs the following tasks in parallel, via
+The `npm run build` script performs the following task, via
 [`update/worker.js`](update/worker.js):
 
-- Cloning or updating the git-based data for SRIs & tutorials, via
+- Cloning or updating the git-based data for tutorials, via
 [`bin/cloneUpdateData.sh`](bin/cloneUpdateData.sh)
-    - Clone or update SRI data
-        - If SRI git repo already exists locally, update it from origin
-        - Else, clone latest SRI data from [cdnjs/SRIs](https://github.com/cdnjs/SRIs)
-        - Then, always, log the SRI commit that was cloned
     - Clone or update tutorials
         - If tutorials git repo already exists locally, update it from origin
         - Else, clone the latest tutorials from [cdnjs/tutorials](https://github.com/cdnjs/tutorials)
@@ -66,9 +61,6 @@ The `npm run build` script performs the following tasks in parallel, via
         - Then, always, save the last modified and created at info for the tutorials to
         [`data/tutorialsModified.txt`](data/tutorialsModified.txt) and
         [`data/tutorialsCreated.txt`](data/tutorialsCreated.txt) respectively
-- Fetch the latest library data from the KV Worker API
-    - Fetches the full data for every library on cdnjs
-    - Stores the data in a JSON file which the app can then load in
 
 ## Error Logging
 
@@ -78,7 +70,6 @@ We make use of Sentry to handle our error logging. To enable Sentry in the API s
 Alongside the normal error catching that Sentry provides in Node.js & Express, we also fire out
 custom error events for certain issues:
 
-- `Failed to load SRI data` is fired if a JSON SRI file cannot be read/parsed
 - `Missing SRI entry` is fired if there is no SRI hash for a file
 - `Bad entry in Algolia data` is fired if an entry in Algolia is falsey, or if its name is falsey
 - `Bad entry in packages data` is fired if a package is falsey, or if its `name`/`version` is falsey
