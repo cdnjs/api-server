@@ -197,6 +197,16 @@ const kvLibraries = async () => {
     return jsonCachedFetch(`${kvBase}/packages`);
 };
 
+// Get the SRI data for a library's version
+const kvLibraryVersionSri = async (library, version) => {
+    return jsonCachedFetch(`${kvBase}/packages/${encodeURIComponent(library)}/sris/${encodeURIComponent(version)}`);
+};
+
+// Get all the SRI data for an entire library
+const kvLibrarySri = async library => {
+    return jsonCachedFetch(`${kvBase}/packages/${encodeURIComponent(library)}/sris`);
+};
+
 // Fetch data from a KV endpoint cleanly, handling 404 and error responses for Express
 const kvCleanFetch = async (method, parameters, response, errorCallback, notFoundMessage) => {
     let data;
@@ -261,4 +271,8 @@ const kvAll = async () => {
     return [libraries, errors];
 };
 
-module.exports = { kvLibraries, kvFullLibrary, kvLibrary, kvLibraryVersion, kvCleanFetch };
+module.exports = {
+    kvLibraries, kvFullLibrary, kvLibrary, kvLibraryVersion,
+    kvLibrarySri, kvLibraryVersionSri,
+    kvCleanFetch,
+};

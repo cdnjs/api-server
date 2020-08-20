@@ -2,7 +2,11 @@
 const path = require('path');
 
 // Local imports
-const { kvFullLibrary, kvLibrary, kvLibraryVersion, kvCleanFetch } = require('../utils/libraries');
+const {
+    kvFullLibrary, kvLibrary, kvLibraryVersion,
+    kvLibrarySri, kvLibraryVersionSri,
+    kvCleanFetch,
+} = require('../utils/libraries');
 const cache = require('../utils/cache');
 const tutorials = require('../utils/tutorials');
 const filter = require('../utils/filter');
@@ -61,8 +65,11 @@ module.exports = app => {
 
             // Load SRI data if needed
             if ('sri' in response) {
+                // Get SRI for version
+                const latestSriData = await kvLibraryVersionSri(lib.name, req.params.version).catch(() => {});
+
                 try {
-                    response.sri = sriForVersion(lib.name, req.params.version, [...(version || [])]);
+                    response.sri = sriForVersion(lib.name, req.params.version, [...(version || [])], latestSriData);
                 } catch (_) {
                     // If we can't load, set SRI to a blank object
                     response.sri = {};
@@ -123,31 +130,48 @@ module.exports = app => {
                 response.tutorials = tutorials(req.params.library);
             }
 
-            // Load SRI for latest if needed
-            if ('sri' in response) {
-                if (lib.filename && lib.version) {
-                    try {
-                        response.sri = sriForVersion(req.params.library, lib.version, [lib.filename])[lib.filename];
-                    } catch (_) {
-                        // If we fail to load, leave it as null
-                    }
-                }
-            }
-
             // Inject SRI into assets if in results and do whitelist filtering
             if ('assets' in response) {
+                // Get all SRI data
+                const sriData = await kvLibrarySri(req.params.library).catch(() => {});
+
+                // Map assets
                 response.assets = (response.assets || []).map(asset => {
                     asset.rawFiles = [...(asset.files || [])];
                     asset.files = [...(asset.files || [])].filter(isWhitelisted);
-
-                    try {
-                        asset.sri = sriForVersion(req.params.library, asset.version, asset.rawFiles);
-                    } catch (_) {
-                        // If we can't load, set SRI to a blank object
-                        asset.sri = {};
-                    }
+                    asset.sri = sriForVersion(req.params.library, asset.version, asset.rawFiles, sriData);
                     return asset;
                 });
+            }
+
+            // Load SRI for latest if needed
+            if ('sri' in response) {
+                if (lib.filename && lib.version) {
+                    // Handle if we've already fetched SRI
+                    if ('assets' in response) {
+                        const latestVersion = response.assets.find(entry => entry.version === lib.version);
+                        if (latestVersion) {
+                            if (lib.filename in latestVersion.sri) {
+                                response.sri = latestVersion.sri[lib.filename];
+                            }
+                        }
+                    }
+
+                    // If no SRI value yet, fetch
+                    if (!response.sri) {
+                        // Get SRI for version
+                        const latestSriData = await kvLibraryVersionSri(req.params.library, lib.version).catch(() => {});
+
+                        if (latestSriData) {
+                            response.sri = sriForVersion(
+                                req.params.library,
+                                lib.version,
+                                [ lib.filename ],
+                                latestSriData,
+                            )[lib.filename] || null;
+                        }
+                    }
+                }
             }
 
             // Set a 6 hour life on this response
