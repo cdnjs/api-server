@@ -2,10 +2,10 @@
 const updateRun = require('../update/run');
 const respond = require('../utils/respond');
 
-module.exports = (app, localMode) => {
+module.exports = (app) => {
     app.get('/test-update', (req, res) => {
         respond(req, res, {});
-        updateRun(app, localMode).then(() => {});
+        updateRun(app, true).then(() => {});
     });
 
     // eslint-disable-next-line no-unused-vars

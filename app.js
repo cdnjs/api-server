@@ -81,7 +81,7 @@ module.exports = async () => {
     whitelistRoutes(app);
     statsRoutes(app);
     updateRoutes(app);
-    testingRoutes(app, localMode);
+    if (localMode) testingRoutes(app);
 
     // Redirect root the API docs
     app.get('/', (req, res) => {
