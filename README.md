@@ -27,10 +27,10 @@ npm ci
 ```
 
 Once the dependencies are installed, you need to get a copy of all the data that the API server
-requires to run. This can be done with the [`bin/initialData.sh`](bin/initialData.sh) script:
+requires to run. This can be done by running:
 
 ```shell script
-. ./bin/initialData.sh
+npm run build
 ```
 
 With the data fetched, the API server is ready to run in development mode. To start the server in
@@ -42,56 +42,25 @@ npm run dev
 
 ## Updating Data
 
-In development, you initially fetch a set of data using the
-[`bin/initialData.sh`](bin/initialData.sh) script (in production this script is run as part of the
-[`bin/runServer.sh`](bin/runServer.sh) script). This downloads the latest package JSON data, as
-well as making a local clone of the tutorials & SRI repos.
+To update your data, you can simply run `npm run build` again, which will update the tutorial repo
+clone originally created by this script.
 
-To update your data, you can run the [`bin/updateData.sh`](bin/updateData.sh) script, which will
-fetch the latest package data as well as update the SRI & tutorial repo clones. In production, this
-script is automatically run every ten minutes once deployed.
+Once you have updated your data locally, you will need to restart the development server for it to
+pick up the new data. In production, the app includes its own update job that runs every ten
+minutes, calling the same logic as `npm run build` and then loading that data into memory.
 
-The data consists of three parts that can all be updated individually if needed:
+The `npm run build` script performs the following task, via
+[`update/worker.js`](update/worker.js):
 
-### Packages
-
-Use the [`bin/packages.sh`](bin/packages.sh) script to pull down the latest packages data:
-
-```shell script
-. ./bin/packages.sh
-```
-
-### SRI
-
-The SRI data is contained within another cdnjs repository and is cloned locally by the
-[`bin/initialData.sh`](bin/initialData.sh) script. You can update this at any time by updating that
-cloned repository:
-
-```shell script
-cd data/sri
-git fetch origin
-git reset --hard origin/master
-```
-
-### Tutorials
-
-Similarly, all the tutorials for the libraries that are available via the API are also contained in
-another cdnjs repository and cloned by the [`bin/initialData.sh`](bin/initialData.sh) script.
-
-You can update that cloned repository by running:
-
-```shell script
-cd data/tutorials
-git fetch origin
-git git reset --hard origin/master
-```
-
-Once this is done, the last modified and created at data logs should also be updated, which can be
-done by running:
-
-```shell script
-. ./bin/tutorialsTimestamps.sh
-```
+- Cloning or updating the git-based data for tutorials, via
+[`bin/cloneUpdateData.sh`](bin/cloneUpdateData.sh)
+    - Clone or update tutorials
+        - If tutorials git repo already exists locally, update it from origin
+        - Else, clone the latest tutorials from [cdnjs/tutorials](https://github.com/cdnjs/tutorials)
+        - Then, always, log the tutorials commit that was cloned
+        - Then, always, save the last modified and created at info for the tutorials to
+        [`data/tutorialsModified.txt`](data/tutorialsModified.txt) and
+        [`data/tutorialsCreated.txt`](data/tutorialsCreated.txt) respectively
 
 ## Error Logging
 
@@ -101,35 +70,14 @@ We make use of Sentry to handle our error logging. To enable Sentry in the API s
 Alongside the normal error catching that Sentry provides in Node.js & Express, we also fire out
 custom error events for certain issues:
 
-- `Failed to load SRI data` is fired if a JSON SRI file cannot be read/parsed
 - `Missing SRI entry` is fired if there is no SRI hash for a file
 - `Bad entry in Algolia data` is fired if an entry in Algolia is falsey, or if its name is falsey
 - `Bad entry in packages data` is fired if a package is falsey, or if its `name`/`version` is falsey
 
 ## Production Deployment
 
-To deploy this API server to production, it should be as simple as cloning this repository and
-running the [`bin/runServer.sh`](bin/runServer.sh) file (from the root of the repository). For
-deployments to Heroku, running this script is configured with the included [`Procfile`](Procfile).
-
-The [`bin/runServer.sh`](bin/runServer.sh) script performs the following actions to deploy and
-start the app:
-
-- Update packages data
-    - Remove development packages data
-    - Download latest packages data
-- Update SRI data
-    - Remove the outdated SRI submodule data
-    - Clone latest SRI data from [cdnjs/SRIs](https://github.com/cdnjs/SRIs)
-    - Log the SRI commit that was cloned
-- Update tutorials
-    - Remove the outdated tutorials submodule data
-    - Clone the latest tutorials from [cdnjs/tutorials](https://github.com/cdnjs/tutorials)
-    - Log the tutorials commit that was cloned
-    - Save the last modified and created at info for the tutorials to
-    [`data/tutorialsModified.txt`](data/tutorialsModified.txt) and
-    [`data/tutorialsCreated.txt`](data/tutorialsCreated.txt) respectively
-- Start the API server with GC enabled and additional memory allocated
+To deploy this API server to production, it should be as simple as cloning this repository, running
+`npm run build` to fetch the initial data for the server and then running `npm run start`.
 
 To change the port that the app binds to, set the `PORT` environment var when running the script.
 For our Heroku deployment, this is set automatically by Heroku.
@@ -151,6 +99,9 @@ You can also run the tests with their own API server running in development mode
 ```shell script
 npm run test:with-server
 ```
+
+Note, as this starts an instance of the API server, data for it must be available. This can be done
+by running `npm run build`, before starting the server/tests.
 
 (This is what the CI in this repository uses for every commit).
 

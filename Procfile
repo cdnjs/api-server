@@ -1,1 +1,1 @@
-web: ./bin/runServer.sh
+web: npm run start

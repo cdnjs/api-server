@@ -243,7 +243,7 @@ describe('/libraries/:library', () => {
             const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
-                fetch(test).then(res => {
+                fetch(test, 5000).then(res => {
                     response = res;
                     done();
                 });
@@ -327,7 +327,7 @@ describe('/libraries/:library', () => {
             const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
-                fetch(test).then(res => {
+                fetch(test, 5000).then(res => {
                     response = res;
                     done();
                 });
@@ -360,7 +360,7 @@ describe('/libraries/:library', () => {
                 const test = () => request().get(path);
                 let response;
                 before('fetch endpoint', done => {
-                    fetch(test).then(res => {
+                    fetch(test, 5000).then(res => {
                         response = res;
                         done();
                     });
@@ -393,7 +393,7 @@ describe('/libraries/:library', () => {
                 const test = () => request().get(path);
                 let response;
                 before('fetch endpoint', done => {
-                    fetch(test).then(res => {
+                    fetch(test, 5000).then(res => {
                         response = res;
                         done();
                     });
@@ -427,7 +427,7 @@ describe('/libraries/:library', () => {
             const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
-                fetch(test).then(res => {
+                fetch(test, 5000).then(res => {
                     response = res;
                     done();
                 });
