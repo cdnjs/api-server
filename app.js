@@ -5,7 +5,6 @@ const Sentry = require('@sentry/node');
 const morgan = require('morgan');
 
 // Local imports
-const cache = require('./utils/cache');
 const cors = require('./utils/cors');
 const updateLoad = require('./update/load');
 const updateJob = require('./update/job');
@@ -21,6 +20,7 @@ const libraryRoutes = require('./routes/library');
 const whitelistRoutes = require('./routes/whitelist');
 const statsRoutes = require('./routes/stats');
 const updateRoutes = require('./routes/update');
+const indexRoutes = require('./routes/index');
 const testingRoutes = require('./routes/testing');
 
 // App constants
@@ -81,17 +81,8 @@ module.exports = async () => {
     whitelistRoutes(app);
     statsRoutes(app);
     updateRoutes(app);
+    indexRoutes(app);
     if (localMode) testingRoutes(app);
-
-    // Redirect root the API docs
-    app.get('/', (req, res) => {
-        // Set a 355 day (same as CDN) life on this response
-        // This is also immutable
-        cache(res, 355 * 24 * 60 * 60, true);
-
-        // Redirect to the API docs
-        res.redirect(301, 'https://cdnjs.com/api');
-    });
 
     // Catch-all errors
     if (process.env.SENTRY_DSN) app.use(Sentry.Handlers.errorHandler());
