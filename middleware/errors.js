@@ -6,7 +6,7 @@ const notFound = require('../utils/not_found');
 
 module.exports = {
     notFound: (req, res, next) => {
-        notFound(res, 'Endpoint');
+        notFound(req, res, 'Endpoint');
         next();
     },
     error: (err, req, res, next) => {

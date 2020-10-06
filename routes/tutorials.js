@@ -16,6 +16,7 @@ module.exports = app => {
             const lib = await kvCleanFetch(
                 kvLibrary,
                 [ req.params.library ],
+                req,
                 res,
                 next,
                 'Library',
@@ -58,6 +59,7 @@ module.exports = app => {
             const lib = await kvCleanFetch(
                 kvLibrary,
                 [ req.params.library ],
+                req,
                 res,
                 next,
                 'Library',
@@ -84,7 +86,7 @@ module.exports = app => {
                 // Send the response
                 respond(req, res, response);
             } catch (_) {
-                notFound(res, 'Tutorial');
+                notFound(req, res, 'Tutorial');
             }
         } catch (err) {
             next(err);

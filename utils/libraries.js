@@ -208,13 +208,13 @@ const kvLibrarySri = async library => {
 };
 
 // Fetch data from a KV endpoint cleanly, handling 404 and error responses for Express
-const kvCleanFetch = async (method, parameters, response, errorCallback, notFoundMessage) => {
+const kvCleanFetch = async (method, parameters, request, response, errorCallback, notFoundMessage) => {
     let data;
     try {
         data = await method(...parameters);
     } catch (err) {
         if (err.status === 404) {
-            notFound(response, notFoundMessage);
+            notFound(request, response, notFoundMessage);
             return;
         }
 
