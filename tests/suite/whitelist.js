@@ -3,6 +3,7 @@ const { expect } = require('chai');
 const request = require('../base');
 const fetch = require('../fetch');
 const testCors = require('../cors');
+const testHuman = require('../human');
 
 describe('/whitelist', () => {
     describe('No query params', () => {
@@ -54,6 +55,24 @@ describe('/whitelist', () => {
                 done();
             });
         });
+    });
+
+    describe('Requesting human response (?output=human)', () => {
+        const path = '/whitelist?output=human';
+        const test = () => request().get(path);
+        let response;
+        before('fetch endpoint', done => {
+            fetch(test, 5000).then(res => {
+                response = res;
+                done();
+            });
+        });
+        testCors(path, () => response);
+        it('returns the correct Cache headers', done => {
+            expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
+            done();
+        });
+        testHuman(() => response);
     });
 
     describe('Requesting a field (?fields=extensions)', () => {
