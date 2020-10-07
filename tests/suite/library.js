@@ -3,6 +3,7 @@ const { expect } = require('chai');
 const request = require('../base');
 const fetch = require('../fetch');
 const testCors = require('../cors');
+const testHuman = require('../human');
 
 describe('/libraries/:library/:version', () => {
     describe('Requesting a valid library (:library = backbone.js)', () => {
@@ -41,6 +42,24 @@ describe('/libraries/:library/:version', () => {
                         done();
                     });
                 });
+            });
+
+            describe('Requesting human response (?output=human)', () => {
+                const path = '/libraries/backbone.js/1.1.0?output=human';
+                const test = () => request().get(path);
+                let response;
+                before('fetch endpoint', done => {
+                    fetch(test, 5000).then(res => {
+                        response = res;
+                        done();
+                    });
+                });
+                testCors(path, () => response);
+                it('returns the correct Cache headers', done => {
+                    expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
+                    done();
+                });
+                testHuman(() => response);
             });
 
             describe('Requesting a field (?fields=files)', () => {
@@ -205,12 +224,30 @@ describe('/libraries/:library/:version', () => {
                     done();
                 });
             });
+
+            describe('Requesting human response (?output=human)', () => {
+                const path = '/libraries/backbone.js/this-version-doesnt-exist?output=human';
+                const test = () => request().get(path);
+                let response;
+                before('fetch endpoint', done => {
+                    fetch(test, 5000).then(res => {
+                        response = res;
+                        done();
+                    });
+                });
+                testCors(path, () => response);
+                it('returns the correct Cache headers', done => {
+                    expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
+                    done();
+                });
+                testHuman(() => response);
+            });
         });
     });
 
-    describe('Requesting a non-existent library (:library = this-library-doesnt-exist)', () => {
+    describe('Requesting a non-existent library (:library = this-library-doesnt-exist, :version = this-version-doesnt-exist)', () => {
         describe('No query params', () => {
-            const path = '/libraries/this-library-doesnt-exist';
+            const path = '/libraries/this-library-doesnt-exist/this-version-doesnt-exist';
             const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
@@ -232,6 +269,24 @@ describe('/libraries/:library/:version', () => {
                 expect(response.body).to.have.property('message', 'Library not found');
                 done();
             });
+        });
+
+        describe('Requesting human response (?output=human)', () => {
+            const path = '/libraries/this-library-doesnt-exist/this-version-doesnt-exist?output=human';
+            const test = () => request().get(path);
+            let response;
+            before('fetch endpoint', done => {
+                fetch(test, 5000).then(res => {
+                    response = res;
+                    done();
+                });
+            });
+            testCors(path, () => response);
+            it('returns the correct Cache headers', done => {
+                expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
+                done();
+            });
+            testHuman(() => response);
         });
     });
 });
@@ -320,6 +375,24 @@ describe('/libraries/:library', () => {
                     });
                 });
             });
+        });
+
+        describe('Requesting human response (?output=human)', () => {
+            const path = '/libraries/backbone.js?output=human';
+            const test = () => request().get(path);
+            let response;
+            before('fetch endpoint', done => {
+                fetch(test, 5000).then(res => {
+                    response = res;
+                    done();
+                });
+            });
+            testCors(path, () => response);
+            it('returns the correct Cache headers', done => {
+                expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
+                done();
+            });
+            testHuman(() => response);
         });
 
         describe('Requesting a field (?fields=assets)', () => {
@@ -490,6 +563,24 @@ describe('/libraries/:library', () => {
                 expect(response.body).to.have.property('message', 'Library not found');
                 done();
             });
+        });
+
+        describe('Requesting human response (?output=human)', () => {
+            const path = '/libraries/this-library-doesnt-exist?output=human';
+            const test = () => request().get(path);
+            let response;
+            before('fetch endpoint', done => {
+                fetch(test, 5000).then(res => {
+                    response = res;
+                    done();
+                });
+            });
+            testCors(path, () => response);
+            it('returns the correct Cache headers', done => {
+                expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
+                done();
+            });
+            testHuman(() => response);
         });
     });
 });

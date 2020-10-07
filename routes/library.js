@@ -29,6 +29,7 @@ module.exports = app => {
             const lib = await kvCleanFetch(
                 kvLibrary,
                 [ req.params.library ],
+                req,
                 res,
                 next,
                 'Library',
@@ -39,6 +40,7 @@ module.exports = app => {
             const version = await kvCleanFetch(
                 kvLibraryVersion,
                 [ lib.name, req.params.version ],
+                req,
                 res,
                 next,
                 'Version',
@@ -95,6 +97,7 @@ module.exports = app => {
             const lib = await kvCleanFetch(
                 kvFullLibrary,
                 [ req.params.library ],
+                req,
                 res,
                 next,
                 'Library',

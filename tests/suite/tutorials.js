@@ -3,6 +3,7 @@ const { expect } = require('chai');
 const request = require('../base');
 const fetch = require('../fetch');
 const testCors = require('../cors');
+const testHuman = require('../human');
 
 describe('/libraries/:library/tutorials', () => {
     describe('Requesting for a valid library (:library = backbone.js)', () => {
@@ -44,6 +45,24 @@ describe('/libraries/:library/tutorials', () => {
                     done();
                 });
             });
+        });
+
+        describe('Requesting human response (?output=human)', () => {
+            const path = '/libraries/backbone.js/tutorials?output=human';
+            const test = () => request().get(path);
+            let response;
+            before('fetch endpoint', done => {
+                fetch(test, 5000).then(res => {
+                    response = res;
+                    done();
+                });
+            });
+            testCors(path, () => response);
+            it('returns the correct Cache headers', done => {
+                expect(response).to.have.header('Cache-Control', 'public, max-age=86400'); // 24 hours
+                done();
+            });
+            testHuman(() => response);
         });
 
         describe('Requesting a field (?fields=name)', () => {
@@ -237,6 +256,24 @@ describe('/libraries/:library/tutorials', () => {
                 done();
             });
         });
+
+        describe('Requesting human response (?output=human)', () => {
+            const path = '/libraries/this-library-doesnt-exist/tutorials?output=human';
+            const test = () => request().get(path);
+            let response;
+            before('fetch endpoint', done => {
+                fetch(test, 5000).then(res => {
+                    response = res;
+                    done();
+                });
+            });
+            testCors(path, () => response);
+            it('returns the correct Cache headers', done => {
+                expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
+                done();
+            });
+            testHuman(() => response);
+        });
     });
 });
 
@@ -276,6 +313,24 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
                         done();
                     });
                 });
+            });
+
+            describe('Requesting human response (?output=human)', () => {
+                const path = '/libraries/backbone.js/tutorials/what-is-a-view?output=human';
+                const test = () => request().get(path);
+                let response;
+                before('fetch endpoint', done => {
+                    fetch(test, 5000).then(res => {
+                        response = res;
+                        done();
+                    });
+                });
+                testCors(path, () => response);
+                it('returns the correct Cache headers', done => {
+                    expect(response).to.have.header('Cache-Control', 'public, max-age=1209600'); // 2 weeks
+                    done();
+                });
+                testHuman(() => response);
             });
 
             describe('Requesting a field (?fields=name)', () => {
@@ -440,6 +495,24 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
                     done();
                 });
             });
+
+            describe('Requesting human response (?output=human)', () => {
+                const path = '/libraries/backbone.js/tutorials/this-tutorial-doesnt-exist?output=human';
+                const test = () => request().get(path);
+                let response;
+                before('fetch endpoint', done => {
+                    fetch(test, 5000).then(res => {
+                        response = res;
+                        done();
+                    });
+                });
+                testCors(path, () => response);
+                it('returns the correct Cache headers', done => {
+                    expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
+                    done();
+                });
+                testHuman(() => response);
+            });
         });
     });
 
@@ -468,6 +541,24 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
                     expect(response.body).to.have.property('message', 'Library not found');
                     done();
                 });
+            });
+
+            describe('Requesting human response (?output=human)', () => {
+                const path = '/libraries/this-library-doesnt-exist/tutorials/this-tutorial-doesnt-exist?output=human';
+                const test = () => request().get(path);
+                let response;
+                before('fetch endpoint', done => {
+                    fetch(test, 5000).then(res => {
+                        response = res;
+                        done();
+                    });
+                });
+                testCors(path, () => response);
+                it('returns the correct Cache headers', done => {
+                    expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
+                    done();
+                });
+                testHuman(() => response);
             });
         });
     });
