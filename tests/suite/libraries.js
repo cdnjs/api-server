@@ -328,8 +328,8 @@ describe('/libraries', () => {
         // Testing of the searching functionality should be done by hand
         // TODO: Make this set of tests more robust
 
-        describe('Providing a short query (?search=hi-sven)', () => {
-            const path = '/libraries?search=hi-sven';
+        describe('Providing a short query (?search=twitter-bootstrap)', () => {
+            const path = '/libraries?search=twitter-bootstrap';
             const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
@@ -356,8 +356,8 @@ describe('/libraries', () => {
                 done();
             });
             describe('Library object', () => {
-                it('returns the \'hi-sven\' package as the first object', done => {
-                    expect(response.body.results[0]).to.have.property('name', 'hi-sven');
+                it('returns the \'twitter-bootstrap\' package as the first object', done => {
+                    expect(response.body.results[0]).to.have.property('name', 'twitter-bootstrap');
                     done();
                 });
                 it('is an object with \'name\' and \'latest\' properties', done => {
