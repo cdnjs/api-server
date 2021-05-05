@@ -7,7 +7,7 @@ const gunzip = require('gunzip-maybe');
 const notFound = require('./not_found');
 
 // Globals
-const kvBase = 'https://metadata.speedcdnjs.com';
+const kvBase = process.env.METADATA_BASE || 'https://metadata.speedcdnjs.com';
 const cache = {};
 
 // Clean cache hits that are ready to be purged
