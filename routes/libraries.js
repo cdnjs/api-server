@@ -10,8 +10,8 @@ const queryArray = require('../utils/query_array');
 
 // App constants
 const index = algoliasearch('2QWLVLXZB6', 'e16bd99a5c7a8fccae13ad40762eec3c').initIndex('libraries');
-const validSearchFields = ['name', 'alternativeNames', 'github.​repo', 'description', 'keywords', 'filename',
-    'repositories.​url', 'github.​user', 'maintainers.​name'];
+const validSearchFields = ['name', 'alternativeNames', 'github.repo', 'description', 'keywords', 'filename',
+    'repositories.url', 'github.user', 'maintainers.name'];
 const maxQueryLength = 512;
 
 // Search the algolia index in browser mode

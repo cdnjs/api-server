@@ -64,12 +64,14 @@ const jsonFetch = async url => {
     }
 
     // Store in cache
-    cache[url] = {
-        expires: Date.now() + 5 * 60 * 1000,
-        purge: Date.now() + 10 * 60 * 1000,
-        data: json,
-        fetching: false,
-    };
+    if (process.env.DISABLE_CACHING !== '1') {
+        cache[url] = {
+            expires: Date.now() + 5 * 60 * 1000,
+            purge: Date.now() + 10 * 60 * 1000,
+            data: json,
+            fetching: false,
+        };
+    }
     return json;
 };
 
