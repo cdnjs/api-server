@@ -329,8 +329,8 @@ describe('/libraries', () => {
         // Testing of the searching functionality should be done by hand
         // TODO: Make this set of tests more robust
 
-        describe('Providing a short query (?search=twitter-bootstrap)', () => {
-            const path = '/libraries?search=twitter-bootstrap';
+        describe('Providing a short query (?search=font-awesome)', () => {
+            const path = '/libraries?search=font-awesome';
             const test = () => request().get(path);
             let response;
             before('fetch endpoint', done => {
@@ -358,7 +358,7 @@ describe('/libraries', () => {
             });
             describe('Library object', () => {
                 it('returns the \'twitter-bootstrap\' package as the first object', done => {
-                    expect(response.body.results[0]).to.have.property('name', 'twitter-bootstrap');
+                    expect(response.body.results[0]).to.have.property('name', 'font-awesome');
                     done();
                 });
                 it('is an object with \'name\' and \'latest\' properties', done => {
@@ -413,7 +413,6 @@ describe('/libraries', () => {
         // This set of tests is incredibly fragile
         // Testing of the searching functionality should be done by hand
         // TODO: Make this set of tests more robust
-
 
         describe('Providing search fields that are valid', () => {
             describe('through comma-separated string (?search=backbone.js&search_fields=keywords,github.user)', () => {
