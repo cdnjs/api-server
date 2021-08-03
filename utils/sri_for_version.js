@@ -8,7 +8,7 @@ module.exports = (library, version, files, sriData) => {
         const fullFile = `${library}/${version}/${file}`;
 
         // If we have an SRI entry for this, add it
-        if (fullFile in sriData) {
+        if (sriData && fullFile in sriData) {
             sri[file] = sriData[fullFile];
             continue;
         }
