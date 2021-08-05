@@ -59,7 +59,7 @@ const main = () => {
         }
 
         // Run the mocha tests if the server started
-        if (!exiting && `${data}`.trim().startsWith('Listening on ')) {
+        if (!exiting && `${data}`.trim().indexOf(`Listening on http://0.0.0.0:${Number(process.env.PORT || 5050)}`) !== -1) {
             clearTimeout(timeout);
             mocha(server);
         }
