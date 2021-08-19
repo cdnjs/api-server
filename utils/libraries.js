@@ -60,7 +60,7 @@ const jsonFetch = async url => {
     try {
         json = JSON.parse(data);
     } catch (_) {
-        throw RequestError(resp.status, data);
+        throw RequestError(url, resp.status, data);
     }
 
     // Store in cache
@@ -129,7 +129,15 @@ const chunkedAsync = async (asyncFunctionsMap, errorHandler) => {
 
 // Get the metadata for a library's version on KV
 const kvLibraryVersion = async (library, version) => {
-    return jsonCachedFetch(`${kvBase}/packages/${encodeURIComponent(library)}/versions/${encodeURIComponent(version)}`);
+    // Get the data
+    const url = `${kvBase}/packages/${encodeURIComponent(library)}/versions/${encodeURIComponent(version)}`;
+    const data = await jsonCachedFetch(url);
+
+    // Treat empty as 404
+    if (!data || !data.length) throw RequestError(url, 404, data);
+
+    // Otherwise, return the data
+    return data;
 };
 
 // Validate the data we get from KV for a library
