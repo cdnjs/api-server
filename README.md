@@ -80,10 +80,9 @@ To deploy this API server to production, it should be as simple as cloning this 
 `npm run build` to fetch the initial data for the server and then running `npm run start`.
 
 To change the port that the app binds to, set the `PORT` environment var when running the script.
-For our Heroku deployment, this is set automatically by Heroku.
 
 Removing submodules and then cloning the respective repositories is used to update data for
-production deployments due to how Heroku sets up the app, with the final app directory not being an
+production deployments due to how some PaaS hosts deploy, with the final app directory not being an
 initialised Git repo.
 
 ## Testing and Linting
