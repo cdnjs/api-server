@@ -60,7 +60,7 @@ const jsonFetch = async url => {
     try {
         json = JSON.parse(data);
     } catch (_) {
-        throw RequestError(resp.status, data);
+        throw RequestError(url, resp.status, data);
     }
 
     // Store in cache
@@ -129,31 +129,15 @@ const chunkedAsync = async (asyncFunctionsMap, errorHandler) => {
 
 // Get the metadata for a library's version on KV
 const kvLibraryVersion = async (library, version) => {
-    return jsonCachedFetch(`${kvBase}/packages/${encodeURIComponent(library)}/versions/${encodeURIComponent(version)}`);
-};
+    // Get the data
+    const url = `${kvBase}/packages/${encodeURIComponent(library)}/versions/${encodeURIComponent(version)}`;
+    const data = await jsonCachedFetch(url);
 
-// Get the metadata for a library's versions on KV
-// This is an endpoint on the API worker that we don't currently use
-// eslint-disable-next-line no-unused-vars
-const kvLibraryVersions = async library => {
-    return jsonCachedFetch(`${kvBase}/packages/${encodeURIComponent(library)}/versions`);
-};
+    // Treat empty as 404
+    if (!data || !data.length) throw RequestError(url, 404, data);
 
-// Get the metadata for a library's assets on KV
-// This is an endpoint on the API worker that we don't currently use
-// eslint-disable-next-line no-unused-vars
-const kvLibraryAssets = async (library, versions = undefined) => {
-    versions = versions || await kvLibraryVersions(library);
-
-    // Create all the promise functions
-    const versionPromises = versions.reduce((prev, version) => {
-        prev[version] = () => kvLibraryVersion(library, version);
-        return prev;
-    }, {});
-
-    // Get the data and process it
-    const versionData = await chunkedAsync(versionPromises, (_, err) => { throw err; });
-    return Object.entries(versionData).map(([version, files]) => ({ version, files }));
+    // Otherwise, return the data
+    return data;
 };
 
 // Validate the data we get from KV for a library
