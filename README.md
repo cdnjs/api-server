@@ -26,41 +26,12 @@ You can install the Node dependencies following this lock file by running:
 npm ci
 ```
 
-Once the dependencies are installed, you need to get a copy of all the data that the API server
-requires to run. This can be done by running:
-
-```shell script
-npm run build
-```
-
-With the data fetched, the API server is ready to run in development mode. To start the server in
+Once the dependencies are installed, the API server is ready to run in development mode. To start the server in
 development mode, run:
 
 ```shell script
 npm run dev
 ```
-
-## Updating Data
-
-To update your data, you can simply run `npm run build` again, which will update the tutorial repo
-clone originally created by this script.
-
-Once you have updated your data locally, you will need to restart the development server for it to
-pick up the new data. In production, the app includes its own update job that runs every ten
-minutes, calling the same logic as `npm run build` and then loading that data into memory.
-
-The `npm run build` script performs the following task, via
-[`update/worker.js`](update/worker.js):
-
-- Cloning or updating the git-based data for tutorials, via
-[`bin/cloneUpdateData.sh`](bin/cloneUpdateData.sh)
-    - Clone or update tutorials
-        - If tutorials git repo already exists locally, update it from origin
-        - Else, clone the latest tutorials from [cdnjs/tutorials](https://github.com/cdnjs/tutorials)
-        - Then, always, log the tutorials commit that was cloned
-        - Then, always, save the last modified and created at info for the tutorials to
-        [`data/tutorialsModified.txt`](data/tutorialsModified.txt) and
-        [`data/tutorialsCreated.txt`](data/tutorialsCreated.txt) respectively
 
 ## Error Logging
 
@@ -76,14 +47,10 @@ custom error events for certain issues:
 
 ## Production Deployment
 
-To deploy this API server to production, it should be as simple as cloning this repository, running
-`npm run build` to fetch the initial data for the server and then running `npm run start`.
+To deploy this API server to production, it should be as simple as cloning this repository, checking dependencies are
+installed for the server and then running `npm run start`.
 
 To change the port that the app binds to, set the `PORT` environment var when running the script.
-
-Removing submodules and then cloning the respective repositories is used to update data for
-production deployments due to how some PaaS hosts deploy, with the final app directory not being an
-initialised Git repo.
 
 ## Testing and Linting
 
@@ -98,9 +65,6 @@ You can also run the tests with their own API server running in development mode
 ```shell script
 npm run test:with-server
 ```
-
-Note, as this starts an instance of the API server, data for it must be available. This can be done
-by running `npm run build`, before starting the server/tests.
 
 (This is what the CI in this repository uses for every commit).
 

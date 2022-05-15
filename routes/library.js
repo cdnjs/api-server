@@ -8,7 +8,6 @@ const {
     kvCleanFetch,
 } = require('../utils/libraries');
 const cache = require('../utils/cache');
-const tutorials = require('../utils/tutorials');
 const filter = require('../utils/filter');
 const respond = require('../utils/respond');
 const files = require('../utils/files');
@@ -128,9 +127,9 @@ module.exports = app => {
                 response.versions = lib.assets.map(asset => asset.version);
             }
 
-            // Load tutorials if we need them
+            // Tutorials are deprecated, so return an empty array if requested
             if ('tutorials' in response) {
-                response.tutorials = tutorials(req.params.library);
+                response.tutorials = [];
             }
 
             // Inject SRI into assets if in results and do whitelist filtering

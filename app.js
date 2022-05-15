@@ -6,8 +6,6 @@ const morgan = require('morgan');
 
 // Local imports
 const cors = require('./utils/cors');
-const updateLoad = require('./update/load');
-const updateJob = require('./update/job');
 
 // Middleware imports
 const timingMiddleware = require('./middleware/timing');
@@ -19,7 +17,6 @@ const tutorialsRoutes = require('./routes/tutorials');
 const libraryRoutes = require('./routes/library');
 const whitelistRoutes = require('./routes/whitelist');
 const statsRoutes = require('./routes/stats');
-const updateRoutes = require('./routes/update');
 const indexRoutes = require('./routes/index');
 const testingRoutes = require('./routes/testing');
 
@@ -64,10 +61,6 @@ module.exports = async () => {
     // Request logging
     app.use(morgan('combined'));
 
-    // Load the update data and set recurring job
-    updateLoad(app, localMode);
-    updateJob(app, localMode);
-
     // Set up cors headers
     cors(app);
 
@@ -80,7 +73,6 @@ module.exports = async () => {
     libraryRoutes(app);
     whitelistRoutes(app);
     statsRoutes(app);
-    updateRoutes(app);
     indexRoutes(app);
     if (localMode) testingRoutes(app);
 
