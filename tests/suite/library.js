@@ -362,15 +362,8 @@ describe('/libraries/:library', () => {
                     });
                 });
                 describe('Tutorials array', () => {
-                    it('has \'id\', \'modified\', \'name\' and \'content\' properties for each entry', done => {
-                        // and any properties from the tutorial metadata
-                        for (const result of response.body.tutorials) {
-                            expect(result).to.have.property('id').that.is.a('string');
-                            expect(result).to.have.property('modified').that.is.a('string');
-                            expect(result.modified).to.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/);
-                            expect(result).to.have.property('name').that.is.a('string');
-                            expect(result).to.have.property('content').that.is.a('string');
-                        }
+                    it('is empty', done => {
+                        expect(response.body.tutorials).to.be.empty;
                         done();
                     });
                 });
