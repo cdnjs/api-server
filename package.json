@@ -10,14 +10,13 @@
     "scripts": {
         "test": "npm run test:echint && npm run test:eslint && npm run test:mocha",
         "test:with-server": "npm run test:echint && npm run test:eslint && npm run test:mocha:with-server",
-        "test:echint": "echint -i \"data/**/*\" -v",
+        "test:echint": "echint -v",
         "test:eslint": "eslint \"**/*.js\"",
         "test:eslint:fix": "npm run test:eslint -- --fix",
         "test:mocha": "mocha tests/suite",
         "test:mocha:with-server": "node tests/run.js",
         "dev": "LOCAL=true node index.js",
-        "start": "node --expose-gc --max-old-space-size=2048 index.js",
-        "build": "node update/worker.js"
+        "start": "node --expose-gc --max-old-space-size=2048 index.js"
     },
     "repository": {
         "type": "git",
