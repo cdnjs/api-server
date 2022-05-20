@@ -12,6 +12,16 @@ module.exports = app => {
         res.redirect(301, 'https://cdnjs.com/api');
     });
 
+    // Respond that the API is up
+    app.get('/health', (req, res) => {
+        // Don't cache health, ensure its always live
+        cache(res, -1);
+
+        // Respond
+        res.type('text/plain');
+        res.send('OK');
+    });
+
     // Don't ever index anything on the API
     app.get('/robots.txt', (req, res) => {
         // Set a 355 day (same as CDN) life on this response
