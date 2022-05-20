@@ -27,6 +27,31 @@ describe('/', () => {
     });
 });
 
+describe('/health', () => {
+    const path = '/health';
+    const test = () => request().get(path);
+    let response;
+    before('fetch endpoint', done => {
+        fetch(test).then(res => {
+            response = res;
+            done();
+        });
+    });
+    testCors(path, () => response);
+    it('returns the correct Cache headers', done => {
+        expect(response).to.have.header('Expires', '0');
+        expect(response).to.have.header('Pragma', 'no-cache');
+        expect(response).to.have.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+        done();
+    });
+    it('returns on OK message with a 200 status code', done => {
+        expect(response).to.have.status(200);
+        expect(response).to.be.text;
+        expect(response.text).to.eq('OK');
+        done();
+    });
+});
+
 describe('/robots.txt', () => {
     const path = '/robots.txt';
     const test = () => request().get(path);
