@@ -29,7 +29,7 @@ describe('/', () => {
 
 describe('/health', () => {
     const path = '/health';
-    const test = () => request().get(path).redirects(0);
+    const test = () => request().get(path);
     let response;
     before('fetch endpoint', done => {
         fetch(test).then(res => {
