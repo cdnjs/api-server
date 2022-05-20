@@ -4,9 +4,6 @@
     "description": "The new API server for api.cdnjs.com",
     "private": true,
     "main": "index.js",
-    "engines": {
-        "node": "12.16.2"
-    },
     "scripts": {
         "test": "npm run test:echint && npm run test:eslint && npm run test:mocha",
         "test:with-server": "npm run test:echint && npm run test:eslint && npm run test:mocha:with-server",
