@@ -1,7 +1,14 @@
-name = "api-server"
+name = "cdnjs-api-worker"
 main = "src/index.js"
 compatibility_date = "2022-05-20"
 
 [vars]
+DISABLE_CACHING = false
+METADATA_BASE = ""
+
+[env.staging]
+route = "api-worker-staging.cdnjs.dev/*"
+
+[env.staging.vars]
 DISABLE_CACHING = false
 METADATA_BASE = ""
