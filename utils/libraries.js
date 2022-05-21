@@ -6,93 +6,6 @@ const gunzip = require('gunzip-maybe');
 // Local imports
 const notFound = require('./not_found');
 
-// Globals
-const kvBase = process.env.METADATA_BASE || 'https://metadata.speedcdnjs.com';
-const cache = {};
-
-// Clean cache hits that are ready to be purged
-const cleanCache = () => {
-    Object.entries(cache).forEach(([key, value]) => {
-        if (Date.now() < value.purge) return;
-        if (value.fetching) return;
-
-        delete cache[key];
-    });
-};
-
-// Clean cache every 1 minute
-setInterval(cleanCache, 60 * 1000);
-
-// A custom error for a non-200 request response
-const RequestError = (url, status, body) => {
-    const err = new Error('Request failed');
-    err.url = url;
-    err.status = status;
-    err.body = body;
-    return err;
-};
-
-// We're always fetching JSON, but sometimes it's gzipped
-const gunzipBody = (body) => new Promise((resolve, reject) => {
-    const gunzipHandler = gunzip();
-    body.pipe(gunzipHandler);
-    let string = '';
-    gunzipHandler.on('data', (data) => {
-        string += data.toString();
-    }).on('end', () => {
-        resolve(string);
-    }).on('error', (err) => {
-        reject(err);
-    });
-});
-
-// Fetch a JSON endpoint, throw for a non-200 response
-const jsonFetch = async url => {
-    // Fetch the URL and gunzip the data
-    const resp = await fetch(url);
-    const data = await gunzipBody(resp.body);
-
-    // If not 200, throw an error
-    if (resp.status !== 200) throw RequestError(url, resp.status, data);
-
-    // Parse data into object
-    let json;
-    try {
-        json = JSON.parse(data);
-    } catch (_) {
-        throw RequestError(url, resp.status, data);
-    }
-
-    // Store in cache
-    if (process.env.DISABLE_CACHING !== '1') {
-        cache[url] = {
-            expires: Date.now() + 5 * 60 * 1000,
-            purge: Date.now() + 10 * 60 * 1000,
-            data: json,
-            fetching: false,
-        };
-    }
-    return json;
-};
-
-// Fetch a JSON endpoint with caching, throw for a non-200 response
-const jsonCachedFetch = async url => {
-    const cacheHit = cache[url];
-
-    // If no cache data, fetch data
-    if (!cacheHit) {
-        return jsonFetch(url);
-    }
-
-    // If old data, re-fetch in background
-    if (Date.now() > cacheHit.expires && !cacheHit.fetching) {
-        cacheHit.fetching = true;
-        jsonFetch(url).then(() => {}).catch(() => {});
-    }
-
-    return cacheHit.data;
-};
-
 // Execute a set of async functions in chunks of 30
 const chunkedAsync = async (asyncFunctionsMap, errorHandler) => {
     const failed = [];
@@ -176,11 +89,6 @@ const kvLibrary = async library => {
 const kvFullLibrary = async library => {
     const data = await jsonCachedFetch(`${kvBase}/packages/${encodeURIComponent(library)}/all`);
     return kvLibraryValidate(library, data);
-};
-
-// Get a list of libraries from KV
-const kvLibraries = async () => {
-    return jsonCachedFetch(`${kvBase}/packages`);
 };
 
 // Get the SRI data for a library's version

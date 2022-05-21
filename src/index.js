@@ -5,6 +5,7 @@ import corsOptions from './utils/cors.js';
 
 // Import all the routes
 import indexRoutes from './routes/index.js';
+import statsRoutes from './routes/stats.js';
 import errorRoutes from './routes/errors.js';
 
 // Create the base app
@@ -14,6 +15,7 @@ app.use('*', cors(corsOptions));
 
 // Load the routes
 indexRoutes(app);
+statsRoutes(app);
 errorRoutes(app);
 
 // Let's go!
