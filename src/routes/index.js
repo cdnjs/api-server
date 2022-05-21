@@ -1,5 +1,10 @@
 import cache from '../utils/cache';
 
+/**
+ * Register core routes.
+ *
+ * @param {import('hono').Hono} app App instance.
+ */
 export default app => {
     // Redirect root the API docs
     app.get('/', ctx => {

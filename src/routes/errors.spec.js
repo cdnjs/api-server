@@ -1,0 +1,52 @@
+import { describe, it, before } from 'mocha';
+import chai, { expect } from 'chai';
+import chaiHttp from 'chai-http';
+import request from '../utils/spec/request.js';
+import testCors from '../utils/spec/cors.js'
+import testHuman from '../utils/spec/human.js'
+
+chai.use(chaiHttp);
+
+describe('/this-route-doesnt-exist', () => {
+    describe('No query params', () => {
+        // Define endpoint info
+        const path = '/this-route-doesnt-exist';
+        const fetch = () => request(path);
+
+        // Fetch the endpoint
+        let response;
+        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+        // Test the endpoint
+        testCors(path, () => response);
+        it('returns the correct Cache headers', () => {
+            expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
+        });
+        it('returns a JSON body that is a valid error response', () => {
+            expect(response).to.be.json;
+            expect(response.body).to.be.an('object');
+            expect(response.body).to.have.property('error', true);
+            expect(response.body).to.have.property('status', 404);
+            expect(response.body).to.have.property('message', 'Endpoint not found');
+        });
+    });
+
+    describe('Requesting human response (?output=human)', () => {
+        // Define endpoint info
+        const path = '/this-route-doesnt-exist?output=human';
+        const fetch = () => request(path);
+
+        // Fetch the endpoint
+        let response;
+        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+        // Test the endpoint
+        testCors(path, () => response);
+        it('returns the correct Cache headers', () => {
+            expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
+        });
+        testHuman(() => response);
+    });
+});
+
+// TODO: Test 5xx error handler?

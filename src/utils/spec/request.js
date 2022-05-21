@@ -6,6 +6,8 @@ import { Request } from '@miniflare/core';
  * @typedef {Response} ExtendedResponse
  * @property {function(string): string|undefined} getHeader Method to access a header (alias to headers.get).
  * @property {Request} request Request that was sent to fetch the response.
+ * @property {string} text Text content from the response.
+ * @property {ReadableStream|*} body Body content from the response (parsed JSON if response declared as JSON).
  */
 
 /**
@@ -28,10 +30,18 @@ export default (route, opts = {}) => {
     const req = new Request(`http://localhost:5050${route}`, opts);
 
     // Send the request to Miniflare
-    return mf.dispatchFetch(req).then(resp => {
+    return mf.dispatchFetch(req).then(async resp => {
         // Patch in some extras for chai-http
         resp.getHeader = name => resp.headers.get(name);
         resp.request = req;
+
+        const text = await resp.text();
+        Reflect.defineProperty(resp, 'text', { value: text });
+
+        // https://github.com/visionmedia/superagent/blob/9ed29166e2fe01d20a1ae4c06e009b1a27711c27/src/client.js#L275-L287
+        if (/[/+]json($|[^-\w])/i.test(resp.headers.get('content-type')?.toLowerCase()))
+            Reflect.defineProperty(resp, 'body', { value: JSON.parse(text) });
+
         return resp;
     });
 };

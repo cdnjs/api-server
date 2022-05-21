@@ -1,7 +1,14 @@
-const human = (res, data) => {
-    res.header('Content-Type', 'text/html');
-    res.header('X-Robots-Tag', 'noindex');
-    res.send('<!doctype><html>' +
+/**
+ * Generate an HTML response with pretty-printed data.
+ *
+ * @param {import('hono').Context} ctx Request context.
+ * @param {*} data Data to be included in the response.
+ * @return {Response}
+ */
+const human = (ctx, data) => {
+    ctx.header('Content-Type', 'text/html');
+    ctx.header('X-Robots-Tag', 'noindex');
+    return ctx.html('<!doctype><html>' +
         '<head><meta name="robots" content="noindex"/><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" integrity="sha256-Zd1icfZ72UBmsId/mUcagrmN7IN5Qkrvh75ICHIQVTk=" crossorigin="anonymous"/></head><body>' +
         '<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>' +
         '<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/json.min.js" integrity="sha256-KPdGtw3AdDen/v6+9ue/V3m+9C2lpNiuirroLsHrJZM=" crossorigin="anonymous" defer></script>' +
@@ -13,10 +20,11 @@ const human = (res, data) => {
         '</body></html>');
 };
 
-module.exports = (req, res, data) => {
-    if (req.query.output && req.query.output === 'human') {
-        human(res, data);
-    } else {
-        res.json(data);
-    }
-};
+/**
+ * Respond to a request with data, handling if it should be returned as JSON or pretty-printed in HTML.
+ *
+ * @param {import('hono').Context} ctx Request context.
+ * @param {*} data Data to be included in the response.
+ * @return {Response}
+ */
+export default (ctx, data) => ctx.req.query('output') === 'human' ? human(ctx, data) : ctx.json(data);
