@@ -7,6 +7,7 @@ import corsOptions from './utils/cors.js';
 import indexRoutes from './routes/index.js';
 import statsRoutes from './routes/stats.js';
 import whitelistRoutes from './routes/whitelist.js';
+import tutorialsRoutes from './routes/tutorials.js';
 import errorRoutes from './routes/errors.js';
 
 
@@ -38,6 +39,7 @@ app.use('*', async (ctx, next) => {
 indexRoutes(app);
 statsRoutes(app);
 whitelistRoutes(app);
+tutorialsRoutes(app);
 errorRoutes(app);
 
 // Let's go!
