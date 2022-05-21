@@ -1,0 +1,6 @@
+name = "api-server"
+main = "src/index.js"
+compatibility_date = "2022-05-20"
+
+[vars]
+DISABLE_CACHING=false
