@@ -33,6 +33,7 @@ const kvLibraryValidate = (library, data) => {
     // Breaking issues
     if (!data.version) {
         console.error('Version missing', data.name, data);
+        // TODO: Sentry
         // if (process.env.SENTRY_DSN) {
         //     Sentry.withScope(scope => {
         //         scope.setTag('data', JSON.stringify(data));
@@ -53,3 +54,38 @@ const kvLibraryValidate = (library, data) => {
  */
 export const library = name => fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}`)
     .then(data => kvLibraryValidate(name, data));
+
+/**
+ * Get the metadata for a library's version on KV.
+ *
+ * @param {string} name Name of the library to fetch.
+ * @param {string} version Version of the library to fetch.
+ * @return {Promise<string[]>}
+ */
+export const libraryVersion = (name, version) => fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}/versions/${encodeURIComponent(version)}`);
+
+/**
+ * Get the SRI data for a library's version.
+ *
+ * @param {string} name Name of the library to fetch.
+ * @param {string} version Version of the library to fetch.
+ * @return {Promise<Object<string, string>>}
+ */
+export const libraryVersionSri = (name, version) => fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}/sris/${encodeURIComponent(version)}`);
+
+/**
+ * Get the full metadata for a library incl. versions on KV.
+ *
+ * @param {string} name Name of the library to fetch.
+ * @return {Promise<Object>}
+ */
+export const libraryFull = name => fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}/all`)
+    .then(data => kvLibraryValidate(name, data));
+
+/**
+ * Get all the SRI data for an entire library.
+ *
+ * @param {string} name Name of the library to fetch.
+ * @return {Promise<Object<string, string>>}
+ */
+export const librarySri = name => fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}/sris`);

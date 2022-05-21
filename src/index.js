@@ -8,8 +8,8 @@ import indexRoutes from './routes/index.js';
 import statsRoutes from './routes/stats.js';
 import whitelistRoutes from './routes/whitelist.js';
 import tutorialsRoutes from './routes/tutorials.js';
+import libraryRoutes from './routes/library.js';
 import errorRoutes from './routes/errors.js';
-
 
 // Create the base app
 const app = new Hono();
@@ -39,6 +39,7 @@ app.use('*', async (ctx, next) => {
 indexRoutes(app);
 statsRoutes(app);
 whitelistRoutes(app);
+libraryRoutes(app);
 tutorialsRoutes(app);
 errorRoutes(app);
 

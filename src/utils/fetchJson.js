@@ -1,3 +1,7 @@
+import { inflate } from 'pako';
+import isGzip from 'is-gzip';
+import isDeflate from 'is-deflate';
+
 /**
  * Cleanly make a fetch request, throwing an error for any non-ok response.
  * Optionally, provide a timeout in milliseconds.
@@ -26,6 +30,7 @@ export default async (url, options = {}, timeout = 30) => {
         // If the request was aborted, throw a nice error
         if (error.name === 'AbortError') {
             const err = new Error(`${options?.method || 'GET'} ${url}: Timed out after ${timeout}s`);
+            err.original = error;
             err.method = options?.method || 'GET';
             err.url = url;
             throw err;
@@ -48,11 +53,18 @@ export default async (url, options = {}, timeout = 30) => {
         throw err;
     }
 
-    // Parse JSON response
-    return resp.json().catch(error => {
-        const err = new Error(`${options?.method || 'GET'} ${url}: ${error.message}`);
-        err.method = options?.method || 'GET';
-        err.url = url;
-        throw err;
-    });
+    // Get the raw data, inflate it (packages/:package/all returns double-gzip'ed data), and parse the JSON
+    return resp.arrayBuffer()
+        .then(raw => new Uint8Array(raw))
+        .then(raw => (isGzip(raw) || isDeflate(raw))
+            ? inflate(raw, { to: 'string' })
+            : new TextDecoder('utf-8').decode(raw))
+        .then(text => JSON.parse(text))
+        .catch(error => {
+            const err = new Error(`${options?.method || 'GET'} ${url}: ${error.message}`);
+            err.original = error;
+            err.method = options?.method || 'GET';
+            err.url = url;
+            throw err;
+        });
 };

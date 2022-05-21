@@ -1,199 +1,224 @@
-const { describe, it, before } = require('mocha');
-const { expect } = require('chai');
-const request = require('../base');
-const fetch = require('../fetch');
-const testCors = require('../cors');
-const testHuman = require('../human');
+import { describe, it, before } from 'mocha';
+import { expect } from 'chai';
+import request from '../utils/spec/request.js';
+import testCors from '../utils/spec/cors.js';
+import testHuman from '../utils/spec/human.js';
 
 describe('/libraries/:library/:version', () => {
     describe('Requesting a valid library (:library = backbone.js)', () => {
         describe('Requesting a valid version (:version = 1.1.0)', () => {
             describe('No query params', () => {
+                // Define endpoint info
                 const path = '/libraries/backbone.js/1.1.0';
-                const test = () => request().get(path);
+                const fetch = () => request(path);
+
+                // Fetch the endpoint
                 let response;
-                before('fetch endpoint', done => {
-                    fetch(test).then(res => {
-                        response = res;
-                        done();
-                    });
-                });
+                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+                // Test the endpoint
                 testCors(path, () => response);
-                it('returns the correct Cache headers', done => {
+                it('returns the correct Cache headers', () => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
-                    done();
                 });
-                it('returns a JSON body that is a library version object', done => {
+                it('returns the correct status code', () => {
+                    expect(response).to.have.status(200);
+                });
+                it('returns a JSON body that is a library version object', () => {
                     expect(response).to.be.json;
                     expect(response.body).to.be.an('object');
-                    done();
                 });
                 describe('Library version object', () => {
-                    it('is an object with \'name\', \'version\', \'files\', \'rawFiles\' and \'sri\' properties', done => {
+                    it('is an object with \'name\', \'version\', \'files\', \'rawFiles\' and \'sri\' properties', () => {
                         expect(response.body).to.have.property('name', 'backbone.js');
                         expect(response.body).to.have.property('version', '1.1.0');
                         expect(response.body).to.have.property('files').that.is.an('array');
                         expect(response.body).to.have.property('rawFiles').that.is.an('array');
                         expect(response.body).to.have.property('sri').that.is.an('object');
-                        done();
                     });
-                    it('has no other properties', done => {
+                    it('has no other properties', () => {
                         expect(Object.keys(response.body)).to.have.lengthOf(5);
-                        done();
                     });
                 });
             });
 
             describe('Requesting human response (?output=human)', () => {
+                // Define endpoint info
                 const path = '/libraries/backbone.js/1.1.0?output=human';
-                const test = () => request().get(path);
+                const fetch = () => request(path);
+
+                // Fetch the endpoint
                 let response;
-                before('fetch endpoint', done => {
-                    fetch(test, 5000).then(res => {
-                        response = res;
-                        done();
-                    });
-                });
+                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+                // Test the endpoint
                 testCors(path, () => response);
-                it('returns the correct Cache headers', done => {
+                it('returns the correct Cache headers', () => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
-                    done();
                 });
                 testHuman(() => response);
             });
 
             describe('Requesting a field (?fields=files)', () => {
+                // Define endpoint info
                 const path = '/libraries/backbone.js/1.1.0?fields=files';
-                const test = () => request().get(path);
+                const fetch = () => request(path);
+
+                // Fetch the endpoint
                 let response;
-                before('fetch endpoint', done => {
-                    fetch(test).then(res => {
-                        response = res;
-                        done();
-                    });
-                });
+                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+                // Test the endpoint
                 testCors(path, () => response);
-                it('returns the correct Cache headers', done => {
+                it('returns the correct Cache headers', () => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
-                    done();
                 });
-                it('returns a JSON body that is a library version object', done => {
+                it('returns the correct status code', () => {
+                    expect(response).to.have.status(200);
+                });
+                it('returns a JSON body that is a library version object', () => {
                     expect(response).to.be.json;
                     expect(response.body).to.be.an('object');
-                    done();
                 });
                 describe('Library version object', () => {
-                    it('is an object with only the \'files\' property', done => {
+                    it('is an object with only the \'files\' property', () => {
                         expect(response.body).to.have.property('files').that.is.an('array');
-                        done();
                     });
-                    it('has no other properties', done => {
+                    it('has no other properties', () => {
                         expect(Object.keys(response.body)).to.have.lengthOf(1);
-                        done();
                     });
                 });
             });
 
             describe('Requesting multiple fields', () => {
                 describe('through comma-separated string (?fields=files,sri)', () => {
+                    // Define endpoint info
                     const path = '/libraries/backbone.js/1.1.0?fields=files,sri';
-                    const test = () => request().get(path);
+                    const fetch = () => request(path);
+
+                    // Fetch the endpoint
                     let response;
-                    before('fetch endpoint', done => {
-                        fetch(test).then(res => {
-                            response = res;
-                            done();
-                        });
-                    });
+                    before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+                    // Test the endpoint
                     testCors(path, () => response);
-                    it('returns the correct Cache headers', done => {
+                    it('returns the correct Cache headers', () => {
                         expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
-                        done();
                     });
-                    it('returns a JSON body that is a library object', done => {
+                    it('returns the correct status code', () => {
+                        expect(response).to.have.status(200);
+                    });
+                    it('returns a JSON body that is a library object', () => {
                         expect(response).to.be.json;
                         expect(response.body).to.be.an('object');
-                        done();
                     });
                     describe('Library version object', () => {
-                        it('is an object with only the \'files\' and \'sri\' properties', done => {
+                        it('is an object with only the \'files\' and \'sri\' properties', () => {
                             expect(response.body).to.have.property('files').that.is.an('array');
                             expect(response.body).to.have.property('sri').that.is.an('object');
-                            done();
                         });
-                        it('has no other properties', done => {
+                        it('has no other properties', () => {
                             expect(Object.keys(response.body)).to.have.lengthOf(2);
-                            done();
+                        });
+                    });
+                });
+
+                describe('through space-separated string (?fields=files sri)', () => {
+                    // Define endpoint info
+                    const path = '/libraries/backbone.js/1.1.0?fields=files sri';
+                    const fetch = () => request(path);
+
+                    // Fetch the endpoint
+                    let response;
+                    before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+                    // Test the endpoint
+                    testCors(path, () => response);
+                    it('returns the correct Cache headers', () => {
+                        expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
+                    });
+                    it('returns the correct status code', () => {
+                        expect(response).to.have.status(200);
+                    });
+                    it('returns a JSON body that is a library object', () => {
+                        expect(response).to.be.json;
+                        expect(response.body).to.be.an('object');
+                    });
+                    describe('Library version object', () => {
+                        it('is an object with only the \'files\' and \'sri\' properties', () => {
+                            expect(response.body).to.have.property('files').that.is.an('array');
+                            expect(response.body).to.have.property('sri').that.is.an('object');
+                        });
+                        it('has no other properties', () => {
+                            expect(Object.keys(response.body)).to.have.lengthOf(2);
                         });
                     });
                 });
 
                 describe('through multiple query parameters (?fields=files&fields=sri)', () => {
+                    // Define endpoint info
                     const path = '/libraries/backbone.js/1.1.0?fields=files&fields=sri';
-                    const test = () => request().get(path);
+                    const fetch = () => request(path);
+
+                    // Fetch the endpoint
                     let response;
-                    before('fetch endpoint', done => {
-                        fetch(test).then(res => {
-                            response = res;
-                            done();
-                        });
-                    });
+                    before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+                    // Test the endpoint
                     testCors(path, () => response);
-                    it('returns the correct Cache headers', done => {
+                    it('returns the correct Cache headers', () => {
                         expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
-                        done();
                     });
-                    it('returns a JSON body that is a library object', done => {
+                    it('returns the correct status code', () => {
+                        expect(response).to.have.status(200);
+                    });
+                    it('returns a JSON body that is a library object', () => {
                         expect(response).to.be.json;
                         expect(response.body).to.be.an('object');
-                        done();
                     });
                     describe('Library version object', () => {
-                        it('is an object with only the \'files\' and \'sri\' properties', done => {
+                        it('is an object with only the \'files\' and \'sri\' properties', () => {
                             expect(response.body).to.have.property('files').that.is.an('array');
                             expect(response.body).to.have.property('sri').that.is.an('object');
-                            done();
                         });
-                        it('has no other properties', done => {
+                        it('has no other properties', () => {
                             expect(Object.keys(response.body)).to.have.lengthOf(2);
-                            done();
                         });
                     });
                 });
             });
 
             describe('Requesting all fields (?fields=*)', () => {
+                // Define endpoint info
                 const path = '/libraries/backbone.js/1.1.0?fields=*';
-                const test = () => request().get(path);
+                const fetch = () => request(path);
+
+                // Fetch the endpoint
                 let response;
-                before('fetch endpoint', done => {
-                    fetch(test).then(res => {
-                        response = res;
-                        done();
-                    });
-                });
+                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+                // Test the endpoint
                 testCors(path, () => response);
-                it('returns the correct Cache headers', done => {
+                it('returns the correct Cache headers', () => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
-                    done();
                 });
-                it('returns a JSON body that is a library version object', done => {
+                it('returns the correct status code', () => {
+                    expect(response).to.have.status(200);
+                });
+                it('returns a JSON body that is a library version object', () => {
                     expect(response).to.be.json;
                     expect(response.body).to.be.an('object');
-                    done();
                 });
                 describe('Library version object', () => {
-                    it('is an object with \'name\', \'version\', \'files\', \'rawFiles\' and \'sri\' properties', done => {
+                    it('is an object with \'name\', \'version\', \'files\', \'rawFiles\' and \'sri\' properties', () => {
                         expect(response.body).to.have.property('name', 'backbone.js');
                         expect(response.body).to.have.property('version', '1.1.0');
                         expect(response.body).to.have.property('files').that.is.an('array');
                         expect(response.body).to.have.property('rawFiles').that.is.an('array');
                         expect(response.body).to.have.property('sri').that.is.an('object');
-                        done();
                     });
-                    it('has no other properties', done => {
+                    it('has no other properties', () => {
                         expect(Object.keys(response.body)).to.have.lengthOf(5);
-                        done();
                     });
                 });
             });
@@ -201,44 +226,44 @@ describe('/libraries/:library/:version', () => {
 
         describe('Requesting a non-existent version (:version = this-version-doesnt-exist)', () => {
             describe('No query params', () => {
+                // Define endpoint info
                 const path = '/libraries/backbone.js/this-version-doesnt-exist';
-                const test = () => request().get(path);
+                const fetch = () => request(path);
+
+                // Fetch the endpoint
                 let response;
-                before('fetch endpoint', done => {
-                    fetch(test).then(res => {
-                        response = res;
-                        done();
-                    });
-                });
+                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+                // Test the endpoint
                 testCors(path, () => response);
-                it('returns the correct Cache headers', done => {
+                it('returns the correct Cache headers', () => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
-                    done();
                 });
-                it('returns a JSON body that is a valid error response', done => {
+                it('returns the correct status code', () => {
+                    expect(response).to.have.status(404);
+                });
+                it('returns a JSON body that is a valid error response', () => {
                     expect(response).to.be.json;
                     expect(response.body).to.be.an('object');
                     expect(response.body).to.have.property('error', true);
                     expect(response.body).to.have.property('status', 404);
                     expect(response.body).to.have.property('message', 'Version not found');
-                    done();
                 });
             });
 
             describe('Requesting human response (?output=human)', () => {
+                // Define endpoint info
                 const path = '/libraries/backbone.js/this-version-doesnt-exist?output=human';
-                const test = () => request().get(path);
+                const fetch = () => request(path);
+
+                // Fetch the endpoint
                 let response;
-                before('fetch endpoint', done => {
-                    fetch(test, 5000).then(res => {
-                        response = res;
-                        done();
-                    });
-                });
+                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+                // Test the endpoint
                 testCors(path, () => response);
-                it('returns the correct Cache headers', done => {
+                it('returns the correct Cache headers', () => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
-                    done();
                 });
                 testHuman(() => response);
             });
@@ -247,44 +272,44 @@ describe('/libraries/:library/:version', () => {
 
     describe('Requesting a non-existent library (:library = this-library-doesnt-exist, :version = this-version-doesnt-exist)', () => {
         describe('No query params', () => {
+            // Define endpoint info
             const path = '/libraries/this-library-doesnt-exist/this-version-doesnt-exist';
-            const test = () => request().get(path);
+            const fetch = () => request(path);
+
+            // Fetch the endpoint
             let response;
-            before('fetch endpoint', done => {
-                fetch(test).then(res => {
-                    response = res;
-                    done();
-                });
-            });
+            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+            // Test the endpoint
             testCors(path, () => response);
-            it('returns the correct Cache headers', done => {
+            it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
-                done();
             });
-            it('returns a JSON body that is a valid error response', done => {
+            it('returns the correct status code', () => {
+                expect(response).to.have.status(404);
+            });
+            it('returns a JSON body that is a valid error response', () => {
                 expect(response).to.be.json;
                 expect(response.body).to.be.an('object');
                 expect(response.body).to.have.property('error', true);
                 expect(response.body).to.have.property('status', 404);
                 expect(response.body).to.have.property('message', 'Library not found');
-                done();
             });
         });
 
         describe('Requesting human response (?output=human)', () => {
+            // Define endpoint info
             const path = '/libraries/this-library-doesnt-exist/this-version-doesnt-exist?output=human';
-            const test = () => request().get(path);
+            const fetch = () => request(path);
+
+            // Fetch the endpoint
             let response;
-            before('fetch endpoint', done => {
-                fetch(test, 5000).then(res => {
-                    response = res;
-                    done();
-                });
-            });
+            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+            // Test the endpoint
             testCors(path, () => response);
-            it('returns the correct Cache headers', done => {
+            it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
-                done();
             });
             testHuman(() => response);
         });
@@ -294,27 +319,28 @@ describe('/libraries/:library/:version', () => {
 describe('/libraries/:library', () => {
     describe('Requesting a valid library (:library = backbone.js)', () => {
         describe('No query params', () => {
+            // Define endpoint info
             const path = '/libraries/backbone.js';
-            const test = () => request().get(path);
+            const fetch = () => request(path);
+
+            // Fetch the endpoint
             let response;
-            before('fetch endpoint', done => {
-                fetch(test, 5000).then(res => {
-                    response = res;
-                    done();
-                });
-            });
+            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+            // Test the endpoint
             testCors(path, () => response);
-            it('returns the correct Cache headers', done => {
+            it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
-                done();
             });
-            it('returns a JSON body that is a library object', done => {
+            it('returns the correct status code', () => {
+                expect(response).to.have.status(200);
+            });
+            it('returns a JSON body that is a library object', () => {
                 expect(response).to.be.json;
                 expect(response.body).to.be.an('object');
-                done();
             });
             describe('Library object', () => {
-                it('is an object with the full set of library properties', done => {
+                it('is an object with the full set of library properties', () => {
                     expect(response.body).to.have.property('name', 'backbone.js');
                     expect(response.body).to.have.property('latest').that.is.a('string');
                     expect(response.body).to.have.property('sri').that.is.a('string');
@@ -330,187 +356,210 @@ describe('/libraries/:library', () => {
                     expect(response.body).to.have.property('assets').that.is.an('array');
                     expect(response.body).to.have.property('versions').that.is.an('array');
                     expect(response.body).to.have.property('tutorials').that.is.an('array');
-                    done();
                 });
-                it('has a CDN url for the \'latest\' property', done => {
+                it('has a CDN url for the \'latest\' property', () => {
                     expect(response.body.latest).to.match(/https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/.+\/.+\/.*/);
-                    done();
                 });
-                it('has a \'type\' and \'url\' property for \'repository\'', done => {
+                it('has a \'type\' and \'url\' property for \'repository\'', () => {
                     expect(response.body.repository).to.have.property('type').that.is.a('string');
                     expect(response.body.repository).to.have.property('url').that.is.a('string');
-                    done();
                 });
-                it('has a \'type\'/\'source\' and \'target\' property for \'autoupdate\'', done => {
+                it('has a \'type\'/\'source\' and \'target\' property for \'autoupdate\'', () => {
                     try {
                         expect(response.body.autoupdate).to.have.property('type').that.is.a('string');
                     } catch (_) {
                         expect(response.body.autoupdate).to.have.property('source').that.is.a('string');
                     }
                     expect(response.body.autoupdate).to.have.property('target').that.is.a('string');
-                    done();
                 });
                 describe('Assets array', () => {
-                    it('has \'version\', \'files\', \'rawFiles\' and \'sri\' properties for each entry', done => {
+                    it('has \'version\', \'files\', \'rawFiles\' and \'sri\' properties for each entry', () => {
                         for (const result of response.body.assets) {
                             expect(result).to.have.property('version').that.is.a('string');
                             expect(result).to.have.property('files').that.is.an('array');
                             expect(result).to.have.property('rawFiles').that.is.an('array');
                             expect(result).to.have.property('sri').that.is.an('object');
                         }
-                        done();
                     });
                 });
                 describe('Tutorials array', () => {
-                    it('is empty', done => {
+                    it('is empty', () => {
                         expect(response.body.tutorials).to.be.empty;
-                        done();
                     });
                 });
             });
         });
 
         describe('Requesting human response (?output=human)', () => {
+            // Define endpoint info
             const path = '/libraries/backbone.js?output=human';
-            const test = () => request().get(path);
+            const fetch = () => request(path);
+
+            // Fetch the endpoint
             let response;
-            before('fetch endpoint', done => {
-                fetch(test, 5000).then(res => {
-                    response = res;
-                    done();
-                });
-            });
+            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+            // Test the endpoint
             testCors(path, () => response);
-            it('returns the correct Cache headers', done => {
+            it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
-                done();
             });
             testHuman(() => response);
         });
 
         describe('Requesting a field (?fields=assets)', () => {
+            // Define endpoint info
             const path = '/libraries/backbone.js?fields=assets';
-            const test = () => request().get(path);
+            const fetch = () => request(path);
+
+            // Fetch the endpoint
             let response;
-            before('fetch endpoint', done => {
-                fetch(test, 5000).then(res => {
-                    response = res;
-                    done();
-                });
-            });
+            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+            // Test the endpoint
             testCors(path, () => response);
-            it('returns the correct Cache headers', done => {
+            it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
-                done();
             });
-            it('returns a JSON body that is a library object', done => {
+            it('returns the correct status code', () => {
+                expect(response).to.have.status(200);
+            });
+            it('returns a JSON body that is a library object', () => {
                 expect(response).to.be.json;
                 expect(response.body).to.be.an('object');
-                done();
             });
             describe('Library object', () => {
-                it('is an object with only the \'assets\' property', done => {
+                it('is an object with only the \'assets\' property', () => {
                     expect(response.body).to.have.property('assets').that.is.an('array');
-                    done();
                 });
-                it('has no other properties', done => {
+                it('has no other properties', () => {
                     expect(Object.keys(response.body)).to.have.lengthOf(1);
-                    done();
                 });
             });
         });
 
         describe('Requesting multiple fields', () => {
             describe('through comma-separated string (?fields=name,assets)', () => {
+                // Define endpoint info
                 const path = '/libraries/backbone.js?fields=name,assets';
-                const test = () => request().get(path);
+                const fetch = () => request(path);
+
+                // Fetch the endpoint
                 let response;
-                before('fetch endpoint', done => {
-                    fetch(test, 5000).then(res => {
-                        response = res;
-                        done();
-                    });
-                });
+                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+                // Test the endpoint
                 testCors(path, () => response);
-                it('returns the correct Cache headers', done => {
+                it('returns the correct Cache headers', () => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
-                    done();
                 });
-                it('returns a JSON body that is a library object', done => {
+                it('returns the correct status code', () => {
+                    expect(response).to.have.status(200);
+                });
+                it('returns a JSON body that is a library object', () => {
                     expect(response).to.be.json;
                     expect(response.body).to.be.an('object');
-                    done();
                 });
                 describe('Library object', () => {
-                    it('is an object with only the \'name\' and \'assets\' properties', done => {
+                    it('is an object with only the \'name\' and \'assets\' properties', () => {
                         expect(response.body).to.have.property('name').that.is.a('string');
                         expect(response.body).to.have.property('assets').that.is.an('array');
-                        done();
                     });
-                    it('has no other properties', done => {
+                    it('has no other properties', () => {
                         expect(Object.keys(response.body)).to.have.lengthOf(2);
-                        done();
+                    });
+                });
+            });
+
+            describe('through space-separated string (?fields=name assets)', () => {
+                // Define endpoint info
+                const path = '/libraries/backbone.js?fields=name assets';
+                const fetch = () => request(path);
+
+                // Fetch the endpoint
+                let response;
+                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+                // Test the endpoint
+                testCors(path, () => response);
+                it('returns the correct Cache headers', () => {
+                    expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
+                });
+                it('returns the correct status code', () => {
+                    expect(response).to.have.status(200);
+                });
+                it('returns a JSON body that is a library object', () => {
+                    expect(response).to.be.json;
+                    expect(response.body).to.be.an('object');
+                });
+                describe('Library object', () => {
+                    it('is an object with only the \'name\' and \'assets\' properties', () => {
+                        expect(response.body).to.have.property('name').that.is.a('string');
+                        expect(response.body).to.have.property('assets').that.is.an('array');
+                    });
+                    it('has no other properties', () => {
+                        expect(Object.keys(response.body)).to.have.lengthOf(2);
                     });
                 });
             });
 
             describe('through multiple query parameters (?fields=name&fields=assets)', () => {
+                // Define endpoint info
                 const path = '/libraries/backbone.js?fields=name&fields=assets';
-                const test = () => request().get(path);
+                const fetch = () => request(path);
+
+                // Fetch the endpoint
                 let response;
-                before('fetch endpoint', done => {
-                    fetch(test, 5000).then(res => {
-                        response = res;
-                        done();
-                    });
-                });
+                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+                // Test the endpoint
                 testCors(path, () => response);
-                it('returns the correct Cache headers', done => {
+                it('returns the correct Cache headers', () => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
-                    done();
                 });
-                it('returns a JSON body that is a library object', done => {
+                it('returns the correct status code', () => {
+                    expect(response).to.have.status(200);
+                });
+                it('returns a JSON body that is a library object', () => {
                     expect(response).to.be.json;
                     expect(response.body).to.be.an('object');
-                    done();
                 });
                 describe('Library object', () => {
-                    it('is an object with only the \'name\' and \'assets\' properties', done => {
+                    it('is an object with only the \'name\' and \'assets\' properties', () => {
                         expect(response.body).to.have.property('name').that.is.a('string');
                         expect(response.body).to.have.property('assets').that.is.an('array');
-                        done();
                     });
-                    it('has no other properties', done => {
+                    it('has no other properties', () => {
                         expect(Object.keys(response.body)).to.have.lengthOf(2);
-                        done();
                     });
                 });
             });
         });
 
         describe('Requesting all fields (?fields=*)', () => {
+            // Define endpoint info
             const path = '/libraries/backbone.js?fields=*';
-            const test = () => request().get(path);
+            const fetch = () => request(path);
+
+            // Fetch the endpoint
             let response;
-            before('fetch endpoint', done => {
-                fetch(test, 5000).then(res => {
-                    response = res;
-                    done();
-                });
-            });
+            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+            // Test the endpoint
             testCors(path, () => response);
-            it('returns the correct Cache headers', done => {
+            it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
-                done();
             });
-            it('returns a JSON body that is a library object', done => {
+            it('returns the correct status code', () => {
+                expect(response).to.have.status(200);
+            });
+            it('returns a JSON body that is a library object', () => {
                 expect(response).to.be.json;
                 expect(response.body).to.be.an('object');
-                done();
             });
             describe('Library object', () => {
                 // Behaves the same as not including the fields query param
-                it('is an object with the full set of library properties', done => {
+                it('is an object with the full set of library properties', () => {
                     expect(response.body).to.have.property('name', 'backbone.js');
                     expect(response.body).to.have.property('latest').that.is.a('string');
                     expect(response.body).to.have.property('sri').that.is.a('string');
@@ -526,7 +575,6 @@ describe('/libraries/:library', () => {
                     expect(response.body).to.have.property('assets').that.is.an('array');
                     expect(response.body).to.have.property('versions').that.is.an('array');
                     expect(response.body).to.have.property('tutorials').that.is.an('array');
-                    done();
                 });
             });
         });
@@ -534,44 +582,44 @@ describe('/libraries/:library', () => {
 
     describe('Requesting a non-existent library (:library = this-library-doesnt-exist)', () => {
         describe('No query params', () => {
+            // Define endpoint info
             const path = '/libraries/this-library-doesnt-exist';
-            const test = () => request().get(path);
+            const fetch = () => request(path);
+
+            // Fetch the endpoint
             let response;
-            before('fetch endpoint', done => {
-                fetch(test).then(res => {
-                    response = res;
-                    done();
-                });
-            });
+            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+            // Test the endpoint
             testCors(path, () => response);
-            it('returns the correct Cache headers', done => {
+            it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
-                done();
             });
-            it('returns a JSON body that is a valid error response', done => {
+            it('returns the correct status code', () => {
+                expect(response).to.have.status(404);
+            });
+            it('returns a JSON body that is a valid error response', () => {
                 expect(response).to.be.json;
                 expect(response.body).to.be.an('object');
                 expect(response.body).to.have.property('error', true);
                 expect(response.body).to.have.property('status', 404);
                 expect(response.body).to.have.property('message', 'Library not found');
-                done();
             });
         });
 
         describe('Requesting human response (?output=human)', () => {
+            // Define endpoint info
             const path = '/libraries/this-library-doesnt-exist?output=human';
-            const test = () => request().get(path);
+            const fetch = () => request(path);
+
+            // Fetch the endpoint
             let response;
-            before('fetch endpoint', done => {
-                fetch(test, 5000).then(res => {
-                    response = res;
-                    done();
-                });
-            });
+            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+            // Test the endpoint
             testCors(path, () => response);
-            it('returns the correct Cache headers', done => {
+            it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
-                done();
             });
             testHuman(() => response);
         });
