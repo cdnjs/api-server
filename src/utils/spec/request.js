@@ -3,11 +3,17 @@ import { Miniflare } from 'miniflare';
 import { Request } from '@miniflare/core';
 
 /**
+ * @typedef {Response} ExtendedResponse
+ * @property {function(string): string|undefined} getHeader Method to access a header (alias to headers.get).
+ * @property {Request} request Request that was sent to fetch the response.
+ */
+
+/**
  * Dispatch a fetch request to Miniflare.
  *
- * @param {string} route
- * @param {RequestInit} [opts={}]
- * @return {Response}
+ * @param {string} route Route to request in API via Miniflare.
+ * @param {RequestInit} [opts={}] Options to set for fetch request.
+ * @return {ExtendedResponse}
  */
 export default (route, opts = {}) => {
     // Create the Miniflare instance
