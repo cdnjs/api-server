@@ -1,5 +1,5 @@
 /* eslint-disable key-spacing */
-module.exports = {
+export default {
     js:     'JavaScript',
     mjs:    'JavaScript',
 

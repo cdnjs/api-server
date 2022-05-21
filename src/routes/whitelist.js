@@ -1,13 +1,17 @@
-// Local imports
-const cache = require('../utils/cache');
-const files = require('../utils/files');
-const filter = require('../utils/filter');
-const respond = require('../utils/respond');
-const queryArray = require('../utils/query_array');
+import queryArray from '../utils/queryArray.js';
+import filter from '../utils/filter.js';
+import cache from '../utils/cache.js';
+import respond from '../utils/respond.js';
+import files from '../utils/files.js';
 
-module.exports = app => {
+/**
+ * Register whitelist routes.
+ *
+ * @param {import('hono').Hono} app App instance.
+ */
+export default app => {
     // Whitelist
-    app.get('/whitelist', (req, res) => {
+    app.get('/whitelist', ctx => {
         // Build the object
         const results = {
             extensions: Object.keys(files),
@@ -15,7 +19,7 @@ module.exports = app => {
         };
 
         // Generate the filtered response
-        const requestedFields = queryArray(req.query, 'fields');
+        const requestedFields = queryArray(ctx.req.query('fields'));
         const response = filter(
             results,
             requestedFields,
@@ -24,9 +28,9 @@ module.exports = app => {
         );
 
         // Set a 6 hour life on this response
-        cache(res, 6 * 60 * 60);
+        cache(ctx, 6 * 60 * 60);
 
         // Send the response
-        respond(req, res, response);
+        return respond(ctx, response);
     });
 };

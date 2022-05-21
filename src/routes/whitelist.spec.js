@@ -1,190 +1,194 @@
-const { describe, it, before } = require('mocha');
-const { expect } = require('chai');
-const request = require('../base');
-const fetch = require('../fetch');
-const testCors = require('../cors');
-const testHuman = require('../human');
+import { describe, it, before } from 'mocha';
+import { expect } from 'chai';
+import request from '../utils/spec/request.js';
+import testCors from '../utils/spec/cors.js';
+import testHuman from '../utils/spec/human.js';
 
 describe('/whitelist', () => {
     describe('No query params', () => {
+        // Define endpoint info
         const path = '/whitelist';
-        const test = () => request().get(path);
+        const fetch = () => request(path);
+
+        // Fetch the endpoint
         let response;
-        before('fetch endpoint', done => {
-            fetch(test).then(res => {
-                response = res;
-                done();
-            });
-        });
+        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+        // Test the endpoint
         testCors(path, () => response);
-        it('returns the correct Cache headers', done => {
-            expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
-            done();
+        it('returns the correct Cache headers', () => {
+            expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours;
         });
-        it('returns a JSON body with \'extensions\' and \'categories\' properties', done => {
+        it('returns a JSON body with \'extensions\' and \'categories\' properties', () => {
             expect(response).to.be.json;
             expect(response.body).to.be.an('object');
             expect(response.body).to.have.property('extensions').that.is.an('array');
             expect(response.body).to.have.property('categories').that.is.an('object');
-            done();
         });
-        it('has no other properties', done => {
+        it('has no other properties', () => {
             expect(Object.keys(response.body)).to.have.lengthOf(2);
-            done();
         });
         describe('Extensions array', () => {
-            it('only has string elements', done => {
+            it('only has string elements', () => {
                 for (const result of response.body.extensions) {
                     expect(result).to.be.a('string');
                 }
-                done();
             });
         });
         describe('Categories object', () => {
-            it('has a key for each value in \'extensions\'', done => {
+            it('has a key for each value in \'extensions\'', () => {
                 const keys = Object.keys(response.body.categories);
                 for (const result of response.body.extensions) {
                     expect(keys).to.include(result);
                 }
-                done();
             });
-            it('has a string value for each key', done => {
+            it('has a string value for each key', () => {
                 for (const result of Object.values(response.body.categories)) {
                     expect(result).to.be.a('string');
                 }
-                done();
             });
         });
     });
 
     describe('Requesting human response (?output=human)', () => {
+        // Define endpoint info
         const path = '/whitelist?output=human';
-        const test = () => request().get(path);
+        const fetch = () => request(path);
+
+        // Fetch the endpoint
         let response;
-        before('fetch endpoint', done => {
-            fetch(test, 5000).then(res => {
-                response = res;
-                done();
-            });
-        });
+        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+        // Test the endpoint
         testCors(path, () => response);
-        it('returns the correct Cache headers', done => {
+        it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
-            done();
         });
         testHuman(() => response);
     });
 
     describe('Requesting a field (?fields=extensions)', () => {
+        // Define endpoint info
         const path = '/whitelist?fields=extensions';
-        const test = () => request().get(path);
+        const fetch = () => request(path);
+
+        // Fetch the endpoint
         let response;
-        before('fetch endpoint', done => {
-            fetch(test).then(res => {
-                response = res;
-                done();
-            });
-        });
+        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+        // Test the endpoint
         testCors(path, () => response);
-        it('returns the correct Cache headers', done => {
+        it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
-            done();
         });
-        it('returns a JSON body with the \'extensions\' property', done => {
+        it('returns a JSON body with the \'extensions\' property', () => {
             expect(response).to.be.json;
             expect(response.body).to.be.an('object');
             expect(response.body).to.have.property('extensions').that.is.an('array');
-            done();
         });
-        it('has no other properties', done => {
+        it('has no other properties', () => {
             expect(Object.keys(response.body)).to.have.lengthOf(1);
-            done();
         });
     });
 
     describe('Requesting multiple fields', () => {
         describe('through comma-separated string (?fields=extensions,categories)', () => {
+            // Define endpoint info
             const path = '/whitelist?fields=extensions,categories';
-            const test = () => request().get(path);
+            const fetch = () => request(path);
+
+            // Fetch the endpoint
             let response;
-            before('fetch endpoint', done => {
-                fetch(test).then(res => {
-                    response = res;
-                    done();
-                });
-            });
+            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+            // Test the endpoint
             testCors(path, () => response);
-            it('returns the correct Cache headers', done => {
+            it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
-                done();
             });
-            it('returns a JSON body with the \'extensions\' and \'categories\' properties', done => {
+            it('returns a JSON body with the \'extensions\' and \'categories\' properties', () => {
                 expect(response).to.be.json;
                 expect(response.body).to.be.an('object');
                 expect(response.body).to.have.property('extensions').that.is.an('array');
                 expect(response.body).to.have.property('categories').that.is.an('object');
-                done();
             });
-            it('has no other properties', done => {
+            it('has no other properties', () => {
                 expect(Object.keys(response.body)).to.have.lengthOf(2);
-                done();
+            });
+        });
+        describe('through space-separated string (?fields=extensions categories)', () => {
+            // Define endpoint info
+            const path = '/whitelist?fields=extensions categories';
+            const fetch = () => request(path);
+
+            // Fetch the endpoint
+            let response;
+            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+            // Test the endpoint
+            testCors(path, () => response);
+            it('returns the correct Cache headers', () => {
+                expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
+            });
+            it('returns a JSON body with the \'extensions\' and \'categories\' properties', () => {
+                expect(response).to.be.json;
+                expect(response.body).to.be.an('object');
+                expect(response.body).to.have.property('extensions').that.is.an('array');
+                expect(response.body).to.have.property('categories').that.is.an('object');
+            });
+            it('has no other properties', () => {
+                expect(Object.keys(response.body)).to.have.lengthOf(2);
             });
         });
 
         describe('through multiple query parameters (?fields=extensions&fields=categories)', () => {
+            // Define endpoint info
             const path = '/whitelist?fields=extensions&fields=categories';
-            const test = () => request().get(path);
+            const fetch = () => request(path);
+
+            // Fetch the endpoint
             let response;
-            before('fetch endpoint', done => {
-                fetch(test).then(res => {
-                    response = res;
-                    done();
-                });
-            });
+            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+            // Test the endpoint
             testCors(path, () => response);
-            it('returns the correct Cache headers', done => {
+            it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
-                done();
             });
-            it('returns a JSON body with the \'extensions\' and \'categories\' properties', done => {
+            it('returns a JSON body with the \'extensions\' and \'categories\' properties', () => {
                 expect(response).to.be.json;
                 expect(response.body).to.be.an('object');
                 expect(response.body).to.have.property('extensions').that.is.an('array');
                 expect(response.body).to.have.property('categories').that.is.an('object');
-                done();
             });
-            it('has no other properties', done => {
+            it('has no other properties', () => {
                 expect(Object.keys(response.body)).to.have.lengthOf(2);
-                done();
             });
         });
     });
 
     describe('Requesting all fields (?fields=*)', () => {
+        // Define endpoint info
         const path = '/whitelist?fields=*';
-        const test = () => request().get(path);
+        const fetch = () => request(path);
+
+        // Fetch the endpoint
         let response;
-        before('fetch endpoint', done => {
-            fetch(test).then(res => {
-                response = res;
-                done();
-            });
-        });
+        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+        // Test the endpoint
         testCors(path, () => response);
-        it('returns the correct Cache headers', done => {
+        it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
-            done();
         });
-        it('returns a JSON body with \'extensions\' and \'categories\' properties', done => {
+        it('returns a JSON body with \'extensions\' and \'categories\' properties', () => {
             expect(response).to.be.json;
             expect(response.body).to.be.an('object');
             expect(response.body).to.have.property('extensions').that.is.an('array');
             expect(response.body).to.have.property('categories').that.is.an('object');
-            done();
         });
-        it('has no other properties', done => {
+        it('has no other properties', () => {
             expect(Object.keys(response.body)).to.have.lengthOf(2);
-            done();
         });
     });
 });
