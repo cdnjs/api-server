@@ -12,7 +12,7 @@ import respond from '../utils/respond.js';
 export default app => {
     app.get('/stats', async ctx => {
         const libs = await libraries();
-        const requestedFields = queryArray(ctx.req.query('fields'));
+        const requestedFields = queryArray(ctx.req.queries('fields'));
         const response = filter(
             {
                 libraries: libs.length,

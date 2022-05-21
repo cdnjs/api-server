@@ -55,7 +55,7 @@ export default app => {
         };
 
         // Generate the initial filtered response (without SRI data)
-        const requestedFields = queryArray(ctx.req.query('fields'));
+        const requestedFields = queryArray(ctx.req.queries('fields'));
         const response = filter(
             results,
             requestedFields,
@@ -88,7 +88,7 @@ export default app => {
         if (!lib) return notFound(ctx, 'Library');
 
         // Generate the initial filtered response (without SRI or tutorials data)
-        const requestedFields = queryArray(ctx.req.query('fields'));
+        const requestedFields = queryArray(ctx.req.queries('fields'));
         const response = filter(
             {
                 // Ensure name is first prop

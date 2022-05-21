@@ -41,14 +41,14 @@ const browse = async (query, searchFields) => {
 export default app => {
     app.get('/libraries', async ctx => {
         // Get the index results
-        const searchFields = queryArray(ctx.req.query('search_fields'));
+        const searchFields = queryArray(ctx.req.queries('search_fields'));
         const results = await browse(
             (ctx.req.query('search') || '').toString().slice(0, maxQueryLength),
             searchFields.includes('*') ? [] : searchFields,
         );
 
         // Transform the results into our filtered array
-        const requestedFields = queryArray(ctx.req.query('fields'));
+        const requestedFields = queryArray(ctx.req.queries('fields'));
         const response = results.filter(hit => {
             if (hit && hit.name) return true;
             console.warn('Found bad entry in Algolia data');

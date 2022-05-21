@@ -19,7 +19,7 @@ export default app => {
         };
 
         // Generate the filtered response
-        const requestedFields = queryArray(ctx.req.query('fields'));
+        const requestedFields = queryArray(ctx.req.queries('fields'));
         const response = filter(
             results,
             requestedFields,

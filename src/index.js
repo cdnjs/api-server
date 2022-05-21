@@ -11,37 +11,10 @@ import tutorialsRoutes from './routes/tutorials.js';
 import whitelistRoutes from './routes/whitelist.js';
 import corsOptions from './utils/cors.js';
 
-// Import all the routes
-
 // Create the base app
 const app = new Hono();
 app.use('*', logger());
 app.use('*', cors(corsOptions));
-
-// Patch req.query
-app.use('*', async (ctx, next) => {
-    const params = new URL(ctx.req.url).searchParams;
-
-    /**
-     * Fetch a query parameter, or all query parameters, from the request.
-     *
-     * @type {(function(): Object<string, string|string[]>) & (function(string): string|string[]|undefined)}
-     */
-    ctx.req.query = (field = undefined) => {
-        if (field) {
-            const values = params.getAll(field);
-            return values.length < 2 ? values[0] : values;
-        }
-
-        return [ ...params.entries() ].reduce((obj, [ key, value ]) => ({
-            ...obj,
-            [key]: obj[key]
-                ? (Array.isArray(obj[key]) ? obj[key] : [ obj[key] ]).concat([ value ])
-                : value,
-        }), {});
-    };
-    await next();
-});
 
 // Load the routes
 indexRoutes(app);

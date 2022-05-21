@@ -8,7 +8,8 @@
  */
 export default query => {
     if (query) {
-        return (Array.isArray(query) ? query : query.toString().split(/[ ,]/))
+        return (Array.isArray(query) ? query : [ query ])
+            .flatMap(part => part.toString().split(/[ ,]/))
             .map(item => item.toLowerCase().trim());
     }
     return [];
