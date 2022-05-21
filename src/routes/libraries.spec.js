@@ -1,40 +1,39 @@
-const { describe, it, xit, before } = require('mocha');
-const { expect } = require('chai');
-const request = require('../base');
-const fetch = require('../fetch');
-const testCors = require('../cors');
-const testHuman = require('../human');
+import { describe, it, before } from 'mocha';
+import { expect } from 'chai';
+import request from '../utils/spec/request.js';
+import testCors from '../utils/spec/cors.js';
+import testHuman from '../utils/spec/human.js';
 
 describe('/libraries', () => {
     describe('No query params', () => {
+        // Define endpoint info
         const path = '/libraries';
-        const test = () => request().get(path);
+        const fetch = () => request(path);
+
+        // Fetch the endpoint
         let response;
-        before('fetch endpoint', done => {
-            fetch(test, 5000).then(res => {
-                response = res;
-                done();
-            });
-        });
+        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+        // Test the endpoint
         testCors(path, () => response);
-        it('returns the correct Cache headers', done => {
+        it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
-            done();
         });
-        it('returns a JSON body with \'results\', \'total\' and \'available\' properties', done => {
+        it('returns the correct status code', () => {
+            expect(response).to.have.status(200);
+        });
+        it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
             expect(response).to.be.json;
             expect(response.body).to.have.property('results').that.is.an('array');
             expect(response.body).to.have.property('total').that.is.a('number');
             expect(response.body).to.have.property('available').that.is.a('number');
-            done();
         });
-        it('returns all available hits', done => {
+        it('returns all available hits', () => {
             expect(response.body.results).to.have.lengthOf(response.body.total);
             expect(response.body.results).to.have.lengthOf(response.body.available);
-            done();
         });
         describe('Library object', () => {
-            it('is an object with \'name\' and \'latest\' properties', done => {
+            it('is an object with \'name\' and \'latest\' properties', () => {
                 for (const result of response.body.results) {
                     expect(result).to.have.property('name').that.is.a('string');
                     try {
@@ -43,9 +42,8 @@ describe('/libraries', () => {
                         expect(result).to.have.property('latest').that.is.null;
                     }
                 }
-                done();
             });
-            it('has a CDN url for the \'latest\' property', done => {
+            it('has a CDN url for the \'latest\' property', () => {
                 for (const result of response.body.results) {
                     try {
                         expect(result.latest).to.match(/https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/.+\/.+\/.*/);
@@ -53,95 +51,88 @@ describe('/libraries', () => {
                         expect(result.latest).to.be.null;
                     }
                 }
-                done();
             });
-            it('has no other properties', done => {
+            it('has no other properties', () => {
                 for (const result of response.body.results) {
                     expect(Object.keys(result)).to.have.lengthOf(2);
                 }
-                done();
             });
         });
     });
 
     describe('Requesting human response (?output=human)', () => {
         const path = '/libraries?output=human';
-        const test = () => request().get(path);
+        const fetch = () => request(path);
+
+        // Fetch the endpoint
         let response;
-        before('fetch endpoint', done => {
-            fetch(test, 5000).then(res => {
-                response = res;
-                done();
-            });
-        });
+        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+        // Test the endpoint
         testCors(path, () => response);
-        it('returns the correct Cache headers', done => {
+        it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
-            done();
         });
         testHuman(() => response);
     });
 
     describe('Limiting number of results (?limit=10)', () => {
         const path = '/libraries?limit=10';
-        const test = () => request().get(path);
+        const fetch = () => request(path);
+
+        // Fetch the endpoint
         let response;
-        before('fetch endpoint', done => {
-            fetch(test, 5000).then(res => {
-                response = res;
-                done();
-            });
-        });
+        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+        // Test the endpoint
         testCors(path, () => response);
-        it('returns the correct Cache headers', done => {
+        it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
-            done();
         });
-        it('returns a JSON body with \'results\', \'total\' and \'available\' properties', done => {
+        it('returns the correct status code', () => {
+            expect(response).to.have.status(200);
+        });
+        it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
             expect(response).to.be.json;
             expect(response.body).to.have.property('results').that.is.an('array');
             expect(response.body).to.have.property('total').that.is.a('number');
             expect(response.body).to.have.property('available').that.is.a('number');
-            done();
         });
-        it('returns only the requested number of hits', done => {
+        it('returns only the requested number of hits', () => {
             expect(response.body.results).to.have.lengthOf(10);
             expect(response.body.total).to.equal(10);
             expect(response.body.available).to.be.above(10);
-            done();
         });
     });
 
     describe('Requesting a field (?fields=version)', () => {
         const path = '/libraries?fields=version';
-        const test = () => request().get(path);
+        const fetch = () => request(path);
+
+        // Fetch the endpoint
         let response;
-        before('fetch endpoint', done => {
-            fetch(test, 5000).then(res => {
-                response = res;
-                done();
-            });
-        });
+        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+        // Test the endpoint
         testCors(path, () => response);
-        it('returns the correct Cache headers', done => {
+        it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
-            done();
         });
-        it('returns a JSON body with \'results\', \'total\' and \'available\' properties', done => {
+        it('returns the correct status code', () => {
+            expect(response).to.have.status(200);
+        });
+        it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
             expect(response).to.be.json;
             expect(response.body).to.have.property('results').that.is.an('array');
             expect(response.body).to.have.property('total').that.is.a('number');
             expect(response.body).to.have.property('available').that.is.a('number');
-            done();
         });
-        it('returns all available hits', done => {
+        it('returns all available hits', () => {
             expect(response.body.results).to.have.lengthOf(response.body.total);
             expect(response.body.results).to.have.lengthOf(response.body.available);
-            done();
         });
         describe('Library object', () => {
-            // FIXME
-            xit('is an object with \'name\', \'latest\' and requested \'version\' properties', done => {
+            it('is an object with \'name\', \'latest\' and requested \'version\' properties', () => {
                 for (const result of response.body.results) {
                     expect(result).to.have.property('name').that.is.a('string');
                     try {
@@ -151,13 +142,11 @@ describe('/libraries', () => {
                     }
                     expect(result).to.have.property('version').that.is.a('string');
                 }
-                done();
             });
-            it('has no other properties', done => {
+            it('has no other properties', () => {
                 for (const result of response.body.results) {
                     expect(Object.keys(result)).to.have.lengthOf(3);
                 }
-                done();
             });
         });
     });
@@ -165,92 +154,129 @@ describe('/libraries', () => {
     describe('Requesting multiple fields', () => {
         describe('through comma-separated string (?fields=filename,version)', () => {
             const path = '/libraries?fields=filename,version';
-            const test = () => request().get(path);
+            const fetch = () => request(path);
+
+            // Fetch the endpoint
             let response;
-            before('fetch endpoint', done => {
-                fetch(test, 5000).then(res => {
-                    response = res;
-                    done();
-                });
-            });
+            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+            // Test the endpoint
             testCors(path, () => response);
-            it('returns the correct Cache headers', done => {
+            it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
-                done();
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', done => {
+            it('returns the correct status code', () => {
+                expect(response).to.have.status(200);
+            });
+            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
                 expect(response).to.be.json;
                 expect(response.body).to.have.property('results').that.is.an('array');
                 expect(response.body).to.have.property('total').that.is.a('number');
                 expect(response.body).to.have.property('available').that.is.a('number');
-                done();
             });
-            it('returns all available hits', done => {
+            it('returns all available hits', () => {
                 expect(response.body.results).to.have.lengthOf(response.body.total);
                 expect(response.body.results).to.have.lengthOf(response.body.available);
-                done();
             });
             describe('Library object', () => {
-                it('is an object with \'name\', \'latest\' and requested \'filename\' & \'version\' properties', done => {
+                it('is an object with \'name\', \'latest\' and requested \'filename\' & \'version\' properties', () => {
                     for (const result of response.body.results) {
                         expect(result).to.have.property('name');
                         expect(result).to.have.property('latest');
                         expect(result).to.have.property('filename');
                         expect(result).to.have.property('version');
                     }
-                    done();
                 });
-                it('has no other properties', done => {
+                it('has no other properties', () => {
                     for (const result of response.body.results) {
                         expect(Object.keys(result)).to.have.lengthOf(4);
                     }
-                    done();
+                });
+            });
+        });
+
+        describe('through space-separated string (?fields=filename version)', () => {
+            const path = '/libraries?fields=filename version';
+            const fetch = () => request(path);
+
+            // Fetch the endpoint
+            let response;
+            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+            // Test the endpoint
+            testCors(path, () => response);
+            it('returns the correct Cache headers', () => {
+                expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+            });
+            it('returns the correct status code', () => {
+                expect(response).to.have.status(200);
+            });
+            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
+                expect(response).to.be.json;
+                expect(response.body).to.have.property('results').that.is.an('array');
+                expect(response.body).to.have.property('total').that.is.a('number');
+                expect(response.body).to.have.property('available').that.is.a('number');
+            });
+            it('returns all available hits', () => {
+                expect(response.body.results).to.have.lengthOf(response.body.total);
+                expect(response.body.results).to.have.lengthOf(response.body.available);
+            });
+            describe('Library object', () => {
+                it('is an object with \'name\', \'latest\' and requested \'filename\' & \'version\' properties', () => {
+                    for (const result of response.body.results) {
+                        expect(result).to.have.property('name');
+                        expect(result).to.have.property('latest');
+                        expect(result).to.have.property('filename');
+                        expect(result).to.have.property('version');
+                    }
+                });
+                it('has no other properties', () => {
+                    for (const result of response.body.results) {
+                        expect(Object.keys(result)).to.have.lengthOf(4);
+                    }
                 });
             });
         });
 
         describe('through multiple query parameters (?fields=filename&fields=version)', () => {
             const path = '/libraries?fields=filename&fields=version';
-            const test = () => request().get(path);
+            const fetch = () => request(path);
+
+            // Fetch the endpoint
             let response;
-            before('fetch endpoint', done => {
-                fetch(test, 5000).then(res => {
-                    response = res;
-                    done();
-                });
-            });
+            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+            // Test the endpoint
             testCors(path, () => response);
-            it('returns the correct Cache headers', done => {
+            it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
-                done();
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', done => {
+            it('returns the correct status code', () => {
+                expect(response).to.have.status(200);
+            });
+            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
                 expect(response).to.be.json;
                 expect(response.body).to.have.property('results').that.is.an('array');
                 expect(response.body).to.have.property('total').that.is.a('number');
                 expect(response.body).to.have.property('available').that.is.a('number');
-                done();
             });
-            it('returns all available hits', done => {
+            it('returns all available hits', () => {
                 expect(response.body.results).to.have.lengthOf(response.body.total);
                 expect(response.body.results).to.have.lengthOf(response.body.available);
-                done();
             });
             describe('Library object', () => {
-                it('is an object with \'name\', \'latest\' and requested \'filename\' & \'version\' properties', done => {
+                it('is an object with \'name\', \'latest\' and requested \'filename\' & \'version\' properties', () => {
                     for (const result of response.body.results) {
                         expect(result).to.have.property('name');
                         expect(result).to.have.property('latest');
                         expect(result).to.have.property('filename');
                         expect(result).to.have.property('version');
                     }
-                    done();
                 });
-                it('has no other properties', done => {
+                it('has no other properties', () => {
                     for (const result of response.body.results) {
                         expect(Object.keys(result)).to.have.lengthOf(4);
                     }
-                    done();
                 });
             });
         });
@@ -258,33 +284,32 @@ describe('/libraries', () => {
 
     describe('Requesting all fields (?fields=*)', () => {
         const path = '/libraries?fields=*';
-        const test = () => request().get(path);
+        const fetch = () => request(path);
+
+        // Fetch the endpoint
         let response;
-        before('fetch endpoint', done => {
-            fetch(test, 5000).then(res => {
-                response = res;
-                done();
-            });
-        });
+        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+        // Test the endpoint
         testCors(path, () => response);
-        it('returns the correct Cache headers', done => {
+        it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
-            done();
         });
-        it('returns a JSON body with \'results\', \'total\' and \'available\' properties', done => {
+        it('returns the correct status code', () => {
+            expect(response).to.have.status(200);
+        });
+        it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
             expect(response).to.be.json;
             expect(response.body).to.have.property('results').that.is.an('array');
             expect(response.body).to.have.property('total').that.is.a('number');
             expect(response.body).to.have.property('available').that.is.a('number');
-            done();
         });
-        it('returns all available hits', done => {
+        it('returns all available hits', () => {
             expect(response.body.results).to.have.lengthOf(response.body.total);
             expect(response.body.results).to.have.lengthOf(response.body.available);
-            done();
         });
         describe('Library object', () => {
-            it('is an object with the full set of library properties', done => {
+            it('is an object with the full set of library properties', () => {
                 for (const result of response.body.results) {
                     expect(result).to.have.property('name').that.is.a('string');
                     try {
@@ -319,7 +344,6 @@ describe('/libraries', () => {
                     expect(result).to.have.property('sri').that.is.a('string');
                     expect(result).to.have.property('objectID').that.is.a('string');
                 }
-                done();
             });
         });
     });
@@ -331,78 +355,73 @@ describe('/libraries', () => {
 
         describe('Providing a short query (?search=font-awesome)', () => {
             const path = '/libraries?search=font-awesome';
-            const test = () => request().get(path);
+            const fetch = () => request(path);
+
+            // Fetch the endpoint
             let response;
-            before('fetch endpoint', done => {
-                fetch(test, 5000).then(res => {
-                    response = res;
-                    done();
-                });
-            });
+            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+            // Test the endpoint
             testCors(path, () => response);
-            it('returns the correct Cache headers', done => {
+            it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
-                done();
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', done => {
+            it('returns the correct status code', () => {
+                expect(response).to.have.status(200);
+            });
+            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
                 expect(response).to.be.json;
                 expect(response.body).to.have.property('results').that.is.an('array');
                 expect(response.body).to.have.property('total').that.is.a('number');
                 expect(response.body).to.have.property('available').that.is.a('number');
-                done();
             });
-            it('returns all available hits', done => {
+            it('returns all available hits', () => {
                 expect(response.body.results).to.have.lengthOf(response.body.total);
                 expect(response.body.results).to.have.lengthOf(response.body.available);
-                done();
             });
             describe('Library object', () => {
-                it('returns the \'twitter-bootstrap\' package as the first object', done => {
+                it('returns the \'twitter-bootstrap\' package as the first object', () => {
                     expect(response.body.results[0]).to.have.property('name', 'font-awesome');
-                    done();
                 });
-                it('is an object with \'name\' and \'latest\' properties', done => {
+                it('is an object with \'name\' and \'latest\' properties', () => {
                     for (const result of response.body.results) {
                         expect(result).to.have.property('name').that.is.a('string');
                         expect(result).to.have.property('latest').that.is.a('string');
                     }
-                    done();
                 });
-                it('has no other properties', done => {
+                it('has no other properties', () => {
                     for (const result of response.body.results) {
                         expect(Object.keys(result)).to.have.lengthOf(2);
                     }
-                    done();
                 });
             });
         });
 
         describe('Providing a query that is longer than max that Algolia allows (?search=this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet-this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet)', () => {
             const path = '/libraries?search=this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet-this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet';
-            const test = () => request().get(path);
+            const fetch = () => request(path);
+
+            // Fetch the endpoint
             let response;
-            before('fetch endpoint', done => {
-                fetch(test, 5000).then(res => {
-                    response = res;
-                    done();
-                });
-            });
+            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+            // Test the endpoint
             testCors(path, () => response);
-            it('returns the correct Cache headers', done => {
+            it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
-                done();
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', done => {
+            it('returns the correct status code', () => {
+                expect(response).to.have.status(200);
+            });
+            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
                 expect(response).to.be.json;
                 expect(response.body).to.have.property('results').that.is.an('array');
                 expect(response.body).to.have.property('total').that.is.a('number');
                 expect(response.body).to.have.property('available').that.is.a('number');
-                done();
             });
-            it('returns all available hits', done => {
+            it('returns all available hits', () => {
                 expect(response.body.results).to.have.lengthOf(response.body.total);
                 expect(response.body.results).to.have.lengthOf(response.body.available);
-                done();
             });
             // No library object as it's rather likely this won't match anything
             // But this test is just to ensure it doesn't return an error
@@ -417,104 +436,144 @@ describe('/libraries', () => {
         describe('Providing search fields that are valid', () => {
             describe('through comma-separated string (?search=backbone.js&search_fields=keywords,github.user)', () => {
                 const path = '/libraries?search=backbone.js&search_fields=keywords,github.user';
-                const test = () => request().get(path);
+                const fetch = () => request(path);
+
+                // Fetch the endpoint
                 let response;
-                before('fetch endpoint', done => {
-                    fetch(test, 5000).then(res => {
-                        response = res;
-                        done();
-                    });
-                });
+                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+                // Test the endpoint
                 testCors(path, () => response);
-                it('returns the correct Cache headers', done => {
+                it('returns the correct Cache headers', () => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
-                    done();
                 });
-                it('returns a JSON body with \'results\', \'total\' and \'available\' properties', done => {
+                it('returns the correct status code', () => {
+                    expect(response).to.have.status(200);
+                });
+                it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
                     expect(response).to.be.json;
                     expect(response.body).to.have.property('results').that.is.an('array');
                     expect(response.body).to.have.property('total').that.is.a('number');
                     expect(response.body).to.have.property('available').that.is.a('number');
-                    done();
                 });
-                it('returns all available hits', done => {
+                it('returns all available hits', () => {
                     expect(response.body.results).to.have.lengthOf(response.body.total);
                     expect(response.body.results).to.have.lengthOf(response.body.available);
-                    done();
                 });
                 describe('Library object', () => {
-                    it('is an object with \'name\' and \'latest\' properties', done => {
+                    it('is an object with \'name\' and \'latest\' properties', () => {
                         for (const result of response.body.results) {
                             expect(result).to.have.property('name').that.is.a('string');
                             expect(result).to.have.property('latest').that.is.a('string');
                         }
-                        done();
                     });
                     // This is fragile!
                     // backbone.js doesn't have a keyword for itself and is owned by a user so we shouldn't see it
-                    it('doesn\'t return the \'backbone.js\' package', done => {
+                    it('doesn\'t return the \'backbone.js\' package', () => {
                         for (const result of response.body.results) {
                             expect(result.name).to.not.equal('backbone.js');
                         }
-                        done();
                     });
-                    it('has no other properties', done => {
+                    it('has no other properties', () => {
                         for (const result of response.body.results) {
                             expect(Object.keys(result)).to.have.lengthOf(2);
                         }
-                        done();
+                    });
+                });
+            });
+
+            describe('through space-separated string (?search=backbone.js&search_fields=keywords github.user)', () => {
+                const path = '/libraries?search=backbone.js&search_fields=keywords github.user';
+                const fetch = () => request(path);
+
+                // Fetch the endpoint
+                let response;
+                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+                // Test the endpoint
+                testCors(path, () => response);
+                it('returns the correct Cache headers', () => {
+                    expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+                });
+                it('returns the correct status code', () => {
+                    expect(response).to.have.status(200);
+                });
+                it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
+                    expect(response).to.be.json;
+                    expect(response.body).to.have.property('results').that.is.an('array');
+                    expect(response.body).to.have.property('total').that.is.a('number');
+                    expect(response.body).to.have.property('available').that.is.a('number');
+                });
+                it('returns all available hits', () => {
+                    expect(response.body.results).to.have.lengthOf(response.body.total);
+                    expect(response.body.results).to.have.lengthOf(response.body.available);
+                });
+                describe('Library object', () => {
+                    it('is an object with \'name\' and \'latest\' properties', () => {
+                        for (const result of response.body.results) {
+                            expect(result).to.have.property('name').that.is.a('string');
+                            expect(result).to.have.property('latest').that.is.a('string');
+                        }
+                    });
+                    // This is fragile!
+                    // backbone.js doesn't have a keyword for itself and is owned by a user so we shouldn't see it
+                    it('doesn\'t return the \'backbone.js\' package', () => {
+                        for (const result of response.body.results) {
+                            expect(result.name).to.not.equal('backbone.js');
+                        }
+                    });
+                    it('has no other properties', () => {
+                        for (const result of response.body.results) {
+                            expect(Object.keys(result)).to.have.lengthOf(2);
+                        }
                     });
                 });
             });
 
             describe('through multiple query parameters (?search=backbone.js&search_fields=keywords&search_fields=github.user)', () => {
                 const path = '/libraries?search=backbone.js&search_fields=keywords&search_fields=github.user';
-                const test = () => request().get(path);
+                const fetch = () => request(path);
+
+                // Fetch the endpoint
                 let response;
-                before('fetch endpoint', done => {
-                    fetch(test, 5000).then(res => {
-                        response = res;
-                        done();
-                    });
-                });
+                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+                // Test the endpoint
                 testCors(path, () => response);
-                it('returns the correct Cache headers', done => {
+                it('returns the correct Cache headers', () => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
-                    done();
                 });
-                it('returns a JSON body with \'results\', \'total\' and \'available\' properties', done => {
+                it('returns the correct status code', () => {
+                    expect(response).to.have.status(200);
+                });
+                it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
                     expect(response).to.be.json;
                     expect(response.body).to.have.property('results').that.is.an('array');
                     expect(response.body).to.have.property('total').that.is.a('number');
                     expect(response.body).to.have.property('available').that.is.a('number');
-                    done();
                 });
-                it('returns all available hits', done => {
+                it('returns all available hits', () => {
                     expect(response.body.results).to.have.lengthOf(response.body.total);
                     expect(response.body.results).to.have.lengthOf(response.body.available);
-                    done();
                 });
                 describe('Library object', () => {
-                    it('is an object with \'name\' and \'latest\' properties', done => {
+                    it('is an object with \'name\' and \'latest\' properties', () => {
                         for (const result of response.body.results) {
                             expect(result).to.have.property('name').that.is.a('string');
                             expect(result).to.have.property('latest').that.is.a('string');
                         }
-                        done();
                     });
                     // This is fragile!
                     // backbone.js doesn't have a keyword for itself and is owned by a user so we shouldn't see it
-                    it('doesn\'t return the \'backbone.js\' package', done => {
+                    it('doesn\'t return the \'backbone.js\' package', () => {
                         for (const result of response.body.results) {
                             expect(result.name).to.not.equal('backbone.js');
                         }
-                        done();
                     });
-                    it('has no other properties', done => {
+                    it('has no other properties', () => {
                         for (const result of response.body.results) {
                             expect(Object.keys(result)).to.have.lengthOf(2);
                         }
-                        done();
                     });
                 });
             });
@@ -523,49 +582,45 @@ describe('/libraries', () => {
         describe('Providing search fields that are invalid (?search=backbone.js&search_fields=this-field-doesnt-exist)', () => {
             // If invalid fields make it to Aloglia, it will error, so this tests that we're filtering them first
             const path = '/libraries?search=backbone.js&search_fields=this-field-doesnt-exist';
-            const test = () => request().get(path);
+            const fetch = () => request(path);
+
+            // Fetch the endpoint
             let response;
-            before('fetch endpoint', done => {
-                fetch(test, 5000).then(res => {
-                    response = res;
-                    done();
-                });
-            });
+            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+
+            // Test the endpoint
             testCors(path, () => response);
-            it('returns the correct Cache headers', done => {
+            it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
-                done();
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', done => {
+            it('returns the correct status code', () => {
+                expect(response).to.have.status(200);
+            });
+            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
                 expect(response).to.be.json;
                 expect(response.body).to.have.property('results').that.is.an('array');
                 expect(response.body).to.have.property('total').that.is.a('number');
                 expect(response.body).to.have.property('available').that.is.a('number');
-                done();
             });
-            it('returns all available hits', done => {
+            it('returns all available hits', () => {
                 expect(response.body.results).to.have.lengthOf(response.body.total);
                 expect(response.body.results).to.have.lengthOf(response.body.available);
-                done();
             });
             describe('Library object', () => {
-                it('is an object with \'name\' and \'latest\' properties', done => {
+                it('is an object with \'name\' and \'latest\' properties', () => {
                     for (const result of response.body.results) {
                         expect(result).to.have.property('name').that.is.a('string');
                         expect(result).to.have.property('latest').that.is.a('string');
                     }
-                    done();
                 });
                 // This is fragile! backbone.js is the most popular package in this query so we should see it first
-                it('returns the \'backbone.js\' package as the first object', done => {
+                it('returns the \'backbone.js\' package as the first object', () => {
                     expect(response.body.results[0]).to.have.property('name', 'backbone.js');
-                    done();
                 });
-                it('has no other properties', done => {
+                it('has no other properties', () => {
                     for (const result of response.body.results) {
                         expect(Object.keys(result)).to.have.lengthOf(2);
                     }
-                    done();
                 });
             });
         });

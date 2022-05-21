@@ -7,8 +7,9 @@ import corsOptions from './utils/cors.js';
 import indexRoutes from './routes/index.js';
 import statsRoutes from './routes/stats.js';
 import whitelistRoutes from './routes/whitelist.js';
-import tutorialsRoutes from './routes/tutorials.js';
 import libraryRoutes from './routes/library.js';
+import tutorialsRoutes from './routes/tutorials.js';
+import librariesRoutes from './routes/libraries.js';
 import errorRoutes from './routes/errors.js';
 
 // Create the base app
@@ -41,6 +42,7 @@ statsRoutes(app);
 whitelistRoutes(app);
 libraryRoutes(app);
 tutorialsRoutes(app);
+librariesRoutes(app);
 errorRoutes(app);
 
 // Let's go!

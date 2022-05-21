@@ -10,6 +10,11 @@ import sriForVersion from '../utils/sriForVersion.js';
 const extensions = Object.keys(files);
 const whitelisted = file => extensions.includes(file.split('.').slice(-1)[0]);
 
+/**
+ * Register library routes.
+ *
+ * @param {import('hono').Hono} app App instance.
+ */
 export default app => {
     // Library version
     app.get('/libraries/:library/:version', async (ctx, next) => {
