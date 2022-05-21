@@ -1,12 +1,12 @@
+import algolia from '../utils/algolia.js';
 import cache from '../utils/cache.js';
 import filter from '../utils/filter.js';
 import queryArray from '../utils/queryArray.js';
 import respond from '../utils/respond.js';
-import algolia from '../utils/algolia.js';
 
 const index = algolia().initIndex('libraries');
-const validSearchFields = ['name', 'alternativeNames', 'github.repo', 'description', 'keywords', 'filename',
-    'repositories.url', 'github.user', 'maintainers.name'];
+const validSearchFields = [ 'name', 'alternativeNames', 'github.repo', 'description', 'keywords', 'filename',
+    'repositories.url', 'github.user', 'maintainers.name' ];
 const maxQueryLength = 512;
 
 /**
@@ -21,6 +21,11 @@ const browse = async (query, searchFields) => {
     await index.browseObjects({
         query,
         restrictSearchableAttributes: searchFields.filter(field => validSearchFields.includes(field)),
+        /**
+         * Store an incoming batch of hits.
+         *
+         * @param {Object[]} batch Incoming batch.
+         */
         batch: batch => {
             hits.push(...batch);
         },
@@ -56,26 +61,24 @@ export default app => {
             //     });
             // }
             return false;
-        }).map(hit => {
-            return filter(
-                {
-                    // Ensure name is first prop
-                    name: hit.name,
-                    // Custom latest prop
-                    latest: hit.filename && hit.version ? 'https://cdnjs.cloudflare.com/ajax/libs/' + hit.name + '/' + hit.version + '/' + hit.filename : null,
-                    // All other hit props
-                    ...hit,
-                },
-                [
-                    // Always send back name & latest
-                    'name',
-                    'latest',
-                    // Send back whatever else was requested
-                    ...requestedFields,
-                ],
-                requestedFields.includes('*'), // Send all if they have '*'
-            );
-        });
+        }).map(hit => filter(
+            {
+                // Ensure name is first prop
+                name: hit.name,
+                // Custom latest prop
+                latest: hit.filename && hit.version ? 'https://cdnjs.cloudflare.com/ajax/libs/' + hit.name + '/' + hit.version + '/' + hit.filename : null,
+                // All other hit props
+                ...hit,
+            },
+            [
+                // Always send back name & latest
+                'name',
+                'latest',
+                // Send back whatever else was requested
+                ...requestedFields,
+            ],
+            requestedFields.includes('*'), // Send all if they have '*'
+        ));
 
         // If they want less data, allow that
         const limit = ctx.req.query('limit') && Number(ctx.req.query('limit'));

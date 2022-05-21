@@ -1,6 +1,7 @@
 import { fileURLToPath } from 'node:url';
-import { Miniflare } from 'miniflare';
+
 import { Request } from '@miniflare/core';
+import { Miniflare } from 'miniflare';
 
 /**
  * @typedef {Response} ExtendedResponse
@@ -32,12 +33,23 @@ export default (route, opts = {}) => {
     // Send the request to Miniflare
     return mf.dispatchFetch(req).then(async resp => {
         // Patch in some extras for chai-http
+
+        /**
+         * Fetch a header from the response.
+         *
+         * @param {string} name Name of the header to fetch.
+         * @return {string}
+         */
         resp.getHeader = name => resp.headers.get(name);
+
+        // Expose the request
         resp.request = req;
 
+        // Replace the text method with the text content
         const text = await resp.text();
         Reflect.defineProperty(resp, 'text', { value: text });
 
+        // Replace the body method with the JSON body content
         // https://github.com/visionmedia/superagent/blob/9ed29166e2fe01d20a1ae4c06e009b1a27711c27/src/client.js#L275-L287
         if (/[/+]json($|[^-\w])/i.test(resp.headers.get('content-type')?.toLowerCase()))
             Reflect.defineProperty(resp, 'body', { value: JSON.parse(text) });

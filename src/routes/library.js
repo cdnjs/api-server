@@ -1,13 +1,20 @@
 import cache from '../utils/cache.js';
+import files from '../utils/files.js';
 import filter from '../utils/filter.js';
 import { library, libraryVersion, libraryVersionSri, libraryFull, librarySri } from '../utils/kvMetadata.js';
 import notFound from '../utils/notFound.js';
-import files from '../utils/files.js';
 import queryArray from '../utils/queryArray.js';
 import respond from '../utils/respond.js';
 import sriForVersion from '../utils/sriForVersion.js';
 
 const extensions = Object.keys(files);
+
+/**
+ * Check if a file is whitelisted for cdnjs, based on its extension.
+ *
+ * @param {string} file Filename to check.
+ * @return {boolean}
+ */
 const whitelisted = file => extensions.includes(file.split('.').slice(-1)[0]);
 
 /**
@@ -116,7 +123,7 @@ export default app => {
 
             // Map assets
             response.assets = (response.assets || []).map(asset => {
-                asset.rawFiles = [...(asset.files || [])];
+                asset.rawFiles = [ ...(asset.files || []) ];
                 asset.files = (asset.files || []).filter(whitelisted);
                 asset.sri = sriForVersion(lib.name, asset.version, asset.rawFiles, sriData);
                 return asset;

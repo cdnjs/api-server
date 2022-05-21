@@ -1,5 +1,5 @@
+import { expect } from 'chai';
 import { it } from 'mocha';
-import { expect } from'chai';
 
 /**
  * Run Mocha tests to ensure a response is a valid pretty-printed HTML "human" response.

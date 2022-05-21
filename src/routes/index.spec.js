@@ -1,8 +1,9 @@
-import { describe, it, before } from 'mocha';
 import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
+import { describe, it, before } from 'mocha';
+
+import testCors from '../utils/spec/cors.js';
 import request from '../utils/spec/request.js';
-import testCors from '../utils/spec/cors.js'
 
 chai.use(chaiHttp);
 

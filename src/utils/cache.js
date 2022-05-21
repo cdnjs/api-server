@@ -18,5 +18,5 @@ export default (ctx, age, immutable = false) => {
     ctx.header('Expires',
         new Date(Date.now() + age * 1000).toUTCString());
     ctx.header('Cache-Control',
-        ['public', `max-age=${age}`, immutable ? 'immutable' : null].filter(x => !!x).join(', '));
+        [ 'public', `max-age=${age}`, immutable ? 'immutable' : null ].filter(x => !!x).join(', '));
 };

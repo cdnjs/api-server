@@ -6,6 +6,12 @@ import algoliasearch from 'algoliasearch';
  * @type {import('@algolia/requester-common').Requester}
  */
 const requester = {
+    /**
+     * Send a request to the Algolia API.
+     *
+     * @param {import('@algolia/requester-common').Request} req Request to send.
+     * @return {Promise<import('@algolia/requester-common').Response>}
+     */
     send: req => {
         // Create the timeout
         const hasTimeout = typeof req.responseTimeout === 'number' && req.responseTimeout > 0;

@@ -1,6 +1,6 @@
+import cache from '../utils/cache.js';
 import notFound from '../utils/notFound.js';
 import respond from '../utils/respond.js';
-import cache from '../utils/cache.js';
 
 /**
  * Register error handlers for routes.
@@ -9,9 +9,7 @@ import cache from '../utils/cache.js';
  */
 export default app => {
     // Handle 404s
-    app.notFound(ctx => {
-        return notFound(ctx, 'Endpoint');
-    });
+    app.notFound(ctx => notFound(ctx, 'Endpoint'));
 
     // Handle errors
     app.onError((err, ctx) => {

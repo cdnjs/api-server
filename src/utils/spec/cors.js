@@ -1,7 +1,10 @@
-import { before, it } from 'mocha';
 import { expect } from 'chai';
-import request from './request.js';
+import { before, it } from 'mocha';
+
 import corsOptions from '../cors.js';
+
+import request from './request.js';
+
 
 /**
  * Check that a response (and request if OPTIONS) has the expects CORS header values.

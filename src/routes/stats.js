@@ -1,8 +1,8 @@
-import queryArray from '../utils/queryArray.js';
 import cache from '../utils/cache.js';
-import respond from '../utils/respond.js';
 import filter from '../utils/filter.js';
 import { libraries } from '../utils/kvMetadata.js';
+import queryArray from '../utils/queryArray.js';
+import respond from '../utils/respond.js';
 
 /**
  * Register stats routes.

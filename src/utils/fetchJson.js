@@ -1,6 +1,6 @@
-import { inflate } from 'pako';
-import isGzip from 'is-gzip';
 import isDeflate from 'is-deflate';
+import isGzip from 'is-gzip';
+import { inflate } from 'pako';
 
 /**
  * Cleanly make a fetch request, throwing an error for any non-ok response.

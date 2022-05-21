@@ -1,8 +1,9 @@
-import { describe, it, before } from 'mocha';
 import { expect } from 'chai';
-import request from '../utils/spec/request.js';
+import { describe, it, before } from 'mocha';
+
 import testCors from '../utils/spec/cors.js';
 import testHuman from '../utils/spec/human.js';
+import request from '../utils/spec/request.js';
 
 describe('/libraries/:library/:version', () => {
     describe('Requesting a valid library (:library = backbone.js)', () => {
