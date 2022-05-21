@@ -1,4 +1,4 @@
-import { it } from 'mocha';
+import { before, it } from 'mocha';
 import { expect } from 'chai';
 import request from './request.js';
 import corsOptions from '../cors.js';
@@ -26,13 +26,20 @@ const expectCORSHeaders = response => {
  * @param {function(): import('./request.js').ExtendedResponse} getResponse Method that returns main path response.
  */
 export default (path, getResponse) => {
+    // Fetch the endpoint
+    let optionsResponse;
+    before('fetch endpoint (OPTIONS)', () => request(path, { method: 'OPTIONS', redirect: 'manual' })
+        .then(res => { optionsResponse = res; }));
+
     it('returns the correct CORS headers', () => {
-        const response = getResponse();
-        expectCORSHeaders(response);
+        expectCORSHeaders(getResponse());
     });
 
-    it('returns the correct CORS headers for OPTIONS request',
-        () => request(path, { method: 'OPTIONS', redirect: 'manual' }).then(response => {
-            expectCORSHeaders(response);
-        }));
+    it('returns the correct status code for OPTIONS request', () => {
+        expect(optionsResponse).to.have.status(204);
+    });
+
+    it('returns the correct CORS headers for OPTIONS request', () => {
+        expectCORSHeaders(optionsResponse);
+    });
 };

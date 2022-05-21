@@ -19,6 +19,9 @@ describe('/whitelist', () => {
         it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours;
         });
+        it('returns the correct status code', () => {
+            expect(response).to.have.status(200);
+        });
         it('returns a JSON body with \'extensions\' and \'categories\' properties', () => {
             expect(response).to.be.json;
             expect(response.body).to.be.an('object');
@@ -81,6 +84,9 @@ describe('/whitelist', () => {
         it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
         });
+        it('returns the correct status code', () => {
+            expect(response).to.have.status(200);
+        });
         it('returns a JSON body with the \'extensions\' property', () => {
             expect(response).to.be.json;
             expect(response.body).to.be.an('object');
@@ -106,6 +112,9 @@ describe('/whitelist', () => {
             it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
             });
+            it('returns the correct status code', () => {
+                expect(response).to.have.status(200);
+            });
             it('returns a JSON body with the \'extensions\' and \'categories\' properties', () => {
                 expect(response).to.be.json;
                 expect(response.body).to.be.an('object');
@@ -116,6 +125,7 @@ describe('/whitelist', () => {
                 expect(Object.keys(response.body)).to.have.lengthOf(2);
             });
         });
+
         describe('through space-separated string (?fields=extensions categories)', () => {
             // Define endpoint info
             const path = '/whitelist?fields=extensions categories';
@@ -129,6 +139,9 @@ describe('/whitelist', () => {
             testCors(path, () => response);
             it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
+            });
+            it('returns the correct status code', () => {
+                expect(response).to.have.status(200);
             });
             it('returns a JSON body with the \'extensions\' and \'categories\' properties', () => {
                 expect(response).to.be.json;
@@ -155,6 +168,9 @@ describe('/whitelist', () => {
             it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
             });
+            it('returns the correct status code', () => {
+                expect(response).to.have.status(200);
+            });
             it('returns a JSON body with the \'extensions\' and \'categories\' properties', () => {
                 expect(response).to.be.json;
                 expect(response.body).to.be.an('object');
@@ -180,6 +196,9 @@ describe('/whitelist', () => {
         testCors(path, () => response);
         it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
+        });
+        it('returns the correct status code', () => {
+            expect(response).to.have.status(200);
         });
         it('returns a JSON body with \'extensions\' and \'categories\' properties', () => {
             expect(response).to.be.json;

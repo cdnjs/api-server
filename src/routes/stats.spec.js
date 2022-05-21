@@ -19,6 +19,9 @@ describe('/stats', () => {
         it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
         });
+        it('returns the correct status code', () => {
+            expect(response).to.have.status(200);
+        });
         it('returns a JSON body that is a stats object', () => {
             expect(response).to.be.json;
             expect(response.body).to.be.an('object');

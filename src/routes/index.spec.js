@@ -42,8 +42,10 @@ describe('/health', () => {
         expect(response).to.have.header('Pragma', 'no-cache');
         expect(response).to.have.header('Cache-Control', 'no-cache, no-store, must-revalidate');
     });
-    it('returns on OK message with a 200 status code', async () => {
+    it('returns the correct status code', () => {
         expect(response).to.have.status(200);
+    });
+    it('returns on OK message', () => {
         expect(response).to.be.text;
         expect(response.text).to.eq('OK');
     });
@@ -63,7 +65,10 @@ describe('/robots.txt', () => {
     it('returns the correct Cache headers', () => {
         expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
     });
-    it('disallows all indexing', async () => {
+    it('returns the correct status code', () => {
+        expect(response).to.have.status(200);
+    });
+    it('disallows all indexing', () => {
         expect(response).to.be.text;
         expect(response.text).to.eq('User-agent: *\nDisallow: /');
     });

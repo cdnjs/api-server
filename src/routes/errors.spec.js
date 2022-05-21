@@ -22,6 +22,9 @@ describe('/this-route-doesnt-exist', () => {
         it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
         });
+        it('returns the correct status code', () => {
+            expect(response).to.have.status(404);
+        });
         it('returns a JSON body that is a valid error response', () => {
             expect(response).to.be.json;
             expect(response.body).to.be.an('object');
