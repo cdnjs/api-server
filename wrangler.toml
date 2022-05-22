@@ -7,7 +7,7 @@ DISABLE_CACHING = false
 METADATA_BASE = ""
 
 [env.staging]
-route = "api-worker-staging.cdnjs.dev/*"
+route = "api.cdnjs.dev/*"
 
 [env.staging.vars]
 DISABLE_CACHING = false
