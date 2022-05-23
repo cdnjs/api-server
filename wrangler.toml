@@ -5,6 +5,9 @@ compatibility_date = "2022-05-20"
 [vars]
 DISABLE_CACHING = false
 METADATA_BASE = ""
+SENTRY_DSN = ""
+SENTRY_RELEASE = ""
+SENTRY_ENVIRONMENT = "development"
 
 [env.staging]
 route = "api.cdnjs.dev/*"
@@ -12,3 +15,6 @@ route = "api.cdnjs.dev/*"
 [env.staging.vars]
 DISABLE_CACHING = false
 METADATA_BASE = ""
+SENTRY_DSN = "" # Will be injected by build pipeline
+SENTRY_RELEASE = "" # Will be injected by build pipeline
+SENTRY_ENVIRONMENT = "staging"

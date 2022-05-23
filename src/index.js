@@ -1,6 +1,9 @@
+/* global SENTRY_DSN, SENTRY_RELEASE, SENTRY_ENVIRONMENT */
+
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
+import Toucan from 'toucan-js';
 
 import errorRoutes from './routes/errors.js';
 import indexRoutes from './routes/index.js';
@@ -15,6 +18,33 @@ import corsOptions from './utils/cors.js';
 const app = new Hono();
 app.use('*', logger());
 app.use('*', cors(corsOptions));
+
+// Inject Sentry
+if (typeof SENTRY_DSN === 'string') {
+    app.use('*', async (ctx, next) => {
+        // Create the Sentry instance
+        ctx.sentry = new Toucan({
+            dsn: SENTRY_DSN,
+            context: ctx.event,
+            allowedHeaders: [ 'user-agent', 'cf-ray' ],
+            allowedSearchParams: /(.*)/,
+            release: (typeof SENTRY_RELEASE === 'string' ? SENTRY_RELEASE : '') || undefined,
+            environment: (typeof SENTRY_ENVIRONMENT === 'string' ? SENTRY_ENVIRONMENT : '') || undefined,
+        });
+
+        // Track the colo we're in
+        const colo = ctx.event.request.cf && ctx.event.request.cf.colo ? ctx.event.request.cf.colo : 'UNKNOWN';
+        ctx.sentry.setTag('colo', colo);
+
+        // Track the connecting user
+        const ipAddress = ctx.event.request.headers.get('cf-connecting-ip') || ctx.event.request.headers.get('x-forwarded-for') || undefined;
+        const userAgent = ctx.event.request.headers.get('user-agent') || undefined;
+        ctx.sentry.setUser({ ip: ipAddress, userAgent, colo });
+
+        // Continue
+        await next();
+    });
+}
 
 // Load the routes
 indexRoutes(app);

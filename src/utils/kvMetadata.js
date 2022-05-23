@@ -2,7 +2,7 @@
 
 import fetchJson from './fetchJson.js';
 
-const kvBase = METADATA_BASE || 'https://metadata.speedcdnjs.com';
+const kvBase = (typeof METADATA_BASE === 'string' ? METADATA_BASE : '') || 'https://metadata.speedcdnjs.com';
 
 /**
  * Get a list of libraries.
