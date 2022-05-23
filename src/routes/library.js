@@ -32,7 +32,7 @@ export default app => {
         }
 
         // Get the library
-        const lib = await library(ctx.req.param('library')).catch(err => {
+        const lib = await library(ctx.req.param('library'), ctx.sentry).catch(err => {
             if (err.status === 404) return;
             throw err;
         });
@@ -67,7 +67,7 @@ export default app => {
         if ('sri' in response) {
             // Get SRI for version
             const latestSriData = await libraryVersionSri(lib.name, ctx.req.param('version')).catch(() => {});
-            response.sri = sriForVersion(lib.name, ctx.req.param('version'), version, latestSriData);
+            response.sri = sriForVersion(lib.name, ctx.req.param('version'), version, latestSriData, ctx.sentry);
         }
 
         // Set a 355 day (same as CDN) life on this response
@@ -81,7 +81,7 @@ export default app => {
     // Library
     app.get('/libraries/:library', async ctx => {
         // Get the library
-        const lib = await libraryFull(ctx.req.param('library')).catch(err => {
+        const lib = await libraryFull(ctx.req.param('library'), ctx.sentry).catch(err => {
             if (err.status === 404) return;
             throw err;
         });
@@ -125,7 +125,7 @@ export default app => {
             response.assets = (response.assets || []).map(asset => {
                 asset.rawFiles = [ ...(asset.files || []) ];
                 asset.files = (asset.files || []).filter(whitelisted);
-                asset.sri = sriForVersion(lib.name, asset.version, asset.rawFiles, sriData);
+                asset.sri = sriForVersion(lib.name, asset.version, asset.rawFiles, sriData, ctx.sentry);
                 return asset;
             });
         }
@@ -152,6 +152,7 @@ export default app => {
                         lib.version,
                         [ lib.filename ],
                         latestSriData,
+                        ctx.sentry,
                     )[lib.filename] || null;
                 }
             }

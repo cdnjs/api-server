@@ -12,7 +12,7 @@ export default app => {
     // Library tutorials
     app.get('/libraries/:library/tutorials', async ctx => {
         // Get the library
-        const lib = await library(ctx.req.param('library')).catch(err => {
+        const lib = await library(ctx.req.param('library'), ctx.sentry).catch(err => {
             if (err.status === 404) return;
             throw err;
         });
@@ -28,7 +28,7 @@ export default app => {
     // Library tutorial
     app.get('/libraries/:library/tutorials/:tutorial', async ctx => {
         // Get the library
-        const lib = await library(ctx.req.param('library')).catch(err => {
+        const lib = await library(ctx.req.param('library'), ctx.sentry).catch(err => {
             if (err.status === 404) return;
             throw err;
         });

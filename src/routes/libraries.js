@@ -53,13 +53,12 @@ export default app => {
             if (hit && hit.name) return true;
             console.warn('Found bad entry in Algolia data');
             console.info(hit);
-            // TODO: Sentry
-            // if (process.env.SENTRY_DSN) {
-            //     Sentry.withScope(scope => {
-            //         scope.setTag('hit.data', JSON.stringify(hit));
-            //         Sentry.captureException(new Error('Bad entry in Algolia data'));
-            //     });
-            // }
+            if (ctx.sentry) {
+                ctx.sentry.withScope(scope => {
+                    scope.setExtra('hit', hit);
+                    ctx.sentry.captureException(new Error('Bad entry in Algolia data'));
+                });
+            }
             return false;
         }).map(hit => filter(
             {

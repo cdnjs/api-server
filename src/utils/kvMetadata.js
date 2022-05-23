@@ -18,9 +18,10 @@ export const libraries = () => fetchJson(`${kvBase}/packages`);
  *
  * @param {string} library Requested library name.
  * @param {T} data Returned library data to validate.
+ * @param {import('toucan-js')} [sentry] Sentry instance for missing version reporting.
  * @return {T & { assets: [] }}
  */
-const kvLibraryValidate = (library, data) => {
+const kvLibraryValidate = (library, data, sentry = undefined) => {
     // Assets might not exist if there are none, but we should make it an empty array by default
     data.assets = data.assets || [];
 
@@ -33,13 +34,12 @@ const kvLibraryValidate = (library, data) => {
     // Breaking issues
     if (!data.version) {
         console.error('Version missing', data.name, data);
-        // TODO: Sentry
-        // if (process.env.SENTRY_DSN) {
-        //     Sentry.withScope(scope => {
-        //         scope.setTag('data', JSON.stringify(data));
-        //         Sentry.captureException(new Error('Version missing in package data'));
-        //     });
-        // }
+        if (sentry) {
+            sentry.withScope(scope => {
+                scope.setExtra('data', data);
+                sentry.captureException(new Error('Version missing in package data'));
+            });
+        }
         throw new Error('Version missing in package data');
     }
 
@@ -50,10 +50,11 @@ const kvLibraryValidate = (library, data) => {
  * Get the metadata for a library on KV.
  *
  * @param {string} name Name of the library to fetch.
+ * @param {import('toucan-js')} [sentry] Sentry instance for data validation reporting.
  * @return {Promise<Object>}
  */
-export const library = name => fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}`)
-    .then(data => kvLibraryValidate(name, data));
+export const library = (name, sentry = undefined) => fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}`)
+    .then(data => kvLibraryValidate(name, data, sentry));
 
 /**
  * Get the metadata for a library's version on KV.
@@ -77,10 +78,11 @@ export const libraryVersionSri = (name, version) => fetchJson(`${kvBase}/package
  * Get the full metadata for a library incl. versions on KV.
  *
  * @param {string} name Name of the library to fetch.
+ * @param {import('toucan-js')} [sentry] Sentry instance for data validation reporting.
  * @return {Promise<Object>}
  */
-export const libraryFull = name => fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}/all`)
-    .then(data => kvLibraryValidate(name, data));
+export const libraryFull = (name, sentry = undefined) => fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}/all`)
+    .then(data => kvLibraryValidate(name, data, sentry));
 
 /**
  * Get all the SRI data for an entire library.
