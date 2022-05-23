@@ -27,8 +27,16 @@ jobs:
       - name: Run Tests
         run: npm test
 
+      - name: Prepare Wrangler Config
+        run: |
+          SENTRY_DSN=$(printf '%s\n' "${{ secrets.SENTRY_DSN }}" | sed -e 's/[\/&]/\\&/g')
+          sed -i "s/SENTRY_DSN = \"\"/SENTRY_DSN = \"$SENTRY_DSN\"/g" wrangler.toml
+
+          SENTRY_RELEASE=$(printf '%s\n' "${{ github.sha }}" | sed -e 's/[\/&]/\\&/g')
+          sed -i "s/SENTRY_RELEASE = \"\"/SENTRY_RELEASE = \"$SENTRY_RELEASE\"/g" wrangler.toml
+
       - name: Deploy to Staging
-        run: npx wrangler publish --env staging --outdir dist-worker
+        run: npx wrangler publish --env staging --outdir dist-worker --minify
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_STAGING }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID_STAGING }}
@@ -40,5 +48,6 @@ jobs:
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         with:
+          version: ${{ github.sha }}
           environment: staging
           sourcemaps: dist-worker
