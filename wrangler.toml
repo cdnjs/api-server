@@ -18,3 +18,13 @@ METADATA_BASE = ""
 SENTRY_DSN = "" # Will be injected by build pipeline
 SENTRY_RELEASE = "" # Will be injected by build pipeline
 SENTRY_ENVIRONMENT = "staging"
+
+[env.production]
+route = "api.cdnjs.com/*"
+
+[env.production.vars]
+DISABLE_CACHING = false
+METADATA_BASE = ""
+SENTRY_DSN = "" # Will be injected by build pipeline
+SENTRY_RELEASE = "" # Will be injected by build pipeline
+SENTRY_ENVIRONMENT = "production"
