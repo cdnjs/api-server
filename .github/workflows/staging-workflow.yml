@@ -41,6 +41,11 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_STAGING }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID_STAGING }}
 
+      - name: Prepare Sentry Release
+        run: |
+          mv dist-worker/index.js dist-worker/worker.js
+          mv dist-worker/index.js.map dist-worker/worker.js.map
+
       - name: Create Sentry Release
         uses: getsentry/action-release@v1
         env:
@@ -48,6 +53,7 @@ jobs:
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         with:
+          url_prefix: /
           ignore_missing: true
           version: ${{ github.sha }}
           environment: staging

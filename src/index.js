@@ -28,6 +28,21 @@ if (typeof SENTRY_DSN === 'string') {
             context: ctx.event,
             allowedHeaders: [ 'user-agent', 'cf-ray' ],
             allowedSearchParams: /(.*)/,
+            rewriteFrames: {
+                /**
+                 * @template {{ filename: string }} T
+                 *
+                 * Rewrite error stack frames to fix the source file path.
+                 *
+                 * @param {T} frame Stack frame to fix.
+                 * @return {T}
+                 */
+                iteratee: frame => {
+                    // Root should be `/`
+                    frame.filename = frame.filename.replace(/^(async )?worker\.js/, '/worker.js');
+                    return frame;
+                },
+            },
             release: (typeof SENTRY_RELEASE === 'string' ? SENTRY_RELEASE : '') || undefined,
             environment: (typeof SENTRY_ENVIRONMENT === 'string' ? SENTRY_ENVIRONMENT : '') || undefined,
         });
