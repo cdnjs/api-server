@@ -16,7 +16,7 @@
         "test:mocha": "mocha tests/suite",
         "test:mocha:with-server": "node tests/run.js",
         "dev": "LOCAL=true node index.js",
-        "start": "node --expose-gc --max-old-space-size=2048 index.js"
+        "start": "node --expose-gc index.js"
     },
     "repository": {
         "type": "git",
