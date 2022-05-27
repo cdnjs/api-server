@@ -33,15 +33,15 @@
         "toucan-js": "^2.6.0"
     },
     "devDependencies": {
-        "@babel/core": "^7.18.0",
-        "@babel/eslint-parser": "^7.17.0",
+        "@babel/core": "^7.18.2",
+        "@babel/eslint-parser": "^7.18.2",
         "@miniflare/core": "^2.4.0",
         "chai": "^4.3.6",
         "chai-http": "^4.3.0",
         "echint": "^4.0.2",
         "eslint": "^8.16.0",
         "eslint-plugin-import": "^2.26.0",
-        "eslint-plugin-jsdoc": "^39.3.0",
+        "eslint-plugin-jsdoc": "^39.3.2",
         "miniflare": "^2.4.0",
         "mocha": "^10.0.0",
         "wrangler": "^2.0.6"
