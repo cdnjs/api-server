@@ -26,7 +26,7 @@
     "homepage": "https://github.com/cdnjs/api-server#readme",
     "dependencies": {
         "algoliasearch": "^4.13.1",
-        "hono": "^1.3.6",
+        "hono": "^1.4.1",
         "is-deflate": "^1.0.0",
         "is-gzip": "^2.0.0",
         "pako": "^2.0.4",

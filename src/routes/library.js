@@ -24,13 +24,7 @@ const whitelisted = file => extensions.includes(file.split('.').slice(-1)[0]);
  */
 export default app => {
     // Library version
-    app.get('/libraries/:library/:version', async (ctx, next) => {
-        // Don't run this handler if destined for tutorials handler
-        if (ctx.req.param('version') === 'tutorials') {
-            await next();
-            return;
-        }
-
+    app.get('/libraries/:library/:version', async ctx => {
         // Get the library
         const lib = await library(ctx.req.param('library'), ctx.sentry).catch(err => {
             if (err.status === 404) return;

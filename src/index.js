@@ -65,8 +65,8 @@ if (typeof SENTRY_DSN === 'string') {
 indexRoutes(app);
 statsRoutes(app);
 whitelistRoutes(app);
-libraryRoutes(app);
 tutorialsRoutes(app);
+libraryRoutes(app);
 librariesRoutes(app);
 errorRoutes(app);
 
