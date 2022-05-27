@@ -8,6 +8,7 @@ METADATA_BASE = ""
 SENTRY_DSN = ""
 SENTRY_RELEASE = ""
 SENTRY_ENVIRONMENT = "development"
+USE_ORIGIN_PCT = 0
 
 [env.staging]
 route = "api.cdnjs.dev/*"
@@ -18,6 +19,7 @@ METADATA_BASE = ""
 SENTRY_DSN = "" # Will be injected by build pipeline
 SENTRY_RELEASE = "" # Will be injected by build pipeline
 SENTRY_ENVIRONMENT = "staging"
+USE_ORIGIN_PCT = 0
 
 [env.production]
 route = "api.cdnjs.com/*"
@@ -28,3 +30,4 @@ METADATA_BASE = ""
 SENTRY_DSN = "" # Will be injected by build pipeline
 SENTRY_RELEASE = "" # Will be injected by build pipeline
 SENTRY_ENVIRONMENT = "production"
+USE_ORIGIN_PCT = 0
