@@ -1,7 +1,6 @@
 import { fileURLToPath } from 'node:url';
 
-import { Request } from '@miniflare/core';
-import { Miniflare } from 'miniflare';
+import { Miniflare, Request } from 'miniflare';
 
 /**
  * @typedef {Response} ExtendedResponse
