@@ -1,7 +1,9 @@
 /**
  * Get an array based on a given query value.
- * If the query is an array, it will be returned directly.
- * If not, the query will be forced to a string, and split on commas and spaces.
+ * Splits strings on commas and spaces, casting them to lowercase and trimming each item.
+ *
+ * If given an array, the splitting operation will be applied to each item,
+ *  and the result flattened into a single-level array.
  *
  * @param {string|string[]|undefined} query Query param value to extract to an array.
  * @return {string[]}
