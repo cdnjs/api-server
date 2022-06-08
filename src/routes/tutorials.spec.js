@@ -8,13 +8,10 @@ import request from '../utils/spec/request.js';
 describe('/libraries/:library/tutorials', () => {
     describe('Requesting for a valid library (:library = backbone.js)', () => {
         describe('No query params', () => {
-            // Define endpoint info
-            const path = '/libraries/backbone.js/tutorials';
-            const fetch = () => request(path);
-
             // Fetch the endpoint
+            const path = '/libraries/backbone.js/tutorials';
             let response;
-            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
             // Test the endpoint
             testCors(path, () => response);
@@ -32,13 +29,10 @@ describe('/libraries/:library/tutorials', () => {
         });
 
         describe('Requesting human response (?output=human)', () => {
-            // Define endpoint info
-            const path = '/libraries/backbone.js/tutorials?output=human';
-            const fetch = () => request(path);
-
             // Fetch the endpoint
+            const path = '/libraries/backbone.js/tutorials?output=human';
             let response;
-            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
             // Test the endpoint
             testCors(path, () => response);
@@ -51,13 +45,10 @@ describe('/libraries/:library/tutorials', () => {
 
     describe('Requesting for a non-existent library (:library = this-library-doesnt-exist)', () => {
         describe('No query params', () => {
-            // Define endpoint info
-            const path = '/libraries/this-library-doesnt-exist/tutorials';
-            const fetch = () => request(path);
-
             // Fetch the endpoint
+            const path = '/libraries/this-library-doesnt-exist/tutorials';
             let response;
-            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
             // Test the endpoint
             testCors(path, () => response);
@@ -77,13 +68,10 @@ describe('/libraries/:library/tutorials', () => {
         });
 
         describe('Requesting human response (?output=human)', () => {
-            // Define endpoint info
-            const path = '/libraries/this-library-doesnt-exist/tutorials?output=human';
-            const fetch = () => request(path);
-
             // Fetch the endpoint
+            const path = '/libraries/this-library-doesnt-exist/tutorials?output=human';
             let response;
-            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
             // Test the endpoint
             testCors(path, () => response);
@@ -99,13 +87,10 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
     describe('Requesting for a valid library (:library = backbone.js)', () => {
         describe('Requesting a valid tutorial (:tutorial = what-is-a-view)', () => {
             describe('No query params', () => {
-                // Define endpoint info
-                const path = '/libraries/backbone.js/tutorials/what-is-a-view';
-                const fetch = () => request(path);
-
                 // Fetch the endpoint
+                const path = '/libraries/backbone.js/tutorials/what-is-a-view';
                 let response;
-                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+                before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
                 // Test the endpoint
                 testCors(path, () => response);
@@ -125,13 +110,10 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
             });
 
             describe('Requesting human response (?output=human)', () => {
-                // Define endpoint info
-                const path = '/libraries/backbone.js/tutorials/what-is-a-view?output=human';
-                const fetch = () => request(path);
-
                 // Fetch the endpoint
+                const path = '/libraries/backbone.js/tutorials/what-is-a-view?output=human';
                 let response;
-                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+                before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
                 // Test the endpoint
                 testCors(path, () => response);
@@ -144,13 +126,10 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
 
         describe('Requesting a non-existent tutorial (:tutorial = this-tutorial-doesnt-exist)', () => {
             describe('No query params', () => {
-                // Define endpoint info
-                const path = '/libraries/backbone.js/tutorials/this-tutorial-doesnt-exist';
-                const fetch = () => request(path);
-
                 // Fetch the endpoint
+                const path = '/libraries/backbone.js/tutorials/this-tutorial-doesnt-exist';
                 let response;
-                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+                before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
                 // Test the endpoint
                 testCors(path, () => response);
@@ -170,13 +149,10 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
             });
 
             describe('Requesting human response (?output=human)', () => {
-                // Define endpoint info
-                const path = '/libraries/backbone.js/tutorials/this-tutorial-doesnt-exist?output=human';
-                const fetch = () => request(path);
-
                 // Fetch the endpoint
+                const path = '/libraries/backbone.js/tutorials/this-tutorial-doesnt-exist?output=human';
                 let response;
-                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+                before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
                 // Test the endpoint
                 testCors(path, () => response);
@@ -191,13 +167,10 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
     describe('Requesting for a non-existent library (:library = this-library-doesnt-exist)', () => {
         describe('Requesting a non-existent tutorial (:tutorial = this-tutorial-doesnt-exist)', () => {
             describe('No query params', () => {
-                // Define endpoint info
-                const path = '/libraries/this-library-doesnt-exist/tutorials/this-tutorial-doesnt-exist';
-                const fetch = () => request(path);
-
                 // Fetch the endpoint
+                const path = '/libraries/this-library-doesnt-exist/tutorials/this-tutorial-doesnt-exist';
                 let response;
-                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+                before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
                 // Test the endpoint
                 testCors(path, () => response);
@@ -217,13 +190,10 @@ describe('/libraries/:library/tutorials/:tutorial', () => {
             });
 
             describe('Requesting human response (?output=human)', () => {
-                // Define endpoint info
-                const path = '/libraries/this-library-doesnt-exist/tutorials/this-tutorial-doesnt-exist?output=human';
-                const fetch = () => request(path);
-
                 // Fetch the endpoint
+                const path = '/libraries/this-library-doesnt-exist/tutorials/this-tutorial-doesnt-exist?output=human';
                 let response;
-                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+                before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
                 // Test the endpoint
                 testCors(path, () => response);

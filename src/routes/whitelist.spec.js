@@ -7,13 +7,10 @@ import request from '../utils/spec/request.js';
 
 describe('/whitelist', () => {
     describe('No query params', () => {
-        // Define endpoint info
-        const path = '/whitelist';
-        const fetch = () => request(path);
-
         // Fetch the endpoint
+        const path = '/whitelist';
         let response;
-        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+        before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
         // Test the endpoint
         testCors(path, () => response);
@@ -55,13 +52,10 @@ describe('/whitelist', () => {
     });
 
     describe('Requesting human response (?output=human)', () => {
-        // Define endpoint info
-        const path = '/whitelist?output=human';
-        const fetch = () => request(path);
-
         // Fetch the endpoint
+        const path = '/whitelist?output=human';
         let response;
-        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+        before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
         // Test the endpoint
         testCors(path, () => response);
@@ -72,13 +66,10 @@ describe('/whitelist', () => {
     });
 
     describe('Requesting a field (?fields=extensions)', () => {
-        // Define endpoint info
-        const path = '/whitelist?fields=extensions';
-        const fetch = () => request(path);
-
         // Fetch the endpoint
+        const path = '/whitelist?fields=extensions';
         let response;
-        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+        before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
         // Test the endpoint
         testCors(path, () => response);
@@ -100,13 +91,10 @@ describe('/whitelist', () => {
 
     describe('Requesting multiple fields', () => {
         describe('through comma-separated string (?fields=extensions,categories)', () => {
-            // Define endpoint info
-            const path = '/whitelist?fields=extensions,categories';
-            const fetch = () => request(path);
-
             // Fetch the endpoint
+            const path = '/whitelist?fields=extensions,categories';
             let response;
-            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
             // Test the endpoint
             testCors(path, () => response);
@@ -128,13 +116,10 @@ describe('/whitelist', () => {
         });
 
         describe('through space-separated string (?fields=extensions categories)', () => {
-            // Define endpoint info
-            const path = '/whitelist?fields=extensions categories';
-            const fetch = () => request(path);
-
             // Fetch the endpoint
+            const path = '/whitelist?fields=extensions categories';
             let response;
-            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
             // Test the endpoint
             testCors(path, () => response);
@@ -156,13 +141,10 @@ describe('/whitelist', () => {
         });
 
         describe('through multiple query parameters (?fields=extensions&fields=categories)', () => {
-            // Define endpoint info
-            const path = '/whitelist?fields=extensions&fields=categories';
-            const fetch = () => request(path);
-
             // Fetch the endpoint
+            const path = '/whitelist?fields=extensions&fields=categories';
             let response;
-            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
             // Test the endpoint
             testCors(path, () => response);
@@ -185,13 +167,10 @@ describe('/whitelist', () => {
     });
 
     describe('Requesting all fields (?fields=*)', () => {
-        // Define endpoint info
-        const path = '/whitelist?fields=*';
-        const fetch = () => request(path);
-
         // Fetch the endpoint
+        const path = '/whitelist?fields=*';
         let response;
-        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+        before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
         // Test the endpoint
         testCors(path, () => response);

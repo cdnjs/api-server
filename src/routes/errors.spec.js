@@ -10,13 +10,10 @@ chai.use(chaiHttp);
 
 describe('/this-route-doesnt-exist', () => {
     describe('No query params', () => {
-        // Define endpoint info
-        const path = '/this-route-doesnt-exist';
-        const fetch = () => request(path);
-
         // Fetch the endpoint
+        const path = '/this-route-doesnt-exist';
         let response;
-        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+        before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
         // Test the endpoint
         testCors(path, () => response);
@@ -36,13 +33,10 @@ describe('/this-route-doesnt-exist', () => {
     });
 
     describe('Requesting human response (?output=human)', () => {
-        // Define endpoint info
-        const path = '/this-route-doesnt-exist?output=human';
-        const fetch = () => request(path);
-
         // Fetch the endpoint
+        const path = '/this-route-doesnt-exist?output=human';
         let response;
-        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+        before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
         // Test the endpoint
         testCors(path, () => response);
@@ -55,13 +49,10 @@ describe('/this-route-doesnt-exist', () => {
 
 describe('/error', () => {
     describe('No query params', () => {
-        // Define endpoint info
-        const path = '/error';
-        const fetch = () => request(path);
-
         // Fetch the endpoint
+        const path = '/error';
         let response;
-        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+        before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
         // Test the endpoint
         testCors(path, () => response);
@@ -83,13 +74,10 @@ describe('/error', () => {
     });
 
     describe('Requesting human response (?output=human)', () => {
-        // Define endpoint info
-        const path = '/error?output=human';
-        const fetch = () => request(path);
-
         // Fetch the endpoint
+        const path = '/error?output=human';
         let response;
-        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+        before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
         // Test the endpoint
         testCors(path, () => response);

@@ -7,13 +7,10 @@ import request from '../utils/spec/request.js';
 
 describe('/stats', () => {
     describe('No query params', () => {
-        // Define endpoint info
-        const path = '/stats';
-        const fetch = () => request(path);
-
         // Fetch the endpoint
+        const path = '/stats';
         let response;
-        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+        before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
         // Test the endpoint
         testCors(path, () => response);
@@ -38,13 +35,10 @@ describe('/stats', () => {
     });
 
     describe('Requesting human response (?output=human)', () => {
-        // Define endpoint info
-        const path = '/stats?output=human';
-        const fetch = () => request(path);
-
         // Fetch the endpoint
+        const path = '/stats?output=human';
         let response;
-        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+        before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
         // Test the endpoint
         testCors(path, () => response);

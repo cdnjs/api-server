@@ -7,13 +7,10 @@ import request from '../utils/spec/request.js';
 
 describe('/libraries', () => {
     describe('No query params', () => {
-        // Define endpoint info
-        const path = '/libraries';
-        const fetch = () => request(path);
-
         // Fetch the endpoint
+        const path = '/libraries';
         let response;
-        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+        before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
         // Test the endpoint
         testCors(path, () => response);
@@ -62,12 +59,10 @@ describe('/libraries', () => {
     });
 
     describe('Requesting human response (?output=human)', () => {
-        const path = '/libraries?output=human';
-        const fetch = () => request(path);
-
         // Fetch the endpoint
+        const path = '/libraries?output=human';
         let response;
-        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+        before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
         // Test the endpoint
         testCors(path, () => response);
@@ -78,12 +73,10 @@ describe('/libraries', () => {
     });
 
     describe('Limiting number of results (?limit=10)', () => {
-        const path = '/libraries?limit=10';
-        const fetch = () => request(path);
-
         // Fetch the endpoint
+        const path = '/libraries?limit=10';
         let response;
-        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+        before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
         // Test the endpoint
         testCors(path, () => response);
@@ -107,12 +100,10 @@ describe('/libraries', () => {
     });
 
     describe('Requesting a field (?fields=version)', () => {
-        const path = '/libraries?fields=version';
-        const fetch = () => request(path);
-
         // Fetch the endpoint
+        const path = '/libraries?fields=version';
         let response;
-        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+        before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
         // Test the endpoint
         testCors(path, () => response);
@@ -154,12 +145,10 @@ describe('/libraries', () => {
 
     describe('Requesting multiple fields', () => {
         describe('through comma-separated string (?fields=filename,version)', () => {
-            const path = '/libraries?fields=filename,version';
-            const fetch = () => request(path);
-
             // Fetch the endpoint
+            const path = '/libraries?fields=filename,version';
             let response;
-            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
             // Test the endpoint
             testCors(path, () => response);
@@ -197,12 +186,10 @@ describe('/libraries', () => {
         });
 
         describe('through space-separated string (?fields=filename version)', () => {
-            const path = '/libraries?fields=filename version';
-            const fetch = () => request(path);
-
             // Fetch the endpoint
+            const path = '/libraries?fields=filename version';
             let response;
-            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
             // Test the endpoint
             testCors(path, () => response);
@@ -240,12 +227,10 @@ describe('/libraries', () => {
         });
 
         describe('through multiple query parameters (?fields=filename&fields=version)', () => {
-            const path = '/libraries?fields=filename&fields=version';
-            const fetch = () => request(path);
-
             // Fetch the endpoint
+            const path = '/libraries?fields=filename&fields=version';
             let response;
-            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
             // Test the endpoint
             testCors(path, () => response);
@@ -284,12 +269,10 @@ describe('/libraries', () => {
     });
 
     describe('Requesting all fields (?fields=*)', () => {
-        const path = '/libraries?fields=*';
-        const fetch = () => request(path);
-
         // Fetch the endpoint
+        const path = '/libraries?fields=*';
         let response;
-        before('fetch endpoint', () => fetch().then(res => { response = res; }));
+        before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
         // Test the endpoint
         testCors(path, () => response);
@@ -355,12 +338,10 @@ describe('/libraries', () => {
         // TODO: Make this set of tests more robust
 
         describe('Providing a short query (?search=font-awesome)', () => {
-            const path = '/libraries?search=font-awesome';
-            const fetch = () => request(path);
-
             // Fetch the endpoint
+            const path = '/libraries?search=font-awesome';
             let response;
-            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
             // Test the endpoint
             testCors(path, () => response);
@@ -399,12 +380,10 @@ describe('/libraries', () => {
         });
 
         describe('Providing a query that is longer than max that Algolia allows (?search=this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet-this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet)', () => {
-            const path = '/libraries?search=this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet-this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet';
-            const fetch = () => request(path);
-
             // Fetch the endpoint
+            const path = '/libraries?search=this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet-this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet';
             let response;
-            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
             // Test the endpoint
             testCors(path, () => response);
@@ -436,12 +415,10 @@ describe('/libraries', () => {
 
         describe('Providing search fields that are valid', () => {
             describe('through comma-separated string (?search=backbone.js&search_fields=keywords,github.user)', () => {
-                const path = '/libraries?search=backbone.js&search_fields=keywords,github.user';
-                const fetch = () => request(path);
-
                 // Fetch the endpoint
+                const path = '/libraries?search=backbone.js&search_fields=keywords,github.user';
                 let response;
-                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+                before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
                 // Test the endpoint
                 testCors(path, () => response);
@@ -484,12 +461,10 @@ describe('/libraries', () => {
             });
 
             describe('through space-separated string (?search=backbone.js&search_fields=keywords github.user)', () => {
-                const path = '/libraries?search=backbone.js&search_fields=keywords github.user';
-                const fetch = () => request(path);
-
                 // Fetch the endpoint
+                const path = '/libraries?search=backbone.js&search_fields=keywords github.user';
                 let response;
-                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+                before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
                 // Test the endpoint
                 testCors(path, () => response);
@@ -532,12 +507,10 @@ describe('/libraries', () => {
             });
 
             describe('through multiple query parameters (?search=backbone.js&search_fields=keywords&search_fields=github.user)', () => {
-                const path = '/libraries?search=backbone.js&search_fields=keywords&search_fields=github.user';
-                const fetch = () => request(path);
-
                 // Fetch the endpoint
+                const path = '/libraries?search=backbone.js&search_fields=keywords&search_fields=github.user';
                 let response;
-                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+                before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
                 // Test the endpoint
                 testCors(path, () => response);
@@ -580,14 +553,12 @@ describe('/libraries', () => {
             });
         });
 
+        // If invalid fields make it to Aloglia, it will error, so this tests that we're filtering them first
         describe('Providing search fields that are invalid (?search=backbone.js&search_fields=this-field-doesnt-exist)', () => {
-            // If invalid fields make it to Aloglia, it will error, so this tests that we're filtering them first
-            const path = '/libraries?search=backbone.js&search_fields=this-field-doesnt-exist';
-            const fetch = () => request(path);
-
             // Fetch the endpoint
+            const path = '/libraries?search=backbone.js&search_fields=this-field-doesnt-exist';
             let response;
-            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
             // Test the endpoint
             testCors(path, () => response);

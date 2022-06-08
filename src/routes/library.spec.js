@@ -9,13 +9,10 @@ describe('/libraries/:library/:version', () => {
     describe('Requesting a valid library (:library = backbone.js)', () => {
         describe('Requesting a valid version (:version = 1.1.0)', () => {
             describe('No query params', () => {
-                // Define endpoint info
-                const path = '/libraries/backbone.js/1.1.0';
-                const fetch = () => request(path);
-
                 // Fetch the endpoint
+                const path = '/libraries/backbone.js/1.1.0';
                 let response;
-                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+                before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
                 // Test the endpoint
                 testCors(path, () => response);
@@ -44,13 +41,10 @@ describe('/libraries/:library/:version', () => {
             });
 
             describe('Requesting human response (?output=human)', () => {
-                // Define endpoint info
-                const path = '/libraries/backbone.js/1.1.0?output=human';
-                const fetch = () => request(path);
-
                 // Fetch the endpoint
+                const path = '/libraries/backbone.js/1.1.0?output=human';
                 let response;
-                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+                before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
                 // Test the endpoint
                 testCors(path, () => response);
@@ -61,13 +55,10 @@ describe('/libraries/:library/:version', () => {
             });
 
             describe('Requesting a field (?fields=files)', () => {
-                // Define endpoint info
-                const path = '/libraries/backbone.js/1.1.0?fields=files';
-                const fetch = () => request(path);
-
                 // Fetch the endpoint
+                const path = '/libraries/backbone.js/1.1.0?fields=files';
                 let response;
-                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+                before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
                 // Test the endpoint
                 testCors(path, () => response);
@@ -93,13 +84,10 @@ describe('/libraries/:library/:version', () => {
 
             describe('Requesting multiple fields', () => {
                 describe('through comma-separated string (?fields=files,sri)', () => {
-                    // Define endpoint info
-                    const path = '/libraries/backbone.js/1.1.0?fields=files,sri';
-                    const fetch = () => request(path);
-
                     // Fetch the endpoint
+                    const path = '/libraries/backbone.js/1.1.0?fields=files,sri';
                     let response;
-                    before('fetch endpoint', () => fetch().then(res => { response = res; }));
+                    before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
                     // Test the endpoint
                     testCors(path, () => response);
@@ -125,13 +113,10 @@ describe('/libraries/:library/:version', () => {
                 });
 
                 describe('through space-separated string (?fields=files sri)', () => {
-                    // Define endpoint info
-                    const path = '/libraries/backbone.js/1.1.0?fields=files sri';
-                    const fetch = () => request(path);
-
                     // Fetch the endpoint
+                    const path = '/libraries/backbone.js/1.1.0?fields=files sri';
                     let response;
-                    before('fetch endpoint', () => fetch().then(res => { response = res; }));
+                    before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
                     // Test the endpoint
                     testCors(path, () => response);
@@ -157,13 +142,10 @@ describe('/libraries/:library/:version', () => {
                 });
 
                 describe('through multiple query parameters (?fields=files&fields=sri)', () => {
-                    // Define endpoint info
-                    const path = '/libraries/backbone.js/1.1.0?fields=files&fields=sri';
-                    const fetch = () => request(path);
-
                     // Fetch the endpoint
+                    const path = '/libraries/backbone.js/1.1.0?fields=files&fields=sri';
                     let response;
-                    before('fetch endpoint', () => fetch().then(res => { response = res; }));
+                    before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
                     // Test the endpoint
                     testCors(path, () => response);
@@ -190,13 +172,10 @@ describe('/libraries/:library/:version', () => {
             });
 
             describe('Requesting all fields (?fields=*)', () => {
-                // Define endpoint info
-                const path = '/libraries/backbone.js/1.1.0?fields=*';
-                const fetch = () => request(path);
-
                 // Fetch the endpoint
+                const path = '/libraries/backbone.js/1.1.0?fields=*';
                 let response;
-                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+                before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
                 // Test the endpoint
                 testCors(path, () => response);
@@ -227,13 +206,10 @@ describe('/libraries/:library/:version', () => {
 
         describe('Requesting a non-existent version (:version = this-version-doesnt-exist)', () => {
             describe('No query params', () => {
-                // Define endpoint info
-                const path = '/libraries/backbone.js/this-version-doesnt-exist';
-                const fetch = () => request(path);
-
                 // Fetch the endpoint
+                const path = '/libraries/backbone.js/this-version-doesnt-exist';
                 let response;
-                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+                before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
                 // Test the endpoint
                 testCors(path, () => response);
@@ -253,13 +229,10 @@ describe('/libraries/:library/:version', () => {
             });
 
             describe('Requesting human response (?output=human)', () => {
-                // Define endpoint info
-                const path = '/libraries/backbone.js/this-version-doesnt-exist?output=human';
-                const fetch = () => request(path);
-
                 // Fetch the endpoint
+                const path = '/libraries/backbone.js/this-version-doesnt-exist?output=human';
                 let response;
-                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+                before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
                 // Test the endpoint
                 testCors(path, () => response);
@@ -273,13 +246,10 @@ describe('/libraries/:library/:version', () => {
 
     describe('Requesting a non-existent library (:library = this-library-doesnt-exist, :version = this-version-doesnt-exist)', () => {
         describe('No query params', () => {
-            // Define endpoint info
-            const path = '/libraries/this-library-doesnt-exist/this-version-doesnt-exist';
-            const fetch = () => request(path);
-
             // Fetch the endpoint
+            const path = '/libraries/this-library-doesnt-exist/this-version-doesnt-exist';
             let response;
-            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
             // Test the endpoint
             testCors(path, () => response);
@@ -299,13 +269,10 @@ describe('/libraries/:library/:version', () => {
         });
 
         describe('Requesting human response (?output=human)', () => {
-            // Define endpoint info
-            const path = '/libraries/this-library-doesnt-exist/this-version-doesnt-exist?output=human';
-            const fetch = () => request(path);
-
             // Fetch the endpoint
+            const path = '/libraries/this-library-doesnt-exist/this-version-doesnt-exist?output=human';
             let response;
-            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
             // Test the endpoint
             testCors(path, () => response);
@@ -320,13 +287,10 @@ describe('/libraries/:library/:version', () => {
 describe('/libraries/:library', () => {
     describe('Requesting a valid library (:library = backbone.js)', () => {
         describe('No query params', () => {
-            // Define endpoint info
-            const path = '/libraries/backbone.js';
-            const fetch = () => request(path);
-
             // Fetch the endpoint
+            const path = '/libraries/backbone.js';
             let response;
-            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
             // Test the endpoint
             testCors(path, () => response);
@@ -392,13 +356,10 @@ describe('/libraries/:library', () => {
         });
 
         describe('Requesting human response (?output=human)', () => {
-            // Define endpoint info
-            const path = '/libraries/backbone.js?output=human';
-            const fetch = () => request(path);
-
             // Fetch the endpoint
+            const path = '/libraries/backbone.js?output=human';
             let response;
-            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
             // Test the endpoint
             testCors(path, () => response);
@@ -409,13 +370,10 @@ describe('/libraries/:library', () => {
         });
 
         describe('Requesting a field (?fields=assets)', () => {
-            // Define endpoint info
-            const path = '/libraries/backbone.js?fields=assets';
-            const fetch = () => request(path);
-
             // Fetch the endpoint
+            const path = '/libraries/backbone.js?fields=assets';
             let response;
-            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
             // Test the endpoint
             testCors(path, () => response);
@@ -441,13 +399,10 @@ describe('/libraries/:library', () => {
 
         describe('Requesting multiple fields', () => {
             describe('through comma-separated string (?fields=name,assets)', () => {
-                // Define endpoint info
-                const path = '/libraries/backbone.js?fields=name,assets';
-                const fetch = () => request(path);
-
                 // Fetch the endpoint
+                const path = '/libraries/backbone.js?fields=name,assets';
                 let response;
-                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+                before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
                 // Test the endpoint
                 testCors(path, () => response);
@@ -473,13 +428,10 @@ describe('/libraries/:library', () => {
             });
 
             describe('through space-separated string (?fields=name assets)', () => {
-                // Define endpoint info
-                const path = '/libraries/backbone.js?fields=name assets';
-                const fetch = () => request(path);
-
                 // Fetch the endpoint
+                const path = '/libraries/backbone.js?fields=name assets';
                 let response;
-                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+                before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
                 // Test the endpoint
                 testCors(path, () => response);
@@ -505,13 +457,10 @@ describe('/libraries/:library', () => {
             });
 
             describe('through multiple query parameters (?fields=name&fields=assets)', () => {
-                // Define endpoint info
-                const path = '/libraries/backbone.js?fields=name&fields=assets';
-                const fetch = () => request(path);
-
                 // Fetch the endpoint
+                const path = '/libraries/backbone.js?fields=name&fields=assets';
                 let response;
-                before('fetch endpoint', () => fetch().then(res => { response = res; }));
+                before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
                 // Test the endpoint
                 testCors(path, () => response);
@@ -538,13 +487,10 @@ describe('/libraries/:library', () => {
         });
 
         describe('Requesting all fields (?fields=*)', () => {
-            // Define endpoint info
-            const path = '/libraries/backbone.js?fields=*';
-            const fetch = () => request(path);
-
             // Fetch the endpoint
+            const path = '/libraries/backbone.js?fields=*';
             let response;
-            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
             // Test the endpoint
             testCors(path, () => response);
@@ -583,13 +529,10 @@ describe('/libraries/:library', () => {
 
     describe('Requesting a non-existent library (:library = this-library-doesnt-exist)', () => {
         describe('No query params', () => {
-            // Define endpoint info
-            const path = '/libraries/this-library-doesnt-exist';
-            const fetch = () => request(path);
-
             // Fetch the endpoint
+            const path = '/libraries/this-library-doesnt-exist';
             let response;
-            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
             // Test the endpoint
             testCors(path, () => response);
@@ -609,13 +552,10 @@ describe('/libraries/:library', () => {
         });
 
         describe('Requesting human response (?output=human)', () => {
-            // Define endpoint info
-            const path = '/libraries/this-library-doesnt-exist?output=human';
-            const fetch = () => request(path);
-
             // Fetch the endpoint
+            const path = '/libraries/this-library-doesnt-exist?output=human';
             let response;
-            before('fetch endpoint', () => fetch().then(res => { response = res; }));
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
             // Test the endpoint
             testCors(path, () => response);

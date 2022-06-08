@@ -8,13 +8,10 @@ import request from '../utils/spec/request.js';
 chai.use(chaiHttp);
 
 describe('/', () => {
-    // Define endpoint info
-    const path = '/';
-    const fetch = () => request(path, { redirect: 'manual' });
-
     // Fetch the endpoint
+    const path = '/';
     let response;
-    before('fetch endpoint', () => fetch().then(res => { response = res; }));
+    before('fetch endpoint', () => request(path, { redirect: 'manual' }).then(res => { response = res; }));
 
     // Test the endpoint
     testCors(path, () => response);
@@ -28,13 +25,10 @@ describe('/', () => {
 });
 
 describe('/health', () => {
-    // Define endpoint info
-    const path = '/health';
-    const fetch = () => request(path);
-
     // Fetch the endpoint
+    const path = '/health';
     let response;
-    before('fetch endpoint', () => fetch().then(res => { response = res; }));
+    before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
     // Test the endpoint
     testCors(path, () => response);
@@ -53,13 +47,10 @@ describe('/health', () => {
 });
 
 describe('/robots.txt', () => {
-    // Define endpoint info
-    const path = '/robots.txt';
-    const fetch = () => request(path);
-
     // Fetch the endpoint
+    const path = '/robots.txt';
     let response;
-    before('fetch endpoint', () => fetch().then(res => { response = res; }));
+    before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
     // Test the endpoint
     testCors(path, () => response);
