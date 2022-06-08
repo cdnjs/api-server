@@ -554,9 +554,9 @@ describe('/libraries', () => {
         });
 
         // If invalid fields make it to Aloglia, it will error, so this tests that we're filtering them first
-        describe('Providing search fields that are invalid (?search=backbone.js&search_fields=this-field-doesnt-exist)', () => {
+        describe('Providing search fields that are invalid (?search_fields=this-field-doesnt-exist)', () => {
             // Fetch the endpoint
-            const path = '/libraries?search=backbone.js&search_fields=this-field-doesnt-exist';
+            const path = '/libraries?search_fields=this-field-doesnt-exist';
             let response;
             before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
@@ -584,10 +584,6 @@ describe('/libraries', () => {
                         expect(result).to.have.property('name').that.is.a('string');
                         expect(result).to.have.property('latest').that.is.a('string');
                     }
-                });
-                // This is fragile! backbone.js is the most popular package in this query so we should see it first
-                it('returns the \'backbone.js\' package as the first object', () => {
-                    expect(response.body.results[0]).to.have.property('name', 'backbone.js');
                 });
                 it('has no other properties', () => {
                     for (const result of response.body.results) {

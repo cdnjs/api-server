@@ -29,6 +29,8 @@ const browse = async (query, searchFields) => {
         batch: batch => {
             hits.push(...batch);
         },
+    }).catch(err => {
+        throw err instanceof Error ? err : new Error(`${err.name}: ${err.message}`);
     });
     return hits;
 };
