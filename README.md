@@ -87,11 +87,11 @@ npm run test:mocha
 
 ## Error Logging
 
-We make use of Sentry to handle our error logging. To enable Sentry in the API server, set the
-`SENTRY_DSN` environment variable in the [Wrangler config file](wrangler.toml) for the appropriate
-environment to a valid DSN URL from Sentry. The `SENTRY_RELEASE` environment variable can also be
-set to identify a specific release of the worker (our GitHub Actions workflows for deployments set
-this to the current commit hash).
+We use Sentry to handle our error logging. To enable Sentry in the API server, set the `SENTRY_DSN`
+environment variable in the [Wrangler config file](wrangler.toml) for the appropriate environment to
+a valid DSN URL from Sentry. The `SENTRY_RELEASE` environment variable can also be set to identify a
+specific release of the worker (our GitHub Actions workflows for deployments set this to the current
+commit hash).
 
 Alongside the normal error reporting that Sentry provides in the worker, we also fire out custom
 error events for certain issues to help with improving data consistency across cdnjs:
@@ -103,10 +103,10 @@ error events for certain issues to help with improving data consistency across c
 ## Deployment
 
 As this API server is written as a Cloudflare Worker, you can deploy it using the Wrangler CLI. This
-can be done manually if needed, but in this repository we have
-[GitHub Actions configured](.github/workflows) to handle deploying to staging (api.cdnjs.dev) and
-production (api.cdnjs.com) based on commits to the staging/production branches, automatically
-handling not only deploying the worker but also creating a Sentry release with full source maps.
+can be done manually, but this repository uses [GitHub Actions](.github/workflows) to handle
+deploying to staging (api.cdnjs.dev) and production (api.cdnjs.com) based on commits to the
+staging/production branches, automatically handling not only deploying the worker but also creating
+a Sentry release with full source maps.
 
 To deploy to staging (assuming you have write access to this repository), run `make deploy-staging`.
 This will force-push your latest local commit to the staging branch, which will trigger GitHub
