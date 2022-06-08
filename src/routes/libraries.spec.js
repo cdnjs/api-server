@@ -582,7 +582,11 @@ describe('/libraries', () => {
                 it('is an object with \'name\' and \'latest\' properties', () => {
                     for (const result of response.body.results) {
                         expect(result).to.have.property('name').that.is.a('string');
-                        expect(result).to.have.property('latest').that.is.a('string');
+                        try {
+                            expect(result).to.have.property('latest').that.is.a('string');
+                        } catch (_) {
+                            expect(result).to.have.property('latest').that.is.null;
+                        }
                     }
                 });
                 it('has no other properties', () => {
