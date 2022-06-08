@@ -23,15 +23,13 @@ export default (library, version, files, sriData, sentry = undefined) => {
         // If we don't have an SRI entry, but expect one, error!
         if (file.endsWith('.js') || file.endsWith('.css')) {
             console.warn('Missing SRI entry for', fullFile);
-            if (sentry) {
-                sentry.withScope(scope => {
-                    scope.setTag('library', library);
-                    scope.setTag('library.version', version);
-                    scope.setTag('library.file', file);
-                    scope.setTag('library.file.full', fullFile);
-                    sentry.captureException(new Error('Missing SRI entry'));
-                });
-            }
+            sentry?.withScope(scope => {
+                scope.setTag('library', library);
+                scope.setTag('library.version', version);
+                scope.setTag('library.file', file);
+                scope.setTag('library.file.full', fullFile);
+                sentry.captureException(new Error('Missing SRI entry'));
+            });
         }
     }
 

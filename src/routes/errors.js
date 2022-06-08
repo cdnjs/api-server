@@ -21,7 +21,7 @@ export default app => {
     app.onError((err, ctx) => {
         // Log the error
         console.error(err.stack);
-        const sentry = ctx.sentry && ctx.sentry.captureException(err);
+        const sentry = ctx.sentry?.captureException(err);
 
         // Never cache this
         cache(ctx, -1);

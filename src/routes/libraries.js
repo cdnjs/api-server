@@ -50,15 +50,13 @@ export default app => {
         // Transform the results into our filtered array
         const requestedFields = queryArray(ctx.req.queries('fields'));
         const response = results.filter(hit => {
-            if (hit && hit.name) return true;
+            if (hit?.name) return true;
             console.warn('Found bad entry in Algolia data');
             console.info(hit);
-            if (ctx.sentry) {
-                ctx.sentry.withScope(scope => {
-                    scope.setExtra('hit', hit);
-                    ctx.sentry.captureException(new Error('Bad entry in Algolia data'));
-                });
-            }
+            ctx.sentry?.withScope(scope => {
+                scope.setExtra('hit', hit);
+                ctx.sentry.captureException(new Error('Bad entry in Algolia data'));
+            });
             return false;
         }).map(hit => filter(
             {

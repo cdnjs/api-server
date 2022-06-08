@@ -34,12 +34,10 @@ const kvLibraryValidate = (library, data, sentry = undefined) => {
     // Breaking issues
     if (!data.version) {
         console.error('Version missing', data.name, data);
-        if (sentry) {
-            sentry.withScope(scope => {
-                scope.setExtra('data', data);
-                sentry.captureException(new Error('Version missing in package data'));
-            });
-        }
+        sentry?.withScope(scope => {
+            scope.setExtra('data', data);
+            sentry.captureException(new Error('Version missing in package data'));
+        });
         throw new Error('Version missing in package data');
     }
 

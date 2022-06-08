@@ -48,7 +48,7 @@ if (typeof SENTRY_DSN === 'string') {
         });
 
         // Track the colo we're in
-        const colo = ctx.event.request.cf && ctx.event.request.cf.colo ? ctx.event.request.cf.colo : 'UNKNOWN';
+        const colo = ctx.event.request.cf?.colo || 'UNKNOWN';
         ctx.sentry.setTag('colo', colo);
 
         // Track the connecting user
