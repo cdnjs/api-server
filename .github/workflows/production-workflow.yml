@@ -13,7 +13,7 @@ jobs:
       - name: Checkout Commit
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Get the full history for the Sentry release commit log
 
       - name: Install Node.js
         uses: actions/setup-node@v3
