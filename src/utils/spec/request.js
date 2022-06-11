@@ -44,11 +44,13 @@ export default (route, opts = {}) => {
         // Expose the request
         resp.request = req;
 
-        // Replace the text method with the text content
+        // Replace the text method (returns a promise that consumes the body stream)
+        // chai-http expects the text property to be the text content
         const text = await resp.text();
         Reflect.defineProperty(resp, 'text', { value: text });
 
-        // Replace the body method with the JSON body content
+        // Replace the body property (is a readable stream of the body)
+        // chai-http expects the body property to be the parsed body JSON data
         // https://github.com/visionmedia/superagent/blob/9ed29166e2fe01d20a1ae4c06e009b1a27711c27/src/client.js#L275-L287
         if (/[/+]json($|[^-\w])/i.test(resp.headers.get('content-type')?.toLowerCase()))
             Reflect.defineProperty(resp, 'body', { value: JSON.parse(text) });
