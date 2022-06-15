@@ -45,7 +45,7 @@ const kvLibraryValidate = (library, data, sentry = undefined) => {
 };
 
 /**
- * Get the metadata for a library on KV.
+ * Get the metadata for a library.
  *
  * @param {string} name Name of the library to fetch.
  * @param {import('toucan-js')} [sentry] Sentry instance for data validation reporting.
@@ -55,7 +55,15 @@ export const library = (name, sentry = undefined) => fetchJson(`${kvBase}/packag
     .then(data => kvLibraryValidate(name, data, sentry));
 
 /**
- * Get the metadata for a library's version on KV.
+ * Get the versions for a library.
+ *
+ * @param {string} name Name of the library to fetch.
+ * @return {Promise<string[]>}
+ */
+export const libraryVersions = name => fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}/versions`);
+
+/**
+ * Get the assets for a library version.
  *
  * @param {string} name Name of the library to fetch.
  * @param {string} version Version of the library to fetch.
@@ -71,21 +79,3 @@ export const libraryVersion = (name, version) => fetchJson(`${kvBase}/packages/$
  * @return {Promise<Object<string, string>>}
  */
 export const libraryVersionSri = (name, version) => fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}/sris/${encodeURIComponent(version)}`);
-
-/**
- * Get the full metadata for a library incl. versions on KV.
- *
- * @param {string} name Name of the library to fetch.
- * @param {import('toucan-js')} [sentry] Sentry instance for data validation reporting.
- * @return {Promise<Object>}
- */
-export const libraryFull = (name, sentry = undefined) => fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}/all`)
-    .then(data => kvLibraryValidate(name, data, sentry));
-
-/**
- * Get all the SRI data for an entire library.
- *
- * @param {string} name Name of the library to fetch.
- * @return {Promise<Object<string, string>>}
- */
-export const librarySri = name => fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}/sris`);

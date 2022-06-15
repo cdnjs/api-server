@@ -1,7 +1,7 @@
 import cache from '../utils/cache.js';
 import files from '../utils/files.js';
 import filter from '../utils/filter.js';
-import { library, libraryVersion, libraryVersionSri, libraryFull, librarySri } from '../utils/kvMetadata.js';
+import { library, libraryVersion, libraryVersionSri, libraryVersions } from '../utils/kvMetadata.js';
 import notFound from '../utils/notFound.js';
 import queryArray from '../utils/queryArray.js';
 import respond from '../utils/respond.js';
@@ -75,13 +75,13 @@ export default app => {
     // Library
     app.get('/libraries/:library', async ctx => {
         // Get the library
-        const lib = await libraryFull(ctx.req.param('library'), ctx.sentry).catch(err => {
+        const lib = await library(ctx.req.param('library'), ctx.sentry).catch(err => {
             if (err.status === 404) return;
             throw err;
         });
         if (!lib) return notFound(ctx, 'Library');
 
-        // Generate the initial filtered response (without SRI or tutorials data)
+        // Generate the initial filtered response (without SRI, tutorials, versions or assets data)
         const requestedFields = queryArray(ctx.req.queries('fields'));
         const response = filter(
             {
@@ -92,36 +92,40 @@ export default app => {
                 sri: null,
                 // All other lib props
                 ...lib,
-                versions: null,
                 tutorials: null,
+                versions: null,
+                assets: null,
             },
             requestedFields,
             // If they requested no fields or '*', send them all
             !requestedFields.length || requestedFields.includes('*'),
         );
 
-        // Compute versions if needed
-        if ('versions' in response) {
-            response.versions = lib.assets.map(asset => asset.version);
-        }
-
         // Tutorials are deprecated, so return an empty array if requested
-        if ('tutorials' in response) {
-            response.tutorials = [];
-        }
+        if ('tutorials' in response) response.tutorials = [];
 
-        // Inject SRI into assets if in results and do whitelist filtering
+        // Get versions if needed
+        if ('versions' in response) response.versions = await libraryVersions(lib.name);
+
+        // Get assets if needed, inject SRI and do whitelist filtering
+        // Returning assets for all versions is deprecated, we only return the latest version in the array
         if ('assets' in response) {
-            // Get all SRI data
-            const sriData = await librarySri(lib.name).catch(() => {});
+            if (!lib.version) response.assets = [];
+            else {
+                // Fetch the assets for the version
+                const assets = await libraryVersion(lib.name, lib.version);
 
-            // Map assets
-            response.assets = (response.assets || []).map(asset => {
-                asset.rawFiles = [ ...(asset.files || []) ];
-                asset.files = (asset.files || []).filter(whitelisted);
-                asset.sri = sriForVersion(lib.name, asset.version, asset.rawFiles, sriData, ctx.sentry);
-                return asset;
-            });
+                // Fetch the SRI data, ignore errors as they'll be reported by sriForVersion
+                const sriData = await libraryVersionSri(lib.name, lib.version).catch(() => {});
+
+                // Produce the assets array with just the latest version
+                response.assets = [ {
+                    version: lib.version,
+                    files: assets.filter(whitelisted),
+                    rawFiles: assets,
+                    sri: sriForVersion(lib.name, lib.version, assets, sriData, ctx.sentry),
+                } ];
+            }
         }
 
         // Load SRI for latest if needed
@@ -139,7 +143,7 @@ export default app => {
 
                 // If no SRI value yet, fetch
                 if (!response.sri) {
-                    // Get SRI for version
+                    // Get SRI for version, ignore errors as they'll be reported by sriForVersion
                     const latestSriData = await libraryVersionSri(lib.name, lib.version).catch(() => {});
                     response.sri = sriForVersion(
                         lib.name,
