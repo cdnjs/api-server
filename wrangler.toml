@@ -30,4 +30,4 @@ METADATA_BASE = ""
 SENTRY_DSN = "" # Will be injected by build pipeline
 SENTRY_RELEASE = "" # Will be injected by build pipeline
 SENTRY_ENVIRONMENT = "production"
-USE_ORIGIN_PCT = 50
+USE_ORIGIN_PCT = 25
