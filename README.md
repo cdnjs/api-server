@@ -16,7 +16,7 @@ Looking for the documentation on our API?
 
 This project uses [Node.js](https://nodejs.org) for development, and is deployed as a
 [Cloudflare Worker](https://workers.cloudflare.com/). Please make sure you have a Node.js version
-installed that matches our defined requirement in the [.nvmrc](.nvmrc) file for this project.
+installed that matches our defined requirement in the [`.nvmrc`](.nvmrc) file for this project.
 
 Included with this project is a dependency lock file. This is used to ensure that all installations
 of the project are using the same version of dependencies for consistency. You can install the
@@ -26,8 +26,19 @@ dependencies following this lock file by running:
 npm ci
 ```
 
-Once the dependencies are installed, which includes the Wrangler CLI for Cloudflare Workers, the API
-server is ready to run in development mode. To start the server in development mode, run:
+Once the dependencies are installed, which includes the Wrangler CLI for Cloudflare Workers, we need
+to create the KV namespace for data caching before the API can be run. This command will ask you to
+authenticate with a Cloudflare account, so that the Workers KV namespace can be created:
+
+```shell script
+wrangler kv:namespace create CACHE --preview
+```
+
+Update the existing `preview_id` in the [`wrangler.toml`](wrangler.toml) file to the new preview ID
+provided by the CLI.
+
+With the KV namespace ready to go, the API server is now ready to run in development mode. To start
+the server in development mode, run:
 
 ```shell script
 npm run dev

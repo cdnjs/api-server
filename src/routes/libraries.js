@@ -1,3 +1,5 @@
+/* global CACHE */
+
 import algolia from '../utils/algolia.js';
 import cache from '../utils/cache.js';
 import filter from '../utils/filter.js';
@@ -17,10 +19,22 @@ const maxQueryLength = 512;
  * @return {Promise<Object[]>}
  */
 const browse = async (query, searchFields) => {
+    // Normalize the search fields
+    const fields = searchFields.filter(field => validSearchFields.includes(field)).sort();
+
+    // Check if we have a cached result for this query
+    const cacheKey = await crypto.subtle.digest(
+        { name: 'SHA-512' },
+        new TextEncoder().encode(`${query}:${fields.join(',')}`),
+    ).then(buf => `libraries:${Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('')}`);
+    const cached = await CACHE.get(cacheKey, { type: 'json' });
+    if (cached) return cached;
+
+    // Fetch the results from Algolia
     const hits = [];
     await index.browseObjects({
         query,
-        restrictSearchableAttributes: searchFields.filter(field => validSearchFields.includes(field)),
+        restrictSearchableAttributes: fields,
         /**
          * Store an incoming batch of hits.
          *
@@ -32,6 +46,9 @@ const browse = async (query, searchFields) => {
     }).catch(err => {
         throw err instanceof Error ? err : new Error(`${err.name}: ${err.message}`);
     });
+
+    // Cache the results for 15 minutes
+    await CACHE.put(cacheKey, JSON.stringify(hits), { expirationTtl: 60 * 15 });
     return hits;
 };
 
