@@ -119,6 +119,15 @@ deploying to staging (api.cdnjs.dev) and production (api.cdnjs.com) based on com
 staging/production branches, automatically handling not only deploying the worker but also creating
 a Sentry release with full source maps.
 
+Before deploying, ensure that you generate the required KV namespace for the environment you are
+deploying to and update [`wrangler.toml`](wrangler.toml) to use the correct ID:
+
+```shell script
+wrangler kv:namespace create CACHE --env=staging
+# or
+wrangler kv:namespace create CACHE --env=production
+```
+
 To deploy to staging (assuming you have write access to this repository), run `make deploy-staging`.
 This will force-push your latest local commit to the staging branch, which will trigger GitHub
 Actions to run and deploy your worker to Cloudflare Workers.

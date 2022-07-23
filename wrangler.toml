@@ -15,6 +15,9 @@ USE_ORIGIN_PCT = 0
 
 [env.staging]
 route = "api.cdnjs.dev/*"
+kv_namespaces = [
+    { binding = "CACHE", id = "34b159dab6f840ce9c17e4d0730ead12" }
+]
 
 [env.staging.vars]
 DISABLE_CACHING = false
