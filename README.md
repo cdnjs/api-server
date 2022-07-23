@@ -14,63 +14,40 @@ Looking for the documentation on our API?
 
 ## Getting Started
 
-This project runs on [Node.js](https://nodejs.org). Please make sure you have a version installed
-that matches our defined requirement in the [.nvmrc](.nvmrc) file for this project.
+This project uses [Node.js](https://nodejs.org) for development, and is deployed as a
+[Cloudflare Worker](https://workers.cloudflare.com/). Please make sure you have a Node.js version
+installed that matches our defined requirement in the [.nvmrc](.nvmrc) file for this project.
 
 Included with this project is a dependency lock file. This is used to ensure that all installations
-of the project are using the same version of dependencies for consistency.
-
-You can install the Node dependencies following this lock file by running:
+of the project are using the same version of dependencies for consistency. You can install the
+dependencies following this lock file by running:
 
 ```shell script
 npm ci
 ```
 
-Once the dependencies are installed, the API server is ready to run in development mode. To start the server in
-development mode, run:
+Once the dependencies are installed, which includes the Wrangler CLI for Cloudflare Workers, the API
+server is ready to run in development mode. To start the server in development mode, run:
 
 ```shell script
 npm run dev
 ```
 
-## Error Logging
-
-We make use of Sentry to handle our error logging. To enable Sentry in the API server, set the
-`SENTRY_DSN` environment variable to a valid DSN URL from Sentry.
-
-Alongside the normal error catching that Sentry provides in Node.js & Express, we also fire out
-custom error events for certain issues:
-
-- `Missing SRI entry` is fired if there is no SRI hash for a file
-- `Bad entry in Algolia data` is fired if an entry in Algolia is falsey, or if its name is falsey
-- `Bad entry in packages data` is fired if a package is falsey, or if its `name`/`version` is falsey
-
-## Production Deployment
-
-To deploy this API server to production, it should be as simple as cloning this repository, checking dependencies are
-installed for the server and then running `npm run start`.
-
-To change the port that the app binds to, set the `PORT` environment var when running the script.
+This command will ask you to authenticate with a Cloudflare account, so that the worker can be
+deployed in a development context to Cloudflare's Workers runtime.
 
 ## Testing and Linting
 
-Our full set of tests (linting & test suite) can be run at any time with:
+Our full set of tests (linting & a mocha+chai test suite using Miniflare to run the worker locally)
+can be run at any time with:
 
 ```shell script
 npm test
 ```
 
-You can also run the tests with their own API server running in development mode using:
-
-```shell script
-npm run test:with-server
-```
-
-(This is what the CI in this repository uses for every commit).
-
 ### Linting
 
-Included in this repository are an [eslint config file](.eslintrc.js) as well as an
+Included in this repository are an [eslint config file](.eslintrc.cjs) as well as an
 [editorconfig file](.editorconfig) to help with ensuring a consistent style in the codebase for the
 API server.
 
@@ -96,20 +73,44 @@ npm run test:echint
 
 ### Testing
 
-This project uses Mocha and Chai (http) to test the API server. The tests attempt to validate every
+This project uses Mocha and Chai (http) to test the API server, along with Miniflare to run the
+Worker itself in a simulated Cloudflare Workers runtime. The tests attempt to validate every
 route on the API to ensure that no breaking changes have been made, though there is no promise that
 this is perfect, a human should always review changes!
 
-The mocha test suite can be run at any time with the following command, assuming that the API server
-is running locally on port 5050 (or on the port defined with the environment variable `PORT`):
+The mocha test suite can be run at any time with the following command (it will build the worker
+using Wrangler, and then run it with Miniflare during the Mocha+Chai test suite):
 
 ```shell script
 npm run test:mocha
 ```
 
-You can also start the mocha test suite with a dedicated API server running in development mode on
-port 5050 (or on the port defined with the environment variable `PORT`) by running:
+## Error Logging
 
-```shell script
-npm run test:mocha:with-server
-```
+We use Sentry to handle our error logging. To enable Sentry in the API server, set the `SENTRY_DSN`
+environment variable in the [Wrangler config file](wrangler.toml) for the appropriate environment to
+a valid DSN URL from Sentry. The `SENTRY_RELEASE` environment variable can also be set to identify a
+specific release of the worker (our GitHub Actions workflows for deployments set this to the current
+commit hash).
+
+Alongside the normal error reporting that Sentry provides in the worker, we also fire out custom
+error events for certain issues to help with improving data consistency across cdnjs:
+
+- `Missing SRI entry` is fired if there is no SRI hash for a file
+- `Bad entry in Algolia data` is fired if an entry in Algolia is falsey, or if its name is falsey
+- `Bad entry in packages data` is fired if a package is falsey, or if its `name`/`version` is falsey
+
+## Deployment
+
+As this API server is written as a Cloudflare Worker, you can deploy it using the Wrangler CLI. This
+can be done manually, but this repository uses [GitHub Actions](.github/workflows) to handle
+deploying to staging (api.cdnjs.dev) and production (api.cdnjs.com) based on commits to the
+staging/production branches, automatically handling not only deploying the worker but also creating
+a Sentry release with full source maps.
+
+To deploy to staging (assuming you have write access to this repository), run `make deploy-staging`.
+This will force-push your latest local commit to the staging branch, which will trigger GitHub
+Actions to run and deploy your worker to Cloudflare Workers.
+
+Similarly, for a production deployment, run `make deploy-production`. This will force-push to the
+production branch instead, and trigger the production GitHub Actions workflow.

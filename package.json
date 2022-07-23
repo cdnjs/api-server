@@ -3,20 +3,16 @@
     "version": "1.0.0",
     "description": "The new API server for api.cdnjs.com",
     "private": true,
-    "main": "index.js",
-    "engines": {
-        "node": "12.16.2"
-    },
+    "type": "module",
+    "main": "src/index.js",
     "scripts": {
         "test": "npm run test:echint && npm run test:eslint && npm run test:mocha",
-        "test:with-server": "npm run test:echint && npm run test:eslint && npm run test:mocha:with-server",
-        "test:echint": "echint -v",
-        "test:eslint": "eslint \"**/*.js\"",
+        "test:echint": "echint -v -i \"dist-worker/**/*\"",
+        "test:eslint": "eslint \"{,src/**/}*.@(js|cjs|mjs)\"",
         "test:eslint:fix": "npm run test:eslint -- --fix",
-        "test:mocha": "mocha tests/suite",
-        "test:mocha:with-server": "node tests/run.js",
-        "dev": "LOCAL=true node index.js",
-        "start": "node --expose-gc index.js"
+        "test:mocha": "npm run test:mocha:build && mocha",
+        "test:mocha:build": "wrangler publish --dry-run --outdir dist-worker",
+        "dev": "wrangler dev"
     },
     "repository": {
         "type": "git",
@@ -29,23 +25,24 @@
     },
     "homepage": "https://github.com/cdnjs/api-server#readme",
     "dependencies": {
-        "@sentry/node": "^6.10.0",
-        "algoliasearch": "^4.10.3",
-        "body-parser": "^1.19.0",
-        "compression": "^1.7.4",
-        "cors": "^2.8.5",
-        "express": "^4.17.1",
-        "gunzip-maybe": "^1.4.2",
-        "morgan": "^1.10.0",
-        "node-fetch": "^2.6.7",
-        "on-finished": "^2.3.0",
-        "on-headers": "^1.0.2"
+        "algoliasearch": "^4.13.1",
+        "hono": "^1.4.2",
+        "is-deflate": "^1.0.0",
+        "is-gzip": "^2.0.0",
+        "pako": "^2.0.4",
+        "toucan-js": "^2.6.0"
     },
     "devDependencies": {
-        "chai": "^4.3.4",
+        "@babel/core": "^7.18.2",
+        "@babel/eslint-parser": "^7.18.2",
+        "chai": "^4.3.6",
         "chai-http": "^4.3.0",
         "echint": "^4.0.2",
-        "eslint": "^7.32.0",
-        "mocha": "^9.0.3"
+        "eslint": "^8.16.0",
+        "eslint-plugin-import": "^2.26.0",
+        "eslint-plugin-jsdoc": "^39.3.2",
+        "miniflare": "^2.5.0",
+        "mocha": "^10.0.0",
+        "wrangler": "^2.0.7"
     }
 }
