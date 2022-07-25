@@ -22,7 +22,7 @@ Included with this project is a dependency lock file. This is used to ensure tha
 of the project are using the same version of dependencies for consistency. You can install the
 dependencies following this lock file by running:
 
-```shell script
+```sh
 npm ci
 ```
 
@@ -30,7 +30,7 @@ Once the dependencies are installed, which includes the Wrangler CLI for Cloudfl
 to create the KV namespace for data caching before the API can be run. This command will ask you to
 authenticate with a Cloudflare account, so that the Workers KV namespace can be created:
 
-```shell script
+```sh
 wrangler kv:namespace create CACHE --preview
 ```
 
@@ -40,7 +40,7 @@ provided by the CLI.
 With the KV namespace ready to go, the API server is now ready to run in development mode. To start
 the server in development mode, run:
 
-```shell script
+```sh
 npm run dev
 ```
 
@@ -52,7 +52,7 @@ deployed in a development context to Cloudflare's Workers runtime.
 Our full set of tests (linting & a mocha+chai test suite using Miniflare to run the worker locally)
 can be run at any time with:
 
-```shell script
+```sh
 npm test
 ```
 
@@ -65,20 +65,20 @@ API server.
 To help enforce this, we use both eslint and echint in our testing. To run eslint at any time, which
 checks the code style of any JavaScript, you can use:
 
-```shell script
+```sh
 npm run test:eslint
 ```
 
 eslint also provides automatic fixing capabilities, these can be run against the codebase with:
 
-```shell script
+```sh
 npm run test:eslint:fix
 ```
 
 The more generic rules defined in the [editorconfig file](.editorconfig) apply to all files in the
 repository and this is enforced by echint, which can be run at any time with:
 
-```shell script
+```sh
 npm run test:echint
 ```
 
@@ -92,7 +92,7 @@ this is perfect, a human should always review changes!
 The mocha test suite can be run at any time with the following command (it will build the worker
 using Wrangler, and then run it with Miniflare during the Mocha+Chai test suite):
 
-```shell script
+```sh
 npm run test:mocha
 ```
 
@@ -122,7 +122,7 @@ a Sentry release with full source maps.
 Before deploying, ensure that you generate the required KV namespace for the environment you are
 deploying to and update [`wrangler.toml`](wrangler.toml) to use the correct ID:
 
-```shell script
+```sh
 wrangler kv:namespace create CACHE --env=staging
 # or
 wrangler kv:namespace create CACHE --env=production
