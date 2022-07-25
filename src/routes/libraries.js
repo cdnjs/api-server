@@ -12,6 +12,14 @@ const validSearchFields = [ 'name', 'alternativeNames', 'github.repo', 'descript
 const maxQueryLength = 512;
 
 /**
+ * Convert an ArrayBuffer to a hex string.
+ *
+ * @param {ArrayBuffer} buf Buffer to convert.
+ * @return {string}
+ */
+const bufToHex = buf => Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+
+/**
  * Browse an Algolia index to get all objects matching a query.
  *
  * @param {string} query Query to fetch matching objects for.
@@ -22,11 +30,11 @@ const browse = async (query, searchFields) => {
     // Normalize the search fields
     const fields = searchFields.filter(field => validSearchFields.includes(field)).sort();
 
-    // Check if we have a cached result for this query
+    // Check if there is a cached result for this query
     const cacheKey = await crypto.subtle.digest(
         { name: 'SHA-512' },
         new TextEncoder().encode(`${query}:${fields.join(',')}`),
-    ).then(buf => `libraries:${Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('')}`);
+    ).then(buf => `libraries:${bufToHex(buf)}`);
     const cached = await CACHE.get(cacheKey, { type: 'json' });
     if (cached) return cached;
 
