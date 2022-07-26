@@ -29,6 +29,9 @@ USE_ORIGIN_PCT = 0
 
 [env.production]
 route = "api.cdnjs.com/*"
+kv_namespaces = [
+    { binding = "CACHE", id = "c2922fcf1af643658d6769859b913134" }
+]
 
 [env.production.vars]
 DISABLE_CACHING = false
