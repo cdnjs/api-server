@@ -1,4 +1,4 @@
-/* global SENTRY_DSN, SENTRY_RELEASE, SENTRY_ENVIRONMENT, USE_ORIGIN_PCT */
+/* global SENTRY_DSN, SENTRY_RELEASE, SENTRY_ENVIRONMENT */
 
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
@@ -72,9 +72,6 @@ errorRoutes(app);
 
 // Let's go!
 addEventListener('fetch', event => {
-    // Allow usage of fallback origin randomly
-    if (typeof USE_ORIGIN_PCT === 'number' && Math.random() < (USE_ORIGIN_PCT / 100)) return fetch(event.request);
-
     // Pass to hono
     event.respondWith(app.handleEvent(event));
 });
