@@ -1,4 +1,4 @@
-/* global SENTRY_DSN, SENTRY_RELEASE, SENTRY_ENVIRONMENT, USE_ORIGIN_PCT */
+/* global SENTRY_DSN, SENTRY_RELEASE, SENTRY_ENVIRONMENT */
 
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
