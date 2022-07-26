@@ -72,9 +72,6 @@ errorRoutes(app);
 
 // Let's go!
 addEventListener('fetch', event => {
-    // Allow usage of fallback origin randomly
-    if (typeof USE_ORIGIN_PCT === 'number' && Math.random() < (USE_ORIGIN_PCT / 100)) return fetch(event.request);
-
     // Pass to hono
     event.respondWith(app.handleEvent(event));
 });
