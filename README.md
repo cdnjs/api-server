@@ -16,20 +16,31 @@ Looking for the documentation on our API?
 
 This project uses [Node.js](https://nodejs.org) for development, and is deployed as a
 [Cloudflare Worker](https://workers.cloudflare.com/). Please make sure you have a Node.js version
-installed that matches our defined requirement in the [.nvmrc](.nvmrc) file for this project.
+installed that matches our defined requirement in the [`.nvmrc`](.nvmrc) file for this project.
 
 Included with this project is a dependency lock file. This is used to ensure that all installations
 of the project are using the same version of dependencies for consistency. You can install the
 dependencies following this lock file by running:
 
-```shell script
+```sh
 npm ci
 ```
 
-Once the dependencies are installed, which includes the Wrangler CLI for Cloudflare Workers, the API
-server is ready to run in development mode. To start the server in development mode, run:
+Once the dependencies are installed, which includes the Wrangler CLI for Cloudflare Workers, you
+need to create the KV namespace for data caching before the API can be run. This command will ask
+you to authenticate with a Cloudflare account, so that the Workers KV namespace can be created:
 
-```shell script
+```sh
+wrangler kv:namespace create CACHE --preview
+```
+
+Copy the new `preview_id` returned by the command and replace the existing `preview_id` in
+[`wrangler.toml`](wrangler.toml).
+
+With the KV namespace setup, the API server is now ready to run in development mode. To start the
+server in development mode, run:
+
+```sh
 npm run dev
 ```
 
@@ -41,7 +52,7 @@ deployed in a development context to Cloudflare's Workers runtime.
 Our full set of tests (linting & a mocha+chai test suite using Miniflare to run the worker locally)
 can be run at any time with:
 
-```shell script
+```sh
 npm test
 ```
 
@@ -54,20 +65,20 @@ API server.
 To help enforce this, we use both eslint and echint in our testing. To run eslint at any time, which
 checks the code style of any JavaScript, you can use:
 
-```shell script
+```sh
 npm run test:eslint
 ```
 
 eslint also provides automatic fixing capabilities, these can be run against the codebase with:
 
-```shell script
+```sh
 npm run test:eslint:fix
 ```
 
 The more generic rules defined in the [editorconfig file](.editorconfig) apply to all files in the
 repository and this is enforced by echint, which can be run at any time with:
 
-```shell script
+```sh
 npm run test:echint
 ```
 
@@ -81,7 +92,7 @@ this is perfect, a human should always review changes!
 The mocha test suite can be run at any time with the following command (it will build the worker
 using Wrangler, and then run it with Miniflare during the Mocha+Chai test suite):
 
-```shell script
+```sh
 npm run test:mocha
 ```
 
@@ -107,6 +118,15 @@ can be done manually, but this repository uses [GitHub Actions](.github/workflow
 deploying to staging (api.cdnjs.dev) and production (api.cdnjs.com) based on commits to the
 staging/production branches, automatically handling not only deploying the worker but also creating
 a Sentry release with full source maps.
+
+Before deploying, ensure that you generate the required KV namespace for the environment you are
+deploying to and update [`wrangler.toml`](wrangler.toml) to use the correct ID:
+
+```sh
+wrangler kv:namespace create CACHE --env=staging
+# or
+wrangler kv:namespace create CACHE --env=production
+```
 
 To deploy to staging (assuming you have write access to this repository), run `make deploy-staging`.
 This will force-push your latest local commit to the staging branch, which will trigger GitHub

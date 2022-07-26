@@ -1,3 +1,5 @@
+import { createHash } from 'crypto';
+
 import { expect } from 'chai';
 import { describe, it, before } from 'mocha';
 
@@ -594,6 +596,85 @@ describe('/libraries', () => {
                         expect(Object.keys(result)).to.have.lengthOf(2);
                     }
                 });
+            });
+        });
+    });
+
+    describe('Caching Algolia data with KV', () => {
+        it('writes the results from Algolia to KV', async () => {
+            await request('/libraries', {}, undefined, async mf => {
+                // Check that the results were stored under the `:` key (no query, no fields)
+                const cache = await mf.getKVNamespace('CACHE');
+                const key = `libraries:${createHash('sha512').update(':').digest('hex')}`;
+                const { keys } = await cache.list();
+                expect(keys).to.be.an('array');
+                expect(keys).to.have.lengthOf(1);
+                expect(keys[0].name).to.equal(key);
+                expect(await cache.get(key, { type: 'json' })).to.be.an('array');
+            });
+        });
+
+        it('reuses existing Algolia values from KV', async () => {
+            const response = await request('/libraries', {}, async mf => {
+                // Create a stub set of Algolia results under the `:` key (no query, no fields)
+                const cache = await mf.getKVNamespace('CACHE');
+                const key = `libraries:${createHash('sha512').update(':').digest('hex')}`;
+                await cache.put(key, JSON.stringify([ { name: 'testing' } ]));
+            });
+
+            // Check the response was generated from KV
+            expect(response).to.be.json;
+            expect(response.body).to.have.property('results').that.is.an('array');
+            expect(response.body.results).to.have.lengthOf(1);
+            expect(response.body.results[0]).to.have.property('name').that.is.a('string');
+            expect(response.body.results[0].name).to.equal('testing');
+        });
+
+        it('reuses the same KV cache no matter the query parameter order', async () => {
+            const key = `libraries:${createHash('sha512').update('test:name').digest('hex')}`;
+
+            // Run the request with the `name` parameter first, check consistent key was used
+            await request('/libraries?search=test&search_fields=name', {}, undefined, async mf => {
+                const cache = await mf.getKVNamespace('CACHE');
+                const { keys } = await cache.list();
+                expect(keys).to.be.an('array');
+                expect(keys).to.have.lengthOf(1);
+                expect(keys[0].name).to.equal(key);
+                expect(await cache.get(key, { type: 'json' })).to.be.an('array');
+            });
+
+            // Run the request with the `search_fields` parameter first, check consistent key was used
+            await request('/libraries?search_fields=name&search=test', {}, undefined, async mf => {
+                const cache = await mf.getKVNamespace('CACHE');
+                const { keys } = await cache.list();
+                expect(keys).to.be.an('array');
+                expect(keys).to.have.lengthOf(1);
+                expect(keys[0].name).to.equal(key);
+                expect(await cache.get(key, { type: 'json' })).to.be.an('array');
+            });
+        });
+
+        it('reuses the same KV cache no matter the search fields order', async () => {
+            const key = `libraries:${createHash('sha512').update('test:keywords,name').digest('hex')}`;
+
+            // Run the request with the `name` search field first, check consistent key was used
+            await request('/libraries?search=test&search_fields=name,keywords', {}, undefined, async mf => {
+                const cache = await mf.getKVNamespace('CACHE');
+                const { keys } = await cache.list();
+                expect(keys).to.be.an('array');
+                expect(keys).to.have.lengthOf(1);
+                expect(keys[0].name).to.equal(key);
+                expect(await cache.get(key, { type: 'json' })).to.be.an('array');
+            });
+
+            // Run the request with the `keywords` search field first, check consistent key was used
+            await request('/libraries?search=test&search_fields=keywords,name', {}, undefined, async mf => {
+                const cache = await mf.getKVNamespace('CACHE');
+                const { keys } = await cache.list();
+                expect(keys).to.be.an('array');
+                expect(keys).to.have.lengthOf(1);
+                expect(keys[0].name).to.equal(key);
+                expect(await cache.get(key, { type: 'json' })).to.be.an('array');
             });
         });
     });

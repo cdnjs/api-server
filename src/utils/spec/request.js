@@ -15,9 +15,11 @@ import { Miniflare, Request } from 'miniflare';
  *
  * @param {string} route Route to request in API via Miniflare.
  * @param {RequestInit} [opts={}] Options to set for fetch request.
- * @return {ExtendedResponse}
+ * @param {function(Miniflare, Request): (Promise<void>|void)} [preHook] Hook to run before the request is sent.
+ * @param {function(Miniflare, Request, ExtendedResponse): (Promise<void>|void)} [postHook] Hook to run after the response is received.
+ * @return {Promise<ExtendedResponse>}
  */
-export default (route, opts = {}) => {
+export default async (route, opts = {}, preHook = undefined, postHook = undefined) => {
     // Create the Miniflare instance
     const mf = new Miniflare({
         scriptPath: fileURLToPath(new URL('../../../dist-worker/index.js', import.meta.url)),
@@ -28,6 +30,9 @@ export default (route, opts = {}) => {
 
     // Create a full request
     const req = new Request(`http://localhost:5050${route}`, opts);
+
+    // Run the pre-hook if defined
+    if (typeof preHook === 'function') await preHook(mf, req);
 
     // Send the request to Miniflare
     return mf.dispatchFetch(req).then(async resp => {
@@ -54,6 +59,9 @@ export default (route, opts = {}) => {
         // https://github.com/visionmedia/superagent/blob/9ed29166e2fe01d20a1ae4c06e009b1a27711c27/src/client.js#L275-L287
         if (/[/+]json($|[^-\w])/i.test(resp.headers.get('content-type')?.toLowerCase()))
             Reflect.defineProperty(resp, 'body', { value: JSON.parse(text) });
+
+        // Run the post-hook if defined
+        if (typeof postHook === 'function') await postHook(mf, req, resp);
 
         return resp;
     });

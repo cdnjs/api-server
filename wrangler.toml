@@ -1,6 +1,9 @@
 name = "cdnjs-api-worker"
 main = "src/index.js"
 compatibility_date = "2022-05-20"
+kv_namespaces = [
+    { binding = "CACHE", id = "", preview_id = "845ae1599dcf4d75950b61201a951b73" }
+]
 
 [vars]
 DISABLE_CACHING = false
@@ -11,6 +14,9 @@ SENTRY_ENVIRONMENT = "development"
 
 [env.staging]
 route = "api.cdnjs.dev/*"
+kv_namespaces = [
+    { binding = "CACHE", id = "34b159dab6f840ce9c17e4d0730ead12" }
+]
 
 [env.staging.vars]
 DISABLE_CACHING = false
@@ -21,6 +27,9 @@ SENTRY_ENVIRONMENT = "staging"
 
 [env.production]
 route = "api.cdnjs.com/*"
+kv_namespaces = [
+    { binding = "CACHE", id = "c2922fcf1af643658d6769859b913134" }
+]
 
 [env.production.vars]
 DISABLE_CACHING = false
