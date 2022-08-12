@@ -10,7 +10,6 @@ import indexRoutes from './routes/index.js';
 import librariesRoutes from './routes/libraries.js';
 import libraryRoutes from './routes/library.js';
 import statsRoutes from './routes/stats.js';
-import tutorialsRoutes from './routes/tutorials.js';
 import whitelistRoutes from './routes/whitelist.js';
 import corsOptions from './utils/cors.js';
 
@@ -65,7 +64,6 @@ if (typeof SENTRY_DSN === 'string') {
 indexRoutes(app);
 statsRoutes(app);
 whitelistRoutes(app);
-tutorialsRoutes(app);
 libraryRoutes(app);
 librariesRoutes(app);
 errorRoutes(app);
