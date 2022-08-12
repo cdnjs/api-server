@@ -81,7 +81,7 @@ export default app => {
         });
         if (!lib) return notFound(ctx, 'Library');
 
-        // Generate the initial filtered response (without SRI, tutorials, versions or assets data)
+        // Generate the initial filtered response (without SRI, versions or assets data)
         const requestedFields = queryArray(ctx.req.queries('fields'));
         const response = filter(
             {
@@ -92,7 +92,6 @@ export default app => {
                 sri: null,
                 // All other lib props
                 ...lib,
-                tutorials: null,
                 versions: null,
                 assets: null,
             },
@@ -100,9 +99,6 @@ export default app => {
             // If they requested no fields or '*', send them all
             !requestedFields.length || requestedFields.includes('*'),
         );
-
-        // Tutorials are deprecated, so return an empty array if requested
-        if ('tutorials' in response) response.tutorials = [];
 
         // Get versions if needed
         if ('versions' in response) response.versions = await libraryVersions(lib.name);
