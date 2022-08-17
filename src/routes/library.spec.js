@@ -320,7 +320,6 @@ describe('/libraries/:library', () => {
                     expect(response.body).to.have.property('autoupdate').that.is.an('object');
                     expect(response.body).to.have.property('assets').that.is.an('array');
                     expect(response.body).to.have.property('versions').that.is.an('array');
-                    expect(response.body).to.have.property('tutorials').that.is.an('array');
                 });
                 it('has a CDN url for the \'latest\' property', () => {
                     expect(response.body.latest).to.match(/https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/.+\/.+\/.*/);
@@ -345,11 +344,6 @@ describe('/libraries/:library', () => {
                             expect(result).to.have.property('rawFiles').that.is.an('array');
                             expect(result).to.have.property('sri').that.is.an('object');
                         }
-                    });
-                });
-                describe('Tutorials array', () => {
-                    it('is empty', () => {
-                        expect(response.body.tutorials).to.be.empty;
                     });
                 });
             });
@@ -521,7 +515,6 @@ describe('/libraries/:library', () => {
                     expect(response.body).to.have.property('autoupdate').that.is.an('object');
                     expect(response.body).to.have.property('assets').that.is.an('array');
                     expect(response.body).to.have.property('versions').that.is.an('array');
-                    expect(response.body).to.have.property('tutorials').that.is.an('array');
                 });
             });
         });
