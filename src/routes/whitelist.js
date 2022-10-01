@@ -8,9 +8,9 @@ import respond from '../utils/respond.js';
  * Handle GET /whitelist requests.
  *
  * @param {import('hono').Context} ctx Request context.
- * @return {Promise<Response>}
+ * @return {Response}
  */
-const handleGetWhitelist = async ctx => {
+const handleGetWhitelist = ctx => {
     // Build the object
     const results = {
         extensions: Object.keys(files),
