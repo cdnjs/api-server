@@ -34,7 +34,7 @@ you to authenticate with a Cloudflare account, so that the Workers KV namespace 
 wrangler kv:namespace create CACHE --preview
 ```
 
-Copy the new `preview_id` returned by the command and replace the existing `preview_id` in
+Copy the new `preview_id` returned by the command and replace the existing `id`/preview_id` in
 [`wrangler.toml`](wrangler.toml).
 
 With the KV namespace setup, the API server is now ready to run in development mode. To start the
