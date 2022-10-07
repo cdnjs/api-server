@@ -38,6 +38,13 @@ describe('/libraries/:library/:version', () => {
                         expect(Object.keys(response.body)).to.have.lengthOf(5);
                     });
                 });
+
+                // Test with a trailing slash
+                it('responds to requests with a trailing slash', async () => {
+                    const res = await request(path + '/');
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.deep.equal(response.body);
+                });
             });
 
             describe('Requesting human response (?output=human)', () => {
@@ -346,6 +353,13 @@ describe('/libraries/:library', () => {
                         }
                     });
                 });
+            });
+
+            // Test with a trailing slash
+            it('responds to requests with a trailing slash', async () => {
+                const res = await request(path + '/');
+                expect(res).to.have.status(200);
+                expect(res.body).to.deep.equal(response.body);
             });
         });
 
