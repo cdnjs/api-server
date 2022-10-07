@@ -26,23 +26,23 @@
     "homepage": "https://github.com/cdnjs/api-server#readme",
     "dependencies": {
         "algoliasearch": "^4.14.2",
-        "hono": "^2.0.8",
+        "hono": "^2.2.5",
         "is-deflate": "^1.0.0",
         "is-gzip": "^2.0.0",
         "pako": "^2.0.4",
-        "toucan-js": "^2.6.1"
+        "toucan-js": "^2.7.0"
     },
     "devDependencies": {
-        "@babel/core": "^7.18.10",
-        "@babel/eslint-parser": "^7.18.9",
+        "@babel/core": "^7.19.3",
+        "@babel/eslint-parser": "^7.19.1",
         "chai": "^4.3.6",
         "chai-http": "^4.3.0",
         "echint": "^4.0.2",
-        "eslint": "^8.21.0",
+        "eslint": "^8.24.0",
         "eslint-plugin-import": "^2.26.0",
         "eslint-plugin-jsdoc": "^39.3.6",
-        "miniflare": "^2.6.0",
+        "miniflare": "^2.9.0",
         "mocha": "^10.0.0",
-        "wrangler": "^2.0.25"
+        "wrangler": "^2.1.9"
     }
 }
