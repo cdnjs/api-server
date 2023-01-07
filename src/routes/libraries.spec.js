@@ -152,6 +152,96 @@ describe('/libraries', () => {
         });
     });
 
+    describe('Requesting a case-sensitive field', () => {
+        describe('with the correct casing (?fields=fileType)', () => {
+            // Fetch the endpoint
+            const path = '/libraries?fields=fileType';
+            let response;
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+
+            // Test the endpoint
+            testCors(path, () => response);
+            it('returns the correct Cache headers', () => {
+                expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+            });
+            it('returns the correct status code', () => {
+                expect(response).to.have.status(200);
+            });
+            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
+                expect(response).to.be.json;
+                expect(response.body).to.have.property('results').that.is.an('array');
+                expect(response.body).to.have.property('total').that.is.a('number');
+                expect(response.body).to.have.property('available').that.is.a('number');
+            });
+            it('returns all available hits', () => {
+                expect(response.body.results).to.have.lengthOf(response.body.total);
+                expect(response.body.results).to.have.lengthOf(response.body.available);
+            });
+            describe('Library object', () => {
+                it('is an object with \'name\', \'latest\' and requested \'fileType\' properties', () => {
+                    for (const result of response.body.results) {
+                        expect(result).to.have.property('name').that.is.a('string');
+                        try {
+                            expect(result).to.have.property('latest').that.is.a('string');
+                        } catch (_) {
+                            expect(result).to.have.property('latest').that.is.null;
+                        }
+                        expect(result).to.have.property('fileType').that.is.a('string');
+                    }
+                });
+                it('has no other properties', () => {
+                    for (const result of response.body.results) {
+                        expect(Object.keys(result)).to.have.lengthOf(3);
+                    }
+                });
+            });
+        });
+
+        describe('with incorrect casing (?fields=filetype)', () => {
+            // Fetch the endpoint
+            const path = '/libraries?fields=filetype';
+            let response;
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+
+            // Test the endpoint
+            testCors(path, () => response);
+            it('returns the correct Cache headers', () => {
+                expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+            });
+            it('returns the correct status code', () => {
+                expect(response).to.have.status(200);
+            });
+            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
+                expect(response).to.be.json;
+                expect(response.body).to.have.property('results').that.is.an('array');
+                expect(response.body).to.have.property('total').that.is.a('number');
+                expect(response.body).to.have.property('available').that.is.a('number');
+            });
+            it('returns all available hits', () => {
+                expect(response.body.results).to.have.lengthOf(response.body.total);
+                expect(response.body.results).to.have.lengthOf(response.body.available);
+            });
+            describe('Library object', () => {
+                it('is an object with \'name\', \'latest\' and requested \'fileType\' properties', () => {
+                    for (const result of response.body.results) {
+                        expect(result).to.have.property('name').that.is.a('string');
+                        try {
+                            expect(result).to.have.property('latest').that.is.a('string');
+                        } catch (_) {
+                            expect(result).to.have.property('latest').that.is.null;
+                        }
+                        expect(result).to.have.property('fileType').that.is.a('string');
+                    }
+                });
+                it('has no other properties', () => {
+                    for (const result of response.body.results) {
+                        expect(Object.keys(result)).to.have.lengthOf(3);
+                    }
+                });
+            });
+        });
+    });
+
     describe('Requesting multiple fields', () => {
         describe('through comma-separated string (?fields=filename,version)', () => {
             // Fetch the endpoint

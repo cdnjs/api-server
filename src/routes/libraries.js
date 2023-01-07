@@ -7,9 +7,21 @@ import queryArray from '../utils/queryArray.js';
 import respond from '../utils/respond.js';
 
 const index = algolia().initIndex('libraries');
+
+// Fields configured in Algolia to be searchable
 const validSearchFields = [ 'name', 'alternativeNames', 'github.repo', 'description', 'keywords', 'filename',
     'repositories.url', 'github.user', 'maintainers.name' ];
+
+// Max query length that Algolia will accept
 const maxQueryLength = 512;
+
+// Map of lowercase fields to their proper case
+const mixedCaseFields = {
+    alternativenames: 'alternativeNames',
+    filetype: 'fileType',
+    originalname: 'originalName',
+    objectid: 'objectID',
+};
 
 /**
  * Convert an ArrayBuffer to a hex string.
@@ -75,7 +87,7 @@ const handleGetLibraries = async ctx => {
     );
 
     // Transform the results into our filtered array
-    const requestedFields = queryArray(ctx.req.queries('fields'));
+    const requestedFields = queryArray(ctx.req.queries('fields')).map(field => mixedCaseFields[field] || field);
     const response = results.filter(hit => {
         if (hit?.name) return true;
         console.warn('Found bad entry in Algolia data');
