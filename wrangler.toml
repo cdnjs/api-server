@@ -13,7 +13,7 @@ SENTRY_RELEASE = ""
 SENTRY_ENVIRONMENT = "development"
 
 [env.staging]
-route = "api.cdnjs.dev/*"
+route = { pattern = "api.cdnjs.dev/*", zone_name = "cdnjs.dev" }
 kv_namespaces = [
     { binding = "CACHE", id = "34b159dab6f840ce9c17e4d0730ead12" }
 ]
@@ -26,7 +26,7 @@ SENTRY_RELEASE = "" # Will be injected by build pipeline
 SENTRY_ENVIRONMENT = "staging"
 
 [env.production]
-route = "api.cdnjs.com/*"
+route = { pattern = "api.cdnjs.com/*", zone_name = "cdnjs.com" }
 kv_namespaces = [
     { binding = "CACHE", id = "c2922fcf1af643658d6769859b913134" }
 ]
