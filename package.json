@@ -11,7 +11,7 @@
         "test:eslint": "eslint \"{,src/**/}*.@(js|cjs|mjs)\"",
         "test:eslint:fix": "npm run test:eslint -- --fix",
         "test:mocha": "npm run test:mocha:build && mocha",
-        "test:mocha:build": "wrangler publish --dry-run --outdir dist-worker",
+        "test:mocha:build": "wrangler deploy --dry-run --outdir dist-worker",
         "dev": "wrangler dev"
     },
     "repository": {
@@ -43,6 +43,6 @@
         "eslint-plugin-jsdoc": "^39.3.6",
         "miniflare": "^2.13.0",
         "mocha": "^10.0.0",
-        "wrangler": "^3.1.1"
+        "wrangler": "^3.19.0"
     }
 }
