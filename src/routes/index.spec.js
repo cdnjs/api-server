@@ -49,7 +49,7 @@ describe('/health', () => {
     it('responds to requests with a trailing slash', async () => {
         const res = await request(path + '/');
         expect(res).to.have.status(200);
-        expect(res.body).to.deep.equal(response.body);
+        expect(res.text).to.eq(response.text);
     });
 });
 
