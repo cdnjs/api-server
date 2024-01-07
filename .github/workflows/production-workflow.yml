@@ -36,7 +36,7 @@ jobs:
           sed -i "s/SENTRY_RELEASE = \"\"/SENTRY_RELEASE = \"$SENTRY_RELEASE\"/g" wrangler.toml
 
       - name: Deploy to Production
-        run: npx wrangler publish --env production --outdir dist-worker --minify
+        run: npx wrangler deploy --env production --outdir dist-worker --minify
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_PRODUCTION }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID_PRODUCTION }}
