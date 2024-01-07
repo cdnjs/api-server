@@ -1,3 +1,7 @@
 node_modules/
+
 .idea/
+.vscode/
+
 dist-worker/
+.wrangler/

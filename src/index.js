@@ -47,12 +47,12 @@ if (typeof SENTRY_DSN === 'string') {
         });
 
         // Track the colo we're in
-        const colo = ctx.event.request.cf?.colo || 'UNKNOWN';
+        const colo = ctx.req.raw.cf?.colo || 'UNKNOWN';
         ctx.sentry.setTag('colo', colo);
 
         // Track the connecting user
-        const ipAddress = ctx.event.request.headers.get('cf-connecting-ip') || ctx.event.request.headers.get('x-forwarded-for') || undefined;
-        const userAgent = ctx.event.request.headers.get('user-agent') || undefined;
+        const ipAddress = ctx.req.header('cf-connecting-ip') || ctx.req.header('x-forwarded-for') || undefined;
+        const userAgent = ctx.req.header('user-agent') || undefined;
         ctx.sentry.setUser({ ip: ipAddress, userAgent, colo });
 
         // Continue
@@ -69,7 +69,4 @@ librariesRoutes(app);
 errorRoutes(app);
 
 // Let's go!
-addEventListener('fetch', event => {
-    // Pass to hono
-    event.respondWith(app.handleEvent(event));
-});
+app.fire();
