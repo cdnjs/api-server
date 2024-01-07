@@ -1,4 +1,4 @@
-import chai, { expect } from 'chai';
+import { use, expect } from 'chai';
 import chaiHttp from 'chai-http';
 import { describe, it, before } from 'mocha';
 
@@ -6,7 +6,7 @@ import testCors from '../utils/spec/cors.js';
 import testHuman from '../utils/spec/human.js';
 import request from '../utils/spec/request.js';
 
-chai.use(chaiHttp);
+use(chaiHttp);
 
 describe('/this-route-doesnt-exist', () => {
     describe('No query params', () => {

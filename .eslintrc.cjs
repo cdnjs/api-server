@@ -178,6 +178,7 @@ module.exports = {
         ],
         'jsdoc/require-returns-description': 'off',
         'jsdoc/tag-lines': 'off',
+        'jsdoc/no-defaults': 'off',
         'jsdoc/no-undefined-types': [
             'error',
             {

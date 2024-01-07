@@ -2,6 +2,8 @@ import { fileURLToPath } from 'node:url';
 
 import { Miniflare, Request } from 'miniflare';
 
+let mf;
+
 /**
  * @typedef {Response} ExtendedResponse
  * @property {function(string): string|undefined} getHeader Method to access a header (alias to headers.get).
@@ -21,12 +23,29 @@ import { Miniflare, Request } from 'miniflare';
  */
 export default async (route, opts = {}, preHook = undefined, postHook = undefined) => {
     // Create the Miniflare instance
-    const mf = new Miniflare({
-        scriptPath: fileURLToPath(new URL('../../../dist-worker/index.js', import.meta.url)),
-        wranglerConfigPath: fileURLToPath(new URL('../../../wrangler.toml', import.meta.url)),
-        host: 'localhost',
-        port: 5050,
-    });
+    if (!mf) {
+        mf = new Miniflare({
+            scriptPath: fileURLToPath(new URL('../../../dist-worker/index.js', import.meta.url)),
+            kvNamespaces: [ 'CACHE' ],
+            bindings: {
+                DISABLE_CACHING: false,
+                METADATA_BASE: '',
+                SENTRY_DSN: '',
+                SENTRY_RELEASE: '',
+                SENTRY_ENVIRONMENT: 'test',
+            },
+            host: 'localhost',
+            port: 5050,
+        });
+
+        // Stop Miniflare when the process exits
+        // eslint-disable-next-line no-undef
+        process.on('beforeExit', () => mf.dispose());
+    }
+
+    // Reset the cache
+    const cache = await mf.getKVNamespace('CACHE');
+    await cache.list().then(({ keys }) => Promise.all(keys.map(({ name }) => cache.delete(name))));
 
     // Create a full request
     const req = new Request(`http://localhost:5050${route}`, opts);
