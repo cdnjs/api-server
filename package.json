@@ -27,7 +27,7 @@
     "dependencies": {
         "@sentry/integrations": "^7.92.0",
         "algoliasearch": "^4.22.0",
-        "hono": "^4.5.8",
+        "hono": "^4.6.5",
         "is-deflate": "^1.0.0",
         "is-gzip": "^2.0.0",
         "pako": "^2.1.0",
