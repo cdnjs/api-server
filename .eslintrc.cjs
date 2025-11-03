@@ -151,6 +151,9 @@ module.exports = {
         ],
         'no-unused-vars': [
             'error',
+            {
+                argsIgnorePattern: '^_',
+            },
         ],
         'no-unused-expressions': [
             'error',

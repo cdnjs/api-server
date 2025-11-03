@@ -107,7 +107,7 @@ commit hash).
 Alongside the normal error reporting that Sentry provides in the worker, we also fire out custom
 error events for certain issues to help with improving data consistency across cdnjs:
 
-- `Missing SRI entry` is fired if there is no SRI hash for a file
+<!-- - `Missing SRI entry` is fired if there is no SRI hash for a file -->
 - `Bad entry in Algolia data` is fired if an entry in Algolia is falsey, or if its name is falsey
 - `Bad entry in packages data` is fired if a package is falsey, or if its `name`/`version` is falsey
 
