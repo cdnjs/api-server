@@ -35,7 +35,7 @@ jobs:
       - name: Deploy to ${{ github.ref_name }}
         run: npx wrangler deploy --env ${{ github.ref_name }} --outdir dist-worker --minify --var SENTRY_DSN:${{ secrets.SENTRY_DSN }} --var SENTRY_RELEASE:${{ github.sha }}
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_CDNJS_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_CDNJS_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_CDNJS_ACCOUNT_ID }}
 
       - name: Create Sentry Release
