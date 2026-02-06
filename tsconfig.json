@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "allowSyntheticDefaultImports": true,
+        "noUncheckedIndexedAccess": true,
+        "erasableSyntaxOnly": true,
+        "verbatimModuleSyntax": true,
+        "esModuleInterop": true,
+        "noEmit": true,
+        "strict": false,
+        "skipLibCheck": true,
+    },
+    "include": ["**/*.ts"],
+    "exclude": ["node_modules", "dist-worker"],
+}

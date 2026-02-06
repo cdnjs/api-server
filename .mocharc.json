@@ -1,9 +1,0 @@
-{
-    "diff": true,
-    "timeout": 60000,
-    "ui": "bdd",
-    "color": true,
-    "recursive": true,
-    "spec": "src/**/*.spec.js",
-    "exit": true
-}
