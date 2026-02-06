@@ -5,6 +5,10 @@ kv_namespaces = [
     { binding = "CACHE", id = "845ae1599dcf4d75950b61201a951b73", preview_id = "845ae1599dcf4d75950b61201a951b73" }
 ]
 
+[observability]
+enabled = true
+head_sampling_rate = 1
+
 [vars]
 DISABLE_CACHING = false
 METADATA_BASE = ""
