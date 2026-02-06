@@ -40,6 +40,12 @@ kv_namespaces = [
     { binding = "CACHE", id = "c2922fcf1af643658d6769859b913134" }
 ]
 
+[env.production.observability.logs]
+head_sampling_rate = 0.05
+
+[env.production.observability.traces]
+head_sampling_rate = 0.05
+
 [env.production.vars]
 DISABLE_CACHING = false
 METADATA_BASE = ""
