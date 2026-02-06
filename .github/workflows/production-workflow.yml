@@ -56,6 +56,7 @@ jobs:
           url_prefix: /
           ignore_missing: true
           ignore_empty: true
-          version: ${{ github.sha }}
+          inject: false
+          release: ${{ github.sha }}
           environment: production
           sourcemaps: dist-worker
