@@ -12,6 +12,7 @@
         "noEmit": true,
         "strict": false,
         "skipLibCheck": true,
+        "types": ["@cloudflare/vitest-pool-workers"],
     },
     "include": ["**/*.ts"],
     "exclude": ["node_modules", "dist-worker"],

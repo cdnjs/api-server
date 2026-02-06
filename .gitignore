@@ -5,3 +5,4 @@ node_modules/
 
 dist-worker/
 .wrangler/
+types/worker.d.ts

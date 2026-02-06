@@ -6,8 +6,9 @@
     "type": "module",
     "main": "src/index.ts",
     "scripts": {
+        "prepare": "wrangler types types/worker.d.ts",
         "lint": "npm run lint:echint && npm run lint:eslint",
-        "lint:echint": "echint -v -i \"dist-worker/**/*\"",
+        "lint:echint": "echint -v -i types/worker.d.ts -i \"dist-worker/**/*\"",
         "lint:eslint": "eslint \"{,src/**/}*.@(js|cjs|mjs)\"",
         "lint:fix": "npm run lint:eslint:fix",
         "lint:eslint:fix": "npm run lint:eslint -- --fix",
@@ -41,6 +42,7 @@
         "@babel/core": "^7.29.0",
         "@babel/eslint-parser": "^7.28.6",
         "@cloudflare/vitest-pool-workers": "^0.12.17",
+        "@types/node": "~24.11.0",
         "echint": "^4.0.2",
         "eslint": "^8.56.0",
         "eslint-plugin-import": "^2.32.0",
