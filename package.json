@@ -24,6 +24,9 @@
         "url": "https://github.com/cdnjs/api-server/issues"
     },
     "homepage": "https://github.com/cdnjs/api-server#readme",
+    "engines": {
+        "node": ">=24.11.0"
+    },
     "dependencies": {
         "@sentry/integrations": "^7.92.0",
         "algoliasearch": "^4.22.0",
