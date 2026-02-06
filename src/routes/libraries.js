@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/cloudflare';
-import { env } from 'cloudflare:workers';
+import { env, waitUntil } from 'cloudflare:workers';
 
 import algolia from '../utils/algolia.js';
 import cache from '../utils/cache.js';
@@ -69,7 +69,7 @@ const browse = async (query, searchFields) => {
     });
 
     // Cache the results for 15 minutes
-    await env.CACHE.put(cacheKey, JSON.stringify(hits), { expirationTtl: 60 * 15 });
+    waitUntil(env.CACHE.put(cacheKey, JSON.stringify(hits), { expirationTtl: 60 * 15 }));
     return hits;
 };
 
