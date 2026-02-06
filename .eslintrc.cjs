@@ -176,6 +176,7 @@ module.exports = {
             {
                 ignore: [
                     '^hono/',
+                    '^cloudflare:',
                 ],
             },
         ],

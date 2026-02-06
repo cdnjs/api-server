@@ -1,6 +1,5 @@
-/* global SENTRY_DSN, SENTRY_RELEASE, SENTRY_ENVIRONMENT */
-
 import { RewriteFrames } from '@sentry/integrations';
+import { env } from 'cloudflare:workers';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
@@ -20,11 +19,11 @@ app.use('*', logger());
 app.use('*', cors(corsOptions));
 
 // Inject Sentry
-if (typeof SENTRY_DSN === 'string') {
+if (env.SENTRY_DSN) {
     app.use('*', async (ctx, next) => {
         // Create the Sentry instance
         ctx.sentry = new Toucan({
-            dsn: SENTRY_DSN,
+            dsn: env.SENTRY_DSN,
             context: ctx.event,
             integrations: [
                 new RequestData({
@@ -47,8 +46,8 @@ if (typeof SENTRY_DSN === 'string') {
                     },
                 }),
             ],
-            release: (typeof SENTRY_RELEASE === 'string' ? SENTRY_RELEASE : '') || undefined,
-            environment: (typeof SENTRY_ENVIRONMENT === 'string' ? SENTRY_ENVIRONMENT : '') || undefined,
+            release: env.SENTRY_RELEASE || undefined,
+            environment: env.SENTRY_ENVIRONMENT || undefined,
         });
 
         // Track the colo we're in
