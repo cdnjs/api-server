@@ -1,0 +1,44 @@
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+
+    # Only accept updates that have been published for at least 3 days
+    cooldown:
+      default-days: 3
+
+    # Create a grouped PR for minor/patch updates with majors getting dedicated PRs
+    groups:
+      actions:
+        update-types:
+          - patch
+          - minor
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+
+    # Only accept updates that have been published for at least 3 days
+    cooldown:
+      default-days: 3
+
+    # Ensure the new version is stored in `package.json`
+    versioning-strategy: increase
+
+    groups:
+      # Update `dependencies` and `devDependencies` separately
+      # Create grouped PRs for minor/patch updates with majors getting dedicated PRs
+      production:
+        dependency-type: production
+        update-types:
+          - patch
+          - minor
+      development:
+        dependency-type: development
+        update-types:
+          - patch
+          - minor
