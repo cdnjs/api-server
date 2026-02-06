@@ -46,7 +46,7 @@
         "eslint-plugin-import": "^2.32.0",
         "eslint-plugin-jsdoc": "^48.0.2",
         "miniflare": "^3.20231218.1",
-        "mocha": "^10.8.2",
+        "mocha": "^11.7.5",
         "wrangler": "^4.61.1"
     }
 }
