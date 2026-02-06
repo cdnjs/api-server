@@ -1,4 +1,4 @@
-/* global CACHE */
+import { env } from 'cloudflare:workers';
 
 import algolia from '../utils/algolia.js';
 import cache from '../utils/cache.js';
@@ -47,7 +47,7 @@ const browse = async (query, searchFields) => {
         { name: 'SHA-512' },
         new TextEncoder().encode(`${query}:${fields.join(',')}`),
     ).then(buf => `libraries:${bufToHex(buf)}`);
-    const cached = await CACHE.get(cacheKey, { type: 'json' });
+    const cached = await env.CACHE.get(cacheKey, { type: 'json' });
     if (cached) return cached;
 
     // Fetch the results from Algolia
@@ -68,7 +68,7 @@ const browse = async (query, searchFields) => {
     });
 
     // Cache the results for 15 minutes
-    await CACHE.put(cacheKey, JSON.stringify(hits), { expirationTtl: 60 * 15 });
+    await env.CACHE.put(cacheKey, JSON.stringify(hits), { expirationTtl: 60 * 15 });
     return hits;
 };
 

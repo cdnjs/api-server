@@ -1,4 +1,4 @@
-/* global DISABLE_CACHING */
+import { env } from 'cloudflare:workers';
 
 /**
  * Set cache headers on a response.
@@ -8,7 +8,7 @@
  * @param {boolean} [immutable=false] Mark the response as immutable for caching.
  */
 export default (ctx, age, immutable = false) => {
-    if (age === -1 || DISABLE_CACHING === 'true') {
+    if (age === -1 || env.DISABLE_CACHING === 'true') {
         ctx.header('Expires', '0');
         ctx.header('Pragma', 'no-cache');
         ctx.header('Cache-Control', 'no-cache, no-store, must-revalidate');
