@@ -1,9 +1,7 @@
-import { RewriteFrames } from '@sentry/integrations';
-import { env } from 'cloudflare:workers';
+import * as Sentry from '@sentry/cloudflare';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
-import { Toucan, RequestData } from 'toucan-js';
 
 import errorRoutes from './routes/errors.js';
 import indexRoutes from './routes/index.js';
@@ -18,55 +16,6 @@ const app = new Hono();
 app.use('*', logger());
 app.use('*', cors(corsOptions));
 
-// Inject Sentry
-if (env.SENTRY_DSN) {
-    app.use('*', async (ctx, next) => {
-        // Create the Sentry instance
-        ctx.sentry = new Toucan({
-            dsn: env.SENTRY_DSN,
-            context: {
-                waitUntil: ctx.executionCtx.waitUntil.bind(ctx.executionCtx),
-                request: ctx.req,
-            },
-            integrations: [
-                new RequestData({
-                    allowedHeaders: [ 'user-agent', 'cf-ray' ],
-                    allowedSearchParams: /(.*)/,
-                }),
-                new RewriteFrames({
-                    /**
-                     * @template {{ filename: string }} T
-                     *
-                     * Rewrite error stack frames to fix the source file path.
-                     *
-                     * @param {T} frame Stack frame to fix.
-                     * @return {T}
-                     */
-                    iteratee: frame => {
-                        // Root should be `/`
-                        frame.filename = frame.filename.replace(/^(async )?worker\.js/, '/worker.js');
-                        return frame;
-                    },
-                }),
-            ],
-            release: env.SENTRY_RELEASE || undefined,
-            environment: env.SENTRY_ENVIRONMENT || undefined,
-        });
-
-        // Track the colo we're in
-        const colo = ctx.req.raw.cf?.colo || 'UNKNOWN';
-        ctx.sentry.setTag('colo', colo);
-
-        // Track the connecting user
-        const ipAddress = ctx.req.header('cf-connecting-ip') || ctx.req.header('x-forwarded-for') || undefined;
-        const userAgent = ctx.req.header('user-agent') || undefined;
-        ctx.sentry.setUser({ ip: ipAddress, userAgent, colo });
-
-        // Continue
-        await next();
-    });
-}
-
 // Load the routes
 indexRoutes(app);
 statsRoutes(app);
@@ -76,4 +25,8 @@ librariesRoutes(app);
 errorRoutes(app);
 
 // Let's go!
-export default app;
+export default Sentry.withSentry(env => ({
+    dsn: env.SENTRY_DSN,
+    release: env.SENTRY_RELEASE,
+    environment: env.SENTRY_ENVIRONMENT,
+}), app);
