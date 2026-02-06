@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/cloudflare';
 import { env } from 'cloudflare:workers';
 
 import fetchJson from './fetchJson.js';
@@ -18,10 +19,9 @@ export const libraries = () => fetchJson(`${kvBase}/packages`);
  *
  * @param {string} library Requested library name.
  * @param {T} data Returned library data to validate.
- * @param {import('toucan-js')} [sentry] Sentry instance for missing version reporting.
  * @return {T & { assets: [] }}
  */
-const kvLibraryValidate = (library, data, sentry = undefined) => {
+const kvLibraryValidate = (library, data) => {
     // Assets might not exist if there are none, but we should make it an empty array by default
     data.assets = data.assets || [];
 
@@ -34,9 +34,9 @@ const kvLibraryValidate = (library, data, sentry = undefined) => {
     // Breaking issues
     if (!data.version) {
         console.error('Version missing', data.name, data);
-        sentry?.withScope(scope => {
+        Sentry.withScope(scope => {
             scope.setExtra('data', data);
-            sentry.captureException(new Error('Version missing in package data'));
+            Sentry.captureException(new Error('Version missing in package data'));
         });
         throw new Error('Version missing in package data');
     }
@@ -48,11 +48,10 @@ const kvLibraryValidate = (library, data, sentry = undefined) => {
  * Get the metadata for a library.
  *
  * @param {string} name Name of the library to fetch.
- * @param {import('toucan-js')} [sentry] Sentry instance for data validation reporting.
  * @return {Promise<Object>}
  */
-export const library = (name, sentry = undefined) => fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}`)
-    .then(data => kvLibraryValidate(name, data, sentry));
+export const library = name => fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}`)
+    .then(data => kvLibraryValidate(name, data));
 
 /**
  * Get the versions for a library.

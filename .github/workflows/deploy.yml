@@ -32,24 +32,11 @@ jobs:
       - name: Run Tests
         run: npm test
 
-      - name: Prepare Wrangler Config
-        run: |
-          SENTRY_DSN=$(printf '%s\n' "${{ secrets.SENTRY_DSN }}" | sed -e 's/[\/&]/\\&/g')
-          sed -i "s/SENTRY_DSN = \"\"/SENTRY_DSN = \"$SENTRY_DSN\"/g" wrangler.toml
-
-          SENTRY_RELEASE=$(printf '%s\n' "${{ github.sha }}" | sed -e 's/[\/&]/\\&/g')
-          sed -i "s/SENTRY_RELEASE = \"\"/SENTRY_RELEASE = \"$SENTRY_RELEASE\"/g" wrangler.toml
-
       - name: Deploy to ${{ github.ref_name }}
-        run: npx wrangler deploy --env ${{ github.ref_name }} --outdir dist-worker --minify
+        run: npx wrangler deploy --env ${{ github.ref_name }} --outdir dist-worker --minify --var SENTRY_DSN:${{ secrets.SENTRY_DSN }} --var SENTRY_RELEASE:${{ github.sha }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ github.ref_name == 'production' && secrets.CLOUDFLARE_API_TOKEN_PRODUCTION || secrets.CLOUDFLARE_API_TOKEN_STAGING }}
           CLOUDFLARE_ACCOUNT_ID: ${{ github.ref_name == 'production' && secrets.CLOUDFLARE_ACCOUNT_ID_PRODUCTION || secrets.CLOUDFLARE_ACCOUNT_ID_STAGING }}
-
-      - name: Prepare Sentry Release
-        run: |
-          mv dist-worker/index.js dist-worker/worker.js
-          mv dist-worker/index.js.map dist-worker/worker.js.map
 
       - name: Create Sentry Release
         uses: getsentry/action-release@dab6548b3c03c4717878099e43782cf5be654289 # v3.5.0
@@ -58,10 +45,10 @@ jobs:
           SENTRY_ORG: cdnjs
           SENTRY_PROJECT: api-worker
         with:
-          url_prefix: /
           ignore_missing: true
           ignore_empty: true
           inject: false
           release: ${{ github.sha }}
           environment: ${{ github.ref_name }}
           sourcemaps: dist-worker
+          strip_common_prefix: true

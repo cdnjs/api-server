@@ -25,7 +25,7 @@ const whitelisted = file => extensions.includes(file.split('.').slice(-1)[0]);
  */
 const handleGetLibraryVersion = async ctx => {
     // Get the library
-    const lib = await library(ctx.req.param('library'), ctx.sentry).catch(err => {
+    const lib = await library(ctx.req.param('library')).catch(err => {
         if (err.status === 404) return;
         throw err;
     });
@@ -60,7 +60,7 @@ const handleGetLibraryVersion = async ctx => {
     if ('sri' in response) {
         // Get SRI for version
         const latestSriData = await libraryVersionSri(lib.name, ctx.req.param('version')).catch(() => {});
-        response.sri = sriForVersion(lib.name, ctx.req.param('version'), version, latestSriData, ctx.sentry);
+        response.sri = sriForVersion(lib.name, ctx.req.param('version'), version, latestSriData);
     }
 
     // Set a 355 day (same as CDN) life on this response
@@ -79,7 +79,7 @@ const handleGetLibraryVersion = async ctx => {
  */
 const handleGetLibrary = async ctx => {
     // Get the library
-    const lib = await library(ctx.req.param('library'), ctx.sentry).catch(err => {
+    const lib = await library(ctx.req.param('library')).catch(err => {
         if (err.status === 404) return;
         throw err;
     });
@@ -123,7 +123,7 @@ const handleGetLibrary = async ctx => {
                 version: lib.version,
                 files: assets.filter(whitelisted),
                 rawFiles: assets,
-                sri: sriForVersion(lib.name, lib.version, assets, sriData, ctx.sentry),
+                sri: sriForVersion(lib.name, lib.version, assets, sriData),
             } ];
         }
     }
@@ -150,7 +150,6 @@ const handleGetLibrary = async ctx => {
                     lib.version,
                     [ lib.filename ],
                     latestSriData,
-                    ctx.sentry,
                 )[lib.filename] || null;
             }
         }
