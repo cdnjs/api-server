@@ -24,7 +24,10 @@ if (env.SENTRY_DSN) {
         // Create the Sentry instance
         ctx.sentry = new Toucan({
             dsn: env.SENTRY_DSN,
-            context: ctx.event,
+            context: {
+                waitUntil: ctx.executionCtx.waitUntil.bind(ctx.executionCtx),
+                request: ctx.req,
+            },
             integrations: [
                 new RequestData({
                     allowedHeaders: [ 'user-agent', 'cf-ray' ],
@@ -73,4 +76,4 @@ librariesRoutes(app);
 errorRoutes(app);
 
 // Let's go!
-app.fire();
+export default app;

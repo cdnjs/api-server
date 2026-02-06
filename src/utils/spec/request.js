@@ -25,7 +25,7 @@ export default async (route, opts = {}, preHook = undefined, postHook = undefine
     // Create the Miniflare instance
     if (!mf) {
         mf = new Miniflare({
-            scriptPath: fileURLToPath(new URL('../../../dist-worker/index.js', import.meta.url)),
+            modules: [ { type: 'ESModule', path: fileURLToPath(new URL('../../../dist-worker/index.js', import.meta.url)) } ],
             kvNamespaces: [ 'CACHE' ],
             bindings: {
                 DISABLE_CACHING: false,
