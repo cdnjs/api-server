@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/cloudflare';
 import { env } from 'cloudflare:workers';
 
 import algolia from '../utils/algolia.js';
@@ -92,9 +93,9 @@ const handleGetLibraries = async ctx => {
         if (hit?.name) return true;
         console.warn('Found bad entry in Algolia data');
         console.info(hit);
-        ctx.sentry?.withScope(scope => {
+        Sentry.withScope(scope => {
             scope.setExtra('hit', hit);
-            ctx.sentry.captureException(new Error('Bad entry in Algolia data'));
+            Sentry.captureException(new Error('Bad entry in Algolia data'));
         });
         return false;
     }).map(hit => filter(
