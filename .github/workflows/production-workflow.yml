@@ -47,7 +47,7 @@ jobs:
           mv dist-worker/index.js.map dist-worker/worker.js.map
 
       - name: Create Sentry Release
-        uses: getsentry/action-release@a74facf8a080ecbdf1cb355f16743530d712abb7 # v1.11.0
+        uses: getsentry/action-release@dab6548b3c03c4717878099e43782cf5be654289 # v3.5.0
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
@@ -56,6 +56,7 @@ jobs:
           url_prefix: /
           ignore_missing: true
           ignore_empty: true
-          version: ${{ github.sha }}
+          inject: false
+          release: ${{ github.sha }}
           environment: production
           sourcemaps: dist-worker
