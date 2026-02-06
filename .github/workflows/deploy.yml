@@ -55,8 +55,8 @@ jobs:
         uses: getsentry/action-release@dab6548b3c03c4717878099e43782cf5be654289 # v3.5.0
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          SENTRY_ORG: cdnjs
+          SENTRY_PROJECT: api-worker
         with:
           url_prefix: /
           ignore_missing: true
