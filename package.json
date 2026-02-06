@@ -28,7 +28,7 @@
         "node": ">=24.11.0"
     },
     "dependencies": {
-        "@sentry/integrations": "^7.92.0",
+        "@sentry/integrations": "^7.114.0",
         "algoliasearch": "^4.22.0",
         "hono": "^4.11.7",
         "is-deflate": "^1.0.0",
