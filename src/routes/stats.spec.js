@@ -18,16 +18,16 @@ describe('/stats', () => {
         it('returns the correct status code', () => {
             expect(response.status).to.eq(200);
         });
-        it('returns a JSON body that is a stats object', () => {
+        it('returns a JSON body that is a stats object', async () => {
             expect(response.headers.get('Content-Type')).to.match(/application\/json/);
-            expect(response.body).to.be.an('object');
+            expect(await response.json()).to.be.an('object');
         });
         describe('cdnjs stats object', () => {
-            it('is an object with the \'libraries\' property', () => {
-                expect(response.body).to.have.property('libraries').that.is.an('number');
+            it('is an object with the \'libraries\' property', async () => {
+                expect(await response.json()).to.have.property('libraries').that.is.an('number');
             });
-            it('has no other properties', () => {
-                expect(Object.keys(response.body)).to.have.lengthOf(1);
+            it('has no other properties', async () => {
+                expect(Object.keys(await response.json())).to.have.lengthOf(1);
             });
         });
 
@@ -35,7 +35,7 @@ describe('/stats', () => {
         it('responds to requests with a trailing slash', async () => {
             const res = await request(path + '/');
             expect(res.status).to.eq(200);
-            expect(res.body).to.deep.equal(response.body);
+            expect(await res.json()).to.deep.equal(await response.json());
         });
     });
 
