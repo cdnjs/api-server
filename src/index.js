@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/cloudflare';
+import { env } from 'cloudflare:workers';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
@@ -13,7 +14,7 @@ import corsOptions from './utils/cors.js';
 
 // Create the base app
 const app = new Hono();
-app.use('*', logger());
+if (!env.DISABLE_LOGGING) app.use('*', logger());
 app.use('*', cors(corsOptions));
 
 // Load the routes

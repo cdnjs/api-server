@@ -29,6 +29,7 @@ export default async (route, opts = {}, preHook = undefined, postHook = undefine
             compatibilityFlags: [ 'nodejs_als' ],
             kvNamespaces: [ 'CACHE' ],
             bindings: {
+                DISABLE_LOGGING: true, // Disable Hono logging as it adds noise to test output
                 DISABLE_CACHING: false,
                 METADATA_BASE: '',
                 SENTRY_DSN: '',
