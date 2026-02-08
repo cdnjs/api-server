@@ -14,7 +14,7 @@ describe('/', () => {
         expect(response.headers.get('Cache-Control')).to.eq('public, max-age=30672000, immutable'); // 355 days
     });
     it('redirects to the cdnjs.com API docs as a 301', () => {
-        expect(response).to.have.status(301);
+        expect(response.status).to.eq(301);
         expect(response).to.redirectTo('https://cdnjs.com/api');
     });
 });
@@ -32,7 +32,7 @@ describe('/health', () => {
         expect(response.headers.get('Cache-Control')).to.eq('no-cache, no-store, must-revalidate');
     });
     it('returns the correct status code', () => {
-        expect(response).to.have.status(200);
+        expect(response.status).to.eq(200);
     });
     it('returns on OK message', () => {
         expect(response).to.be.text;
@@ -42,7 +42,7 @@ describe('/health', () => {
     // Test with a trailing slash
     it('responds to requests with a trailing slash', async () => {
         const res = await request(path + '/');
-        expect(res).to.have.status(200);
+        expect(res.status).to.eq(200);
         expect(res.text).to.eq(response.text);
     });
 });
@@ -58,7 +58,7 @@ describe('/robots.txt', () => {
         expect(response.headers.get('Cache-Control')).to.eq('public, max-age=30672000, immutable'); // 355 days
     });
     it('returns the correct status code', () => {
-        expect(response).to.have.status(200);
+        expect(response.status).to.eq(200);
     });
     it('disallows all indexing', () => {
         expect(response).to.be.text;

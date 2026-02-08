@@ -16,7 +16,7 @@ describe('/stats', () => {
             expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
         });
         it('returns the correct status code', () => {
-            expect(response).to.have.status(200);
+            expect(response.status).to.eq(200);
         });
         it('returns a JSON body that is a stats object', () => {
             expect(response).to.be.json;
@@ -34,7 +34,7 @@ describe('/stats', () => {
         // Test with a trailing slash
         it('responds to requests with a trailing slash', async () => {
             const res = await request(path + '/');
-            expect(res).to.have.status(200);
+            expect(res.status).to.eq(200);
             expect(res.body).to.deep.equal(response.body);
         });
     });

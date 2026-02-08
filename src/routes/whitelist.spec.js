@@ -16,7 +16,7 @@ describe('/whitelist', () => {
             expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours;
         });
         it('returns the correct status code', () => {
-            expect(response).to.have.status(200);
+            expect(response.status).to.eq(200);
         });
         it('returns a JSON body with \'extensions\' and \'categories\' properties', () => {
             expect(response).to.be.json;
@@ -51,7 +51,7 @@ describe('/whitelist', () => {
         // Test with a trailing slash
         it('responds to requests with a trailing slash', async () => {
             const res = await request(path + '/');
-            expect(res).to.have.status(200);
+            expect(res.status).to.eq(200);
             expect(res.body).to.deep.equal(response.body);
         });
     });
@@ -80,7 +80,7 @@ describe('/whitelist', () => {
             expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
         });
         it('returns the correct status code', () => {
-            expect(response).to.have.status(200);
+            expect(response.status).to.eq(200);
         });
         it('returns a JSON body with the \'extensions\' property', () => {
             expect(response).to.be.json;
@@ -104,7 +104,7 @@ describe('/whitelist', () => {
                 expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
             });
             it('returns the correct status code', () => {
-                expect(response).to.have.status(200);
+                expect(response.status).to.eq(200);
             });
             it('returns a JSON body with the \'extensions\' and \'categories\' properties', () => {
                 expect(response).to.be.json;
@@ -128,7 +128,7 @@ describe('/whitelist', () => {
                 expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
             });
             it('returns the correct status code', () => {
-                expect(response).to.have.status(200);
+                expect(response.status).to.eq(200);
             });
             it('returns a JSON body with the \'extensions\' and \'categories\' properties', () => {
                 expect(response).to.be.json;
@@ -152,7 +152,7 @@ describe('/whitelist', () => {
                 expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
             });
             it('returns the correct status code', () => {
-                expect(response).to.have.status(200);
+                expect(response.status).to.eq(200);
             });
             it('returns a JSON body with the \'extensions\' and \'categories\' properties', () => {
                 expect(response).to.be.json;
@@ -177,7 +177,7 @@ describe('/whitelist', () => {
             expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
         });
         it('returns the correct status code', () => {
-            expect(response).to.have.status(200);
+            expect(response.status).to.eq(200);
         });
         it('returns a JSON body with \'extensions\' and \'categories\' properties', () => {
             expect(response).to.be.json;

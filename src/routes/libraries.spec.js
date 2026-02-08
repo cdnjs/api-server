@@ -18,7 +18,7 @@ describe('/libraries', () => {
             expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
         });
         it('returns the correct status code', () => {
-            expect(response).to.have.status(200);
+            expect(response.status).to.eq(200);
         });
         it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
             expect(response).to.be.json;
@@ -60,7 +60,7 @@ describe('/libraries', () => {
         // Test with a trailing slash
         it('responds to requests with a trailing slash', async () => {
             const res = await request(path + '/');
-            expect(res).to.have.status(200);
+            expect(res.status).to.eq(200);
             expect(res.body).to.deep.equal(response.body);
         });
     });
@@ -89,7 +89,7 @@ describe('/libraries', () => {
             expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
         });
         it('returns the correct status code', () => {
-            expect(response).to.have.status(200);
+            expect(response.status).to.eq(200);
         });
         it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
             expect(response).to.be.json;
@@ -115,7 +115,7 @@ describe('/libraries', () => {
             expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
         });
         it('returns the correct status code', () => {
-            expect(response).to.have.status(200);
+            expect(response.status).to.eq(200);
         });
         it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
             expect(response).to.be.json;
@@ -159,7 +159,7 @@ describe('/libraries', () => {
                 expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
             });
             it('returns the correct status code', () => {
-                expect(response).to.have.status(200);
+                expect(response.status).to.eq(200);
             });
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
                 expect(response).to.be.json;
@@ -202,7 +202,7 @@ describe('/libraries', () => {
                 expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
             });
             it('returns the correct status code', () => {
-                expect(response).to.have.status(200);
+                expect(response.status).to.eq(200);
             });
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
                 expect(response).to.be.json;
@@ -247,7 +247,7 @@ describe('/libraries', () => {
                 expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
             });
             it('returns the correct status code', () => {
-                expect(response).to.have.status(200);
+                expect(response.status).to.eq(200);
             });
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
                 expect(response).to.be.json;
@@ -287,7 +287,7 @@ describe('/libraries', () => {
                 expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
             });
             it('returns the correct status code', () => {
-                expect(response).to.have.status(200);
+                expect(response.status).to.eq(200);
             });
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
                 expect(response).to.be.json;
@@ -327,7 +327,7 @@ describe('/libraries', () => {
                 expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
             });
             it('returns the correct status code', () => {
-                expect(response).to.have.status(200);
+                expect(response.status).to.eq(200);
             });
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
                 expect(response).to.be.json;
@@ -368,7 +368,7 @@ describe('/libraries', () => {
             expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
         });
         it('returns the correct status code', () => {
-            expect(response).to.have.status(200);
+            expect(response.status).to.eq(200);
         });
         it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
             expect(response).to.be.json;
@@ -436,7 +436,7 @@ describe('/libraries', () => {
                 expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
             });
             it('returns the correct status code', () => {
-                expect(response).to.have.status(200);
+                expect(response.status).to.eq(200);
             });
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
                 expect(response).to.be.json;
@@ -477,7 +477,7 @@ describe('/libraries', () => {
                 expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
             });
             it('returns the correct status code', () => {
-                expect(response).to.have.status(200);
+                expect(response.status).to.eq(200);
             });
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
                 expect(response).to.be.json;
@@ -504,7 +504,7 @@ describe('/libraries', () => {
                 expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
             });
             it('returns the correct status code', () => {
-                expect(response).to.have.status(200);
+                expect(response.status).to.eq(200);
             });
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
                 expect(response).to.be.json;
@@ -538,7 +538,7 @@ describe('/libraries', () => {
                     expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
                 });
                 it('returns the correct status code', () => {
-                    expect(response).to.have.status(200);
+                    expect(response.status).to.eq(200);
                 });
                 it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
                     expect(response).to.be.json;
@@ -583,7 +583,7 @@ describe('/libraries', () => {
                     expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
                 });
                 it('returns the correct status code', () => {
-                    expect(response).to.have.status(200);
+                    expect(response.status).to.eq(200);
                 });
                 it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
                     expect(response).to.be.json;
@@ -628,7 +628,7 @@ describe('/libraries', () => {
                     expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
                 });
                 it('returns the correct status code', () => {
-                    expect(response).to.have.status(200);
+                    expect(response.status).to.eq(200);
                 });
                 it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
                     expect(response).to.be.json;
@@ -675,7 +675,7 @@ describe('/libraries', () => {
                 expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
             });
             it('returns the correct status code', () => {
-                expect(response).to.have.status(200);
+                expect(response.status).to.eq(200);
             });
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
                 expect(response).to.be.json;

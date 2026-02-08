@@ -16,7 +16,7 @@ describe('/this-route-doesnt-exist', () => {
             expect(response.headers.get('Cache-Control')).to.eq('public, max-age=3600'); // 1 hour
         });
         it('returns the correct status code', () => {
-            expect(response).to.have.status(404);
+            expect(response.status).to.eq(404);
         });
         it('returns a JSON body that is a valid error response', () => {
             expect(response).to.be.json;
@@ -55,7 +55,7 @@ describe('/error', () => {
             expect(response.headers.get('Cache-Control')).to.eq('no-cache, no-store, must-revalidate');
         });
         it('returns the correct status code', () => {
-            expect(response).to.have.status(500);
+            expect(response.status).to.eq(500);
         });
         it('returns a JSON body that is a valid error response', () => {
             expect(response).to.be.json;
