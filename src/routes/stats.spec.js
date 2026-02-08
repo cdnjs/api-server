@@ -13,7 +13,7 @@ describe('/stats', () => {
         // Test the endpoint
         testCors(path, response);
         it('returns the correct Cache headers', () => {
-            expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
+            expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
         });
         it('returns the correct status code', () => {
             expect(response).to.have.status(200);
@@ -47,7 +47,7 @@ describe('/stats', () => {
         // Test the endpoint
         testCors(path, response);
         it('returns the correct Cache headers', () => {
-            expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
+            expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
         });
         testHuman(response);
     });

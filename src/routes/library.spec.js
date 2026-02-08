@@ -15,7 +15,7 @@ describe('/libraries/:library/:version', () => {
                 // Test the endpoint
                 testCors(path, response);
                 it('returns the correct Cache headers', () => {
-                    expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
+                    expect(response.headers.get('Cache-Control')).to.eq('public, max-age=30672000, immutable'); // 355 days
                 });
                 it('returns the correct status code', () => {
                     expect(response).to.have.status(200);
@@ -53,7 +53,7 @@ describe('/libraries/:library/:version', () => {
                 // Test the endpoint
                 testCors(path, response);
                 it('returns the correct Cache headers', () => {
-                    expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
+                    expect(response.headers.get('Cache-Control')).to.eq('public, max-age=30672000, immutable'); // 355 days
                 });
                 testHuman(response);
             });
@@ -66,7 +66,7 @@ describe('/libraries/:library/:version', () => {
                 // Test the endpoint
                 testCors(path, response);
                 it('returns the correct Cache headers', () => {
-                    expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
+                    expect(response.headers.get('Cache-Control')).to.eq('public, max-age=30672000, immutable'); // 355 days
                 });
                 it('returns the correct status code', () => {
                     expect(response).to.have.status(200);
@@ -94,7 +94,7 @@ describe('/libraries/:library/:version', () => {
                     // Test the endpoint
                     testCors(path, response);
                     it('returns the correct Cache headers', () => {
-                        expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
+                        expect(response.headers.get('Cache-Control')).to.eq('public, max-age=30672000, immutable'); // 355 days
                     });
                     it('returns the correct status code', () => {
                         expect(response).to.have.status(200);
@@ -122,7 +122,7 @@ describe('/libraries/:library/:version', () => {
                     // Test the endpoint
                     testCors(path, response);
                     it('returns the correct Cache headers', () => {
-                        expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
+                        expect(response.headers.get('Cache-Control')).to.eq('public, max-age=30672000, immutable'); // 355 days
                     });
                     it('returns the correct status code', () => {
                         expect(response).to.have.status(200);
@@ -150,7 +150,7 @@ describe('/libraries/:library/:version', () => {
                     // Test the endpoint
                     testCors(path, response);
                     it('returns the correct Cache headers', () => {
-                        expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
+                        expect(response.headers.get('Cache-Control')).to.eq('public, max-age=30672000, immutable'); // 355 days
                     });
                     it('returns the correct status code', () => {
                         expect(response).to.have.status(200);
@@ -179,7 +179,7 @@ describe('/libraries/:library/:version', () => {
                 // Test the endpoint
                 testCors(path, response);
                 it('returns the correct Cache headers', () => {
-                    expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
+                    expect(response.headers.get('Cache-Control')).to.eq('public, max-age=30672000, immutable'); // 355 days
                 });
                 it('returns the correct status code', () => {
                     expect(response).to.have.status(200);
@@ -212,7 +212,7 @@ describe('/libraries/:library/:version', () => {
                 // Test the endpoint
                 testCors(path, response);
                 it('returns the correct Cache headers', () => {
-                    expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
+                    expect(response.headers.get('Cache-Control')).to.eq('public, max-age=3600'); // 1 hour
                 });
                 it('returns the correct status code', () => {
                     expect(response).to.have.status(404);
@@ -234,7 +234,7 @@ describe('/libraries/:library/:version', () => {
                 // Test the endpoint
                 testCors(path, response);
                 it('returns the correct Cache headers', () => {
-                    expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
+                    expect(response.headers.get('Cache-Control')).to.eq('public, max-age=3600'); // 1 hour
                 });
                 testHuman(response);
             });
@@ -250,7 +250,7 @@ describe('/libraries/:library/:version', () => {
             // Test the endpoint
             testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
+                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=3600'); // 1 hour
             });
             it('returns the correct status code', () => {
                 expect(response).to.have.status(404);
@@ -272,7 +272,7 @@ describe('/libraries/:library/:version', () => {
             // Test the endpoint
             testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
+                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=3600'); // 1 hour
             });
             testHuman(response);
         });
@@ -289,7 +289,7 @@ describe('/libraries/:library', () => {
             // Test the endpoint
             testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
+                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
             });
             it('returns the correct status code', () => {
                 expect(response).to.have.status(200);
@@ -358,7 +358,7 @@ describe('/libraries/:library', () => {
             // Test the endpoint
             testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
+                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
             });
             testHuman(response);
         });
@@ -371,7 +371,7 @@ describe('/libraries/:library', () => {
             // Test the endpoint
             testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
+                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
             });
             it('returns the correct status code', () => {
                 expect(response).to.have.status(200);
@@ -399,7 +399,7 @@ describe('/libraries/:library', () => {
                 // Test the endpoint
                 testCors(path, response);
                 it('returns the correct Cache headers', () => {
-                    expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
+                    expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
                 });
                 it('returns the correct status code', () => {
                     expect(response).to.have.status(200);
@@ -427,7 +427,7 @@ describe('/libraries/:library', () => {
                 // Test the endpoint
                 testCors(path, response);
                 it('returns the correct Cache headers', () => {
-                    expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
+                    expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
                 });
                 it('returns the correct status code', () => {
                     expect(response).to.have.status(200);
@@ -455,7 +455,7 @@ describe('/libraries/:library', () => {
                 // Test the endpoint
                 testCors(path, response);
                 it('returns the correct Cache headers', () => {
-                    expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
+                    expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
                 });
                 it('returns the correct status code', () => {
                     expect(response).to.have.status(200);
@@ -484,7 +484,7 @@ describe('/libraries/:library', () => {
             // Test the endpoint
             testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
+                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
             });
             it('returns the correct status code', () => {
                 expect(response).to.have.status(200);
@@ -524,7 +524,7 @@ describe('/libraries/:library', () => {
             // Test the endpoint
             testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
+                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=3600'); // 1 hour
             });
             it('returns the correct status code', () => {
                 expect(response).to.have.status(404);
@@ -546,7 +546,7 @@ describe('/libraries/:library', () => {
             // Test the endpoint
             testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
+                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=3600'); // 1 hour
             });
             testHuman(response);
         });

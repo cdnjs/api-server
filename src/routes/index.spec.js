@@ -11,7 +11,7 @@ describe('/', () => {
     // Test the endpoint
     testCors(path, response);
     it('returns the correct Cache headers', () => {
-        expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
+        expect(response.headers.get('Cache-Control')).to.eq('public, max-age=30672000, immutable'); // 355 days
     });
     it('redirects to the cdnjs.com API docs as a 301', () => {
         expect(response).to.have.status(301);
@@ -27,9 +27,9 @@ describe('/health', () => {
     // Test the endpoint
     testCors(path, response);
     it('returns the correct Cache headers', () => {
-        expect(response).to.have.header('Expires', '0');
-        expect(response).to.have.header('Pragma', 'no-cache');
-        expect(response).to.have.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+        expect(response.headers.get('Expires')).to.eq('0');
+        expect(response.headers.get('Pragma')).to.eq('no-cache');
+        expect(response.headers.get('Cache-Control')).to.eq('no-cache, no-store, must-revalidate');
     });
     it('returns the correct status code', () => {
         expect(response).to.have.status(200);
@@ -55,7 +55,7 @@ describe('/robots.txt', () => {
     // Test the endpoint
     testCors(path, response);
     it('returns the correct Cache headers', () => {
-        expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
+        expect(response.headers.get('Cache-Control')).to.eq('public, max-age=30672000, immutable'); // 355 days
     });
     it('returns the correct status code', () => {
         expect(response).to.have.status(200);
