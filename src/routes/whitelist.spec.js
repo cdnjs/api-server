@@ -3,17 +3,16 @@ import { describe, it, before } from 'mocha';
 
 import testCors from '../utils/spec/cors.js';
 import testHuman from '../utils/spec/human.js';
-import request from '../utils/spec/request.js';
+import { beforeRequest, request } from '../utils/spec/request.js';
 
 describe('/whitelist', () => {
     describe('No query params', () => {
         // Fetch the endpoint
         const path = '/whitelist';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours;
         });
@@ -61,25 +60,23 @@ describe('/whitelist', () => {
     describe('Requesting human response (?output=human)', () => {
         // Fetch the endpoint
         const path = '/whitelist?output=human';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
         });
-        testHuman(() => response);
+        testHuman(response);
     });
 
     describe('Requesting a field (?fields=extensions)', () => {
         // Fetch the endpoint
         const path = '/whitelist?fields=extensions';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
         });
@@ -100,11 +97,10 @@ describe('/whitelist', () => {
         describe('through comma-separated string (?fields=extensions,categories)', () => {
             // Fetch the endpoint
             const path = '/whitelist?fields=extensions,categories';
-            let response;
-            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+            const response = beforeRequest(path);
 
             // Test the endpoint
-            testCors(path, () => response);
+            testCors(path, response);
             it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
             });
@@ -125,11 +121,10 @@ describe('/whitelist', () => {
         describe('through space-separated string (?fields=extensions categories)', () => {
             // Fetch the endpoint
             const path = '/whitelist?fields=extensions categories';
-            let response;
-            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+            const response = beforeRequest(path);
 
             // Test the endpoint
-            testCors(path, () => response);
+            testCors(path, response);
             it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
             });
@@ -150,11 +145,10 @@ describe('/whitelist', () => {
         describe('through multiple query parameters (?fields=extensions&fields=categories)', () => {
             // Fetch the endpoint
             const path = '/whitelist?fields=extensions&fields=categories';
-            let response;
-            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+            const response = beforeRequest(path);
 
             // Test the endpoint
-            testCors(path, () => response);
+            testCors(path, response);
             it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
             });
@@ -176,11 +170,10 @@ describe('/whitelist', () => {
     describe('Requesting all fields (?fields=*)', () => {
         // Fetch the endpoint
         const path = '/whitelist?fields=*';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
         });

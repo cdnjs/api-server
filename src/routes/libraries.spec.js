@@ -5,17 +5,16 @@ import { describe, it, before } from 'mocha';
 
 import testCors from '../utils/spec/cors.js';
 import testHuman from '../utils/spec/human.js';
-import request from '../utils/spec/request.js';
+import { beforeRequest, request } from '../utils/spec/request.js';
 
 describe('/libraries', () => {
     describe('No query params', () => {
         // Fetch the endpoint
         const path = '/libraries';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
         });
@@ -70,25 +69,23 @@ describe('/libraries', () => {
     describe('Requesting human response (?output=human)', () => {
         // Fetch the endpoint
         const path = '/libraries?output=human';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
         });
-        testHuman(() => response);
+        testHuman(response);
     });
 
     describe('Limiting number of results (?limit=10)', () => {
         // Fetch the endpoint
         const path = '/libraries?limit=10';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
         });
@@ -111,11 +108,10 @@ describe('/libraries', () => {
     describe('Requesting a field (?fields=version)', () => {
         // Fetch the endpoint
         const path = '/libraries?fields=version';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
         });
@@ -156,11 +152,10 @@ describe('/libraries', () => {
         describe('with the correct casing (?fields=fileType)', () => {
             // Fetch the endpoint
             const path = '/libraries?fields=fileType';
-            let response;
-            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+            const response = beforeRequest(path);
 
             // Test the endpoint
-            testCors(path, () => response);
+            testCors(path, response);
             it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
             });
@@ -200,11 +195,10 @@ describe('/libraries', () => {
         describe('with incorrect casing (?fields=filetype)', () => {
             // Fetch the endpoint
             const path = '/libraries?fields=filetype';
-            let response;
-            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+            const response = beforeRequest(path);
 
             // Test the endpoint
-            testCors(path, () => response);
+            testCors(path, response);
             it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
             });
@@ -246,11 +240,10 @@ describe('/libraries', () => {
         describe('through comma-separated string (?fields=filename,version)', () => {
             // Fetch the endpoint
             const path = '/libraries?fields=filename,version';
-            let response;
-            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+            const response = beforeRequest(path);
 
             // Test the endpoint
-            testCors(path, () => response);
+            testCors(path, response);
             it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
             });
@@ -287,11 +280,10 @@ describe('/libraries', () => {
         describe('through space-separated string (?fields=filename version)', () => {
             // Fetch the endpoint
             const path = '/libraries?fields=filename version';
-            let response;
-            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+            const response = beforeRequest(path);
 
             // Test the endpoint
-            testCors(path, () => response);
+            testCors(path, response);
             it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
             });
@@ -328,11 +320,10 @@ describe('/libraries', () => {
         describe('through multiple query parameters (?fields=filename&fields=version)', () => {
             // Fetch the endpoint
             const path = '/libraries?fields=filename&fields=version';
-            let response;
-            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+            const response = beforeRequest(path);
 
             // Test the endpoint
-            testCors(path, () => response);
+            testCors(path, response);
             it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
             });
@@ -370,11 +361,10 @@ describe('/libraries', () => {
     describe('Requesting all fields (?fields=*)', () => {
         // Fetch the endpoint
         const path = '/libraries?fields=*';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
         });
@@ -439,11 +429,10 @@ describe('/libraries', () => {
         describe('Providing a short query (?search=font-awesome)', () => {
             // Fetch the endpoint
             const path = '/libraries?search=font-awesome';
-            let response;
-            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+            const response = beforeRequest(path);
 
             // Test the endpoint
-            testCors(path, () => response);
+            testCors(path, response);
             it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
             });
@@ -481,11 +470,10 @@ describe('/libraries', () => {
         describe('Providing a plain-text query that is longer than max that Algolia allows (?search=...)', () => {
             // Fetch the endpoint
             const path = `/libraries?search=${encodeURIComponent('a'.repeat(1024))}`;
-            let response;
-            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+            const response = beforeRequest(path);
 
             // Test the endpoint
-            testCors(path, () => response);
+            testCors(path, response);
             it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
             });
@@ -509,11 +497,10 @@ describe('/libraries', () => {
         describe('Providing a unicode query that is longer than max that Algolia allows (?search=...)', () => {
             // Fetch the endpoint
             const path = `/libraries?search=${encodeURIComponent('à'.repeat(1024))}`;
-            let response;
-            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+            const response = beforeRequest(path);
 
             // Test the endpoint
-            testCors(path, () => response);
+            testCors(path, response);
             it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
             });
@@ -544,11 +531,10 @@ describe('/libraries', () => {
             describe('through comma-separated string (?search=backbone.js&search_fields=keywords,github.user)', () => {
                 // Fetch the endpoint
                 const path = '/libraries?search=backbone.js&search_fields=keywords,github.user';
-                let response;
-                before('fetch endpoint', () => request(path).then(res => { response = res; }));
+                const response = beforeRequest(path);
 
                 // Test the endpoint
-                testCors(path, () => response);
+                testCors(path, response);
                 it('returns the correct Cache headers', () => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
                 });
@@ -590,11 +576,10 @@ describe('/libraries', () => {
             describe('through space-separated string (?search=backbone.js&search_fields=keywords github.user)', () => {
                 // Fetch the endpoint
                 const path = '/libraries?search=backbone.js&search_fields=keywords github.user';
-                let response;
-                before('fetch endpoint', () => request(path).then(res => { response = res; }));
+                const response = beforeRequest(path);
 
                 // Test the endpoint
-                testCors(path, () => response);
+                testCors(path, response);
                 it('returns the correct Cache headers', () => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
                 });
@@ -636,11 +621,10 @@ describe('/libraries', () => {
             describe('through multiple query parameters (?search=backbone.js&search_fields=keywords&search_fields=github.user)', () => {
                 // Fetch the endpoint
                 const path = '/libraries?search=backbone.js&search_fields=keywords&search_fields=github.user';
-                let response;
-                before('fetch endpoint', () => request(path).then(res => { response = res; }));
+                const response = beforeRequest(path);
 
                 // Test the endpoint
-                testCors(path, () => response);
+                testCors(path, response);
                 it('returns the correct Cache headers', () => {
                     expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
                 });
@@ -684,11 +668,10 @@ describe('/libraries', () => {
         describe('Providing search fields that are invalid (?search_fields=this-field-doesnt-exist)', () => {
             // Fetch the endpoint
             const path = '/libraries?search_fields=this-field-doesnt-exist';
-            let response;
-            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+            const response = beforeRequest(path);
 
             // Test the endpoint
-            testCors(path, () => response);
+            testCors(path, response);
             it('returns the correct Cache headers', () => {
                 expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
             });

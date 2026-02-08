@@ -3,17 +3,16 @@ import { describe, it, before } from 'mocha';
 
 import testCors from '../utils/spec/cors.js';
 import testHuman from '../utils/spec/human.js';
-import request from '../utils/spec/request.js';
+import { beforeRequest, request } from '../utils/spec/request.js';
 
 describe('/stats', () => {
     describe('No query params', () => {
         // Fetch the endpoint
         const path = '/stats';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
         });
@@ -44,14 +43,13 @@ describe('/stats', () => {
     describe('Requesting human response (?output=human)', () => {
         // Fetch the endpoint
         const path = '/stats?output=human';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
         });
-        testHuman(() => response);
+        testHuman(response);
     });
 });

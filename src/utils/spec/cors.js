@@ -1,48 +1,32 @@
-import { expect } from 'chai';
-import { before, it } from 'mocha';
+import { it, expect } from 'vitest';
 
 import corsOptions from '../cors.js';
 
-import request from './request.js';
-
-
-/**
- * Check that a response (and request if OPTIONS) has the expects CORS header values.
- *
- * @param {import('./request.js').ExtendedResponse} response Response (and request) to test.
- */
-const expectCORSHeaders = response => {
-    expect(response).to.have.header('Access-Control-Allow-Origin', corsOptions.origin);
-    expect(response).to.have.header('Access-Control-Allow-Credentials', corsOptions.credentials.toString());
-
-    // Testing allowed methods and headers only makes sense in case of options
-    if (response.request.method.toLowerCase() === 'options') {
-        expect(response).to.have.header('Access-Control-Allow-Headers', corsOptions.allowHeaders.join(','));
-        expect(response).to.have.header('Access-Control-Allow-Methods', corsOptions.allowMethods.join(','));
-    }
-};
+import { beforeRequest } from './request.js';
 
 /**
- * Run Mocha tests to ensure a path returns correct CORS headers.
+ * Run tests to ensure a path returns correct CORS headers.
  *
  * @param {string} path Request path to test for CORS headers.
- * @param {function(): import('./request.js').ExtendedResponse} getResponse Method that returns main path response.
+ * @param {Response} response Response from the API worker to test for CORS headers.
  */
-export default (path, getResponse) => {
+export default (path, response) => {
     // Fetch the endpoint
-    let optionsResponse;
-    before('fetch endpoint (OPTIONS)', () => request(path, { method: 'OPTIONS', redirect: 'manual' })
-        .then(res => { optionsResponse = res; }));
+    const optionsResponse = beforeRequest(path, { method: 'OPTIONS', redirect: 'manual' });
 
     it('returns the correct CORS headers', () => {
-        expectCORSHeaders(getResponse());
+        expect(response.headers.get('Access-Control-Allow-Origin')).to.eq(corsOptions.origin);
+        expect(response.headers.get('Access-Control-Allow-Credentials')).to.eq(corsOptions.credentials.toString());
     });
 
     it('returns the correct status code for OPTIONS request', () => {
-        expect(optionsResponse).to.have.status(204);
+        expect(optionsResponse.status).to.eq(204);
     });
 
     it('returns the correct CORS headers for OPTIONS request', () => {
-        expectCORSHeaders(optionsResponse);
+        expect(optionsResponse.headers.get('Access-Control-Allow-Origin')).to.eq(corsOptions.origin);
+        expect(optionsResponse.headers.get('Access-Control-Allow-Credentials')).to.eq(corsOptions.credentials.toString());
+        expect(optionsResponse.headers.get('Access-Control-Allow-Headers')).to.eq(corsOptions.allowHeaders.join(','));
+        expect(optionsResponse.headers.get('Access-Control-Allow-Methods')).to.eq(corsOptions.allowMethods.join(','));
     });
 };

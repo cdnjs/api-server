@@ -4,7 +4,7 @@ import { describe, it, before } from 'mocha';
 
 import testCors from '../utils/spec/cors.js';
 import testHuman from '../utils/spec/human.js';
-import request from '../utils/spec/request.js';
+import { beforeRequest, request } from '../utils/spec/request.js';
 
 use(chaiHttp);
 
@@ -12,11 +12,10 @@ describe('/this-route-doesnt-exist', () => {
     describe('No query params', () => {
         // Fetch the endpoint
         const path = '/this-route-doesnt-exist';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
         });
@@ -35,15 +34,14 @@ describe('/this-route-doesnt-exist', () => {
     describe('Requesting human response (?output=human)', () => {
         // Fetch the endpoint
         const path = '/this-route-doesnt-exist?output=human';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Cache-Control', 'public, max-age=3600'); // 1 hour
         });
-        testHuman(() => response);
+        testHuman(response);
     });
 });
 
@@ -51,11 +49,10 @@ describe('/error', () => {
     describe('No query params', () => {
         // Fetch the endpoint
         const path = '/error';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Expires', '0');
             expect(response).to.have.header('Pragma', 'no-cache');
@@ -76,16 +73,15 @@ describe('/error', () => {
     describe('Requesting human response (?output=human)', () => {
         // Fetch the endpoint
         const path = '/error?output=human';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
             expect(response).to.have.header('Expires', '0');
             expect(response).to.have.header('Pragma', 'no-cache');
             expect(response).to.have.header('Cache-Control', 'no-cache, no-store, must-revalidate');
         });
-        testHuman(() => response);
+        testHuman(response);
     });
 });

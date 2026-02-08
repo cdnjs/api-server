@@ -3,18 +3,17 @@ import chaiHttp from 'chai-http';
 import { describe, it, before } from 'mocha';
 
 import testCors from '../utils/spec/cors.js';
-import request from '../utils/spec/request.js';
+import { beforeRequest, request } from '../utils/spec/request.js';
 
 use(chaiHttp);
 
 describe('/', () => {
     // Fetch the endpoint
     const path = '/';
-    let response;
-    before('fetch endpoint', () => request(path, { redirect: 'manual' }).then(res => { response = res; }));
+    const response = beforeRequest(path, { redirect: 'manual' });
 
     // Test the endpoint
-    testCors(path, () => response);
+    testCors(path, response);
     it('returns the correct Cache headers', () => {
         expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
     });
@@ -27,11 +26,10 @@ describe('/', () => {
 describe('/health', () => {
     // Fetch the endpoint
     const path = '/health';
-    let response;
-    before('fetch endpoint', () => request(path).then(res => { response = res; }));
+    const response = beforeRequest(path);
 
     // Test the endpoint
-    testCors(path, () => response);
+    testCors(path, response);
     it('returns the correct Cache headers', () => {
         expect(response).to.have.header('Expires', '0');
         expect(response).to.have.header('Pragma', 'no-cache');
@@ -56,11 +54,10 @@ describe('/health', () => {
 describe('/robots.txt', () => {
     // Fetch the endpoint
     const path = '/robots.txt';
-    let response;
-    before('fetch endpoint', () => request(path).then(res => { response = res; }));
+    const response = beforeRequest(path);
 
     // Test the endpoint
-    testCors(path, () => response);
+    testCors(path, response);
     it('returns the correct Cache headers', () => {
         expect(response).to.have.header('Cache-Control', 'public, max-age=30672000, immutable'); // 355 days
     });
