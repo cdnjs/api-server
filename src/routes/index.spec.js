@@ -15,7 +15,7 @@ describe('/', () => {
     });
     it('redirects to the cdnjs.com API docs as a 301', () => {
         expect(response.status).to.eq(301);
-        expect(response).to.redirectTo('https://cdnjs.com/api');
+        expect(response.headers.get('Location')).to.eq('https://cdnjs.com/api');
     });
 });
 
@@ -34,16 +34,16 @@ describe('/health', () => {
     it('returns the correct status code', () => {
         expect(response.status).to.eq(200);
     });
-    it('returns on OK message', () => {
+    it('returns on OK message', async () => {
         expect(response.headers.get('Content-Type')).to.match(/text\/plain/);
-        expect(response.text).to.eq('OK');
+        expect(await response.text()).to.eq('OK');
     });
 
     // Test with a trailing slash
     it('responds to requests with a trailing slash', async () => {
         const res = await request(path + '/');
         expect(res.status).to.eq(200);
-        expect(res.text).to.eq(response.text);
+        expect(await res.text()).to.eq(await response.text());
     });
 });
 
@@ -60,8 +60,8 @@ describe('/robots.txt', () => {
     it('returns the correct status code', () => {
         expect(response.status).to.eq(200);
     });
-    it('disallows all indexing', () => {
+    it('disallows all indexing', async () => {
         expect(response.headers.get('Content-Type')).to.match(/text\/plain/);
-        expect(response.text).to.eq('User-agent: *\nDisallow: /');
+        expect(await response.text()).to.eq('User-agent: *\nDisallow: /');
     });
 });
