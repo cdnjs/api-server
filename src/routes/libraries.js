@@ -13,7 +13,7 @@ const index = algolia().initIndex('libraries');
 const validSearchFields = [ 'name', 'alternativeNames', 'github.repo', 'description', 'keywords', 'filename',
     'repositories.url', 'github.user', 'maintainers.name' ];
 
-// Max query length that Algolia will accept
+// Max query length that Algolia will accept (bytes)
 const maxQueryLength = 512;
 
 // Map of lowercase fields to their proper case
@@ -31,6 +31,26 @@ const mixedCaseFields = {
  * @return {string}
  */
 const bufToHex = buf => Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+
+/**
+ * Limit a string to a specific byte length, ensuring we don't cut off in the middle of a multi-byte character.
+ *
+ * @param {string} str String to limit.
+ * @param {number} byteLimit Maximum byte length.
+ * @return {string}
+ */
+const limitToByteLength = (str, byteLimit) => {
+    const encoder = new TextEncoder();
+    let bytes = 0;
+    let i = 0;
+    while (i < str.length && bytes < byteLimit) {
+        const charBytes = encoder.encode(str[i]).length;
+        if (bytes + charBytes > byteLimit) break;
+        bytes += charBytes;
+        i++;
+    }
+    return str.slice(0, i);
+};
 
 /**
  * Browse an Algolia index to get all objects matching a query.
@@ -83,7 +103,7 @@ const handleGetLibraries = async ctx => {
     // Get the index results
     const searchFields = queryArray(ctx.req.queries('search_fields'));
     const results = await browse(
-        (ctx.req.query('search') || '').toString().slice(0, maxQueryLength),
+        limitToByteLength(ctx.req.query('search') || '', maxQueryLength),
         searchFields.includes('*') ? [] : searchFields,
     );
 
