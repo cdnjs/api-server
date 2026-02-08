@@ -1,22 +1,19 @@
-import { expect } from 'chai';
-import { it } from 'mocha';
+import { it, expect } from 'vitest';
 
 /**
- * Run Mocha tests to ensure a response is a valid pretty-printed HTML "human" response.
+ * Run tests to ensure a response is a valid pretty-printed HTML "human" response.
  *
- * @param {function(): import('./request.js').ExtendedResponse} getResponse Method that returns main path response.
+ * @param {Response} response Response from the API worker to test as a "human" response.
  */
-export default getResponse => {
+export default response => {
     it('returns the no-index header', () => {
-        const response = getResponse();
-        expect(response).to.have.header('X-Robots-Tag', 'noindex');
+        expect(response.headers.get('X-Robots-Tag')).to.eq('noindex');
     });
-    it('returns a HTML body', () => {
-        const response = getResponse();
-        expect(response).to.be.html;
+    it('returns a HTML body', async () => {
+        expect(response.headers.get('Content-Type')).to.match(/text\/html/);
+        expect(await response.text()).to.match(/<html[^>]*>/);
     });
-    it('returns the no-index meta tag', () => {
-        const response = getResponse();
-        expect(response.text).to.match(/<meta\s+name=["']robots["']\s+content=["']noindex["']\s*\/?>/);
+    it('returns the no-index meta tag', async () => {
+        expect(await response.text()).to.match(/<meta\s+name=["']robots["']\s+content=["']noindex["']\s*\/?>/);
     });
 };

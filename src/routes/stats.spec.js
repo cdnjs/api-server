@@ -1,57 +1,54 @@
-import { expect } from 'chai';
-import { describe, it, before } from 'mocha';
+import { describe, it, expect } from 'vitest';
 
 import testCors from '../utils/spec/cors.js';
 import testHuman from '../utils/spec/human.js';
-import request from '../utils/spec/request.js';
+import { beforeRequest, request } from '../utils/spec/request.js';
 
 describe('/stats', () => {
     describe('No query params', () => {
         // Fetch the endpoint
         const path = '/stats';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
-            expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
+            expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
         });
         it('returns the correct status code', () => {
-            expect(response).to.have.status(200);
+            expect(response.status).to.eq(200);
         });
-        it('returns a JSON body that is a stats object', () => {
-            expect(response).to.be.json;
-            expect(response.body).to.be.an('object');
+        it('returns a JSON body that is a stats object', async () => {
+            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+            expect(await response.json()).to.be.an('object');
         });
         describe('cdnjs stats object', () => {
-            it('is an object with the \'libraries\' property', () => {
-                expect(response.body).to.have.property('libraries').that.is.an('number');
+            it('is an object with the \'libraries\' property', async () => {
+                expect(await response.json()).to.have.property('libraries').that.is.an('number');
             });
-            it('has no other properties', () => {
-                expect(Object.keys(response.body)).to.have.lengthOf(1);
+            it('has no other properties', async () => {
+                expect(Object.keys(await response.json())).to.have.lengthOf(1);
             });
         });
 
         // Test with a trailing slash
         it('responds to requests with a trailing slash', async () => {
             const res = await request(path + '/');
-            expect(res).to.have.status(200);
-            expect(res.body).to.deep.equal(response.body);
+            expect(res.status).to.eq(200);
+            expect(await res.json()).to.deep.equal(await response.json());
         });
     });
 
     describe('Requesting human response (?output=human)', () => {
         // Fetch the endpoint
         const path = '/stats?output=human';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
-            expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // 6 hours
+            expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
         });
-        testHuman(() => response);
+        testHuman(response);
     });
 });

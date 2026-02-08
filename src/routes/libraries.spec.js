@@ -1,40 +1,53 @@
 import { createHash } from 'crypto';
 
-import { expect } from 'chai';
-import { describe, it, before } from 'mocha';
+import { env } from 'cloudflare:test';
+import { describe, it, expect, vi } from 'vitest';
 
 import testCors from '../utils/spec/cors.js';
 import testHuman from '../utils/spec/human.js';
-import request from '../utils/spec/request.js';
+import { beforeRequest, externalApiUrl, request } from '../utils/spec/request.js';
+
+const kvExpectEmpty = async () => {
+    expect(await env.CACHE.list()).to.have.property('keys').that.is.an('array').that.is.empty;
+};
+
+const kvExpectNonEmpty = async () => {
+    await vi.waitFor(async () => {
+        expect(await env.CACHE.list()).to.have.property('keys').that.is.an('array').that.is.not.empty;
+    });
+};
 
 describe('/libraries', () => {
     describe('No query params', () => {
         // Fetch the endpoint
         const path = '/libraries';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
-            expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+            expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
         });
         it('returns the correct status code', () => {
-            expect(response).to.have.status(200);
+            expect(response.status).to.eq(200);
         });
-        it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-            expect(response).to.be.json;
-            expect(response.body).to.have.property('results').that.is.an('array');
-            expect(response.body).to.have.property('total').that.is.a('number');
-            expect(response.body).to.have.property('available').that.is.a('number');
+        it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
+            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+
+            const body = await response.json();
+            expect(body).to.have.property('results').that.is.an('array');
+            expect(body).to.have.property('total').that.is.a('number');
+            expect(body).to.have.property('available').that.is.a('number');
         });
-        it('returns all available hits', () => {
-            expect(response.body.results).to.have.lengthOf(response.body.total);
-            expect(response.body.results).to.have.lengthOf(response.body.available);
+        it('returns all available hits', async () => {
+            const body = await response.json();
+            expect(body.results).to.have.lengthOf(body.total);
+            expect(body.results).to.have.lengthOf(body.available);
         });
         describe('Library object', () => {
-            it('is an object with \'name\' and \'latest\' properties', () => {
-                for (const result of response.body.results) {
+            it('is an object with \'name\' and \'latest\' properties', async () => {
+                const body = await response.json();
+                for (const result of body.results) {
                     expect(result).to.have.property('name').that.is.a('string');
                     try {
                         expect(result).to.have.property('latest').that.is.a('string');
@@ -43,8 +56,9 @@ describe('/libraries', () => {
                     }
                 }
             });
-            it('has a CDN url for the \'latest\' property', () => {
-                for (const result of response.body.results) {
+            it('has a CDN url for the \'latest\' property', async () => {
+                const body = await response.json();
+                for (const result of body.results) {
                     try {
                         expect(result.latest).to.match(/https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/.+\/.+\/.*/);
                     } catch (_) {
@@ -52,8 +66,9 @@ describe('/libraries', () => {
                     }
                 }
             });
-            it('has no other properties', () => {
-                for (const result of response.body.results) {
+            it('has no other properties', async () => {
+                const body = await response.json();
+                for (const result of body.results) {
                     expect(Object.keys(result)).to.have.lengthOf(2);
                 }
             });
@@ -62,79 +77,83 @@ describe('/libraries', () => {
         // Test with a trailing slash
         it('responds to requests with a trailing slash', async () => {
             const res = await request(path + '/');
-            expect(res).to.have.status(200);
-            expect(res.body).to.deep.equal(response.body);
+            expect(res.status).to.eq(200);
+            expect(await res.json()).to.deep.equal(await response.json());
         });
     });
 
     describe('Requesting human response (?output=human)', () => {
         // Fetch the endpoint
         const path = '/libraries?output=human';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
-            expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+            expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
         });
-        testHuman(() => response);
+        testHuman(response);
     });
 
     describe('Limiting number of results (?limit=10)', () => {
         // Fetch the endpoint
         const path = '/libraries?limit=10';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
-            expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+            expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
         });
         it('returns the correct status code', () => {
-            expect(response).to.have.status(200);
+            expect(response.status).to.eq(200);
         });
-        it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-            expect(response).to.be.json;
-            expect(response.body).to.have.property('results').that.is.an('array');
-            expect(response.body).to.have.property('total').that.is.a('number');
-            expect(response.body).to.have.property('available').that.is.a('number');
+        it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
+            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+
+            const body = await response.json();
+            expect(body).to.have.property('results').that.is.an('array');
+            expect(body).to.have.property('total').that.is.a('number');
+            expect(body).to.have.property('available').that.is.a('number');
         });
-        it('returns only the requested number of hits', () => {
-            expect(response.body.results).to.have.lengthOf(10);
-            expect(response.body.total).to.equal(10);
-            expect(response.body.available).to.be.above(10);
+        it('returns only the requested number of hits', async () => {
+            const body = await response.json();
+            expect(body.results).to.have.lengthOf(10);
+            expect(body.total).to.equal(10);
+            expect(body.available).to.be.above(10);
         });
     });
 
     describe('Requesting a field (?fields=version)', () => {
         // Fetch the endpoint
         const path = '/libraries?fields=version';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
-            expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+            expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
         });
         it('returns the correct status code', () => {
-            expect(response).to.have.status(200);
+            expect(response.status).to.eq(200);
         });
-        it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-            expect(response).to.be.json;
-            expect(response.body).to.have.property('results').that.is.an('array');
-            expect(response.body).to.have.property('total').that.is.a('number');
-            expect(response.body).to.have.property('available').that.is.a('number');
+        it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
+            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+
+            const body = await response.json();
+            expect(body).to.have.property('results').that.is.an('array');
+            expect(body).to.have.property('total').that.is.a('number');
+            expect(body).to.have.property('available').that.is.a('number');
         });
-        it('returns all available hits', () => {
-            expect(response.body.results).to.have.lengthOf(response.body.total);
-            expect(response.body.results).to.have.lengthOf(response.body.available);
+        it('returns all available hits', async () => {
+            const body = await response.json();
+            expect(body.results).to.have.lengthOf(body.total);
+            expect(body.results).to.have.lengthOf(body.available);
         });
         describe('Library object', () => {
-            it('is an object with \'name\', \'latest\' and requested \'version\' properties', () => {
-                for (const result of response.body.results) {
+            it('is an object with \'name\', \'latest\' and requested \'version\' properties', async () => {
+                const body = await response.json();
+                for (const result of body.results) {
                     expect(result).to.have.property('name').that.is.a('string');
                     try {
                         expect(result).to.have.property('latest').that.is.a('string');
@@ -144,8 +163,9 @@ describe('/libraries', () => {
                     expect(result).to.have.property('version').that.is.a('string');
                 }
             });
-            it('has no other properties', () => {
-                for (const result of response.body.results) {
+            it('has no other properties', async () => {
+                const body = await response.json();
+                for (const result of body.results) {
                     expect(Object.keys(result)).to.have.lengthOf(3);
                 }
             });
@@ -156,30 +176,33 @@ describe('/libraries', () => {
         describe('with the correct casing (?fields=fileType)', () => {
             // Fetch the endpoint
             const path = '/libraries?fields=fileType';
-            let response;
-            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+            const response = beforeRequest(path);
 
             // Test the endpoint
-            testCors(path, () => response);
+            testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
             });
             it('returns the correct status code', () => {
-                expect(response).to.have.status(200);
+                expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                expect(response).to.be.json;
-                expect(response.body).to.have.property('results').that.is.an('array');
-                expect(response.body).to.have.property('total').that.is.a('number');
-                expect(response.body).to.have.property('available').that.is.a('number');
+            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+
+                const body = await response.json();
+                expect(body).to.have.property('results').that.is.an('array');
+                expect(body).to.have.property('total').that.is.a('number');
+                expect(body).to.have.property('available').that.is.a('number');
             });
-            it('returns all available hits', () => {
-                expect(response.body.results).to.have.lengthOf(response.body.total);
-                expect(response.body.results).to.have.lengthOf(response.body.available);
+            it('returns all available hits', async () => {
+                const body = await response.json();
+                expect(body.results).to.have.lengthOf(body.total);
+                expect(body.results).to.have.lengthOf(body.available);
             });
             describe('Library object', () => {
-                it('is an object with \'name\', \'latest\' and requested \'fileType\' properties', () => {
-                    for (const result of response.body.results) {
+                it('is an object with \'name\', \'latest\' and requested \'fileType\' properties', async () => {
+                    const body = await response.json();
+                    for (const result of body.results) {
                         expect(result).to.have.property('name').that.is.a('string');
                         try {
                             expect(result).to.have.property('latest').that.is.a('string');
@@ -189,8 +212,9 @@ describe('/libraries', () => {
                         expect(result).to.have.property('fileType').that.is.a('string');
                     }
                 });
-                it('has no other properties', () => {
-                    for (const result of response.body.results) {
+                it('has no other properties', async () => {
+                    const body = await response.json();
+                    for (const result of body.results) {
                         expect(Object.keys(result)).to.have.lengthOf(3);
                     }
                 });
@@ -200,30 +224,33 @@ describe('/libraries', () => {
         describe('with incorrect casing (?fields=filetype)', () => {
             // Fetch the endpoint
             const path = '/libraries?fields=filetype';
-            let response;
-            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+            const response = beforeRequest(path);
 
             // Test the endpoint
-            testCors(path, () => response);
+            testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
             });
             it('returns the correct status code', () => {
-                expect(response).to.have.status(200);
+                expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                expect(response).to.be.json;
-                expect(response.body).to.have.property('results').that.is.an('array');
-                expect(response.body).to.have.property('total').that.is.a('number');
-                expect(response.body).to.have.property('available').that.is.a('number');
+            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+
+                const body = await response.json();
+                expect(body).to.have.property('results').that.is.an('array');
+                expect(body).to.have.property('total').that.is.a('number');
+                expect(body).to.have.property('available').that.is.a('number');
             });
-            it('returns all available hits', () => {
-                expect(response.body.results).to.have.lengthOf(response.body.total);
-                expect(response.body.results).to.have.lengthOf(response.body.available);
+            it('returns all available hits', async () => {
+                const body = await response.json();
+                expect(body.results).to.have.lengthOf(body.total);
+                expect(body.results).to.have.lengthOf(body.available);
             });
             describe('Library object', () => {
-                it('is an object with \'name\', \'latest\' and requested \'fileType\' properties', () => {
-                    for (const result of response.body.results) {
+                it('is an object with \'name\', \'latest\' and requested \'fileType\' properties', async () => {
+                    const body = await response.json();
+                    for (const result of body.results) {
                         expect(result).to.have.property('name').that.is.a('string');
                         try {
                             expect(result).to.have.property('latest').that.is.a('string');
@@ -233,8 +260,9 @@ describe('/libraries', () => {
                         expect(result).to.have.property('fileType').that.is.a('string');
                     }
                 });
-                it('has no other properties', () => {
-                    for (const result of response.body.results) {
+                it('has no other properties', async () => {
+                    const body = await response.json();
+                    for (const result of body.results) {
                         expect(Object.keys(result)).to.have.lengthOf(3);
                     }
                 });
@@ -246,38 +274,42 @@ describe('/libraries', () => {
         describe('through comma-separated string (?fields=filename,version)', () => {
             // Fetch the endpoint
             const path = '/libraries?fields=filename,version';
-            let response;
-            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+            const response = beforeRequest(path);
 
             // Test the endpoint
-            testCors(path, () => response);
+            testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
             });
             it('returns the correct status code', () => {
-                expect(response).to.have.status(200);
+                expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                expect(response).to.be.json;
-                expect(response.body).to.have.property('results').that.is.an('array');
-                expect(response.body).to.have.property('total').that.is.a('number');
-                expect(response.body).to.have.property('available').that.is.a('number');
+            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+
+                const body = await response.json();
+                expect(body).to.have.property('results').that.is.an('array');
+                expect(body).to.have.property('total').that.is.a('number');
+                expect(body).to.have.property('available').that.is.a('number');
             });
-            it('returns all available hits', () => {
-                expect(response.body.results).to.have.lengthOf(response.body.total);
-                expect(response.body.results).to.have.lengthOf(response.body.available);
+            it('returns all available hits', async () => {
+                const body = await response.json();
+                expect(body.results).to.have.lengthOf(body.total);
+                expect(body.results).to.have.lengthOf(body.available);
             });
             describe('Library object', () => {
-                it('is an object with \'name\', \'latest\' and requested \'filename\' & \'version\' properties', () => {
-                    for (const result of response.body.results) {
+                it('is an object with \'name\', \'latest\' and requested \'filename\' & \'version\' properties', async () => {
+                    const body = await response.json();
+                    for (const result of body.results) {
                         expect(result).to.have.property('name');
                         expect(result).to.have.property('latest');
                         expect(result).to.have.property('filename');
                         expect(result).to.have.property('version');
                     }
                 });
-                it('has no other properties', () => {
-                    for (const result of response.body.results) {
+                it('has no other properties', async () => {
+                    const body = await response.json();
+                    for (const result of body.results) {
                         expect(Object.keys(result)).to.have.lengthOf(4);
                     }
                 });
@@ -287,38 +319,42 @@ describe('/libraries', () => {
         describe('through space-separated string (?fields=filename version)', () => {
             // Fetch the endpoint
             const path = '/libraries?fields=filename version';
-            let response;
-            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+            const response = beforeRequest(path);
 
             // Test the endpoint
-            testCors(path, () => response);
+            testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
             });
             it('returns the correct status code', () => {
-                expect(response).to.have.status(200);
+                expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                expect(response).to.be.json;
-                expect(response.body).to.have.property('results').that.is.an('array');
-                expect(response.body).to.have.property('total').that.is.a('number');
-                expect(response.body).to.have.property('available').that.is.a('number');
+            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+
+                const body = await response.json();
+                expect(body).to.have.property('results').that.is.an('array');
+                expect(body).to.have.property('total').that.is.a('number');
+                expect(body).to.have.property('available').that.is.a('number');
             });
-            it('returns all available hits', () => {
-                expect(response.body.results).to.have.lengthOf(response.body.total);
-                expect(response.body.results).to.have.lengthOf(response.body.available);
+            it('returns all available hits', async () => {
+                const body = await response.json();
+                expect(body.results).to.have.lengthOf(body.total);
+                expect(body.results).to.have.lengthOf(body.available);
             });
             describe('Library object', () => {
-                it('is an object with \'name\', \'latest\' and requested \'filename\' & \'version\' properties', () => {
-                    for (const result of response.body.results) {
+                it('is an object with \'name\', \'latest\' and requested \'filename\' & \'version\' properties', async () => {
+                    const body = await response.json();
+                    for (const result of body.results) {
                         expect(result).to.have.property('name');
                         expect(result).to.have.property('latest');
                         expect(result).to.have.property('filename');
                         expect(result).to.have.property('version');
                     }
                 });
-                it('has no other properties', () => {
-                    for (const result of response.body.results) {
+                it('has no other properties', async () => {
+                    const body = await response.json();
+                    for (const result of body.results) {
                         expect(Object.keys(result)).to.have.lengthOf(4);
                     }
                 });
@@ -328,38 +364,42 @@ describe('/libraries', () => {
         describe('through multiple query parameters (?fields=filename&fields=version)', () => {
             // Fetch the endpoint
             const path = '/libraries?fields=filename&fields=version';
-            let response;
-            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+            const response = beforeRequest(path);
 
             // Test the endpoint
-            testCors(path, () => response);
+            testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
             });
             it('returns the correct status code', () => {
-                expect(response).to.have.status(200);
+                expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                expect(response).to.be.json;
-                expect(response.body).to.have.property('results').that.is.an('array');
-                expect(response.body).to.have.property('total').that.is.a('number');
-                expect(response.body).to.have.property('available').that.is.a('number');
+            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+
+                const body = await response.json();
+                expect(body).to.have.property('results').that.is.an('array');
+                expect(body).to.have.property('total').that.is.a('number');
+                expect(body).to.have.property('available').that.is.a('number');
             });
-            it('returns all available hits', () => {
-                expect(response.body.results).to.have.lengthOf(response.body.total);
-                expect(response.body.results).to.have.lengthOf(response.body.available);
+            it('returns all available hits', async () => {
+                const body = await response.json();
+                expect(body.results).to.have.lengthOf(body.total);
+                expect(body.results).to.have.lengthOf(body.available);
             });
             describe('Library object', () => {
-                it('is an object with \'name\', \'latest\' and requested \'filename\' & \'version\' properties', () => {
-                    for (const result of response.body.results) {
+                it('is an object with \'name\', \'latest\' and requested \'filename\' & \'version\' properties', async () => {
+                    const body = await response.json();
+                    for (const result of body.results) {
                         expect(result).to.have.property('name');
                         expect(result).to.have.property('latest');
                         expect(result).to.have.property('filename');
                         expect(result).to.have.property('version');
                     }
                 });
-                it('has no other properties', () => {
-                    for (const result of response.body.results) {
+                it('has no other properties', async () => {
+                    const body = await response.json();
+                    for (const result of body.results) {
                         expect(Object.keys(result)).to.have.lengthOf(4);
                     }
                 });
@@ -370,30 +410,33 @@ describe('/libraries', () => {
     describe('Requesting all fields (?fields=*)', () => {
         // Fetch the endpoint
         const path = '/libraries?fields=*';
-        let response;
-        before('fetch endpoint', () => request(path).then(res => { response = res; }));
+        const response = beforeRequest(path);
 
         // Test the endpoint
-        testCors(path, () => response);
+        testCors(path, response);
         it('returns the correct Cache headers', () => {
-            expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+            expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
         });
         it('returns the correct status code', () => {
-            expect(response).to.have.status(200);
+            expect(response.status).to.eq(200);
         });
-        it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-            expect(response).to.be.json;
-            expect(response.body).to.have.property('results').that.is.an('array');
-            expect(response.body).to.have.property('total').that.is.a('number');
-            expect(response.body).to.have.property('available').that.is.a('number');
+        it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
+            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+
+            const body = await response.json();
+            expect(body).to.have.property('results').that.is.an('array');
+            expect(body).to.have.property('total').that.is.a('number');
+            expect(body).to.have.property('available').that.is.a('number');
         });
-        it('returns all available hits', () => {
-            expect(response.body.results).to.have.lengthOf(response.body.total);
-            expect(response.body.results).to.have.lengthOf(response.body.available);
+        it('returns all available hits', async () => {
+            const body = await response.json();
+            expect(body.results).to.have.lengthOf(body.total);
+            expect(body.results).to.have.lengthOf(body.available);
         });
         describe('Library object', () => {
-            it('is an object with the full set of library properties', () => {
-                for (const result of response.body.results) {
+            it('is an object with the full set of library properties', async () => {
+                const body = await response.json();
+                for (const result of body.results) {
                     expect(result).to.have.property('name').that.is.a('string');
                     try {
                         expect(result).to.have.property('latest').that.is.a('string');
@@ -439,39 +482,44 @@ describe('/libraries', () => {
         describe('Providing a short query (?search=font-awesome)', () => {
             // Fetch the endpoint
             const path = '/libraries?search=font-awesome';
-            let response;
-            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+            const response = beforeRequest(path);
 
             // Test the endpoint
-            testCors(path, () => response);
+            testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
             });
             it('returns the correct status code', () => {
-                expect(response).to.have.status(200);
+                expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                expect(response).to.be.json;
-                expect(response.body).to.have.property('results').that.is.an('array');
-                expect(response.body).to.have.property('total').that.is.a('number');
-                expect(response.body).to.have.property('available').that.is.a('number');
+            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+
+                const body = await response.json();
+                expect(body).to.have.property('results').that.is.an('array');
+                expect(body).to.have.property('total').that.is.a('number');
+                expect(body).to.have.property('available').that.is.a('number');
             });
-            it('returns all available hits', () => {
-                expect(response.body.results).to.have.lengthOf(response.body.total);
-                expect(response.body.results).to.have.lengthOf(response.body.available);
+            it('returns all available hits', async () => {
+                const body = await response.json();
+                expect(body.results).to.have.lengthOf(body.total);
+                expect(body.results).to.have.lengthOf(body.available);
             });
-            describe('Library object', () => {
-                it('returns the \'twitter-bootstrap\' package as the first object', () => {
-                    expect(response.body.results[0]).to.have.property('name', 'font-awesome');
+            describe('Library object', async () => {
+                it('returns the \'twitter-bootstrap\' package as the first object', async () => {
+                    const body = await response.json();
+                    expect(body.results[0]).to.have.property('name', 'font-awesome');
                 });
-                it('is an object with \'name\' and \'latest\' properties', () => {
-                    for (const result of response.body.results) {
+                it('is an object with \'name\' and \'latest\' properties', async () => {
+                    const body = await response.json();
+                    for (const result of body.results) {
                         expect(result).to.have.property('name').that.is.a('string');
                         expect(result).to.have.property('latest').that.is.a('string');
                     }
                 });
-                it('has no other properties', () => {
-                    for (const result of response.body.results) {
+                it('has no other properties', async () => {
+                    const body = await response.json();
+                    for (const result of body.results) {
                         expect(Object.keys(result)).to.have.lengthOf(2);
                     }
                 });
@@ -481,26 +529,28 @@ describe('/libraries', () => {
         describe('Providing a plain-text query that is longer than max that Algolia allows (?search=...)', () => {
             // Fetch the endpoint
             const path = `/libraries?search=${encodeURIComponent('a'.repeat(1024))}`;
-            let response;
-            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+            const response = beforeRequest(path);
 
             // Test the endpoint
-            testCors(path, () => response);
+            testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
             });
             it('returns the correct status code', () => {
-                expect(response).to.have.status(200);
+                expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                expect(response).to.be.json;
-                expect(response.body).to.have.property('results').that.is.an('array');
-                expect(response.body).to.have.property('total').that.is.a('number');
-                expect(response.body).to.have.property('available').that.is.a('number');
+            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+
+                const body = await response.json();
+                expect(body).to.have.property('results').that.is.an('array');
+                expect(body).to.have.property('total').that.is.a('number');
+                expect(body).to.have.property('available').that.is.a('number');
             });
-            it('returns all available hits', () => {
-                expect(response.body.results).to.have.lengthOf(response.body.total);
-                expect(response.body.results).to.have.lengthOf(response.body.available);
+            it('returns all available hits', async () => {
+                const body = await response.json();
+                expect(body.results).to.have.lengthOf(body.total);
+                expect(body.results).to.have.lengthOf(body.available);
             });
             // No library object as it's rather likely this won't match anything
             // But this test is just to ensure it doesn't return an error
@@ -509,26 +559,28 @@ describe('/libraries', () => {
         describe('Providing a unicode query that is longer than max that Algolia allows (?search=...)', () => {
             // Fetch the endpoint
             const path = `/libraries?search=${encodeURIComponent('à'.repeat(1024))}`;
-            let response;
-            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+            const response = beforeRequest(path);
 
             // Test the endpoint
-            testCors(path, () => response);
+            testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
             });
             it('returns the correct status code', () => {
-                expect(response).to.have.status(200);
+                expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                expect(response).to.be.json;
-                expect(response.body).to.have.property('results').that.is.an('array');
-                expect(response.body).to.have.property('total').that.is.a('number');
-                expect(response.body).to.have.property('available').that.is.a('number');
+            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+
+                const body = await response.json();
+                expect(body).to.have.property('results').that.is.an('array');
+                expect(body).to.have.property('total').that.is.a('number');
+                expect(body).to.have.property('available').that.is.a('number');
             });
-            it('returns all available hits', () => {
-                expect(response.body.results).to.have.lengthOf(response.body.total);
-                expect(response.body.results).to.have.lengthOf(response.body.available);
+            it('returns all available hits', async () => {
+                const body = await response.json();
+                expect(body.results).to.have.lengthOf(body.total);
+                expect(body.results).to.have.lengthOf(body.available);
             });
             // No library object as it's rather likely this won't match anything
             // But this test is just to ensure it doesn't return an error
@@ -544,43 +596,48 @@ describe('/libraries', () => {
             describe('through comma-separated string (?search=backbone.js&search_fields=keywords,github.user)', () => {
                 // Fetch the endpoint
                 const path = '/libraries?search=backbone.js&search_fields=keywords,github.user';
-                let response;
-                before('fetch endpoint', () => request(path).then(res => { response = res; }));
+                const response = beforeRequest(path);
 
                 // Test the endpoint
-                testCors(path, () => response);
+                testCors(path, response);
                 it('returns the correct Cache headers', () => {
-                    expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+                    expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
                 });
                 it('returns the correct status code', () => {
-                    expect(response).to.have.status(200);
+                    expect(response.status).to.eq(200);
                 });
-                it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                    expect(response).to.be.json;
-                    expect(response.body).to.have.property('results').that.is.an('array');
-                    expect(response.body).to.have.property('total').that.is.a('number');
-                    expect(response.body).to.have.property('available').that.is.a('number');
+                it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
+                    expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+
+                    const body = await response.json();
+                    expect(body).to.have.property('results').that.is.an('array');
+                    expect(body).to.have.property('total').that.is.a('number');
+                    expect(body).to.have.property('available').that.is.a('number');
                 });
-                it('returns all available hits', () => {
-                    expect(response.body.results).to.have.lengthOf(response.body.total);
-                    expect(response.body.results).to.have.lengthOf(response.body.available);
+                it('returns all available hits', async () => {
+                    const body = await response.json();
+                    expect(body.results).to.have.lengthOf(body.total);
+                    expect(body.results).to.have.lengthOf(body.available);
                 });
                 describe('Library object', () => {
-                    it('is an object with \'name\' and \'latest\' properties', () => {
-                        for (const result of response.body.results) {
+                    it('is an object with \'name\' and \'latest\' properties', async () => {
+                        const body = await response.json();
+                        for (const result of body.results) {
                             expect(result).to.have.property('name').that.is.a('string');
                             expect(result).to.have.property('latest').that.is.a('string');
                         }
                     });
                     // This is fragile!
                     // backbone.js doesn't have a keyword for itself and is owned by a user so we shouldn't see it
-                    it('doesn\'t return the \'backbone.js\' package', () => {
-                        for (const result of response.body.results) {
+                    it('doesn\'t return the \'backbone.js\' package', async () => {
+                        const body = await response.json();
+                        for (const result of body.results) {
                             expect(result.name).to.not.equal('backbone.js');
                         }
                     });
-                    it('has no other properties', () => {
-                        for (const result of response.body.results) {
+                    it('has no other properties', async () => {
+                        const body = await response.json();
+                        for (const result of body.results) {
                             expect(Object.keys(result)).to.have.lengthOf(2);
                         }
                     });
@@ -590,43 +647,48 @@ describe('/libraries', () => {
             describe('through space-separated string (?search=backbone.js&search_fields=keywords github.user)', () => {
                 // Fetch the endpoint
                 const path = '/libraries?search=backbone.js&search_fields=keywords github.user';
-                let response;
-                before('fetch endpoint', () => request(path).then(res => { response = res; }));
+                const response = beforeRequest(path);
 
                 // Test the endpoint
-                testCors(path, () => response);
+                testCors(path, response);
                 it('returns the correct Cache headers', () => {
-                    expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+                    expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
                 });
                 it('returns the correct status code', () => {
-                    expect(response).to.have.status(200);
+                    expect(response.status).to.eq(200);
                 });
-                it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                    expect(response).to.be.json;
-                    expect(response.body).to.have.property('results').that.is.an('array');
-                    expect(response.body).to.have.property('total').that.is.a('number');
-                    expect(response.body).to.have.property('available').that.is.a('number');
+                it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
+                    expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+
+                    const body = await response.json();
+                    expect(body).to.have.property('results').that.is.an('array');
+                    expect(body).to.have.property('total').that.is.a('number');
+                    expect(body).to.have.property('available').that.is.a('number');
                 });
-                it('returns all available hits', () => {
-                    expect(response.body.results).to.have.lengthOf(response.body.total);
-                    expect(response.body.results).to.have.lengthOf(response.body.available);
+                it('returns all available hits', async () => {
+                    const body = await response.json();
+                    expect(body.results).to.have.lengthOf(body.total);
+                    expect(body.results).to.have.lengthOf(body.available);
                 });
                 describe('Library object', () => {
-                    it('is an object with \'name\' and \'latest\' properties', () => {
-                        for (const result of response.body.results) {
+                    it('is an object with \'name\' and \'latest\' properties', async () => {
+                        const body = await response.json();
+                        for (const result of body.results) {
                             expect(result).to.have.property('name').that.is.a('string');
                             expect(result).to.have.property('latest').that.is.a('string');
                         }
                     });
                     // This is fragile!
                     // backbone.js doesn't have a keyword for itself and is owned by a user so we shouldn't see it
-                    it('doesn\'t return the \'backbone.js\' package', () => {
-                        for (const result of response.body.results) {
+                    it('doesn\'t return the \'backbone.js\' package', async () => {
+                        const body = await response.json();
+                        for (const result of body.results) {
                             expect(result.name).to.not.equal('backbone.js');
                         }
                     });
-                    it('has no other properties', () => {
-                        for (const result of response.body.results) {
+                    it('has no other properties', async () => {
+                        const body = await response.json();
+                        for (const result of body.results) {
                             expect(Object.keys(result)).to.have.lengthOf(2);
                         }
                     });
@@ -636,43 +698,48 @@ describe('/libraries', () => {
             describe('through multiple query parameters (?search=backbone.js&search_fields=keywords&search_fields=github.user)', () => {
                 // Fetch the endpoint
                 const path = '/libraries?search=backbone.js&search_fields=keywords&search_fields=github.user';
-                let response;
-                before('fetch endpoint', () => request(path).then(res => { response = res; }));
+                const response = beforeRequest(path);
 
                 // Test the endpoint
-                testCors(path, () => response);
+                testCors(path, response);
                 it('returns the correct Cache headers', () => {
-                    expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+                    expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
                 });
                 it('returns the correct status code', () => {
-                    expect(response).to.have.status(200);
+                    expect(response.status).to.eq(200);
                 });
-                it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                    expect(response).to.be.json;
-                    expect(response.body).to.have.property('results').that.is.an('array');
-                    expect(response.body).to.have.property('total').that.is.a('number');
-                    expect(response.body).to.have.property('available').that.is.a('number');
+                it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
+                    expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+
+                    const body = await response.json();
+                    expect(body).to.have.property('results').that.is.an('array');
+                    expect(body).to.have.property('total').that.is.a('number');
+                    expect(body).to.have.property('available').that.is.a('number');
                 });
-                it('returns all available hits', () => {
-                    expect(response.body.results).to.have.lengthOf(response.body.total);
-                    expect(response.body.results).to.have.lengthOf(response.body.available);
+                it('returns all available hits', async () => {
+                    const body = await response.json();
+                    expect(body.results).to.have.lengthOf(body.total);
+                    expect(body.results).to.have.lengthOf(body.available);
                 });
                 describe('Library object', () => {
-                    it('is an object with \'name\' and \'latest\' properties', () => {
-                        for (const result of response.body.results) {
+                    it('is an object with \'name\' and \'latest\' properties', async () => {
+                        const body = await response.json();
+                        for (const result of body.results) {
                             expect(result).to.have.property('name').that.is.a('string');
                             expect(result).to.have.property('latest').that.is.a('string');
                         }
                     });
                     // This is fragile!
                     // backbone.js doesn't have a keyword for itself and is owned by a user so we shouldn't see it
-                    it('doesn\'t return the \'backbone.js\' package', () => {
-                        for (const result of response.body.results) {
+                    it('doesn\'t return the \'backbone.js\' package', async () => {
+                        const body = await response.json();
+                        for (const result of body.results) {
                             expect(result.name).to.not.equal('backbone.js');
                         }
                     });
-                    it('has no other properties', () => {
-                        for (const result of response.body.results) {
+                    it('has no other properties', async () => {
+                        const body = await response.json();
+                        for (const result of body.results) {
                             expect(Object.keys(result)).to.have.lengthOf(2);
                         }
                     });
@@ -684,30 +751,33 @@ describe('/libraries', () => {
         describe('Providing search fields that are invalid (?search_fields=this-field-doesnt-exist)', () => {
             // Fetch the endpoint
             const path = '/libraries?search_fields=this-field-doesnt-exist';
-            let response;
-            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+            const response = beforeRequest(path);
 
             // Test the endpoint
-            testCors(path, () => response);
+            testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
             });
             it('returns the correct status code', () => {
-                expect(response).to.have.status(200);
+                expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                expect(response).to.be.json;
-                expect(response.body).to.have.property('results').that.is.an('array');
-                expect(response.body).to.have.property('total').that.is.a('number');
-                expect(response.body).to.have.property('available').that.is.a('number');
+            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+
+                const body = await response.json();
+                expect(body).to.have.property('results').that.is.an('array');
+                expect(body).to.have.property('total').that.is.a('number');
+                expect(body).to.have.property('available').that.is.a('number');
             });
-            it('returns all available hits', () => {
-                expect(response.body.results).to.have.lengthOf(response.body.total);
-                expect(response.body.results).to.have.lengthOf(response.body.available);
+            it('returns all available hits', async () => {
+                const body = await response.json();
+                expect(body.results).to.have.lengthOf(body.total);
+                expect(body.results).to.have.lengthOf(body.available);
             });
             describe('Library object', () => {
-                it('is an object with \'name\' and \'latest\' properties', () => {
-                    for (const result of response.body.results) {
+                it('is an object with \'name\' and \'latest\' properties', async () => {
+                    const body = await response.json();
+                    for (const result of body.results) {
                         expect(result).to.have.property('name').that.is.a('string');
                         try {
                             expect(result).to.have.property('latest').that.is.a('string');
@@ -716,8 +786,9 @@ describe('/libraries', () => {
                         }
                     }
                 });
-                it('has no other properties', () => {
-                    for (const result of response.body.results) {
+                it('has no other properties', async () => {
+                    const body = await response.json();
+                    for (const result of body.results) {
                         expect(Object.keys(result)).to.have.lengthOf(2);
                     }
                 });
@@ -725,82 +796,92 @@ describe('/libraries', () => {
         });
     });
 
-    describe('Caching Algolia data with KV', () => {
+    // Don't run these tests against an external API Worker as we won't have KV access
+    describe.skipIf(externalApiUrl)('Caching Algolia data with KV', () => {
         it('writes the results from Algolia to KV', async () => {
-            await request('/libraries', {}, undefined, async mf => {
-                // Check that the results were stored under the `:` key (no query, no fields)
-                const cache = await mf.getKVNamespace('CACHE');
-                const key = `libraries:${createHash('sha512').update(':').digest('hex')}`;
-                const { keys } = await cache.list();
-                expect(keys).to.be.an('array');
-                expect(keys).to.have.lengthOf(1);
-                expect(keys[0].name).to.equal(key);
-                expect(await cache.get(key, { type: 'json' })).to.be.an('array');
-            });
+            await kvExpectEmpty();
+            await request('/libraries');
+            await kvExpectNonEmpty();
+
+            // Check that the results were stored under the `:` key (no query, no fields)
+            const key = `libraries:${createHash('sha512').update(':').digest('hex')}`;
+            const { keys } = await env.CACHE.list();
+            expect(keys).to.have.lengthOf(1);
+            expect(keys[0]).to.have.property('name').that.equals(key);
+            expect(await env.CACHE.get(key, { type: 'json' })).to.be.an('array');
         });
 
         it('reuses existing Algolia values from KV', async () => {
-            const response = await request('/libraries', {}, async mf => {
-                // Create a stub set of Algolia results under the `:` key (no query, no fields)
-                const cache = await mf.getKVNamespace('CACHE');
-                const key = `libraries:${createHash('sha512').update(':').digest('hex')}`;
-                await cache.put(key, JSON.stringify([ { name: 'testing' } ]));
-            });
+            // Create a stub set of Algolia results under the `:` key (no query, no fields)
+            const key = `libraries:${createHash('sha512').update(':').digest('hex')}`;
+            await env.CACHE.put(key, JSON.stringify([ { name: 'testing' } ]));
 
             // Check the response was generated from KV
-            expect(response).to.be.json;
-            expect(response.body).to.have.property('results').that.is.an('array');
-            expect(response.body.results).to.have.lengthOf(1);
-            expect(response.body.results[0]).to.have.property('name').that.is.a('string');
-            expect(response.body.results[0].name).to.equal('testing');
+            const response = await request('/libraries');
+            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+
+            const body = await response.json();
+            expect(body).to.have.property('results').that.is.an('array');
+            expect(body.results).to.have.lengthOf(1);
+            expect(body.results[0]).to.have.property('name').that.equals('testing');
         });
 
         it('reuses the same KV cache no matter the query parameter order', async () => {
             const key = `libraries:${createHash('sha512').update('test:name').digest('hex')}`;
 
-            // Run the request with the `name` parameter first, check consistent key was used
-            await request('/libraries?search=test&search_fields=name', {}, undefined, async mf => {
-                const cache = await mf.getKVNamespace('CACHE');
-                const { keys } = await cache.list();
-                expect(keys).to.be.an('array');
-                expect(keys).to.have.lengthOf(1);
-                expect(keys[0].name).to.equal(key);
-                expect(await cache.get(key, { type: 'json' })).to.be.an('array');
-            });
+            // Run the request with the `name` parameter first
+            await kvExpectEmpty();
+            await request('/libraries?search=test&search_fields=name');
+            await kvExpectNonEmpty();
 
-            // Run the request with the `search_fields` parameter first, check consistent key was used
-            await request('/libraries?search_fields=name&search=test', {}, undefined, async mf => {
-                const cache = await mf.getKVNamespace('CACHE');
-                const { keys } = await cache.list();
-                expect(keys).to.be.an('array');
-                expect(keys).to.have.lengthOf(1);
-                expect(keys[0].name).to.equal(key);
-                expect(await cache.get(key, { type: 'json' })).to.be.an('array');
-            });
+            // Check that the results were stored under the expected key
+            const { keys } = await env.CACHE.list();
+            expect(keys).to.have.lengthOf(1);
+            expect(keys[0]).to.have.property('name').that.equals(key);
+            expect(await env.CACHE.get(key, { type: 'json' })).to.be.an('array');
+
+            // Remove the key in KV to allow the next request to write to it again
+            await env.CACHE.delete(key);
+
+            // Run the request with the `search_fields` parameter first
+            await kvExpectEmpty();
+            await request('/libraries?search_fields=name&search=test');
+            await kvExpectNonEmpty();
+
+            // Check that the results were stored under the expected key
+            const { keys: keysTwo } = await env.CACHE.list();
+            expect(keysTwo).to.have.lengthOf(1);
+            expect(keysTwo[0]).to.have.property('name').that.equals(key);
+            expect(await env.CACHE.get(key, { type: 'json' })).to.be.an('array');
         });
 
         it('reuses the same KV cache no matter the search fields order', async () => {
             const key = `libraries:${createHash('sha512').update('test:keywords,name').digest('hex')}`;
 
-            // Run the request with the `name` search field first, check consistent key was used
-            await request('/libraries?search=test&search_fields=name,keywords', {}, undefined, async mf => {
-                const cache = await mf.getKVNamespace('CACHE');
-                const { keys } = await cache.list();
-                expect(keys).to.be.an('array');
-                expect(keys).to.have.lengthOf(1);
-                expect(keys[0].name).to.equal(key);
-                expect(await cache.get(key, { type: 'json' })).to.be.an('array');
-            });
+            // Run the request with the `name` search field first
+            await kvExpectEmpty();
+            await request('/libraries?search=test&search_fields=name,keywords');
+            await kvExpectNonEmpty();
 
-            // Run the request with the `keywords` search field first, check consistent key was used
-            await request('/libraries?search=test&search_fields=keywords,name', {}, undefined, async mf => {
-                const cache = await mf.getKVNamespace('CACHE');
-                const { keys } = await cache.list();
-                expect(keys).to.be.an('array');
-                expect(keys).to.have.lengthOf(1);
-                expect(keys[0].name).to.equal(key);
-                expect(await cache.get(key, { type: 'json' })).to.be.an('array');
-            });
+            // Check that the results were stored under the expected key
+            const { keys } = await env.CACHE.list();
+            expect(keys).to.have.lengthOf(1);
+            expect(keys[0]).to.have.property('name').that.equals(key);
+            expect(await env.CACHE.get(key, { type: 'json' })).to.be.an('array');
+
+            // Remove the key in KV to allow the next request to write to it again
+            await env.CACHE.delete(key);
+
+            // Run the request with the `keywords` search field first
+            await kvExpectEmpty();
+            await request('/libraries?search=test&search_fields=keywords,name');
+            await kvExpectNonEmpty();
+
+            // Check that the results were stored under the expected key
+            const { keys: keysTwo } = await env.CACHE.list();
+            expect(keysTwo).to.have.lengthOf(1);
+            expect(keysTwo[0]).to.have.property('name').that.equals(key);
+            expect(await env.CACHE.get(key, { type: 'json' })).to.be.an('array');
         });
     });
 });

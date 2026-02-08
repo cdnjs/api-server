@@ -6,12 +6,11 @@
     "type": "module",
     "main": "src/index.js",
     "scripts": {
-        "test": "npm run test:echint && npm run test:eslint && npm run test:mocha",
+        "test": "npm run test:echint && npm run test:eslint && npm run test:vitest",
         "test:echint": "echint -v -i \"dist-worker/**/*\"",
         "test:eslint": "eslint \"{,src/**/}*.@(js|cjs|mjs)\"",
         "test:eslint:fix": "npm run test:eslint -- --fix",
-        "test:mocha": "npm run test:mocha:build && mocha",
-        "test:mocha:build": "wrangler deploy --dry-run --outdir dist-worker",
+        "test:vitest": "vitest run",
         "dev": "wrangler dev"
     },
     "repository": {
@@ -38,14 +37,17 @@
     "devDependencies": {
         "@babel/core": "^7.29.0",
         "@babel/eslint-parser": "^7.28.6",
-        "chai": "^5.0.0",
-        "chai-http": "^5.1.2",
+        "@cloudflare/vitest-pool-workers": "^0.12.10",
         "echint": "^4.0.2",
         "eslint": "^8.56.0",
         "eslint-plugin-import": "^2.32.0",
         "eslint-plugin-jsdoc": "^62.5.0",
-        "miniflare": "^4.20260128.0",
-        "mocha": "^11.7.5",
+        "vitest": "~3.2.0",
         "wrangler": "^4.61.1"
+    },
+    "overrides": {
+        "@cloudflare/vitest-pool-workers": {
+            "wrangler": "$wrangler"
+        }
     }
 }
