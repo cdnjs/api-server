@@ -18,31 +18,36 @@ describe('/whitelist', () => {
         it('returns the correct status code', () => {
             expect(response.status).to.eq(200);
         });
-        it('returns a JSON body with \'extensions\' and \'categories\' properties', () => {
+        it('returns a JSON body with \'extensions\' and \'categories\' properties', async () => {
             expect(response.headers.get('Content-Type')).to.match(/application\/json/);
-            expect(response.body).to.be.an('object');
-            expect(response.body).to.have.property('extensions').that.is.an('array');
-            expect(response.body).to.have.property('categories').that.is.an('object');
+
+            const body = await response.json();
+            expect(body).to.be.an('object');
+            expect(body).to.have.property('extensions').that.is.an('array');
+            expect(body).to.have.property('categories').that.is.an('object');
         });
-        it('has no other properties', () => {
-            expect(Object.keys(response.body)).to.have.lengthOf(2);
+        it('has no other properties', async () => {
+            expect(Object.keys(await response.json())).to.have.lengthOf(2);
         });
         describe('Extensions array', () => {
-            it('only has string elements', () => {
-                for (const result of response.body.extensions) {
+            it('only has string elements', async () => {
+                const body = await response.json();
+                for (const result of body.extensions) {
                     expect(result).to.be.a('string');
                 }
             });
         });
         describe('Categories object', () => {
-            it('has a key for each value in \'extensions\'', () => {
-                const keys = Object.keys(response.body.categories);
-                for (const result of response.body.extensions) {
+            it('has a key for each value in \'extensions\'', async () => {
+                const body = await response.json();
+                const keys = Object.keys(body.categories);
+                for (const result of body.extensions) {
                     expect(keys).to.include(result);
                 }
             });
-            it('has a string value for each key', () => {
-                for (const result of Object.values(response.body.categories)) {
+            it('has a string value for each key', async () => {
+                const body = await response.json();
+                for (const result of Object.values(body.categories)) {
                     expect(result).to.be.a('string');
                 }
             });
@@ -52,7 +57,7 @@ describe('/whitelist', () => {
         it('responds to requests with a trailing slash', async () => {
             const res = await request(path + '/');
             expect(res.status).to.eq(200);
-            expect(res.body).to.deep.equal(response.body);
+            expect(await res.json()).to.deep.equal(await response.json());
         });
     });
 
@@ -82,13 +87,15 @@ describe('/whitelist', () => {
         it('returns the correct status code', () => {
             expect(response.status).to.eq(200);
         });
-        it('returns a JSON body with the \'extensions\' property', () => {
+        it('returns a JSON body with the \'extensions\' property', async () => {
             expect(response.headers.get('Content-Type')).to.match(/application\/json/);
-            expect(response.body).to.be.an('object');
-            expect(response.body).to.have.property('extensions').that.is.an('array');
+
+            const body = await response.json();
+            expect(body).to.be.an('object');
+            expect(body).to.have.property('extensions').that.is.an('array');
         });
-        it('has no other properties', () => {
-            expect(Object.keys(response.body)).to.have.lengthOf(1);
+        it('has no other properties', async () => {
+            expect(Object.keys(await response.json())).to.have.lengthOf(1);
         });
     });
 
@@ -106,14 +113,16 @@ describe('/whitelist', () => {
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with the \'extensions\' and \'categories\' properties', () => {
+            it('returns a JSON body with the \'extensions\' and \'categories\' properties', async () => {
                 expect(response.headers.get('Content-Type')).to.match(/application\/json/);
-                expect(response.body).to.be.an('object');
-                expect(response.body).to.have.property('extensions').that.is.an('array');
-                expect(response.body).to.have.property('categories').that.is.an('object');
+
+                const body = await response.json();
+                expect(body).to.be.an('object');
+                expect(body).to.have.property('extensions').that.is.an('array');
+                expect(body).to.have.property('categories').that.is.an('object');
             });
-            it('has no other properties', () => {
-                expect(Object.keys(response.body)).to.have.lengthOf(2);
+            it('has no other properties', async () => {
+                expect(Object.keys(await response.json())).to.have.lengthOf(2);
             });
         });
 
@@ -130,14 +139,16 @@ describe('/whitelist', () => {
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with the \'extensions\' and \'categories\' properties', () => {
+            it('returns a JSON body with the \'extensions\' and \'categories\' properties', async () => {
                 expect(response.headers.get('Content-Type')).to.match(/application\/json/);
-                expect(response.body).to.be.an('object');
-                expect(response.body).to.have.property('extensions').that.is.an('array');
-                expect(response.body).to.have.property('categories').that.is.an('object');
+
+                const body = await response.json();
+                expect(body).to.be.an('object');
+                expect(body).to.have.property('extensions').that.is.an('array');
+                expect(body).to.have.property('categories').that.is.an('object');
             });
-            it('has no other properties', () => {
-                expect(Object.keys(response.body)).to.have.lengthOf(2);
+            it('has no other properties', async () => {
+                expect(Object.keys(await response.json())).to.have.lengthOf(2);
             });
         });
 
@@ -154,14 +165,16 @@ describe('/whitelist', () => {
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with the \'extensions\' and \'categories\' properties', () => {
+            it('returns a JSON body with the \'extensions\' and \'categories\' properties', async () => {
                 expect(response.headers.get('Content-Type')).to.match(/application\/json/);
-                expect(response.body).to.be.an('object');
-                expect(response.body).to.have.property('extensions').that.is.an('array');
-                expect(response.body).to.have.property('categories').that.is.an('object');
+
+                const body = await response.json();
+                expect(body).to.be.an('object');
+                expect(body).to.have.property('extensions').that.is.an('array');
+                expect(body).to.have.property('categories').that.is.an('object');
             });
-            it('has no other properties', () => {
-                expect(Object.keys(response.body)).to.have.lengthOf(2);
+            it('has no other properties', async () => {
+                expect(Object.keys(await response.json())).to.have.lengthOf(2);
             });
         });
     });
@@ -179,14 +192,16 @@ describe('/whitelist', () => {
         it('returns the correct status code', () => {
             expect(response.status).to.eq(200);
         });
-        it('returns a JSON body with \'extensions\' and \'categories\' properties', () => {
+        it('returns a JSON body with \'extensions\' and \'categories\' properties', async () => {
             expect(response.headers.get('Content-Type')).to.match(/application\/json/);
-            expect(response.body).to.be.an('object');
-            expect(response.body).to.have.property('extensions').that.is.an('array');
-            expect(response.body).to.have.property('categories').that.is.an('object');
+
+            const body = await response.json();
+            expect(body).to.be.an('object');
+            expect(body).to.have.property('extensions').that.is.an('array');
+            expect(body).to.have.property('categories').that.is.an('object');
         });
-        it('has no other properties', () => {
-            expect(Object.keys(response.body)).to.have.lengthOf(2);
+        it('has no other properties', async () => {
+            expect(Object.keys(await response.json())).to.have.lengthOf(2);
         });
     });
 });
