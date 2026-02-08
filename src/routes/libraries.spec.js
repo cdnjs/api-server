@@ -478,9 +478,9 @@ describe('/libraries', () => {
             });
         });
 
-        describe('Providing a query that is longer than max that Algolia allows (?search=this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet-this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet)', () => {
+        describe('Providing a plain-text query that is longer than max that Algolia allows (?search=...)', () => {
             // Fetch the endpoint
-            const path = '/libraries?search=this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet-this-is-a-very-very-long-query-that-algolia-wont-like-and-will-return-an-error-for-as-it-is-longer-that-512-chars-which-is-documented-on-their-website-on-the-query-api-parameters-page-in-the-usage-notes-section-now-i-shall-repeat-this-as-it-isnt-quite-long-enough-to-cause-that-error-yet';
+            const path = `/libraries?search=${encodeURIComponent('a'.repeat(1024))}`;
             let response;
             before('fetch endpoint', () => request(path).then(res => { response = res; }));
 
