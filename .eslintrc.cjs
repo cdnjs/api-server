@@ -176,6 +176,7 @@ module.exports = {
             {
                 ignore: [
                     '^hono/',
+                    '^@cloudflare/[^/]+/',
                     '^cloudflare:',
                 ],
             },
@@ -219,6 +220,13 @@ module.exports = {
             parserOptions: {
                 sourceType: 'script',
             },
+            env: {
+                node: true,
+                es2022: true,
+            },
+        },
+        {
+            files: [ 'vitest.config.js' ],
             env: {
                 node: true,
                 es2022: true,
