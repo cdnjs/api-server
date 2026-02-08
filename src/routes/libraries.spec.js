@@ -1,7 +1,6 @@
 import { createHash } from 'crypto';
 
-import { expect } from 'chai';
-import { describe, it, before } from 'mocha';
+import { describe, it, expect } from 'vitest';
 
 import testCors from '../utils/spec/cors.js';
 import testHuman from '../utils/spec/human.js';

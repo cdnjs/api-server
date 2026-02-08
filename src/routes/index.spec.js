@@ -1,11 +1,7 @@
-import { use, expect } from 'chai';
-import chaiHttp from 'chai-http';
-import { describe, it, before } from 'mocha';
+import { describe, it, expect } from 'vitest';
 
 import testCors from '../utils/spec/cors.js';
 import { beforeRequest, request } from '../utils/spec/request.js';
-
-use(chaiHttp);
 
 describe('/', () => {
     // Fetch the endpoint
