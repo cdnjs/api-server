@@ -8,7 +8,7 @@ import { env } from 'cloudflare:workers';
  * @param {boolean} [immutable=false] Mark the response as immutable for caching.
  */
 export default (ctx, age, immutable = false) => {
-    if (age === -1 || env.DISABLE_CACHING === 'true') {
+    if (age === -1 || env.DISABLE_CACHING) {
         ctx.header('Expires', '0');
         ctx.header('Pragma', 'no-cache');
         ctx.header('Cache-Control', 'no-cache, no-store, must-revalidate');
