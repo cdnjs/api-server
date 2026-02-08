@@ -1,8 +1,8 @@
-name: Test
+name: CI
 
 on:
-  schedule:
-    - cron:  '*/30 * * * *'
+  push:
+  pull_request:
 
 jobs:
   test:
