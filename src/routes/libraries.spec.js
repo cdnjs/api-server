@@ -505,6 +505,34 @@ describe('/libraries', () => {
             // No library object as it's rather likely this won't match anything
             // But this test is just to ensure it doesn't return an error
         });
+
+        describe('Providing a unicode query that is longer than max that Algolia allows (?search=...)', () => {
+            // Fetch the endpoint
+            const path = `/libraries?search=${encodeURIComponent('à'.repeat(1024))}`;
+            let response;
+            before('fetch endpoint', () => request(path).then(res => { response = res; }));
+
+            // Test the endpoint
+            testCors(path, () => response);
+            it('returns the correct Cache headers', () => {
+                expect(response).to.have.header('Cache-Control', 'public, max-age=21600'); // Six hours
+            });
+            it('returns the correct status code', () => {
+                expect(response).to.have.status(200);
+            });
+            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
+                expect(response).to.be.json;
+                expect(response.body).to.have.property('results').that.is.an('array');
+                expect(response.body).to.have.property('total').that.is.a('number');
+                expect(response.body).to.have.property('available').that.is.a('number');
+            });
+            it('returns all available hits', () => {
+                expect(response.body.results).to.have.lengthOf(response.body.total);
+                expect(response.body.results).to.have.lengthOf(response.body.available);
+            });
+            // No library object as it's rather likely this won't match anything
+            // But this test is just to ensure it doesn't return an error
+        });
     });
 
     describe('Searching for libraries with specific fields', () => {
