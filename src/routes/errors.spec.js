@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 
 import testCors from '../utils/spec/cors.js';
 import testHuman from '../utils/spec/human.js';
-import { beforeRequest } from '../utils/spec/request.js';
+import { beforeRequest, externalApiUrl } from '../utils/spec/request.js';
 
 describe('/this-route-doesnt-exist', () => {
     describe('No query params', () => {
@@ -43,7 +43,8 @@ describe('/this-route-doesnt-exist', () => {
     });
 });
 
-describe('/error', () => {
+// Don't run these tests against an external API Worker as we don't want to create noise
+describe.skipIf(externalApiUrl)('/error', () => {
     describe('No query params', () => {
         // Fetch the endpoint
         const path = '/error';

@@ -5,7 +5,7 @@ import { describe, it, expect, vi } from 'vitest';
 
 import testCors from '../utils/spec/cors.js';
 import testHuman from '../utils/spec/human.js';
-import { beforeRequest, request } from '../utils/spec/request.js';
+import { beforeRequest, externalApiUrl, request } from '../utils/spec/request.js';
 
 const kvExpectEmpty = async () => {
     expect(await env.CACHE.list()).to.have.property('keys').that.is.an('array').that.is.empty;
@@ -796,7 +796,8 @@ describe('/libraries', () => {
         });
     });
 
-    describe('Caching Algolia data with KV', () => {
+    // Don't run these tests against an external API Worker as we won't have KV access
+    describe.skipIf(externalApiUrl)('Caching Algolia data with KV', () => {
         it('writes the results from Algolia to KV', async () => {
             await kvExpectEmpty();
             await request('/libraries');

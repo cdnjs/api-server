@@ -1,5 +1,8 @@
-import { SELF } from 'cloudflare:test';
+import { SELF, env } from 'cloudflare:test';
 import { beforeAll } from 'vitest';
+
+// Allow tests to run against an external API Worker by setting VITEST_EXTERNAL_API_URL.
+export const externalApiUrl = env.VITEST_EXTERNAL_API_URL?.replace(/\/+$/, '') || null;
 
 /**
  * Run a fetch request to the API Worker, pre-consuming the response body as test for repeat access in tests.
@@ -9,7 +12,9 @@ import { beforeAll } from 'vitest';
  * @return {Promise<Response>}
  */
 export const request = async (route, opts = {}) => {
-    const response = await SELF.fetch(`http://local${route}`, opts);
+    const response = externalApiUrl
+        ? await fetch(`${externalApiUrl}${route}`, opts)
+        : await SELF.fetch(`http://local${route}`, opts);
     const text = await response.text();
 
     return new Proxy({}, {
