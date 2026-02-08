@@ -19,7 +19,7 @@ describe('/whitelist', () => {
             expect(response.status).to.eq(200);
         });
         it('returns a JSON body with \'extensions\' and \'categories\' properties', () => {
-            expect(response).to.be.json;
+            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
             expect(response.body).to.be.an('object');
             expect(response.body).to.have.property('extensions').that.is.an('array');
             expect(response.body).to.have.property('categories').that.is.an('object');
@@ -83,7 +83,7 @@ describe('/whitelist', () => {
             expect(response.status).to.eq(200);
         });
         it('returns a JSON body with the \'extensions\' property', () => {
-            expect(response).to.be.json;
+            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
             expect(response.body).to.be.an('object');
             expect(response.body).to.have.property('extensions').that.is.an('array');
         });
@@ -107,7 +107,7 @@ describe('/whitelist', () => {
                 expect(response.status).to.eq(200);
             });
             it('returns a JSON body with the \'extensions\' and \'categories\' properties', () => {
-                expect(response).to.be.json;
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                 expect(response.body).to.be.an('object');
                 expect(response.body).to.have.property('extensions').that.is.an('array');
                 expect(response.body).to.have.property('categories').that.is.an('object');
@@ -131,7 +131,7 @@ describe('/whitelist', () => {
                 expect(response.status).to.eq(200);
             });
             it('returns a JSON body with the \'extensions\' and \'categories\' properties', () => {
-                expect(response).to.be.json;
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                 expect(response.body).to.be.an('object');
                 expect(response.body).to.have.property('extensions').that.is.an('array');
                 expect(response.body).to.have.property('categories').that.is.an('object');
@@ -155,7 +155,7 @@ describe('/whitelist', () => {
                 expect(response.status).to.eq(200);
             });
             it('returns a JSON body with the \'extensions\' and \'categories\' properties', () => {
-                expect(response).to.be.json;
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                 expect(response.body).to.be.an('object');
                 expect(response.body).to.have.property('extensions').that.is.an('array');
                 expect(response.body).to.have.property('categories').that.is.an('object');
@@ -180,7 +180,7 @@ describe('/whitelist', () => {
             expect(response.status).to.eq(200);
         });
         it('returns a JSON body with \'extensions\' and \'categories\' properties', () => {
-            expect(response).to.be.json;
+            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
             expect(response.body).to.be.an('object');
             expect(response.body).to.have.property('extensions').that.is.an('array');
             expect(response.body).to.have.property('categories').that.is.an('object');

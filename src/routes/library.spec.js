@@ -21,7 +21,7 @@ describe('/libraries/:library/:version', () => {
                     expect(response.status).to.eq(200);
                 });
                 it('returns a JSON body that is a library version object', () => {
-                    expect(response).to.be.json;
+                    expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                     expect(response.body).to.be.an('object');
                 });
                 describe('Library version object', () => {
@@ -72,7 +72,7 @@ describe('/libraries/:library/:version', () => {
                     expect(response.status).to.eq(200);
                 });
                 it('returns a JSON body that is a library version object', () => {
-                    expect(response).to.be.json;
+                    expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                     expect(response.body).to.be.an('object');
                 });
                 describe('Library version object', () => {
@@ -100,7 +100,7 @@ describe('/libraries/:library/:version', () => {
                         expect(response.status).to.eq(200);
                     });
                     it('returns a JSON body that is a library object', () => {
-                        expect(response).to.be.json;
+                        expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                         expect(response.body).to.be.an('object');
                     });
                     describe('Library version object', () => {
@@ -128,7 +128,7 @@ describe('/libraries/:library/:version', () => {
                         expect(response.status).to.eq(200);
                     });
                     it('returns a JSON body that is a library object', () => {
-                        expect(response).to.be.json;
+                        expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                         expect(response.body).to.be.an('object');
                     });
                     describe('Library version object', () => {
@@ -156,7 +156,7 @@ describe('/libraries/:library/:version', () => {
                         expect(response.status).to.eq(200);
                     });
                     it('returns a JSON body that is a library object', () => {
-                        expect(response).to.be.json;
+                        expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                         expect(response.body).to.be.an('object');
                     });
                     describe('Library version object', () => {
@@ -185,7 +185,7 @@ describe('/libraries/:library/:version', () => {
                     expect(response.status).to.eq(200);
                 });
                 it('returns a JSON body that is a library version object', () => {
-                    expect(response).to.be.json;
+                    expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                     expect(response.body).to.be.an('object');
                 });
                 describe('Library version object', () => {
@@ -218,7 +218,7 @@ describe('/libraries/:library/:version', () => {
                     expect(response.status).to.eq(404);
                 });
                 it('returns a JSON body that is a valid error response', () => {
-                    expect(response).to.be.json;
+                    expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                     expect(response.body).to.be.an('object');
                     expect(response.body).to.have.property('error', true);
                     expect(response.body).to.have.property('status', 404);
@@ -256,7 +256,7 @@ describe('/libraries/:library/:version', () => {
                 expect(response.status).to.eq(404);
             });
             it('returns a JSON body that is a valid error response', () => {
-                expect(response).to.be.json;
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                 expect(response.body).to.be.an('object');
                 expect(response.body).to.have.property('error', true);
                 expect(response.body).to.have.property('status', 404);
@@ -295,7 +295,7 @@ describe('/libraries/:library', () => {
                 expect(response.status).to.eq(200);
             });
             it('returns a JSON body that is a library object', () => {
-                expect(response).to.be.json;
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                 expect(response.body).to.be.an('object');
             });
             describe('Library object', () => {
@@ -377,7 +377,7 @@ describe('/libraries/:library', () => {
                 expect(response.status).to.eq(200);
             });
             it('returns a JSON body that is a library object', () => {
-                expect(response).to.be.json;
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                 expect(response.body).to.be.an('object');
             });
             describe('Library object', () => {
@@ -405,7 +405,7 @@ describe('/libraries/:library', () => {
                     expect(response.status).to.eq(200);
                 });
                 it('returns a JSON body that is a library object', () => {
-                    expect(response).to.be.json;
+                    expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                     expect(response.body).to.be.an('object');
                 });
                 describe('Library object', () => {
@@ -433,7 +433,7 @@ describe('/libraries/:library', () => {
                     expect(response.status).to.eq(200);
                 });
                 it('returns a JSON body that is a library object', () => {
-                    expect(response).to.be.json;
+                    expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                     expect(response.body).to.be.an('object');
                 });
                 describe('Library object', () => {
@@ -461,7 +461,7 @@ describe('/libraries/:library', () => {
                     expect(response.status).to.eq(200);
                 });
                 it('returns a JSON body that is a library object', () => {
-                    expect(response).to.be.json;
+                    expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                     expect(response.body).to.be.an('object');
                 });
                 describe('Library object', () => {
@@ -490,7 +490,7 @@ describe('/libraries/:library', () => {
                 expect(response.status).to.eq(200);
             });
             it('returns a JSON body that is a library object', () => {
-                expect(response).to.be.json;
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                 expect(response.body).to.be.an('object');
             });
             describe('Library object', () => {
@@ -530,7 +530,7 @@ describe('/libraries/:library', () => {
                 expect(response.status).to.eq(404);
             });
             it('returns a JSON body that is a valid error response', () => {
-                expect(response).to.be.json;
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                 expect(response.body).to.be.an('object');
                 expect(response.body).to.have.property('error', true);
                 expect(response.body).to.have.property('status', 404);

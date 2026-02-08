@@ -21,7 +21,7 @@ describe('/libraries', () => {
             expect(response.status).to.eq(200);
         });
         it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-            expect(response).to.be.json;
+            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
             expect(response.body).to.have.property('results').that.is.an('array');
             expect(response.body).to.have.property('total').that.is.a('number');
             expect(response.body).to.have.property('available').that.is.a('number');
@@ -92,7 +92,7 @@ describe('/libraries', () => {
             expect(response.status).to.eq(200);
         });
         it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-            expect(response).to.be.json;
+            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
             expect(response.body).to.have.property('results').that.is.an('array');
             expect(response.body).to.have.property('total').that.is.a('number');
             expect(response.body).to.have.property('available').that.is.a('number');
@@ -118,7 +118,7 @@ describe('/libraries', () => {
             expect(response.status).to.eq(200);
         });
         it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-            expect(response).to.be.json;
+            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
             expect(response.body).to.have.property('results').that.is.an('array');
             expect(response.body).to.have.property('total').that.is.a('number');
             expect(response.body).to.have.property('available').that.is.a('number');
@@ -162,7 +162,7 @@ describe('/libraries', () => {
                 expect(response.status).to.eq(200);
             });
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                expect(response).to.be.json;
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                 expect(response.body).to.have.property('results').that.is.an('array');
                 expect(response.body).to.have.property('total').that.is.a('number');
                 expect(response.body).to.have.property('available').that.is.a('number');
@@ -205,7 +205,7 @@ describe('/libraries', () => {
                 expect(response.status).to.eq(200);
             });
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                expect(response).to.be.json;
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                 expect(response.body).to.have.property('results').that.is.an('array');
                 expect(response.body).to.have.property('total').that.is.a('number');
                 expect(response.body).to.have.property('available').that.is.a('number');
@@ -250,7 +250,7 @@ describe('/libraries', () => {
                 expect(response.status).to.eq(200);
             });
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                expect(response).to.be.json;
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                 expect(response.body).to.have.property('results').that.is.an('array');
                 expect(response.body).to.have.property('total').that.is.a('number');
                 expect(response.body).to.have.property('available').that.is.a('number');
@@ -290,7 +290,7 @@ describe('/libraries', () => {
                 expect(response.status).to.eq(200);
             });
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                expect(response).to.be.json;
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                 expect(response.body).to.have.property('results').that.is.an('array');
                 expect(response.body).to.have.property('total').that.is.a('number');
                 expect(response.body).to.have.property('available').that.is.a('number');
@@ -330,7 +330,7 @@ describe('/libraries', () => {
                 expect(response.status).to.eq(200);
             });
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                expect(response).to.be.json;
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                 expect(response.body).to.have.property('results').that.is.an('array');
                 expect(response.body).to.have.property('total').that.is.a('number');
                 expect(response.body).to.have.property('available').that.is.a('number');
@@ -371,7 +371,7 @@ describe('/libraries', () => {
             expect(response.status).to.eq(200);
         });
         it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-            expect(response).to.be.json;
+            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
             expect(response.body).to.have.property('results').that.is.an('array');
             expect(response.body).to.have.property('total').that.is.a('number');
             expect(response.body).to.have.property('available').that.is.a('number');
@@ -439,7 +439,7 @@ describe('/libraries', () => {
                 expect(response.status).to.eq(200);
             });
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                expect(response).to.be.json;
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                 expect(response.body).to.have.property('results').that.is.an('array');
                 expect(response.body).to.have.property('total').that.is.a('number');
                 expect(response.body).to.have.property('available').that.is.a('number');
@@ -480,7 +480,7 @@ describe('/libraries', () => {
                 expect(response.status).to.eq(200);
             });
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                expect(response).to.be.json;
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                 expect(response.body).to.have.property('results').that.is.an('array');
                 expect(response.body).to.have.property('total').that.is.a('number');
                 expect(response.body).to.have.property('available').that.is.a('number');
@@ -507,7 +507,7 @@ describe('/libraries', () => {
                 expect(response.status).to.eq(200);
             });
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                expect(response).to.be.json;
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                 expect(response.body).to.have.property('results').that.is.an('array');
                 expect(response.body).to.have.property('total').that.is.a('number');
                 expect(response.body).to.have.property('available').that.is.a('number');
@@ -541,7 +541,7 @@ describe('/libraries', () => {
                     expect(response.status).to.eq(200);
                 });
                 it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                    expect(response).to.be.json;
+                    expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                     expect(response.body).to.have.property('results').that.is.an('array');
                     expect(response.body).to.have.property('total').that.is.a('number');
                     expect(response.body).to.have.property('available').that.is.a('number');
@@ -586,7 +586,7 @@ describe('/libraries', () => {
                     expect(response.status).to.eq(200);
                 });
                 it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                    expect(response).to.be.json;
+                    expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                     expect(response.body).to.have.property('results').that.is.an('array');
                     expect(response.body).to.have.property('total').that.is.a('number');
                     expect(response.body).to.have.property('available').that.is.a('number');
@@ -631,7 +631,7 @@ describe('/libraries', () => {
                     expect(response.status).to.eq(200);
                 });
                 it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                    expect(response).to.be.json;
+                    expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                     expect(response.body).to.have.property('results').that.is.an('array');
                     expect(response.body).to.have.property('total').that.is.a('number');
                     expect(response.body).to.have.property('available').that.is.a('number');
@@ -678,7 +678,7 @@ describe('/libraries', () => {
                 expect(response.status).to.eq(200);
             });
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', () => {
-                expect(response).to.be.json;
+                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
                 expect(response.body).to.have.property('results').that.is.an('array');
                 expect(response.body).to.have.property('total').that.is.a('number');
                 expect(response.body).to.have.property('available').that.is.a('number');
@@ -730,7 +730,7 @@ describe('/libraries', () => {
             });
 
             // Check the response was generated from KV
-            expect(response).to.be.json;
+            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
             expect(response.body).to.have.property('results').that.is.an('array');
             expect(response.body.results).to.have.lengthOf(1);
             expect(response.body.results[0]).to.have.property('name').that.is.a('string');

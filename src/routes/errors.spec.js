@@ -19,7 +19,7 @@ describe('/this-route-doesnt-exist', () => {
             expect(response.status).to.eq(404);
         });
         it('returns a JSON body that is a valid error response', () => {
-            expect(response).to.be.json;
+            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
             expect(response.body).to.be.an('object');
             expect(response.body).to.have.property('error', true);
             expect(response.body).to.have.property('status', 404);
@@ -58,7 +58,7 @@ describe('/error', () => {
             expect(response.status).to.eq(500);
         });
         it('returns a JSON body that is a valid error response', () => {
-            expect(response).to.be.json;
+            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
             expect(response.body).to.be.an('object');
             expect(response.body).to.have.property('error', true);
             expect(response.body).to.have.property('status', 500);

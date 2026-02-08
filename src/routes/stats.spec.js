@@ -19,7 +19,7 @@ describe('/stats', () => {
             expect(response.status).to.eq(200);
         });
         it('returns a JSON body that is a stats object', () => {
-            expect(response).to.be.json;
+            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
             expect(response.body).to.be.an('object');
         });
         describe('cdnjs stats object', () => {
