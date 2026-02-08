@@ -35,7 +35,7 @@ describe('/health', () => {
         expect(response.status).to.eq(200);
     });
     it('returns on OK message', () => {
-        expect(response).to.be.text;
+        expect(response.headers.get('Content-Type')).to.match(/text\/plain/);
         expect(response.text).to.eq('OK');
     });
 
@@ -61,7 +61,7 @@ describe('/robots.txt', () => {
         expect(response.status).to.eq(200);
     });
     it('disallows all indexing', () => {
-        expect(response).to.be.text;
+        expect(response.headers.get('Content-Type')).to.match(/text\/plain/);
         expect(response.text).to.eq('User-agent: *\nDisallow: /');
     });
 });
