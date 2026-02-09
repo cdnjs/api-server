@@ -3,6 +3,9 @@ main = "src/index.js"
 compatibility_date = "2022-10-31"
 compatibility_flags = [ "nodejs_als" ]
 account_id = "dbf163e9a5fda1c8a0eceeed9ec12c18"
+kv_namespaces = [
+    { binding = "CACHE" }
+]
 
 [observability.logs]
 enabled = true
