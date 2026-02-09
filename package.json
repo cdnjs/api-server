@@ -6,11 +6,12 @@
     "type": "module",
     "main": "src/index.js",
     "scripts": {
-        "test": "npm run test:echint && npm run test:eslint && npm run test:vitest",
-        "test:echint": "echint -v -i \"dist-worker/**/*\"",
-        "test:eslint": "eslint \"{,src/**/}*.@(js|cjs|mjs)\"",
-        "test:eslint:fix": "npm run test:eslint -- --fix",
-        "test:vitest": "vitest run",
+        "lint": "npm run lint:echint && npm run lint:eslint",
+        "lint:echint": "echint -v -i \"dist-worker/**/*\"",
+        "lint:eslint": "eslint \"{,src/**/}*.@(js|cjs|mjs)\"",
+        "lint:fix": "npm run lint:eslint:fix",
+        "lint:eslint:fix": "npm run lint:eslint -- --fix",
+        "test": "vitest run",
         "dev": "wrangler dev"
     },
     "repository": {

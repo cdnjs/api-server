@@ -1,14 +1,18 @@
 name: Test
 
 on:
-  push:
-  pull_request:
   schedule:
     - cron:  '*/30 * * * *'
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        worker:
+          - production
+          - staging
 
     steps:
     - name: Checkout Commit
@@ -25,3 +29,5 @@ jobs:
 
     - name: Run Tests
       run: npm test
+      env:
+        VITEST_EXTERNAL_API_URL: ${{ matrix.worker == 'production' && 'https://api.cdnjs.com' || 'https://api.cdnjs.dev' }}
