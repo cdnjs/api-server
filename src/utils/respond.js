@@ -1,3 +1,5 @@
+import event from './event';
+
 /**
  * Generate an HTML response with pretty-printed data.
  *
@@ -6,6 +8,8 @@
  * @return {Response}
  */
 const human = (ctx, data) => {
+    event('human-output', ctx);
+
     ctx.header('Content-Type', 'text/html');
     ctx.header('X-Robots-Tag', 'noindex');
     return ctx.html('<!doctype><html>' +
