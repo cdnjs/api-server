@@ -2,8 +2,9 @@ name = "cdnjs-api-worker"
 main = "src/index.js"
 compatibility_date = "2022-10-31"
 compatibility_flags = [ "nodejs_als" ]
+account_id = "dbf163e9a5fda1c8a0eceeed9ec12c18"
 kv_namespaces = [
-    { binding = "CACHE", id = "845ae1599dcf4d75950b61201a951b73", preview_id = "845ae1599dcf4d75950b61201a951b73" }
+    { binding = "CACHE" }
 ]
 
 [observability.logs]
@@ -24,9 +25,8 @@ SENTRY_RELEASE = ""
 SENTRY_ENVIRONMENT = "development"
 
 [env.staging]
-route = { pattern = "api.cdnjs.dev/*", zone_name = "cdnjs.dev" }
 kv_namespaces = [
-    { binding = "CACHE", id = "34b159dab6f840ce9c17e4d0730ead12" }
+    { binding = "CACHE", id = "01c2862d489743a1b87c4ce338279392" }
 ]
 
 [env.staging.observability.logs]
@@ -47,9 +47,8 @@ SENTRY_RELEASE = "" # Will be injected by build pipeline
 SENTRY_ENVIRONMENT = "staging"
 
 [env.production]
-route = { pattern = "api.cdnjs.com/*", zone_name = "cdnjs.com" }
 kv_namespaces = [
-    { binding = "CACHE", id = "c2922fcf1af643658d6769859b913134" }
+    { binding = "CACHE", id = "6a1fda0afa5a4b73af5302f40b34752c" }
 ]
 
 [env.production.observability.logs]
