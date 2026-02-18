@@ -28,8 +28,16 @@ kv_namespaces = [
     { binding = "CACHE", id = "34b159dab6f840ce9c17e4d0730ead12" }
 ]
 
+[env.staging.observability.logs]
+enabled = true
+head_sampling_rate = 1
+
+[env.staging.observability.traces]
+enabled = true
+head_sampling_rate = 1
+
 [env.staging.vars]
-DISABLE_LOGGING = false
+DISABLE_LOGGING = true
 DISABLE_CACHING = false
 METADATA_BASE = ""
 SENTRY_DSN = "" # Will be injected by build pipeline
@@ -44,14 +52,14 @@ kv_namespaces = [
 
 [env.production.observability.logs]
 enabled = true
-head_sampling_rate = 0.05
+head_sampling_rate = 1
 
 [env.production.observability.traces]
 enabled = true
 head_sampling_rate = 0.05
 
 [env.production.vars]
-DISABLE_LOGGING = false
+DISABLE_LOGGING = true
 DISABLE_CACHING = false
 METADATA_BASE = ""
 SENTRY_DSN = "" # Will be injected by build pipeline

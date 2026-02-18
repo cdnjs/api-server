@@ -12,9 +12,16 @@ export const externalApiUrl = env.VITEST_EXTERNAL_API_URL?.replace(/\/+$/, '') |
  * @return {Promise<Response>}
  */
 export const request = async (route, opts = {}) => {
+    const init = {
+        ...opts,
+        headers: {
+            ...opts.headers,
+            'User-Agent': 'cdnjs/vitest',
+        },
+    };
     const response = externalApiUrl
-        ? await fetch(`${externalApiUrl}${route}`, opts)
-        : await SELF.fetch(`http://local${route}`, opts);
+        ? await fetch(`${externalApiUrl}${route}`, init)
+        : await SELF.fetch(`http://local${route}`, init);
     const text = await response.text();
 
     return new Proxy({}, {
