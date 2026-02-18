@@ -9,6 +9,7 @@ kv_namespaces = [
 [observability.logs]
 enabled = true
 head_sampling_rate = 1
+invocation_logs = false
 
 [observability.traces]
 enabled = true
@@ -31,6 +32,7 @@ kv_namespaces = [
 [env.staging.observability.logs]
 enabled = true
 head_sampling_rate = 1
+invocation_logs = false
 
 [env.staging.observability.traces]
 enabled = true
@@ -53,6 +55,7 @@ kv_namespaces = [
 [env.production.observability.logs]
 enabled = true
 head_sampling_rate = 1
+invocation_logs = false
 
 [env.production.observability.traces]
 enabled = true
