@@ -2,6 +2,7 @@ import { defineWorkersConfig } from '@cloudflare/vitest-pool-workers/config';
 
 export default defineWorkersConfig({
     test: {
+        silent: 'passed-only',
         reporters: [
             'verbose',
             process.env.GITHUB_ACTIONS && 'github-actions',
