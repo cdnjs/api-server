@@ -23,7 +23,6 @@ export default (library, version, files, sriData) => {
 
         // If we don't have an SRI entry, but expect one, error!
         if (file.endsWith('.js') || file.endsWith('.css')) {
-            console.warn('Missing SRI entry for', fullFile);
             // Sentry.withScope(scope => {
             //     scope.setTag('library', library);
             //     scope.setTag('library.version', version);
