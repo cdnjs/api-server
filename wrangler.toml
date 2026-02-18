@@ -29,7 +29,7 @@ kv_namespaces = [
 ]
 
 [env.staging.vars]
-DISABLE_LOGGING = false
+DISABLE_LOGGING = true
 DISABLE_CACHING = false
 METADATA_BASE = ""
 SENTRY_DSN = "" # Will be injected by build pipeline
@@ -51,7 +51,7 @@ enabled = true
 head_sampling_rate = 0.05
 
 [env.production.vars]
-DISABLE_LOGGING = false
+DISABLE_LOGGING = true
 DISABLE_CACHING = false
 METADATA_BASE = ""
 SENTRY_DSN = "" # Will be injected by build pipeline
