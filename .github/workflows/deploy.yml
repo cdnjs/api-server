@@ -53,6 +53,16 @@ jobs:
           sourcemaps: dist-worker
           strip_common_prefix: true
 
+      - name: Wait for Deployment
+        run: |
+          echo "Waiting for deployment to be available..."
+          until curl -sfI "${{ github.ref_name == 'production' && 'https://api.cdnjs.com/health' || 'https://api.cdnjs.dev/health' }}" | grep -q "x-release: ${{ github.sha }}"; do
+            echo "Deployment not ready yet. Retrying in 5 seconds..."
+            sleep 5
+          done
+          echo "Deployment is ready!"
+        timeout-minutes: 5
+
       - name: Run Tests (deployed)
         run: npm test
         env:
