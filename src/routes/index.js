@@ -1,3 +1,5 @@
+import { env } from 'cloudflare:workers';
+
 import cache from '../utils/cache';
 
 /**
@@ -24,6 +26,11 @@ const handleGet = ctx => {
 const handleGetHealth = ctx => {
     // Don't cache health, ensure its always live
     cache(ctx, -1);
+
+    // If we have a known release, include a header for it
+    if (env.SENTRY_RELEASE) {
+        ctx.header('X-Release', env.SENTRY_RELEASE);
+    }
 
     // Respond
     return ctx.text('OK');
