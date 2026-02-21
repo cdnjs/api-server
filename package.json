@@ -33,7 +33,8 @@
         "hono": "^4.11.10",
         "is-deflate": "^1.0.0",
         "is-gzip": "^2.0.0",
-        "pako": "^2.1.0"
+        "pako": "^2.1.0",
+        "semver": "^7.7.4"
     },
     "devDependencies": {
         "@babel/core": "^7.29.0",

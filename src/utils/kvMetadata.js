@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/cloudflare';
 import { env } from 'cloudflare:workers';
 
 import fetchJson from './fetchJson.js';
+import sortVersions from './sort.js';
 
 const kvBase = env.METADATA_BASE || 'https://metadata.speedcdnjs.com';
 
@@ -59,7 +60,7 @@ export const library = name => fetchJson(`${kvBase}/packages/${encodeURIComponen
  * @param {string} name Name of the library to fetch.
  * @return {Promise<string[]>}
  */
-export const libraryVersions = name => fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}/versions`);
+export const libraryVersions = name => fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}/versions`).then(sortVersions);
 
 /**
  * Get the assets for a library version.
