@@ -5,6 +5,8 @@ import cache from '../utils/cache.ts';
 import notFound from '../utils/notFound.ts';
 import respond from '../utils/respond.ts';
 
+const stringOrUndefined = (value: unknown) => typeof value === 'string' ? value : undefined;
+
 /**
  * Register error handlers for routes.
  *
@@ -17,14 +19,13 @@ export default (app: Hono) => {
             requestId: crypto.randomUUID(),
             userAgent: ctx.req.header('user-agent'),
             ray: ctx.req.header('cf-ray'),
-            country: ctx.req.raw.cf?.country,
-            colo: ctx.req.raw.cf?.colo,
+            country: stringOrUndefined(ctx.req.header('cf-country')),
+            colo: stringOrUndefined(ctx.req.header('cf-colo')),
         });
 
         Sentry.setUser({
             ip: ctx.req.header('cf-connecting-ip') || ctx.req.header('x-forwarded-for'),
             userAgent: ctx.req.header('user-agent'),
-            colo: ctx.req.raw.cf?.colo,
         });
 
         await next();
