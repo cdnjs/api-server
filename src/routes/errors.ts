@@ -1,3 +1,4 @@
+import type { Hono } from 'hono';
 import * as Sentry from '@sentry/cloudflare';
 
 import cache from '../utils/cache.ts';
@@ -7,9 +8,9 @@ import respond from '../utils/respond.ts';
 /**
  * Register error handlers for routes.
  *
- * @param {import('hono').Hono} app App instance.
+ * @param app App instance.
  */
-export default app => {
+export default (app: Hono) => {
     // Pass request context to Sentry
     app.use('*', async (ctx, next) => {
         Sentry.setTags({

@@ -3,9 +3,9 @@ import { it, expect } from 'vitest';
 /**
  * Run tests to ensure a response is a valid pretty-printed HTML "human" response.
  *
- * @param {Response} response Response from the API worker to test as a "human" response.
+ * @param response Response from the API worker to test as a "human" response.
  */
-export default response => {
+export default (response: Response) => {
     it('returns the no-index header', () => {
         expect(response.headers.get('X-Robots-Tag')).to.eq('noindex');
     });

@@ -5,10 +5,9 @@
  * If given an array, the splitting operation will be applied to each item,
  *  and the result flattened into a single-level array.
  *
- * @param {string|string[]|undefined} query Query param value to extract to an array.
- * @return {string[]}
+ * @param query Query param value to extract to an array.
  */
-export const queryArray = query => {
+export const queryArray = (query?: string | string[]) => {
     if (query) {
         return (Array.isArray(query) ? query : [ query ])
             .flatMap(part => part.toString().split(/[ ,]/))
@@ -20,12 +19,11 @@ export const queryArray = query => {
 /**
  * Get a function to check if a value is included in the query value.
  *
- * @param {string|string[]|undefined} query Query param value to extract values from.
- * @param {boolean} [allByDefault=true] Whether to consider all values included if the query is empty.
- * @return {function(string): boolean}
+ * @param query Query param value to extract values from.
+ * @param allByDefault Whether to consider all values included if the query is empty.
  */
-export const queryCheck = (query, allByDefault = true) => {
+export const queryCheck = (query?: string | string[], allByDefault = true) => {
     const values = queryArray(query);
     const all = values.includes('*') || (allByDefault && values.length === 0);
-    return value => all || values.includes(value.toLowerCase());
+    return (value: string) => all || values.includes(value.toLowerCase());
 };

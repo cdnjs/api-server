@@ -1,3 +1,5 @@
+import type { Context, Hono } from 'hono';
+
 import cache from '../utils/cache.ts';
 import filter from '../utils/filter.ts';
 import { libraries } from '../utils/kvMetadata.ts';
@@ -7,10 +9,9 @@ import respond from '../utils/respond.ts';
 /**
  * Handle GET /stats requests.
  *
- * @param {import('hono').Context} ctx Request context.
- * @return {Promise<Response>}
+ * @param ctx Request context.
  */
-const handleGetStats = async ctx => {
+const handleGetStats = async (ctx: Context) => {
     const libs = await libraries();
     const response = filter(
         {
@@ -29,9 +30,9 @@ const handleGetStats = async ctx => {
 /**
  * Register stats routes.
  *
- * @param {import('hono').Hono} app App instance.
+ * @param app App instance.
  */
-export default app => {
+export default (app: Hono) => {
     app.get('/stats', handleGetStats);
     app.get('/stats/', handleGetStats);
 };
