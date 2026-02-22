@@ -2,6 +2,21 @@ import isDeflate from 'is-deflate';
 import isGzip from 'is-gzip';
 import { inflate } from 'pako';
 
+class FetchError extends Error {
+    method: string
+    url: RequestInfo;
+    status?: number;
+    statusText?: string;
+
+    constructor(message: string, options: { method: string; url: RequestInfo; status?: number; statusText?: string; cause?: unknown }) {
+        super(`${options.method} ${options.url}: ${message}`, { cause: options.cause });
+        this.method = options.method;
+        this.url = options.url;
+        this.status = options.status;
+        this.statusText = options.statusText;
+    }
+}
+
 /**
  * Cleanly make a fetch request, throwing an error for any non-ok response.
  * Optionally, provide a timeout in milliseconds.
@@ -17,7 +32,7 @@ export default async (url: RequestInfo, options: RequestInit = {}, timeout: numb
     const timer = hasTimeout && setTimeout(() => controller.abort(), timeout * 1000);
 
     // Run the request
-    let resp;
+    let resp: Response;
     try {
         resp = await fetch(url, {
             ...options,
@@ -28,11 +43,11 @@ export default async (url: RequestInfo, options: RequestInit = {}, timeout: numb
     } catch (error) {
         // If the request was aborted, throw a nice error
         if (error.name === 'AbortError') {
-            const err = new Error(`${options?.method || 'GET'} ${url}: Timed out after ${timeout}s`);
-            err.original = error;
-            err.method = options?.method || 'GET';
-            err.url = url;
-            throw err;
+            throw new FetchError(`Timed out after ${timeout}s`, {
+                method: options?.method || 'GET',
+                url,
+                cause: error,
+            });
         }
 
         // Otherwise, throw the original error
@@ -44,12 +59,12 @@ export default async (url: RequestInfo, options: RequestInit = {}, timeout: numb
 
     // Handle failures
     if (!resp.ok) {
-        const err = new Error(`${options?.method || 'GET'} ${url}: ${resp.status} ${resp.statusText}`);
-        err.method = options?.method || 'GET';
-        err.url = url;
-        err.status = resp.status;
-        err.statusText = resp.statusText;
-        throw err;
+        throw new FetchError(`${resp.status} ${resp.statusText}`, {
+            method: options?.method || 'GET',
+            url,
+            status: resp.status,
+            statusText: resp.statusText,
+        });
     }
 
     // Get the raw data, inflate it (packages/:package/all returns double-gzip'ed data), and parse the JSON
@@ -60,10 +75,12 @@ export default async (url: RequestInfo, options: RequestInit = {}, timeout: numb
             : new TextDecoder('utf-8').decode(raw))
         .then(text => JSON.parse(text))
         .catch(error => {
-            const err = new Error(`${options?.method || 'GET'} ${url}: ${error.message}`);
-            err.original = error;
-            err.method = options?.method || 'GET';
-            err.url = url;
-            throw err;
+            throw new FetchError(error.message, {
+                method: options?.method || 'GET',
+                url,
+                status: resp.status,
+                statusText: resp.statusText,
+                cause: error,
+            });
         });
 };
