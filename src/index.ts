@@ -26,7 +26,7 @@ librariesRoutes(app);
 errorRoutes(app);
 
 // Let's go!
-export default Sentry.withSentry(env => ({
+export default Sentry.withSentry<Cloudflare.Env>(env => ({
     dsn: env.SENTRY_DSN,
     release: env.SENTRY_RELEASE,
     environment: env.SENTRY_ENVIRONMENT,
