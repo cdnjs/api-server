@@ -1,8 +1,8 @@
 import * as Sentry from '@sentry/cloudflare';
 import { env } from 'cloudflare:workers';
 
-import fetchJson from './fetchJson.js';
-import sortVersions from './sort.js';
+import fetchJson from './fetchJson.ts';
+import sortVersions from './sort.ts';
 
 const kvBase = env.METADATA_BASE || 'https://metadata.speedcdnjs.com';
 

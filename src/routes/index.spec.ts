@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 
-import testCors from '../utils/spec/cors.js';
-import { beforeRequest, request } from '../utils/spec/request.js';
+import testCors from '../utils/spec/cors.ts';
+import { beforeRequest, request } from '../utils/spec/request.ts';
 
 describe('/', () => {
     // Fetch the endpoint

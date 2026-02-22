@@ -1,8 +1,8 @@
-import cache from '../utils/cache.js';
-import filter from '../utils/filter.js';
-import { libraries } from '../utils/kvMetadata.js';
-import queryArray from '../utils/queryArray.js';
-import respond from '../utils/respond.js';
+import cache from '../utils/cache.ts';
+import filter from '../utils/filter.ts';
+import { libraries } from '../utils/kvMetadata.ts';
+import queryArray from '../utils/queryArray.ts';
+import respond from '../utils/respond.ts';
 
 /**
  * Handle GET /stats requests.

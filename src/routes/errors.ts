@@ -1,8 +1,8 @@
 import * as Sentry from '@sentry/cloudflare';
 
-import cache from '../utils/cache.js';
-import notFound from '../utils/notFound.js';
-import respond from '../utils/respond.js';
+import cache from '../utils/cache.ts';
+import notFound from '../utils/notFound.ts';
+import respond from '../utils/respond.ts';
 
 /**
  * Register error handlers for routes.

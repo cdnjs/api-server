@@ -1,11 +1,11 @@
-import cache from '../utils/cache.js';
-import files from '../utils/files.js';
-import filter from '../utils/filter.js';
-import { library, libraryVersion, libraryVersionSri, libraryVersions } from '../utils/kvMetadata.js';
-import notFound from '../utils/notFound.js';
-import queryArray from '../utils/queryArray.js';
-import respond from '../utils/respond.js';
-import sriForVersion from '../utils/sriForVersion.js';
+import cache from '../utils/cache.ts';
+import files from '../utils/files.ts';
+import filter from '../utils/filter.ts';
+import { library, libraryVersion, libraryVersionSri, libraryVersions } from '../utils/kvMetadata.ts';
+import notFound from '../utils/notFound.ts';
+import queryArray from '../utils/queryArray.ts';
+import respond from '../utils/respond.ts';
+import sriForVersion from '../utils/sriForVersion.ts';
 
 const extensions = Object.keys(files);
 

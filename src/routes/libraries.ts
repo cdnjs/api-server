@@ -1,11 +1,11 @@
 import * as Sentry from '@sentry/cloudflare';
 import { env, waitUntil } from 'cloudflare:workers';
 
-import algolia from '../utils/algolia.js';
-import cache from '../utils/cache.js';
-import filter from '../utils/filter.js';
-import queryArray from '../utils/queryArray.js';
-import respond from '../utils/respond.js';
+import algolia from '../utils/algolia.ts';
+import cache from '../utils/cache.ts';
+import filter from '../utils/filter.ts';
+import queryArray from '../utils/queryArray.ts';
+import respond from '../utils/respond.ts';
 
 // Fields configured in Algolia to be searchable
 const validSearchFields = [ 'name', 'alternativeNames', 'github.repo', 'description', 'keywords', 'filename',

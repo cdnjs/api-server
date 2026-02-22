@@ -4,13 +4,13 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 
-import errorRoutes from './routes/errors.js';
-import indexRoutes from './routes/index.js';
-import librariesRoutes from './routes/libraries.js';
-import libraryRoutes from './routes/library.js';
-import statsRoutes from './routes/stats.js';
-import whitelistRoutes from './routes/whitelist.js';
-import corsOptions from './utils/cors.js';
+import errorRoutes from './routes/errors.ts';
+import indexRoutes from './routes/index.ts';
+import librariesRoutes from './routes/libraries.ts';
+import libraryRoutes from './routes/library.ts';
+import statsRoutes from './routes/stats.ts';
+import whitelistRoutes from './routes/whitelist.ts';
+import corsOptions from './utils/cors.ts';
 
 // Create the base app
 const app = new Hono();

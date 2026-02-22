@@ -3,9 +3,9 @@ import { createHash } from 'crypto';
 import { env } from 'cloudflare:test';
 import { describe, it, expect, vi } from 'vitest';
 
-import testCors from '../utils/spec/cors.js';
-import testHuman from '../utils/spec/human.js';
-import { beforeRequest, externalApiUrl, request } from '../utils/spec/request.js';
+import testCors from '../utils/spec/cors.ts';
+import testHuman from '../utils/spec/human.ts';
+import { beforeRequest, externalApiUrl, request } from '../utils/spec/request.ts';
 
 const kvExpectEmpty = async () => {
     expect(await env.CACHE.list()).to.have.property('keys').that.is.an('array').that.is.empty;
