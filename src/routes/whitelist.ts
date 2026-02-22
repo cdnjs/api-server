@@ -1,8 +1,8 @@
-import cache from '../utils/cache.js';
-import files from '../utils/files.js';
-import filter from '../utils/filter.js';
-import { queryCheck } from '../utils/query.js';
-import respond from '../utils/respond.js';
+import cache from '../utils/cache.ts';
+import files from '../utils/files.ts';
+import filter from '../utils/filter.ts';
+import { queryCheck } from '../utils/query.ts';
+import respond from '../utils/respond.ts';
 
 /**
  * Handle GET /whitelist requests.

@@ -1,5 +1,5 @@
-import cache from './cache.js';
-import respond from './respond.js';
+import cache from './cache.ts';
+import respond from './respond.ts';
 
 /**
  * Respond to a request where a resource wasn't found.

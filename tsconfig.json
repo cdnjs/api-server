@@ -3,6 +3,7 @@
         "target": "esnext",
         "module": "esnext",
         "moduleResolution": "bundler",
+        "allowImportingTsExtensions": true,
         "allowSyntheticDefaultImports": true,
         "noUncheckedIndexedAccess": true,
         "erasableSyntaxOnly": true,

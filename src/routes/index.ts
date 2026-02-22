@@ -1,6 +1,6 @@
 import { env } from 'cloudflare:workers';
 
-import cache from '../utils/cache';
+import cache from '../utils/cache.ts';
 
 /**
  * Handle GET / requests.

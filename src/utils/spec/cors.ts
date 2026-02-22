@@ -1,8 +1,8 @@
 import { it, expect } from 'vitest';
 
-import corsOptions from '../cors.js';
+import corsOptions from '../cors.ts';
 
-import { beforeRequest } from './request.js';
+import { beforeRequest } from './request.ts';
 
 /**
  * Run tests to ensure a path returns correct CORS headers.

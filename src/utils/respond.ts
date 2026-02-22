@@ -1,4 +1,4 @@
-import event from './event';
+import event from './event.ts';
 
 /**
  * Generate an HTML response with pretty-printed data.

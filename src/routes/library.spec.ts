@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 
-import testCors from '../utils/spec/cors.js';
-import testHuman from '../utils/spec/human.js';
-import { beforeRequest, request } from '../utils/spec/request.js';
+import testCors from '../utils/spec/cors.ts';
+import testHuman from '../utils/spec/human.ts';
+import { beforeRequest, request } from '../utils/spec/request.ts';
 
 describe('/libraries/:library/:version', () => {
     describe('Requesting a valid library (:library = backbone.js)', () => {

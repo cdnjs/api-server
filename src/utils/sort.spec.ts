@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-import sortVersions from './sort.js';
+import sortVersions from './sort.ts';
 
 describe('utils/sort', () => {
     it('does not mutate the input array', () => {
