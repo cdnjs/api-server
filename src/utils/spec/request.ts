@@ -23,7 +23,7 @@ export const request = async (route: string, opts: RequestInit = {}) => {
         : await SELF.fetch(`http://local${route}`, init);
     const text = await response.text();
 
-    return new Proxy({}, {
+    return new Proxy({} as Response, {
         get: (_, prop) => {
             if (prop === 'text') {
                 return () => Promise.resolve(text);
@@ -33,7 +33,7 @@ export const request = async (route: string, opts: RequestInit = {}) => {
                 return () => Promise.resolve(JSON.parse(text));
             }
 
-            if ([ 'clone', 'arrayBuffer', 'blob', 'bytes', 'formData' ].includes(prop)) {
+            if (typeof prop === 'string' && [ 'clone', 'arrayBuffer', 'blob', 'bytes', 'formData' ].includes(prop)) {
                 return () => Promise.reject(new Error(`Response.${prop}() is not supported in tests`));
             }
 
@@ -49,13 +49,13 @@ export const request = async (route: string, opts: RequestInit = {}) => {
  * @param opts Options to set for fetch request.
  */
 export const beforeRequest = (route: string, opts: RequestInit = {}) => {
-    let response;
+    let response: Response;
 
     beforeAll(async () => {
         response = await request(route, opts);
     });
 
-    return new Proxy({}, {
+    return new Proxy({} as Response, {
         get: (_, prop) => Reflect.get(response, prop),
     });
 };
