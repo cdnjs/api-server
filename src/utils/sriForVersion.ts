@@ -3,15 +3,14 @@
 /**
  * Create a map of file names to SRI hashes, based on library files and SRI data.
  *
- * @param {string} library Name of the library.
- * @param {string} version Version of the library.
- * @param {string[]} files Names of the files for this version of the library.
- * @param {Object<string, string>} sriData SRI data for the libary version.
- * @return {Object<string, string>}
+ * @param library Name of the library.
+ * @param version Version of the library.
+ * @param files Names of the files for this version of the library.
+ * @param sriData SRI data for the library version.
  */
-export default (library, version, files, sriData) => {
+export default (library: string, version: string, files: string[], sriData: Record<string, string>) => {
     // Build the SRI object
-    const sri = {};
+    const sri: Record<string, string> = {};
     for (const file of files) {
         const fullFile = `${library}/${version}/${file}`;
 

@@ -1,13 +1,14 @@
+import type { Context } from 'hono';
 import { env } from 'cloudflare:workers';
 
 /**
  * Set cache headers on a response.
  *
- * @param {import('hono').Context} ctx Request context.
- * @param {number} age Age in seconds to cache response for (pass -1 to set no-cache headers).
- * @param {boolean} [immutable=false] Mark the response as immutable for caching.
+ * @param ctx Request context.
+ * @param age Age in seconds to cache response for (pass -1 to set no-cache headers).
+ * @param immutable Mark the response as immutable for caching.
  */
-export default (ctx, age, immutable = false) => {
+export default (ctx: Context, age: number, immutable: boolean = false) => {
     if (age === -1 || env.DISABLE_CACHING) {
         ctx.header('Expires', '0');
         ctx.header('Pragma', 'no-cache');

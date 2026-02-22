@@ -5,10 +5,9 @@
  * If given an array, the splitting operation will be applied to each item,
  *  and the result flattened into a single-level array.
  *
- * @param {string|string[]|undefined} query Query param value to extract to an array.
- * @return {string[]}
+ * @param query Query param value to extract to an array.
  */
-export default query => {
+export default (query?: string | string[]) => {
     if (query) {
         return (Array.isArray(query) ? query : [ query ])
             .flatMap(part => part.toString().split(/[ ,]/))

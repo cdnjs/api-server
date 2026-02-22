@@ -1,3 +1,4 @@
+import type { Context, Hono } from 'hono';
 import { env } from 'cloudflare:workers';
 
 import cache from '../utils/cache';
@@ -5,10 +6,9 @@ import cache from '../utils/cache';
 /**
  * Handle GET / requests.
  *
- * @param {import('hono').Context} ctx Request context.
- * @return {Response}
+ * @param ctx Request context.
  */
-const handleGet = ctx => {
+const handleGet = (ctx: Context) => {
     // Set a 355 day (same as CDN) life on this response
     // This is also immutable
     cache(ctx, 355 * 24 * 60 * 60, true);
@@ -20,10 +20,9 @@ const handleGet = ctx => {
 /**
  * Handle GET /health requests.
  *
- * @param {import('hono').Context} ctx Request context.
- * @return {Response}
+ * @param ctx Request context.
  */
-const handleGetHealth = ctx => {
+const handleGetHealth = (ctx: Context) => {
     // Don't cache health, ensure its always live
     cache(ctx, -1);
 
@@ -39,10 +38,9 @@ const handleGetHealth = ctx => {
 /**
  * Handle GET /robots.txt requests.
  *
- * @param {import('hono').Context} ctx Request context.
- * @return {Response}
+ * @param ctx Request context.
  */
-const handleGetRobotsTxt = ctx => {
+const handleGetRobotsTxt = (ctx: Context) => {
     // Set a 355 day (same as CDN) life on this response
     // This is also immutable
     cache(ctx, 355 * 24 * 60 * 60, true);
@@ -54,9 +52,9 @@ const handleGetRobotsTxt = ctx => {
 /**
  * Register core routes.
  *
- * @param {import('hono').Hono} app App instance.
+ * @param app App instance.
  */
-export default app => {
+export default (app: Hono) => {
     // Redirect root the API docs
     app.get('/', handleGet);
 

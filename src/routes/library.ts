@@ -1,3 +1,5 @@
+import type { Context, Hono } from 'hono';
+
 import cache from '../utils/cache.ts';
 import files from '../utils/files.ts';
 import filter from '../utils/filter.ts';
@@ -12,18 +14,16 @@ const extensions = Object.keys(files);
 /**
  * Check if a file is whitelisted for cdnjs, based on its extension.
  *
- * @param {string} file Filename to check.
- * @return {boolean}
+ * @param file Filename to check.
  */
-const whitelisted = file => extensions.includes(file.split('.').slice(-1)[0]);
+const whitelisted = (file: string) => extensions.includes(file.split('.').slice(-1)[0]);
 
 /**
  * Handle GET /libraries/:library/:version requests.
  *
- * @param {import('hono').Context} ctx Request context.
- * @return {Promise<Response>}
+ * @param ctx Request context.
  */
-const handleGetLibraryVersion = async ctx => {
+const handleGetLibraryVersion = async (ctx: Context) => {
     // Get the library
     const lib = await library(ctx.req.param('library')).catch(err => {
         if (err.status === 404) return;
@@ -74,10 +74,9 @@ const handleGetLibraryVersion = async ctx => {
 /**
  * Handle GET /libraries/:library requests.
  *
- * @param {import('hono').Context} ctx Request context.
- * @return {Promise<Response>}
+ * @param ctx Request context.
  */
-const handleGetLibrary = async ctx => {
+const handleGetLibrary = async (ctx: Context) => {
     // Get the library
     const lib = await library(ctx.req.param('library')).catch(err => {
         if (err.status === 404) return;
@@ -165,9 +164,9 @@ const handleGetLibrary = async ctx => {
 /**
  * Register library routes.
  *
- * @param {import('hono').Hono} app App instance.
+ * @param app App instance.
  */
-export default app => {
+export default (app: Hono) => {
     // Library version
     app.get('/libraries/:library/:version', handleGetLibraryVersion);
     app.get('/libraries/:library/:version/', handleGetLibraryVersion);

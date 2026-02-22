@@ -7,11 +7,10 @@ export const externalApiUrl = env.VITEST_EXTERNAL_API_URL?.replace(/\/+$/, '') |
 /**
  * Run a fetch request to the API Worker, pre-consuming the response body as test for repeat access in tests.
  *
- * @param {string} route Route to request in API Worker.
- * @param {RequestInit} [opts={}] Options to set for fetch request.
- * @return {Promise<Response>}
+ * @param route Route to request in API Worker.
+ * @param opts Options to set for fetch request.
  */
-export const request = async (route, opts = {}) => {
+export const request = async (route: string, opts: RequestInit = {}) => {
     const init = {
         ...opts,
         headers: {
@@ -46,11 +45,10 @@ export const request = async (route, opts = {}) => {
 /**
  * Run a fetch request to the API Worker before tests, returning a proxy to the response for use in tests.
  *
- * @param {string} route Route to request in API Worker.
- * @param {RequestInit} [opts={}] Options to set for fetch request.
- * @return {Response}
+ * @param route Route to request in API Worker.
+ * @param opts Options to set for fetch request.
  */
-export const beforeRequest = (route, opts = {}) => {
+export const beforeRequest = (route: string, opts: RequestInit = {}) => {
     let response;
 
     beforeAll(async () => {

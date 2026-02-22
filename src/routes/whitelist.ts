@@ -1,3 +1,5 @@
+import type { Context, Hono } from 'hono';
+
 import cache from '../utils/cache.ts';
 import files from '../utils/files.ts';
 import filter from '../utils/filter.ts';
@@ -7,10 +9,9 @@ import respond from '../utils/respond.ts';
 /**
  * Handle GET /whitelist requests.
  *
- * @param {import('hono').Context} ctx Request context.
- * @return {Response}
+ * @param ctx Request context.
  */
-const handleGetWhitelist = ctx => {
+const handleGetWhitelist = (ctx: Context) => {
     // Build the object
     const results = {
         extensions: Object.keys(files),
@@ -36,9 +37,9 @@ const handleGetWhitelist = ctx => {
 /**
  * Register whitelist routes.
  *
- * @param {import('hono').Hono} app App instance.
+ * @param app App instance.
  */
-export default app => {
+export default (app: Hono) => {
     // Whitelist
     app.get('/whitelist', handleGetWhitelist);
     app.get('/whitelist/', handleGetWhitelist);

@@ -7,10 +7,10 @@ import { beforeRequest } from './request.ts';
 /**
  * Run tests to ensure a path returns correct CORS headers.
  *
- * @param {string} path Request path to test for CORS headers.
- * @param {Response} response Response from the API worker to test for CORS headers.
+ * @param path Request path to test for CORS headers.
+ * @param response Response from the API worker to test for CORS headers.
  */
-export default (path, response) => {
+export default (path: string, response: Response) => {
     // Fetch the endpoint
     const optionsResponse = beforeRequest(path, { method: 'OPTIONS', redirect: 'manual' });
 

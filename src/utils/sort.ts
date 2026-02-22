@@ -4,10 +4,9 @@ import semver from 'semver';
  * Sort a list of versions in descending order (newest first).
  * Handles both valid semver and non-semver version strings.
  *
- * @param {string[]} versions Array of version strings.
- * @return {string[]} Sorted array of version strings.
+ * @param versions Array of version strings.
  */
-export default versions => [ ...versions ].sort((a, b) => {
+export default (versions: string[]) => [ ...versions ].sort((a, b) => {
     // Attempt to parse properly as semver
     // semver.coerce returns a SemVer object or null. semver.clean expects a string.
     // We need to be careful.

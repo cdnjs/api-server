@@ -1,3 +1,4 @@
+import type { Context, Hono } from 'hono';
 import * as Sentry from '@sentry/cloudflare';
 import { env, waitUntil } from 'cloudflare:workers';
 
@@ -25,19 +26,17 @@ const mixedCaseFields = {
 /**
  * Convert an ArrayBuffer to a hex string.
  *
- * @param {ArrayBuffer} buf Buffer to convert.
- * @return {string}
+ * @param buf Buffer to convert.
  */
-const bufToHex = buf => Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+const bufToHex = (buf: ArrayBuffer) => Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
 
 /**
  * Limit a string to a specific byte length, ensuring we don't cut off in the middle of a multi-byte character.
  *
- * @param {string} str String to limit.
- * @param {number} byteLimit Maximum byte length.
- * @return {string}
+ * @param str String to limit.
+ * @param byteLimit Maximum byte length.
  */
-const limitToByteLength = (str, byteLimit) => {
+const limitToByteLength = (str: string, byteLimit: number) => {
     const encoder = new TextEncoder();
     let bytes = 0;
     let i = 0;
@@ -53,11 +52,10 @@ const limitToByteLength = (str, byteLimit) => {
 /**
  * Browse an Algolia index to get all objects matching a query.
  *
- * @param {string} query Query to fetch matching objects for.
- * @param {string[]} searchFields Fields to consider for query.
- * @return {Promise<Object[]>}
+ * @param query Query to fetch matching objects for.
+ * @param searchFields Fields to consider for query.
  */
-const browse = async (query, searchFields) => {
+const browse = async (query: string, searchFields: string[]) => {
     // Normalize the search fields
     const fields = searchFields.filter(field => validSearchFields.includes(field)).sort();
 
@@ -80,7 +78,7 @@ const browse = async (query, searchFields) => {
         /**
          * Store an incoming response with hits.
          *
-         * @param {{ hits: Object[] }} res Incoming response.
+         * @param res Incoming response.
          */
         aggregator: res => {
             hits.push(...res.hits);
@@ -97,10 +95,9 @@ const browse = async (query, searchFields) => {
 /**
  * Handle GET /libraries requests.
  *
- * @param {import('hono').Context} ctx Request context.
- * @return {Promise<Response>}
+ * @param ctx Request context.
  */
-const handleGetLibraries = async ctx => {
+const handleGetLibraries = async (ctx: Context) => {
     // Get the index results
     const searchFields = queryArray(ctx.req.queries('search_fields'));
     const results = await browse(
@@ -156,9 +153,9 @@ const handleGetLibraries = async ctx => {
 /**
  * Register libraries routes.
  *
- * @param {import('hono').Hono} app App instance.
+ * @param app App instance.
  */
-export default app => {
+export default (app: Hono) => {
     app.get('/libraries', handleGetLibraries);
     app.get('/libraries/', handleGetLibraries);
 };

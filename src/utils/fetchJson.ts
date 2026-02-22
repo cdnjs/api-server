@@ -6,12 +6,11 @@ import { inflate } from 'pako';
  * Cleanly make a fetch request, throwing an error for any non-ok response.
  * Optionally, provide a timeout in milliseconds.
  *
- * @param {RequestInfo} url URL to fetch in the request.
- * @param {RequestInit} [options={}] Options for the request being made.
- * @param {number} [timeout=30] Optional timeout in seconds.
- * @return {Promise<*>}
+ * @param url URL to fetch in the request.
+ * @param options Options for the request being made.
+ * @param timeout Optional timeout in seconds.
  */
-export default async (url, options = {}, timeout = 30) => {
+export default async (url: RequestInfo, options: RequestInit = {}, timeout: number = 30) => {
     // Create the timeout
     const hasTimeout = typeof timeout === 'number' && timeout > 0;
     const controller = hasTimeout && new AbortController();

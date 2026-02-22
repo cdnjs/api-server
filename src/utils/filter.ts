@@ -1,10 +1,9 @@
 /**
  * Escape a string for rendering in HTML.
  *
- * @param {string} unsafe Unsafe string to escape.
- * @return {string}
+ * @param unsafe Unsafe string to escape.
  */
-const escape = unsafe => unsafe
+const escape = (unsafe: string) => unsafe
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
@@ -18,12 +17,11 @@ const escape = unsafe => unsafe
  * This is a legacy behaviour for custom fields being requests.
  * No standard fields have characters that would require escaping.
  *
- * @param {Object} source Source object to extract safe fields from.
- * @param {string[]} fields Field names to include in generated object.
- * @param {boolean} [all=false] Generate object with all fields from source object (ignores fields param).
- * @return {Object}
+ * @param source Source object to extract safe fields from.
+ * @param fields Field names to include in generated object.
+ * @param all Generate object with all fields from source object (ignores fields param).
  */
-export default (source, fields, all = false) => {
+export default (source: Record<string, unknown>, fields: string[], all = false) => {
     if (all) {
         return Object.entries(source).reduce((obj, [ key, value ]) => ({
             ...obj,

@@ -1,13 +1,13 @@
+import type { Context } from 'hono';
 import event from './event';
 
 /**
  * Generate an HTML response with pretty-printed data.
  *
- * @param {import('hono').Context} ctx Request context.
- * @param {*} data Data to be included in the response.
- * @return {Response}
+ * @param ctx Request context.
+ * @param data Data to be included in the response.
  */
-const human = (ctx, data) => {
+const human = (ctx: Context, data: unknown) => {
     event('human-output', ctx);
 
     ctx.header('Content-Type', 'text/html');
@@ -27,8 +27,7 @@ const human = (ctx, data) => {
 /**
  * Respond to a request with data, handling if it should be returned as JSON or pretty-printed in HTML.
  *
- * @param {import('hono').Context} ctx Request context.
- * @param {*} data Data to be included in the response.
- * @return {Response}
+ * @param ctx Request context.
+ * @param data Data to be included in the response.
  */
-export default (ctx, data) => ctx.req.query('output') === 'human' ? human(ctx, data) : ctx.json(data);
+export default (ctx: Context, data: unknown) => ctx.req.query('output') === 'human' ? human(ctx, data) : ctx.json(data);
