@@ -53,7 +53,7 @@ const handleGetLibraryVersion = async (ctx: Context) => {
     // Load SRI data if needed
     if (requestedFields('sri')) {
         // Get SRI for version
-        const latestSriData = await libraryVersionSri(lib.name, ctx.req.param('version')).catch(() => {});
+        const latestSriData = await libraryVersionSri(lib.name, ctx.req.param('version')).catch(() => ({}));
         response.sri = sriForVersion(lib.name, ctx.req.param('version'), version, latestSriData);
     }
 
@@ -105,7 +105,7 @@ const handleGetLibrary = async (ctx: Context) => {
             const assets = await libraryVersion(lib.name, lib.version);
 
             // Fetch the SRI data, ignore errors as they'll be reported by sriForVersion
-            const sriData = await libraryVersionSri(lib.name, lib.version).catch(() => {});
+            const sriData = await libraryVersionSri(lib.name, lib.version).catch(() => ({}));
 
             // Produce the assets array with just the latest version
             response.assets = [ {
@@ -133,7 +133,7 @@ const handleGetLibrary = async (ctx: Context) => {
             // If no SRI value yet, fetch
             if (!response.sri) {
                 // Get SRI for version, ignore errors as they'll be reported by sriForVersion
-                const latestSriData = await libraryVersionSri(lib.name, lib.version).catch(() => {});
+                const latestSriData = await libraryVersionSri(lib.name, lib.version).catch(() => ({}));
                 response.sri = sriForVersion(
                     lib.name,
                     lib.version,
