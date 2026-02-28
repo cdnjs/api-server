@@ -1,6 +1,7 @@
 import type { Hono } from 'hono';
 import * as Sentry from '@sentry/cloudflare';
 
+import type { ErrorResponse } from './errors.schema.ts';
 import cache from '../utils/cache.ts';
 import notFound from '../utils/notFound.ts';
 import respond from '../utils/respond.ts';
@@ -56,6 +57,6 @@ export default (app: Hono) => {
             status: 500,
             message: err.message,
             ref: sentry,
-        });
+        } satisfies ErrorResponse);
     });
 };

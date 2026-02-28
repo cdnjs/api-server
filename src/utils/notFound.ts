@@ -1,6 +1,8 @@
 import type { Context } from 'hono';
+
 import cache from './cache.ts';
 import respond from './respond.ts';
+import type { ErrorResponse } from '../routes/errors.schema.ts';
 
 /**
  * Respond to a request where a resource wasn't found.
@@ -18,5 +20,5 @@ export default (ctx: Context, resource: string) => {
         error: true,
         status: 404,
         message: `${resource} not found`,
-    });
+    } satisfies ErrorResponse);
 };

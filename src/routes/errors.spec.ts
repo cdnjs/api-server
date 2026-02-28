@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
+import type { ErrorResponse } from './errors.schema.ts';
 import testCors from '../utils/spec/cors.ts';
 import testHuman from '../utils/spec/human.ts';
 import { beforeRequest, externalApiUrl } from '../utils/spec/request.ts';
@@ -21,7 +22,7 @@ describe('/this-route-doesnt-exist', () => {
         it('returns a JSON body that is a valid error response', async () => {
             expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-            const body = await response.json();
+            const body = await response.json<ErrorResponse>();
             expect(body).to.be.an('object');
             expect(body).to.have.property('error', true);
             expect(body).to.have.property('status', 404);
@@ -63,7 +64,7 @@ describe.skipIf(externalApiUrl)('/error', () => {
         it('returns a JSON body that is a valid error response', async () => {
             expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-            const body = await response.json();
+            const body = await response.json<ErrorResponse>();
             expect(body).to.be.an('object');
             expect(body).to.have.property('error', true);
             expect(body).to.have.property('status', 500);
