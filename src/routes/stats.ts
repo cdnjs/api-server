@@ -1,5 +1,6 @@
 import type { Context, Hono } from 'hono';
 
+import type { StatsResponse } from './stats.schema.ts';
 import cache from '../utils/cache.ts';
 import filter from '../utils/filter.ts';
 import { libraries } from '../utils/kvMetadata.ts';
@@ -27,7 +28,7 @@ const handleGetStats = async (ctx: Context) => {
     cache(ctx, 6 * 60 * 60);
 
     // Send the response
-    return respond(ctx, response);
+    return respond(ctx, response satisfies StatsResponse);
 };
 
 /**
