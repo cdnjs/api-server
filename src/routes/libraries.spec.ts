@@ -6,6 +6,7 @@ import { describe, it, expect, vi } from 'vitest';
 import testCors from '../utils/spec/cors.ts';
 import testHuman from '../utils/spec/human.ts';
 import { beforeRequest, externalApiUrl, request } from '../utils/spec/request.ts';
+import type { Library } from '../utils/algolia.schema.ts';
 
 const kvExpectEmpty = async () => {
     expect(await env.CACHE.list()).to.have.property('keys').that.is.an('array').that.is.empty;
@@ -814,7 +815,23 @@ describe('/libraries', () => {
         it('reuses existing Algolia values from KV', async () => {
             // Create a stub set of Algolia results under the `:` key (no query, no fields)
             const key = `libraries:${createHash('sha512').update(':').digest('hex')}`;
-            await env.CACHE.put(key, JSON.stringify([ { name: 'testing' } ]));
+            await env.CACHE.put(key, JSON.stringify([ {
+                name: 'testing',
+                alternativeNames: [],
+                originalName: 'testing',
+                version: '1.0.0',
+                description: '',
+                keywords: [],
+                license: '',
+                homepage: '',
+                author: '',
+                filename: 'testing.js',
+                sri: '',
+                fileType: 'js',
+                github: null,
+                repository: null,
+                objectID: 'testing',
+            } satisfies Library ]));
 
             // Check the response was generated from KV
             const response = await request('/libraries');

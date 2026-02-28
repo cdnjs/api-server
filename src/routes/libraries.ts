@@ -1,19 +1,11 @@
 import type { Context, Hono } from 'hono';
 import * as Sentry from '@sentry/cloudflare';
-import { env, waitUntil } from 'cloudflare:workers';
 
-import algolia from '../utils/algolia.ts';
+import { libraries } from '../utils/algolia.ts';
 import cache from '../utils/cache.ts';
 import filter from '../utils/filter.ts';
 import queryArray from '../utils/queryArray.ts';
 import respond from '../utils/respond.ts';
-
-// Fields configured in Algolia to be searchable
-const validSearchFields = [ 'name', 'alternativeNames', 'github.repo', 'description', 'keywords', 'filename',
-    'repositories.url', 'github.user', 'maintainers.name' ];
-
-// Max query length that Algolia will accept (bytes)
-const maxQueryLength = 512;
 
 // Map of lowercase fields to their proper case
 const mixedCaseFields = {
@@ -24,75 +16,6 @@ const mixedCaseFields = {
 };
 
 /**
- * Convert an ArrayBuffer to a hex string.
- *
- * @param buf Buffer to convert.
- */
-const bufToHex = (buf: ArrayBuffer) => Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-
-/**
- * Limit a string to a specific byte length, ensuring we don't cut off in the middle of a multi-byte character.
- *
- * @param str String to limit.
- * @param byteLimit Maximum byte length.
- */
-const limitToByteLength = (str: string, byteLimit: number) => {
-    const encoder = new TextEncoder();
-    let bytes = 0;
-    let i = 0;
-    while (i < str.length && bytes < byteLimit) {
-        const charBytes = encoder.encode(str[i]).length;
-        if (bytes + charBytes > byteLimit) break;
-        bytes += charBytes;
-        i++;
-    }
-    return str.slice(0, i);
-};
-
-/**
- * Browse an Algolia index to get all objects matching a query.
- *
- * @param query Query to fetch matching objects for.
- * @param searchFields Fields to consider for query.
- */
-const browse = async (query: string, searchFields: string[]) => {
-    // Normalize the search fields
-    const fields = searchFields.filter(field => validSearchFields.includes(field)).sort();
-
-    // Check if there is a cached result for this query
-    const cacheKey = await crypto.subtle.digest(
-        { name: 'SHA-512' },
-        new TextEncoder().encode(`${query}:${fields.join(',')}`),
-    ).then(buf => `libraries:${bufToHex(buf)}`);
-    const cached = await env.CACHE.get(cacheKey, { type: 'json' });
-    if (cached) return cached;
-
-    // Fetch the results from Algolia
-    const hits = [];
-    await algolia().browseObjects({
-        indexName: 'libraries',
-        browseParams: {
-            query,
-            restrictSearchableAttributes: fields,
-        },
-        /**
-         * Store an incoming response with hits.
-         *
-         * @param res Incoming response.
-         */
-        aggregator: res => {
-            hits.push(...res.hits);
-        },
-    }).catch(err => {
-        throw err instanceof Error ? err : new Error(`${err.name}: ${err.message}`);
-    });
-
-    // Cache the results for 15 minutes
-    waitUntil(env.CACHE.put(cacheKey, JSON.stringify(hits), { expirationTtl: 60 * 15 }));
-    return hits;
-};
-
-/**
  * Handle GET /libraries requests.
  *
  * @param ctx Request context.
@@ -100,8 +23,8 @@ const browse = async (query: string, searchFields: string[]) => {
 const handleGetLibraries = async (ctx: Context) => {
     // Get the index results
     const searchFields = queryArray(ctx.req.queries('search_fields'));
-    const results = await browse(
-        limitToByteLength(ctx.req.query('search') || '', maxQueryLength),
+    const results = await libraries(
+        ctx.req.query('search') || '',
         searchFields.includes('*') ? [] : searchFields,
     );
 
