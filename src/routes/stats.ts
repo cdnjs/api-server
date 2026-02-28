@@ -1,5 +1,6 @@
 import type { Context, Hono } from 'hono';
 
+import type { StatsResponse } from './stats.schema.ts';
 import cache from '../utils/cache.ts';
 import filter from '../utils/filter.ts';
 import { libraries } from '../utils/kvMetadata.ts';
@@ -13,7 +14,7 @@ import respond from '../utils/respond.ts';
  */
 const handleGetStats = async (ctx: Context) => {
     const libs = await libraries();
-    const response = filter(
+    const response: StatsResponse = filter(
         {
             libraries: libs.length,
         },
