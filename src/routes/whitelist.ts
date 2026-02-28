@@ -1,5 +1,6 @@
 import type { Context, Hono } from 'hono';
 
+import type { WhitelistResponse } from './whitelist.schema.ts';
 import cache from '../utils/cache.ts';
 import files from '../utils/files.ts';
 import filter from '../utils/filter.ts';
@@ -13,7 +14,7 @@ import respond from '../utils/respond.ts';
  */
 const handleGetWhitelist = (ctx: Context) => {
     // Generate the filtered response
-    const response = filter(
+    const response: WhitelistResponse = filter(
         {
             extensions: Object.keys(files),
             categories: files,
