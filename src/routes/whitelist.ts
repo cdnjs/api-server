@@ -1,5 +1,6 @@
 import type { Context, Hono } from 'hono';
 
+import type { WhitelistResponse } from './whitelist.schema.ts';
 import cache from '../utils/cache.ts';
 import files from '../utils/files.ts';
 import filter from '../utils/filter.ts';
@@ -31,7 +32,7 @@ const handleGetWhitelist = (ctx: Context) => {
     cache(ctx, 6 * 60 * 60);
 
     // Send the response
-    return respond(ctx, response);
+    return respond(ctx, response satisfies WhitelistResponse);
 };
 
 /**
