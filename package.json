@@ -29,7 +29,7 @@
     },
     "dependencies": {
         "@sentry/cloudflare": "^10.40.0",
-        "algoliasearch": "^4.22.0",
+        "algoliasearch": "^5.49.1",
         "hono": "^4.12.3",
         "is-deflate": "^1.0.0",
         "is-gzip": "^2.0.0",
