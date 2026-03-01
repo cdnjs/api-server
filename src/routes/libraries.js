@@ -7,8 +7,6 @@ import filter from '../utils/filter.js';
 import queryArray from '../utils/queryArray.js';
 import respond from '../utils/respond.js';
 
-const index = algolia().initIndex('libraries');
-
 // Fields configured in Algolia to be searchable
 const validSearchFields = [ 'name', 'alternativeNames', 'github.repo', 'description', 'keywords', 'filename',
     'repositories.url', 'github.user', 'maintainers.name' ];
@@ -73,16 +71,19 @@ const browse = async (query, searchFields) => {
 
     // Fetch the results from Algolia
     const hits = [];
-    await index.browseObjects({
-        query,
-        restrictSearchableAttributes: fields,
+    await algolia().browseObjects({
+        indexName: 'libraries',
+        browseParams: {
+            query,
+            restrictSearchableAttributes: fields,
+        },
         /**
-         * Store an incoming batch of hits.
+         * Store an incoming response with hits.
          *
-         * @param {Object[]} batch Incoming batch.
+         * @param {{ hits: Object[] }} res Incoming response.
          */
-        batch: batch => {
-            hits.push(...batch);
+        aggregator: res => {
+            hits.push(...res.hits);
         },
     }).catch(err => {
         throw err instanceof Error ? err : new Error(`${err.name}: ${err.message}`);

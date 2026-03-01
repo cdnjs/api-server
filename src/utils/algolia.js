@@ -1,16 +1,16 @@
-import algoliasearch from 'algoliasearch';
+import { algoliasearch } from 'algoliasearch';
 
 /**
  * Custom requester for Algolia using fetch.
  *
- * @type {import('@algolia/requester-common').Requester}
+ * @type {import('@algolia/client-common').Requester}
  */
 const requester = {
     /**
      * Send a request to the Algolia API.
      *
-     * @param {import('@algolia/requester-common').Request} req Request to send.
-     * @return {Promise<import('@algolia/requester-common').Response>}
+     * @param {import('@algolia/client-common').EndRequest} req Request to send.
+     * @return {Promise<import('@algolia/client-common').Response>}
      */
     send: req => {
         // Create the timeout
@@ -43,6 +43,6 @@ const requester = {
 /**
  * Create an Algolia SearchClient for the cdnjs app using a custom fetch requester.
  *
- * @return {import('algoliasearch').SearchClient}
+ * @return {import('algoliasearch').Algoliasearch}
  */
 export default () => algoliasearch('2QWLVLXZB6', 'e16bd99a5c7a8fccae13ad40762eec3c', { requester });
