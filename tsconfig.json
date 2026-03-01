@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "allowImportingTsExtensions": true,
+        "allowSyntheticDefaultImports": true,
+        "noUncheckedIndexedAccess": true,
+        "erasableSyntaxOnly": true,
+        "verbatimModuleSyntax": true,
+        "esModuleInterop": true,
+        "noEmit": true,
+        "strict": false,
+        "skipLibCheck": true,
+        "types": ["@cloudflare/vitest-pool-workers"],
+    },
+    "include": ["**/*.ts"],
+    "exclude": ["node_modules", "dist-worker"],
+}

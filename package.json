@@ -4,14 +4,16 @@
     "description": "The new API server for api.cdnjs.com",
     "private": true,
     "type": "module",
-    "main": "src/index.js",
+    "main": "src/index.ts",
     "scripts": {
+        "prepare": "wrangler types types/worker.d.ts",
         "lint": "npm run lint:echint && npm run lint:eslint",
-        "lint:echint": "echint -v -i \"dist-worker/**/*\"",
+        "lint:echint": "echint -v -i types/worker.d.ts -i \"dist-worker/**/*\"",
         "lint:eslint": "eslint \"{,src/**/}*.@(js|cjs|mjs)\"",
         "lint:fix": "npm run lint:eslint:fix",
         "lint:eslint:fix": "npm run lint:eslint -- --fix",
         "test": "vitest run",
+        "types": "tsc --noEmit",
         "dev": "wrangler dev"
     },
     "repository": {
@@ -34,16 +36,23 @@
         "is-deflate": "^1.0.0",
         "is-gzip": "^2.0.0",
         "pako": "^2.1.0",
-        "semver": "^7.7.4"
+        "semver": "^7.7.4",
+        "zod": "^4.3.6"
     },
     "devDependencies": {
         "@babel/core": "^7.29.0",
         "@babel/eslint-parser": "^7.28.6",
         "@cloudflare/vitest-pool-workers": "^0.12.17",
+        "@types/is-deflate": "^1.0.0",
+        "@types/is-gzip": "^2.0.2",
+        "@types/node": "~24.11.0",
+        "@types/pako": "^2.0.4",
+        "@types/semver": "^7.7.1",
         "echint": "^4.0.2",
         "eslint": "^8.56.0",
         "eslint-plugin-import": "^2.32.0",
         "eslint-plugin-jsdoc": "^62.7.1",
+        "typescript": "^5.9.3",
         "vitest": "~3.2.0",
         "wrangler": "^4.68.1"
     },

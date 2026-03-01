@@ -209,7 +209,7 @@ module.exports = {
     },
     overrides: [
         {
-            files: [ '**/spec/**/*.js', '**/*.spec.js' ],
+            files: [ '**/spec/**/*.ts', '**/*.spec.ts' ],
             rules: {
                 'no-unused-expressions': 'off',
                 'jsdoc/require-jsdoc': 'off',
@@ -226,7 +226,7 @@ module.exports = {
             },
         },
         {
-            files: [ 'vitest.config.js' ],
+            files: [ 'vitest.config.ts' ],
             env: {
                 node: true,
                 es2022: true,
