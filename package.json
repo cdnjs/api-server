@@ -39,13 +39,13 @@
     "devDependencies": {
         "@babel/core": "^7.29.0",
         "@babel/eslint-parser": "^7.28.6",
-        "@cloudflare/vitest-pool-workers": "^0.12.10",
+        "@cloudflare/vitest-pool-workers": "^0.12.17",
         "echint": "^4.0.2",
         "eslint": "^8.56.0",
         "eslint-plugin-import": "^2.32.0",
-        "eslint-plugin-jsdoc": "^62.5.0",
+        "eslint-plugin-jsdoc": "^62.7.1",
         "vitest": "~3.2.0",
-        "wrangler": "^4.61.1"
+        "wrangler": "^4.68.1"
     },
     "overrides": {
         "@cloudflare/vitest-pool-workers": {
