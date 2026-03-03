@@ -38,14 +38,13 @@ This command will run the worker entirely locally, and you can access the API at
 
 ## Testing and Linting
 
-Our full set of tests (linting & a mocha+chai test suite using Miniflare to run the worker locally)
-can be run at any time with:
+### Linting
+
+Our full set of linting can be run at any time with:
 
 ```sh
-npm test
+npm run lint
 ```
-
-### Linting
 
 Included in this repository are an [eslint config file](.eslintrc.cjs) as well as an
 [editorconfig file](.editorconfig) to help with ensuring a consistent style in the codebase for the
@@ -55,20 +54,20 @@ To help enforce this, we use both eslint and echint in our testing. To run eslin
 checks the code style of any JavaScript, you can use:
 
 ```sh
-npm run test:eslint
+npm run lint:eslint
 ```
 
 eslint also provides automatic fixing capabilities, these can be run against the codebase with:
 
 ```sh
-npm run test:eslint:fix
+npm run lint:eslint:fix
 ```
 
 The more generic rules defined in the [editorconfig file](.editorconfig) apply to all files in the
 repository and this is enforced by echint, which can be run at any time with:
 
 ```sh
-npm run test:echint
+npm run lint:echint
 ```
 
 ### Testing
