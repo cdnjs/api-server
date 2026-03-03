@@ -1,5 +1,6 @@
 name = "cdnjs-api-worker"
 main = "src/index.js"
+send_metrics = false
 compatibility_date = "2022-10-31"
 compatibility_flags = [ "nodejs_als" ]
 kv_namespaces = [ { binding = "CACHE" } ]
