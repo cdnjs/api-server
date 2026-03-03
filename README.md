@@ -26,26 +26,15 @@ dependencies following this lock file by running:
 npm ci
 ```
 
-Once the dependencies are installed, which includes the Wrangler CLI for Cloudflare Workers, you
-need to create the KV namespace for data caching before the API can be run. This command will ask
-you to authenticate with a Cloudflare account, so that the Workers KV namespace can be created:
-
-```sh
-wrangler kv:namespace create CACHE --preview
-```
-
-Copy the new `preview_id` returned by the command and replace the existing `id`/preview_id` in
-[`wrangler.toml`](wrangler.toml).
-
-With the KV namespace setup, the API server is now ready to run in development mode. To start the
-server in development mode, run:
+Once the dependencies are installed, which includes the Wrangler CLI for Cloudflare Workers, the API
+server is now ready to run in development mode. To start the server in development mode, run:
 
 ```sh
 npm run dev
 ```
 
-This command will ask you to authenticate with a Cloudflare account, so that the worker can be
-deployed in a development context to Cloudflare's Workers runtime.
+This command will run the worker entirely locally, and you can access the API at
+[`http://localhost:8787`](http://localhost:8787) (note that the root path redirects to the docs).
 
 ## Testing and Linting
 
