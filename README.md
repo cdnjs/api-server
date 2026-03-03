@@ -26,37 +26,25 @@ dependencies following this lock file by running:
 npm ci
 ```
 
-Once the dependencies are installed, which includes the Wrangler CLI for Cloudflare Workers, you
-need to create the KV namespace for data caching before the API can be run. This command will ask
-you to authenticate with a Cloudflare account, so that the Workers KV namespace can be created:
-
-```sh
-wrangler kv:namespace create CACHE --preview
-```
-
-Copy the new `preview_id` returned by the command and replace the existing `id`/preview_id` in
-[`wrangler.toml`](wrangler.toml).
-
-With the KV namespace setup, the API server is now ready to run in development mode. To start the
-server in development mode, run:
+Once the dependencies are installed, which includes the Wrangler CLI for Cloudflare Workers, the API
+server is now ready to run in development mode. To start the server in development mode, run:
 
 ```sh
 npm run dev
 ```
 
-This command will ask you to authenticate with a Cloudflare account, so that the worker can be
-deployed in a development context to Cloudflare's Workers runtime.
+This command will run the worker entirely locally, and you can access the API at
+[`http://localhost:8787`](http://localhost:8787) (note that the root path redirects to the docs).
 
 ## Testing and Linting
 
-Our full set of tests (linting & a mocha+chai test suite using Miniflare to run the worker locally)
-can be run at any time with:
+### Linting
+
+Our full set of linting can be run at any time with:
 
 ```sh
-npm test
+npm run lint
 ```
-
-### Linting
 
 Included in this repository are an [eslint config file](.eslintrc.cjs) as well as an
 [editorconfig file](.editorconfig) to help with ensuring a consistent style in the codebase for the
@@ -66,35 +54,40 @@ To help enforce this, we use both eslint and echint in our testing. To run eslin
 checks the code style of any JavaScript, you can use:
 
 ```sh
-npm run test:eslint
+npm run lint:eslint
 ```
 
 eslint also provides automatic fixing capabilities, these can be run against the codebase with:
 
 ```sh
-npm run test:eslint:fix
+npm run lint:eslint:fix
 ```
 
 The more generic rules defined in the [editorconfig file](.editorconfig) apply to all files in the
 repository and this is enforced by echint, which can be run at any time with:
 
 ```sh
-npm run test:echint
+npm run lint:echint
 ```
 
 ### Testing
 
-This project uses Mocha and Chai (http) to test the API server, along with Miniflare to run the
-Worker itself in a simulated Cloudflare Workers runtime. The tests attempt to validate every
-route on the API to ensure that no breaking changes have been made, though there is no promise that
-this is perfect, a human should always review changes!
+This project uses Vitest to test the API server, with Cloudflare Workers' Vitest integration to run
+the worker locally for testing. The tests attempt to validate every route on the API to ensure that
+no breaking changes have been made, though there is no promise that this is perfect, a human should
+always review changes!
 
-The mocha test suite can be run at any time with the following command (it will build the worker
-using Wrangler, and then run it with Miniflare during the Mocha+Chai test suite):
+The Vitest test suite can be run at any time with the following command:
 
 ```sh
-npm run test:mocha
+npm test
 ```
+
+By default the test suite will run against a local version of the worker, and this is also done for
+any commit pushed to GitHub, for any pull requests, and prior to any staging/production deployment.
+
+`VITEST_EXTERNAL_API_URL` can be set to target a deployed version of the API instead, which is used
+as the last step in our staging/production deployment workflows to verify the updated API worker.
 
 ## Error Logging
 
