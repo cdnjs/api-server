@@ -72,17 +72,22 @@ npm run lint:echint
 
 ### Testing
 
-This project uses Mocha and Chai (http) to test the API server, along with Miniflare to run the
-Worker itself in a simulated Cloudflare Workers runtime. The tests attempt to validate every
-route on the API to ensure that no breaking changes have been made, though there is no promise that
-this is perfect, a human should always review changes!
+This project uses Vitest to test the API server, with Cloudflare Workers' Vitest integration to run
+the worker locally for testing. The tests attempt to validate every route on the API to ensure that
+no breaking changes have been made, though there is no promise that this is perfect, a human should
+always review changes!
 
-The mocha test suite can be run at any time with the following command (it will build the worker
-using Wrangler, and then run it with Miniflare during the Mocha+Chai test suite):
+The Vitest test suite can be run at any time with the following command:
 
 ```sh
-npm run test:mocha
+npm test
 ```
+
+By default the test suite will run against a local version of the worker, and this is also done for
+any commit pushed to GitHub, for any pull requests, and prior to any staging/production deployment.
+
+`VITEST_EXTERNAL_API_URL` can be set to target a deployed version of the API instead, which is used
+as the last step in our staging/production deployment workflows to verify the updated API worker.
 
 ## Error Logging
 
