@@ -8,7 +8,7 @@
  * @param {string|string[]|undefined} query Query param value to extract to an array.
  * @return {string[]}
  */
-export default query => {
+export const queryArray = query => {
     if (query) {
         return (Array.isArray(query) ? query : [ query ])
             .flatMap(part => part.toString().split(/[ ,]/))

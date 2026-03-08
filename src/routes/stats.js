@@ -1,7 +1,7 @@
 import cache from '../utils/cache.js';
 import filter from '../utils/filter.js';
 import { libraries } from '../utils/kvMetadata.js';
-import queryArray from '../utils/queryArray.js';
+import { queryArray } from '../utils/query.js';
 import respond from '../utils/respond.js';
 
 /**

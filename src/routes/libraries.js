@@ -4,7 +4,7 @@ import { env, waitUntil } from 'cloudflare:workers';
 import algolia from '../utils/algolia.js';
 import cache from '../utils/cache.js';
 import filter from '../utils/filter.js';
-import queryArray from '../utils/queryArray.js';
+import { queryArray } from '../utils/query.js';
 import respond from '../utils/respond.js';
 
 // Fields configured in Algolia to be searchable
