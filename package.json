@@ -7,11 +7,8 @@
     "main": "src/index.ts",
     "scripts": {
         "prepare": "wrangler types types/worker.d.ts",
-        "lint": "npm run lint:echint && npm run lint:eslint",
-        "lint:echint": "echint -v -i types/worker.d.ts -i \"dist-worker/**/*\"",
-        "lint:eslint": "eslint",
-        "lint:fix": "npm run lint:eslint:fix",
-        "lint:eslint:fix": "npm run lint:eslint -- --fix",
+        "lint": "eslint",
+        "lint:fix": "eslint --fix",
         "test": "vitest run",
         "types": "tsc --noEmit",
         "dev": "wrangler dev"
@@ -47,7 +44,6 @@
         "@types/node": "~24.11.0",
         "@types/pako": "^2.0.4",
         "@types/semver": "^7.7.1",
-        "echint": "^4.0.2",
         "eslint": "^10.0.3",
         "eslint-plugin-jsdoc": "^62.7.1",
         "typescript": "^5.9.3",
