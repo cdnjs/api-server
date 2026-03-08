@@ -16,3 +16,16 @@ export const queryArray = query => {
     }
     return [];
 };
+
+/**
+ * Get a function to check if a value is included in the query value.
+ *
+ * @param {string|string[]|undefined} query Query param value to extract values from.
+ * @param {boolean} [allByDefault=true] Whether to consider all values included if the query is empty.
+ * @return {function(string): boolean}
+ */
+export const queryCheck = (query, allByDefault = true) => {
+    const values = queryArray(query);
+    const all = values.includes('*') || (allByDefault && values.length === 0);
+    return value => all || values.includes(value.toLowerCase());
+};

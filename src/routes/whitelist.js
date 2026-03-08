@@ -1,7 +1,7 @@
 import cache from '../utils/cache.js';
 import files from '../utils/files.js';
 import filter from '../utils/filter.js';
-import { queryArray } from '../utils/query.js';
+import { queryCheck } from '../utils/query.js';
 import respond from '../utils/respond.js';
 
 /**
@@ -11,19 +11,13 @@ import respond from '../utils/respond.js';
  * @return {Response}
  */
 const handleGetWhitelist = ctx => {
-    // Build the object
-    const results = {
-        extensions: Object.keys(files),
-        categories: files,
-    };
-
     // Generate the filtered response
-    const requestedFields = queryArray(ctx.req.queries('fields'));
     const response = filter(
-        results,
-        requestedFields,
-        // If they requested no fields or '*', send them all
-        !requestedFields.length || requestedFields.includes('*'),
+        {
+            extensions: Object.keys(files),
+            categories: files,
+        },
+        queryCheck(ctx.req.queries('fields')),
     );
 
     // Set a 6 hour life on this response
