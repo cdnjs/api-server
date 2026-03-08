@@ -3,7 +3,7 @@ import files from '../utils/files.js';
 import filter from '../utils/filter.js';
 import { library, libraryVersion, libraryVersionSri, libraryVersions } from '../utils/kvMetadata.js';
 import notFound from '../utils/notFound.js';
-import queryArray from '../utils/queryArray.js';
+import { queryCheck } from '../utils/query.js';
 import respond from '../utils/respond.js';
 import sriForVersion from '../utils/sriForVersion.js';
 
@@ -38,26 +38,20 @@ const handleGetLibraryVersion = async ctx => {
     });
     if (!version) return notFound(ctx, 'Version');
 
-    // Build the object
-    const results = {
-        name: lib.name,
-        version: ctx.req.param('version'),
-        rawFiles: version,
-        files: version.filter(whitelisted),
-        sri: null,
-    };
-
     // Generate the initial filtered response (without SRI data)
-    const requestedFields = queryArray(ctx.req.queries('fields'));
+    const requestedFields = queryCheck(ctx.req.queries('fields'));
     const response = filter(
-        results,
+        {
+            name: lib.name,
+            version: ctx.req.param('version'),
+            rawFiles: version,
+            files: version.filter(whitelisted),
+        },
         requestedFields,
-        // If they requested no fields or '*', send them all
-        !requestedFields.length || requestedFields.includes('*'),
     );
 
     // Load SRI data if needed
-    if ('sri' in response) {
+    if (requestedFields('sri')) {
         // Get SRI for version
         const latestSriData = await libraryVersionSri(lib.name, ctx.req.param('version')).catch(() => {});
         response.sri = sriForVersion(lib.name, ctx.req.param('version'), version, latestSriData);
@@ -86,7 +80,7 @@ const handleGetLibrary = async ctx => {
     if (!lib) return notFound(ctx, 'Library');
 
     // Generate the initial filtered response (without SRI, versions or assets data)
-    const requestedFields = queryArray(ctx.req.queries('fields'));
+    const requestedFields = queryCheck(ctx.req.queries('fields'));
     const response = filter(
         {
             // Ensure name is first prop
@@ -96,20 +90,16 @@ const handleGetLibrary = async ctx => {
             sri: null,
             // All other lib props
             ...lib,
-            versions: null,
-            assets: null,
         },
         requestedFields,
-        // If they requested no fields or '*', send them all
-        !requestedFields.length || requestedFields.includes('*'),
     );
 
     // Get versions if needed
-    if ('versions' in response) response.versions = await libraryVersions(lib.name);
+    if (requestedFields('versions')) response.versions = await libraryVersions(lib.name);
 
     // Get assets if needed, inject SRI and do whitelist filtering
     // Returning assets for all versions is deprecated, we only return the latest version in the array
-    if ('assets' in response) {
+    if (requestedFields('assets')) {
         if (!lib.version) response.assets = [];
         else {
             // Fetch the assets for the version
@@ -129,7 +119,7 @@ const handleGetLibrary = async ctx => {
     }
 
     // Load SRI for latest if needed
-    if ('sri' in response) {
+    if (requestedFields('sri')) {
         if (lib.filename && lib.version) {
             // Handle if we've already fetched SRI
             if ('assets' in response) {

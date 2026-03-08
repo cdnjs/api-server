@@ -1,7 +1,7 @@
 import cache from '../utils/cache.js';
 import filter from '../utils/filter.js';
 import { libraries } from '../utils/kvMetadata.js';
-import queryArray from '../utils/queryArray.js';
+import { queryCheck } from '../utils/query.js';
 import respond from '../utils/respond.js';
 
 /**
@@ -12,14 +12,11 @@ import respond from '../utils/respond.js';
  */
 const handleGetStats = async ctx => {
     const libs = await libraries();
-    const requestedFields = queryArray(ctx.req.queries('fields'));
     const response = filter(
         {
             libraries: libs.length,
         },
-        requestedFields,
-        // If they requested no fields or '*', send them all
-        !requestedFields.length || requestedFields.includes('*'),
+        queryCheck(ctx.req.queries('fields')),
     );
 
     // Set a 6 hour life on this response

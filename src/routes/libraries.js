@@ -4,7 +4,7 @@ import { env, waitUntil } from 'cloudflare:workers';
 import algolia from '../utils/algolia.js';
 import cache from '../utils/cache.js';
 import filter from '../utils/filter.js';
-import queryArray from '../utils/queryArray.js';
+import { queryArray, queryCheck } from '../utils/query.js';
 import respond from '../utils/respond.js';
 
 // Fields configured in Algolia to be searchable
@@ -13,14 +13,6 @@ const validSearchFields = [ 'name', 'alternativeNames', 'github.repo', 'descript
 
 // Max query length that Algolia will accept (bytes)
 const maxQueryLength = 512;
-
-// Map of lowercase fields to their proper case
-const mixedCaseFields = {
-    alternativenames: 'alternativeNames',
-    filetype: 'fileType',
-    originalname: 'originalName',
-    objectid: 'objectID',
-};
 
 /**
  * Convert an ArrayBuffer to a hex string.
@@ -109,7 +101,7 @@ const handleGetLibraries = async ctx => {
     );
 
     // Transform the results into our filtered array
-    const requestedFields = queryArray(ctx.req.queries('fields')).map(field => mixedCaseFields[field] || field);
+    const requestedFields = queryCheck(ctx.req.queries('fields'), false);
     const response = results.filter(hit => {
         if (hit?.name) return true;
         console.warn('Found bad entry in Algolia data');
@@ -119,24 +111,13 @@ const handleGetLibraries = async ctx => {
             Sentry.captureException(new Error('Bad entry in Algolia data'));
         });
         return false;
-    }).map(hit => filter(
-        {
-            // Ensure name is first prop
-            name: hit.name,
-            // Custom latest prop
-            latest: hit.filename && hit.version ? 'https://cdnjs.cloudflare.com/ajax/libs/' + hit.name + '/' + hit.version + '/' + hit.filename : null,
-            // All other hit props
-            ...hit,
-        },
-        [
-            // Always send back name & latest
-            'name',
-            'latest',
-            // Send back whatever else was requested
-            ...requestedFields,
-        ],
-        requestedFields.includes('*'), // Send all if they have '*'
-    ));
+    }).map(hit => ({
+        // Always send back name & latest
+        name: hit.name,
+        latest: hit.filename && hit.version ? 'https://cdnjs.cloudflare.com/ajax/libs/' + hit.name + '/' + hit.version + '/' + hit.filename : null,
+        // Send back whatever else was requested, only send all if '*' explicitly included
+        ...filter(hit, requestedFields),
+    }));
 
     // If they want less data, allow that
     const limit = ctx.req.query('limit') && Number(ctx.req.query('limit'));
