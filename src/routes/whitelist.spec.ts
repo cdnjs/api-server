@@ -33,7 +33,7 @@ describe('/whitelist', () => {
         describe('Extensions array', () => {
             it('only has string elements', async () => {
                 const body = await response.json<WhitelistResponse>();
-                for (const result of body.extensions) {
+                for (const result of body.extensions!) {
                     expect(result).to.be.a('string');
                 }
             });
@@ -41,14 +41,14 @@ describe('/whitelist', () => {
         describe('Categories object', () => {
             it('has a key for each value in \'extensions\'', async () => {
                 const body = await response.json<WhitelistResponse>();
-                const keys = Object.keys(body.categories);
-                for (const result of body.extensions) {
+                const keys = Object.keys(body.categories!);
+                for (const result of body.extensions!) {
                     expect(keys).to.include(result);
                 }
             });
             it('has a string value for each key', async () => {
                 const body = await response.json<WhitelistResponse>();
-                for (const result of Object.values(body.categories)) {
+                for (const result of Object.values(body.categories!)) {
                     expect(result).to.be.a('string');
                 }
             });

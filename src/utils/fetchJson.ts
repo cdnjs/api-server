@@ -27,22 +27,21 @@ class FetchError extends Error {
  */
 export default async (url: RequestInfo, options: RequestInit = {}, timeout: number = 30) => {
     // Create the timeout
-    const hasTimeout = typeof timeout === 'number' && timeout > 0;
-    const controller = hasTimeout && new AbortController();
-    const timer = hasTimeout && setTimeout(() => controller.abort(), timeout * 1000);
+    const controller = typeof timeout === 'number' && timeout > 0 && new AbortController();
+    const timer = controller && setTimeout(() => controller.abort(), timeout * 1000);
 
     // Run the request
     let resp: Response;
     try {
         resp = await fetch(url, {
             ...options,
-            ...(hasTimeout
+            ...(controller
                 ? { signal: controller.signal }
                 : {}),
         });
     } catch (error) {
         // If the request was aborted, throw a nice error
-        if (error.name === 'AbortError') {
+        if (error instanceof Error && error.name === 'AbortError') {
             throw new FetchError(`Timed out after ${timeout}s`, {
                 method: options?.method || 'GET',
                 url,
@@ -54,7 +53,7 @@ export default async (url: RequestInfo, options: RequestInit = {}, timeout: numb
         throw error;
     } finally {
         // Clear the timeout
-        if (hasTimeout) clearTimeout(timer);
+        if (timer) clearTimeout(timer);
     }
 
     // Handle failures

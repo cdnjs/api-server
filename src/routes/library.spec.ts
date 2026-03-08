@@ -348,7 +348,7 @@ describe('/libraries/:library', () => {
                 describe('Assets array', () => {
                     it('has \'version\', \'files\', \'rawFiles\' and \'sri\' properties for each entry', async () => {
                         const body = await response.json<LibraryResponse>();
-                        for (const result of body.assets) {
+                        for (const result of body.assets!) {
                             expect(result).to.have.property('version').that.is.a('string');
                             expect(result).to.have.property('files').that.is.an('array');
                             expect(result).to.have.property('rawFiles').that.is.an('array');

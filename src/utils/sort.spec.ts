@@ -48,7 +48,7 @@ describe('utils/sort', () => {
     });
 
     it('handles empty arrays', () => {
-        const versions = [];
+        const versions: string[] = [];
         const sorted = sortVersions([ ...versions ]);
         expect(sorted).toEqual([]);
     });

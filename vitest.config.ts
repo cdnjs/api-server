@@ -6,7 +6,7 @@ export default defineWorkersConfig({
         reporters: [
             'verbose',
             process.env.GITHUB_ACTIONS && 'github-actions',
-        ].filter(Boolean),
+        ].filter((x): x is string => !!x),
         poolOptions: {
             workers: {
                 wrangler: { configPath: './wrangler.toml' },

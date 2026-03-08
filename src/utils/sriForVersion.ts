@@ -15,7 +15,7 @@ export default (library: string, version: string, files: string[], sriData: Reco
         const fullFile = `${library}/${version}/${file}`;
 
         // If we have an SRI entry for this, add it
-        if (sriData && fullFile in sriData) {
+        if (sriData && sriData[fullFile]) {
             sri[file] = sriData[fullFile];
             continue;
         }

@@ -17,7 +17,7 @@ const extensions = Object.keys(files);
  *
  * @param file Filename to check.
  */
-const whitelisted = (file: string) => extensions.includes(file.split('.').slice(-1)[0]);
+const whitelisted = (file: string) => extensions.includes(file.split('.').slice(-1)[0] || '');
 
 /**
  * Handle GET /libraries/:library/:version requests.
@@ -81,15 +81,16 @@ const handleGetLibrary = async (ctx: Context) => {
 
     // Generate the initial filtered response (without SRI, versions or assets data)
     const requestedFields = queryCheck(ctx.req.queries('fields'));
+    const { name, ...rest } = lib;
     const response: LibraryResponse = filter(
         {
             // Ensure name is first prop
-            name: lib.name,
+            name,
             // Custom latest prop (and SRI value)
             latest: lib.filename && lib.version ? 'https://cdnjs.cloudflare.com/ajax/libs/' + lib.name + '/' + lib.version + '/' + lib.filename : null,
             sri: null,
             // All other lib props
-            ...lib,
+            ...rest,
         },
         requestedFields,
     );
@@ -122,7 +123,7 @@ const handleGetLibrary = async (ctx: Context) => {
     if (requestedFields('sri')) {
         if (lib.filename && lib.version) {
             // Handle if we've already fetched SRI
-            if ('assets' in response) {
+            if (response.assets) {
                 const latestVersion = response.assets.find(entry => entry.version === lib.version);
                 if (latestVersion) {
                     if (lib.filename in latestVersion.sri) {
