@@ -1,3 +1,4 @@
+// prettier-ignore
 export default {
     js:     'JavaScript',
     mjs:    'JavaScript',

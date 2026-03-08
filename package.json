@@ -9,6 +9,8 @@
         "prepare": "wrangler types types/worker.d.ts",
         "lint": "eslint",
         "lint:fix": "eslint --fix",
+        "format": "prettier --check .",
+        "format:fix": "prettier --write .",
         "test": "vitest run",
         "types": "tsc --noEmit",
         "dev": "wrangler dev"
@@ -46,6 +48,7 @@
         "@types/semver": "^7.7.1",
         "eslint": "^10.0.3",
         "eslint-plugin-jsdoc": "^62.7.1",
+        "prettier": "^3.8.1",
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.56.1",
         "vitest": "~3.2.0",
