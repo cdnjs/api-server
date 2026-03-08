@@ -5,6 +5,7 @@ import cache from '../utils/cache.ts';
 import filter from '../utils/filter.ts';
 import { queryArray, queryCheck } from '../utils/query.ts';
 import respond from '../utils/respond.ts';
+import type { LibrariesResponse } from './libraries.schema.ts';
 
 /**
  * Handle GET /libraries requests.
@@ -41,7 +42,7 @@ const handleGetLibraries = async (ctx: Context) => {
         results: trimmed,
         total: trimmed.length, // Total results we're sending back
         available: response.length, // Total number available without trimming
-    });
+    } satisfies LibrariesResponse);
 };
 
 /**

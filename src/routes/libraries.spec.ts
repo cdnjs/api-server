@@ -7,6 +7,7 @@ import testCors from '../utils/spec/cors.ts';
 import testHuman from '../utils/spec/human.ts';
 import { beforeRequest, externalApiUrl, request } from '../utils/spec/request.ts';
 import type { Library } from '../utils/algolia.schema.ts';
+import type { LibrariesResponse } from './libraries.schema.ts';
 
 const kvExpectEmpty = async () => {
     expect(await env.CACHE.list()).to.have.property('keys').that.is.an('array').that.is.empty;
@@ -35,19 +36,19 @@ describe('/libraries', () => {
         it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
             expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-            const body = await response.json();
+            const body = await response.json<LibrariesResponse>();
             expect(body).to.have.property('results').that.is.an('array');
             expect(body).to.have.property('total').that.is.a('number');
             expect(body).to.have.property('available').that.is.a('number');
         });
         it('returns all available hits', async () => {
-            const body = await response.json();
+            const body = await response.json<LibrariesResponse>();
             expect(body.results).to.have.lengthOf(body.total);
             expect(body.results).to.have.lengthOf(body.available);
         });
         describe('Library object', () => {
             it('is an object with \'name\' and \'latest\' properties', async () => {
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 for (const result of body.results) {
                     expect(result).to.have.property('name').that.is.a('string');
                     try {
@@ -58,7 +59,7 @@ describe('/libraries', () => {
                 }
             });
             it('has a CDN url for the \'latest\' property', async () => {
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 for (const result of body.results) {
                     try {
                         expect(result.latest).to.match(/https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/.+\/.+\/.*/);
@@ -68,7 +69,7 @@ describe('/libraries', () => {
                 }
             });
             it('has no other properties', async () => {
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 for (const result of body.results) {
                     expect(Object.keys(result)).to.have.lengthOf(2);
                 }
@@ -79,7 +80,7 @@ describe('/libraries', () => {
         it('responds to requests with a trailing slash', async () => {
             const res = await request(path + '/');
             expect(res.status).to.eq(200);
-            expect(await res.json()).to.deep.equal(await response.json());
+            expect(await res.json<LibrariesResponse>()).to.deep.equal(await response.json<LibrariesResponse>());
         });
     });
 
@@ -112,13 +113,13 @@ describe('/libraries', () => {
         it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
             expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-            const body = await response.json();
+            const body = await response.json<LibrariesResponse>();
             expect(body).to.have.property('results').that.is.an('array');
             expect(body).to.have.property('total').that.is.a('number');
             expect(body).to.have.property('available').that.is.a('number');
         });
         it('returns only the requested number of hits', async () => {
-            const body = await response.json();
+            const body = await response.json<LibrariesResponse>();
             expect(body.results).to.have.lengthOf(10);
             expect(body.total).to.equal(10);
             expect(body.available).to.be.above(10);
@@ -141,19 +142,19 @@ describe('/libraries', () => {
         it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
             expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-            const body = await response.json();
+            const body = await response.json<LibrariesResponse>();
             expect(body).to.have.property('results').that.is.an('array');
             expect(body).to.have.property('total').that.is.a('number');
             expect(body).to.have.property('available').that.is.a('number');
         });
         it('returns all available hits', async () => {
-            const body = await response.json();
+            const body = await response.json<LibrariesResponse>();
             expect(body.results).to.have.lengthOf(body.total);
             expect(body.results).to.have.lengthOf(body.available);
         });
         describe('Library object', () => {
             it('is an object with \'name\', \'latest\' and requested \'version\' properties', async () => {
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 for (const result of body.results) {
                     expect(result).to.have.property('name').that.is.a('string');
                     try {
@@ -165,7 +166,7 @@ describe('/libraries', () => {
                 }
             });
             it('has no other properties', async () => {
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 for (const result of body.results) {
                     expect(Object.keys(result)).to.have.lengthOf(3);
                 }
@@ -190,19 +191,19 @@ describe('/libraries', () => {
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
                 expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 expect(body).to.have.property('results').that.is.an('array');
                 expect(body).to.have.property('total').that.is.a('number');
                 expect(body).to.have.property('available').that.is.a('number');
             });
             it('returns all available hits', async () => {
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 expect(body.results).to.have.lengthOf(body.total);
                 expect(body.results).to.have.lengthOf(body.available);
             });
             describe('Library object', () => {
                 it('is an object with \'name\', \'latest\' and requested \'fileType\' properties', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
                         expect(result).to.have.property('name').that.is.a('string');
                         try {
@@ -214,7 +215,7 @@ describe('/libraries', () => {
                     }
                 });
                 it('has no other properties', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
                         expect(Object.keys(result)).to.have.lengthOf(3);
                     }
@@ -238,19 +239,19 @@ describe('/libraries', () => {
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
                 expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 expect(body).to.have.property('results').that.is.an('array');
                 expect(body).to.have.property('total').that.is.a('number');
                 expect(body).to.have.property('available').that.is.a('number');
             });
             it('returns all available hits', async () => {
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 expect(body.results).to.have.lengthOf(body.total);
                 expect(body.results).to.have.lengthOf(body.available);
             });
             describe('Library object', () => {
                 it('is an object with \'name\', \'latest\' and requested \'fileType\' properties', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
                         expect(result).to.have.property('name').that.is.a('string');
                         try {
@@ -262,7 +263,7 @@ describe('/libraries', () => {
                     }
                 });
                 it('has no other properties', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
                         expect(Object.keys(result)).to.have.lengthOf(3);
                     }
@@ -288,19 +289,19 @@ describe('/libraries', () => {
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
                 expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 expect(body).to.have.property('results').that.is.an('array');
                 expect(body).to.have.property('total').that.is.a('number');
                 expect(body).to.have.property('available').that.is.a('number');
             });
             it('returns all available hits', async () => {
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 expect(body.results).to.have.lengthOf(body.total);
                 expect(body.results).to.have.lengthOf(body.available);
             });
             describe('Library object', () => {
                 it('is an object with \'name\', \'latest\' and requested \'filename\' & \'version\' properties', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
                         expect(result).to.have.property('name');
                         expect(result).to.have.property('latest');
@@ -309,7 +310,7 @@ describe('/libraries', () => {
                     }
                 });
                 it('has no other properties', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
                         expect(Object.keys(result)).to.have.lengthOf(4);
                     }
@@ -333,19 +334,19 @@ describe('/libraries', () => {
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
                 expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 expect(body).to.have.property('results').that.is.an('array');
                 expect(body).to.have.property('total').that.is.a('number');
                 expect(body).to.have.property('available').that.is.a('number');
             });
             it('returns all available hits', async () => {
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 expect(body.results).to.have.lengthOf(body.total);
                 expect(body.results).to.have.lengthOf(body.available);
             });
             describe('Library object', () => {
                 it('is an object with \'name\', \'latest\' and requested \'filename\' & \'version\' properties', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
                         expect(result).to.have.property('name');
                         expect(result).to.have.property('latest');
@@ -354,7 +355,7 @@ describe('/libraries', () => {
                     }
                 });
                 it('has no other properties', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
                         expect(Object.keys(result)).to.have.lengthOf(4);
                     }
@@ -378,19 +379,19 @@ describe('/libraries', () => {
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
                 expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 expect(body).to.have.property('results').that.is.an('array');
                 expect(body).to.have.property('total').that.is.a('number');
                 expect(body).to.have.property('available').that.is.a('number');
             });
             it('returns all available hits', async () => {
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 expect(body.results).to.have.lengthOf(body.total);
                 expect(body.results).to.have.lengthOf(body.available);
             });
             describe('Library object', () => {
                 it('is an object with \'name\', \'latest\' and requested \'filename\' & \'version\' properties', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
                         expect(result).to.have.property('name');
                         expect(result).to.have.property('latest');
@@ -399,7 +400,7 @@ describe('/libraries', () => {
                     }
                 });
                 it('has no other properties', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
                         expect(Object.keys(result)).to.have.lengthOf(4);
                     }
@@ -424,19 +425,19 @@ describe('/libraries', () => {
         it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
             expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-            const body = await response.json();
+            const body = await response.json<LibrariesResponse>();
             expect(body).to.have.property('results').that.is.an('array');
             expect(body).to.have.property('total').that.is.a('number');
             expect(body).to.have.property('available').that.is.a('number');
         });
         it('returns all available hits', async () => {
-            const body = await response.json();
+            const body = await response.json<LibrariesResponse>();
             expect(body.results).to.have.lengthOf(body.total);
             expect(body.results).to.have.lengthOf(body.available);
         });
         describe('Library object', () => {
             it('is an object with the full set of library properties', async () => {
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 for (const result of body.results) {
                     expect(result).to.have.property('name').that.is.a('string');
                     try {
@@ -496,30 +497,30 @@ describe('/libraries', () => {
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
                 expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 expect(body).to.have.property('results').that.is.an('array');
                 expect(body).to.have.property('total').that.is.a('number');
                 expect(body).to.have.property('available').that.is.a('number');
             });
             it('returns all available hits', async () => {
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 expect(body.results).to.have.lengthOf(body.total);
                 expect(body.results).to.have.lengthOf(body.available);
             });
             describe('Library object', async () => {
                 it('returns the \'twitter-bootstrap\' package as the first object', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibrariesResponse>();
                     expect(body.results[0]).to.have.property('name', 'font-awesome');
                 });
                 it('is an object with \'name\' and \'latest\' properties', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
                         expect(result).to.have.property('name').that.is.a('string');
                         expect(result).to.have.property('latest').that.is.a('string');
                     }
                 });
                 it('has no other properties', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
                         expect(Object.keys(result)).to.have.lengthOf(2);
                     }
@@ -543,13 +544,13 @@ describe('/libraries', () => {
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
                 expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 expect(body).to.have.property('results').that.is.an('array');
                 expect(body).to.have.property('total').that.is.a('number');
                 expect(body).to.have.property('available').that.is.a('number');
             });
             it('returns all available hits', async () => {
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 expect(body.results).to.have.lengthOf(body.total);
                 expect(body.results).to.have.lengthOf(body.available);
             });
@@ -573,13 +574,13 @@ describe('/libraries', () => {
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
                 expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 expect(body).to.have.property('results').that.is.an('array');
                 expect(body).to.have.property('total').that.is.a('number');
                 expect(body).to.have.property('available').that.is.a('number');
             });
             it('returns all available hits', async () => {
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 expect(body.results).to.have.lengthOf(body.total);
                 expect(body.results).to.have.lengthOf(body.available);
             });
@@ -610,19 +611,19 @@ describe('/libraries', () => {
                 it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
                     expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-                    const body = await response.json();
+                    const body = await response.json<LibrariesResponse>();
                     expect(body).to.have.property('results').that.is.an('array');
                     expect(body).to.have.property('total').that.is.a('number');
                     expect(body).to.have.property('available').that.is.a('number');
                 });
                 it('returns all available hits', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibrariesResponse>();
                     expect(body.results).to.have.lengthOf(body.total);
                     expect(body.results).to.have.lengthOf(body.available);
                 });
                 describe('Library object', () => {
                     it('is an object with \'name\' and \'latest\' properties', async () => {
-                        const body = await response.json();
+                        const body = await response.json<LibrariesResponse>();
                         for (const result of body.results) {
                             expect(result).to.have.property('name').that.is.a('string');
                             expect(result).to.have.property('latest').that.is.a('string');
@@ -631,13 +632,13 @@ describe('/libraries', () => {
                     // This is fragile!
                     // backbone.js doesn't have a keyword for itself and is owned by a user so we shouldn't see it
                     it('doesn\'t return the \'backbone.js\' package', async () => {
-                        const body = await response.json();
+                        const body = await response.json<LibrariesResponse>();
                         for (const result of body.results) {
                             expect(result.name).to.not.equal('backbone.js');
                         }
                     });
                     it('has no other properties', async () => {
-                        const body = await response.json();
+                        const body = await response.json<LibrariesResponse>();
                         for (const result of body.results) {
                             expect(Object.keys(result)).to.have.lengthOf(2);
                         }
@@ -661,19 +662,19 @@ describe('/libraries', () => {
                 it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
                     expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-                    const body = await response.json();
+                    const body = await response.json<LibrariesResponse>();
                     expect(body).to.have.property('results').that.is.an('array');
                     expect(body).to.have.property('total').that.is.a('number');
                     expect(body).to.have.property('available').that.is.a('number');
                 });
                 it('returns all available hits', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibrariesResponse>();
                     expect(body.results).to.have.lengthOf(body.total);
                     expect(body.results).to.have.lengthOf(body.available);
                 });
                 describe('Library object', () => {
                     it('is an object with \'name\' and \'latest\' properties', async () => {
-                        const body = await response.json();
+                        const body = await response.json<LibrariesResponse>();
                         for (const result of body.results) {
                             expect(result).to.have.property('name').that.is.a('string');
                             expect(result).to.have.property('latest').that.is.a('string');
@@ -682,13 +683,13 @@ describe('/libraries', () => {
                     // This is fragile!
                     // backbone.js doesn't have a keyword for itself and is owned by a user so we shouldn't see it
                     it('doesn\'t return the \'backbone.js\' package', async () => {
-                        const body = await response.json();
+                        const body = await response.json<LibrariesResponse>();
                         for (const result of body.results) {
                             expect(result.name).to.not.equal('backbone.js');
                         }
                     });
                     it('has no other properties', async () => {
-                        const body = await response.json();
+                        const body = await response.json<LibrariesResponse>();
                         for (const result of body.results) {
                             expect(Object.keys(result)).to.have.lengthOf(2);
                         }
@@ -712,19 +713,19 @@ describe('/libraries', () => {
                 it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
                     expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-                    const body = await response.json();
+                    const body = await response.json<LibrariesResponse>();
                     expect(body).to.have.property('results').that.is.an('array');
                     expect(body).to.have.property('total').that.is.a('number');
                     expect(body).to.have.property('available').that.is.a('number');
                 });
                 it('returns all available hits', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibrariesResponse>();
                     expect(body.results).to.have.lengthOf(body.total);
                     expect(body.results).to.have.lengthOf(body.available);
                 });
                 describe('Library object', () => {
                     it('is an object with \'name\' and \'latest\' properties', async () => {
-                        const body = await response.json();
+                        const body = await response.json<LibrariesResponse>();
                         for (const result of body.results) {
                             expect(result).to.have.property('name').that.is.a('string');
                             expect(result).to.have.property('latest').that.is.a('string');
@@ -733,13 +734,13 @@ describe('/libraries', () => {
                     // This is fragile!
                     // backbone.js doesn't have a keyword for itself and is owned by a user so we shouldn't see it
                     it('doesn\'t return the \'backbone.js\' package', async () => {
-                        const body = await response.json();
+                        const body = await response.json<LibrariesResponse>();
                         for (const result of body.results) {
                             expect(result.name).to.not.equal('backbone.js');
                         }
                     });
                     it('has no other properties', async () => {
-                        const body = await response.json();
+                        const body = await response.json<LibrariesResponse>();
                         for (const result of body.results) {
                             expect(Object.keys(result)).to.have.lengthOf(2);
                         }
@@ -765,19 +766,19 @@ describe('/libraries', () => {
             it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
                 expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 expect(body).to.have.property('results').that.is.an('array');
                 expect(body).to.have.property('total').that.is.a('number');
                 expect(body).to.have.property('available').that.is.a('number');
             });
             it('returns all available hits', async () => {
-                const body = await response.json();
+                const body = await response.json<LibrariesResponse>();
                 expect(body.results).to.have.lengthOf(body.total);
                 expect(body.results).to.have.lengthOf(body.available);
             });
             describe('Library object', () => {
                 it('is an object with \'name\' and \'latest\' properties', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
                         expect(result).to.have.property('name').that.is.a('string');
                         try {
@@ -788,7 +789,7 @@ describe('/libraries', () => {
                     }
                 });
                 it('has no other properties', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
                         expect(Object.keys(result)).to.have.lengthOf(2);
                     }
@@ -837,7 +838,7 @@ describe('/libraries', () => {
             const response = await request('/libraries');
             expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-            const body = await response.json();
+            const body = await response.json<LibrariesResponse>();
             expect(body).to.have.property('results').that.is.an('array');
             expect(body.results).to.have.lengthOf(1);
             expect(body.results[0]).to.have.property('name').that.equals('testing');
