@@ -53,7 +53,7 @@ describe('/libraries', () => {
                     expect(result).to.have.property('name').that.is.a('string');
                     try {
                         expect(result).to.have.property('latest').that.is.a('string');
-                    } catch (_) {
+                    } catch {
                         expect(result).to.have.property('latest').that.is.null;
                     }
                 }
@@ -63,7 +63,7 @@ describe('/libraries', () => {
                 for (const result of body.results) {
                     try {
                         expect(result.latest).to.match(/https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/.+\/.+\/.*/);
-                    } catch (_) {
+                    } catch {
                         expect(result.latest).to.be.null;
                     }
                 }
@@ -159,7 +159,7 @@ describe('/libraries', () => {
                     expect(result).to.have.property('name').that.is.a('string');
                     try {
                         expect(result).to.have.property('latest').that.is.a('string');
-                    } catch (_) {
+                    } catch {
                         expect(result).to.have.property('latest').that.is.null;
                     }
                     expect(result).to.have.property('version').that.is.a('string');
@@ -208,7 +208,7 @@ describe('/libraries', () => {
                         expect(result).to.have.property('name').that.is.a('string');
                         try {
                             expect(result).to.have.property('latest').that.is.a('string');
-                        } catch (_) {
+                        } catch {
                             expect(result).to.have.property('latest').that.is.null;
                         }
                         expect(result).to.have.property('fileType').that.is.a('string');
@@ -256,7 +256,7 @@ describe('/libraries', () => {
                         expect(result).to.have.property('name').that.is.a('string');
                         try {
                             expect(result).to.have.property('latest').that.is.a('string');
-                        } catch (_) {
+                        } catch {
                             expect(result).to.have.property('latest').that.is.null;
                         }
                         expect(result).to.have.property('fileType').that.is.a('string');
@@ -442,7 +442,7 @@ describe('/libraries', () => {
                     expect(result).to.have.property('name').that.is.a('string');
                     try {
                         expect(result).to.have.property('latest').that.is.a('string');
-                    } catch (_) {
+                    } catch {
                         expect(result).to.have.property('latest').that.is.null;
                     }
                     expect(result).to.have.property('filename').that.is.a('string');
@@ -450,21 +450,21 @@ describe('/libraries', () => {
                     expect(result).to.have.property('version').that.is.a('string');
                     try {
                         expect(result).to.have.property('keywords').that.is.an('array');
-                    } catch (_) {
+                    } catch {
                         expect(result).to.have.property('keywords').that.is.null;
                     }
                     expect(result).to.have.property('alternativeNames').that.is.an('array');
                     expect(result).to.have.property('fileType').that.is.a('string');
                     try {
                         expect(result).to.have.property('github').that.is.an('object');
-                    } catch (_) {
+                    } catch {
                         expect(result).to.have.property('github').that.is.null;
                     }
                     expect(result).to.have.property('license').that.is.a('string');
                     expect(result).to.have.property('homepage').that.is.a('string');
                     try {
                         expect(result).to.have.property('repository').that.is.an('object');
-                    } catch (_) {
+                    } catch {
                         expect(result).to.have.property('repository').that.is.null;
                     }
                     expect(result).to.have.property('author').that.is.a('string');
@@ -783,7 +783,7 @@ describe('/libraries', () => {
                         expect(result).to.have.property('name').that.is.a('string');
                         try {
                             expect(result).to.have.property('latest').that.is.a('string');
-                        } catch (_) {
+                        } catch {
                             expect(result).to.have.property('latest').that.is.null;
                         }
                     }

@@ -1,4 +1,3 @@
-/* eslint-disable key-spacing */
 export default {
     js:     'JavaScript',
     mjs:    'JavaScript',
@@ -33,4 +32,3 @@ export default {
     lang:   'Other',
     hpb:    'Other',
 };
-/* eslint-enable key-spacing */

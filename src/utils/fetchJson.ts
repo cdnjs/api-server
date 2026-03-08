@@ -25,7 +25,7 @@ class FetchError extends Error {
  * @param options Options for the request being made.
  * @param timeout Optional timeout in seconds.
  */
-export default async (url: RequestInfo, options: RequestInit = {}, timeout: number = 30) => {
+export default async (url: RequestInfo, options: RequestInit = {}, timeout = 30) => {
     // Create the timeout
     const controller = typeof timeout === 'number' && timeout > 0 && new AbortController();
     const timer = controller && setTimeout(() => controller.abort(), timeout * 1000);

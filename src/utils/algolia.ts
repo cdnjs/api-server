@@ -41,7 +41,7 @@ const client = () => algoliasearch('2QWLVLXZB6', 'e16bd99a5c7a8fccae13ad40762eec
 /**
  * Browse an Algolia index to get all objects matching a query.
  *
- * @param query Query to fetch matching objects for.
+ * @param searchQuery Query to fetch matching objects for.
  * @param searchFields Fields to consider for query.
  */
 export const libraries = async (searchQuery: string, searchFields: string[]) => {

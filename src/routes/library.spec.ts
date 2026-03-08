@@ -340,7 +340,7 @@ describe('/libraries/:library', () => {
                     const body = await response.json<LibraryResponse>();
                     try {
                         expect(body.autoupdate).to.have.property('type').that.is.a('string');
-                    } catch (_) {
+                    } catch {
                         expect(body.autoupdate).to.have.property('source').that.is.a('string');
                     }
                     expect(body.autoupdate).to.have.property('target').that.is.a('string');

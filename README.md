@@ -46,12 +46,12 @@ Our full set of linting can be run at any time with:
 npm run lint
 ```
 
-Included in this repository are an [eslint config file](.eslintrc.cjs) as well as an
+Included in this repository are an [eslint config file](eslint.config.js) as well as an
 [editorconfig file](.editorconfig) to help with ensuring a consistent style in the codebase for the
 API server.
 
 To help enforce this, we use both eslint and echint in our testing. To run eslint at any time, which
-checks the code style of any JavaScript, you can use:
+checks the code style of any TypeScript, you can use:
 
 ```sh
 npm run lint:eslint
@@ -96,13 +96,6 @@ environment variable in the [Wrangler config file](wrangler.toml) for the approp
 a valid DSN URL from Sentry. The `SENTRY_RELEASE` environment variable can also be set to identify a
 specific release of the worker (our GitHub Actions workflows for deployments set this to the current
 commit hash).
-
-Alongside the normal error reporting that Sentry provides in the worker, we also fire out custom
-error events for certain issues to help with improving data consistency across cdnjs:
-
-<!-- - `Missing SRI entry` is fired if there is no SRI hash for a file -->
-- `Bad entry in Algolia data` is fired if an entry in Algolia is falsey, or if its name is falsey
-- `Bad entry in packages data` is fired if a package is falsey, or if its `name`/`version` is falsey
 
 ## Deployment
 
