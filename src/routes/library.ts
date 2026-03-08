@@ -8,6 +8,7 @@ import notFound from '../utils/notFound.ts';
 import { queryCheck } from '../utils/query.ts';
 import respond from '../utils/respond.ts';
 import sriForVersion from '../utils/sriForVersion.ts';
+import type { LibraryResponse, LibraryVersionResponse } from './library.schema.ts';
 
 const extensions = Object.keys(files);
 
@@ -40,7 +41,7 @@ const handleGetLibraryVersion = async (ctx: Context) => {
 
     // Generate the initial filtered response (without SRI data)
     const requestedFields = queryCheck(ctx.req.queries('fields'));
-    const response = filter(
+    const response: LibraryVersionResponse = filter(
         {
             name: lib.name,
             version: ctx.req.param('version'),
@@ -80,7 +81,7 @@ const handleGetLibrary = async (ctx: Context) => {
 
     // Generate the initial filtered response (without SRI, versions or assets data)
     const requestedFields = queryCheck(ctx.req.queries('fields'));
-    const response = filter(
+    const response: LibraryResponse = filter(
         {
             // Ensure name is first prop
             name: lib.name,

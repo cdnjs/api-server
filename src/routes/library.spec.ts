@@ -3,6 +3,8 @@ import { describe, it, expect } from 'vitest';
 import testCors from '../utils/spec/cors.ts';
 import testHuman from '../utils/spec/human.ts';
 import { beforeRequest, request } from '../utils/spec/request.ts';
+import type { ErrorResponse } from './errors.schema.ts';
+import type { LibraryResponse, LibraryVersionResponse } from './library.schema.ts';
 
 describe('/libraries/:library/:version', () => {
     describe('Requesting a valid library (:library = backbone.js)', () => {
@@ -22,11 +24,11 @@ describe('/libraries/:library/:version', () => {
                 });
                 it('returns a JSON body that is a library version object', async () => {
                     expect(response.headers.get('Content-Type')).to.match(/application\/json/);
-                    expect(await response.json()).to.be.an('object');
+                    expect(await response.json<LibraryVersionResponse>()).to.be.an('object');
                 });
                 describe('Library version object', () => {
                     it('is an object with \'name\', \'version\', \'files\', \'rawFiles\' and \'sri\' properties', async () => {
-                        const body = await response.json();
+                        const body = await response.json<LibraryVersionResponse>();
                         expect(body).to.have.property('name', 'backbone.js');
                         expect(body).to.have.property('version', '1.1.0');
                         expect(body).to.have.property('files').that.is.an('array');
@@ -34,7 +36,7 @@ describe('/libraries/:library/:version', () => {
                         expect(body).to.have.property('sri').that.is.an('object');
                     });
                     it('has no other properties', async () => {
-                        expect(Object.keys(await response.json())).to.have.lengthOf(5);
+                        expect(Object.keys(await response.json<LibraryVersionResponse>())).to.have.lengthOf(5);
                     });
                 });
 
@@ -42,7 +44,7 @@ describe('/libraries/:library/:version', () => {
                 it('responds to requests with a trailing slash', async () => {
                     const res = await request(path + '/');
                     expect(res.status).to.eq(200);
-                    expect(await res.json()).to.deep.equal(await response.json());
+                    expect(await res.json<LibraryVersionResponse>()).to.deep.equal(await response.json<LibraryVersionResponse>());
                 });
             });
 
@@ -74,14 +76,14 @@ describe('/libraries/:library/:version', () => {
                 });
                 it('returns a JSON body that is a library version object', async () => {
                     expect(response.headers.get('Content-Type')).to.match(/application\/json/);
-                    expect(await response.json()).to.be.an('object');
+                    expect(await response.json<LibraryVersionResponse>()).to.be.an('object');
                 });
                 describe('Library version object', () => {
                     it('is an object with only the \'files\' property', async () => {
-                        expect(await response.json()).to.have.property('files').that.is.an('array');
+                        expect(await response.json<LibraryVersionResponse>()).to.have.property('files').that.is.an('array');
                     });
                     it('has no other properties', async () => {
-                        expect(Object.keys(await response.json())).to.have.lengthOf(1);
+                        expect(Object.keys(await response.json<LibraryVersionResponse>())).to.have.lengthOf(1);
                     });
                 });
             });
@@ -102,16 +104,16 @@ describe('/libraries/:library/:version', () => {
                     });
                     it('returns a JSON body that is a library object', async () => {
                         expect(response.headers.get('Content-Type')).to.match(/application\/json/);
-                        expect(await response.json()).to.be.an('object');
+                        expect(await response.json<LibraryVersionResponse>()).to.be.an('object');
                     });
                     describe('Library version object', () => {
                         it('is an object with only the \'files\' and \'sri\' properties', async () => {
-                            const body = await response.json();
+                            const body = await response.json<LibraryVersionResponse>();
                             expect(body).to.have.property('files').that.is.an('array');
                             expect(body).to.have.property('sri').that.is.an('object');
                         });
                         it('has no other properties', async () => {
-                            expect(Object.keys(await response.json())).to.have.lengthOf(2);
+                            expect(Object.keys(await response.json<LibraryVersionResponse>())).to.have.lengthOf(2);
                         });
                     });
                 });
@@ -131,16 +133,16 @@ describe('/libraries/:library/:version', () => {
                     });
                     it('returns a JSON body that is a library object', async () => {
                         expect(response.headers.get('Content-Type')).to.match(/application\/json/);
-                        expect(await response.json()).to.be.an('object');
+                        expect(await response.json<LibraryVersionResponse>()).to.be.an('object');
                     });
                     describe('Library version object', () => {
                         it('is an object with only the \'files\' and \'sri\' properties', async () => {
-                            const body = await response.json();
+                            const body = await response.json<LibraryVersionResponse>();
                             expect(body).to.have.property('files').that.is.an('array');
                             expect(body).to.have.property('sri').that.is.an('object');
                         });
                         it('has no other properties', async () => {
-                            expect(Object.keys(await response.json())).to.have.lengthOf(2);
+                            expect(Object.keys(await response.json<LibraryVersionResponse>())).to.have.lengthOf(2);
                         });
                     });
                 });
@@ -160,16 +162,16 @@ describe('/libraries/:library/:version', () => {
                     });
                     it('returns a JSON body that is a library object', async () => {
                         expect(response.headers.get('Content-Type')).to.match(/application\/json/);
-                        expect(await response.json()).to.be.an('object');
+                        expect(await response.json<LibraryVersionResponse>()).to.be.an('object');
                     });
                     describe('Library version object', () => {
                         it('is an object with only the \'files\' and \'sri\' properties', async () => {
-                            const body = await response.json();
+                            const body = await response.json<LibraryVersionResponse>();
                             expect(body).to.have.property('files').that.is.an('array');
                             expect(body).to.have.property('sri').that.is.an('object');
                         });
                         it('has no other properties', async () => {
-                            expect(Object.keys(await response.json())).to.have.lengthOf(2);
+                            expect(Object.keys(await response.json<LibraryVersionResponse>())).to.have.lengthOf(2);
                         });
                     });
                 });
@@ -190,11 +192,11 @@ describe('/libraries/:library/:version', () => {
                 });
                 it('returns a JSON body that is a library version object', async () => {
                     expect(response.headers.get('Content-Type')).to.match(/application\/json/);
-                    expect(await response.json()).to.be.an('object');
+                    expect(await response.json<LibraryVersionResponse>()).to.be.an('object');
                 });
                 describe('Library version object', () => {
                     it('is an object with \'name\', \'version\', \'files\', \'rawFiles\' and \'sri\' properties', async () => {
-                        const body = await response.json();
+                        const body = await response.json<LibraryVersionResponse>();
                         expect(body).to.have.property('name', 'backbone.js');
                         expect(body).to.have.property('version', '1.1.0');
                         expect(body).to.have.property('files').that.is.an('array');
@@ -202,7 +204,7 @@ describe('/libraries/:library/:version', () => {
                         expect(body).to.have.property('sri').that.is.an('object');
                     });
                     it('has no other properties', async () => {
-                        expect(Object.keys(await response.json())).to.have.lengthOf(5);
+                        expect(Object.keys(await response.json<LibraryVersionResponse>())).to.have.lengthOf(5);
                     });
                 });
             });
@@ -225,7 +227,7 @@ describe('/libraries/:library/:version', () => {
                 it('returns a JSON body that is a valid error response', async () => {
                     expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-                    const body = await response.json();
+                    const body = await response.json<ErrorResponse>();
                     expect(body).to.be.an('object');
                     expect(body).to.have.property('error', true);
                     expect(body).to.have.property('status', 404);
@@ -265,7 +267,7 @@ describe('/libraries/:library/:version', () => {
             it('returns a JSON body that is a valid error response', async () => {
                 expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-                const body = await response.json();
+                const body = await response.json<ErrorResponse>();
                 expect(body).to.be.an('object');
                 expect(body).to.have.property('error', true);
                 expect(body).to.have.property('status', 404);
@@ -305,11 +307,11 @@ describe('/libraries/:library', () => {
             });
             it('returns a JSON body that is a library object', async () => {
                 expect(response.headers.get('Content-Type')).to.match(/application\/json/);
-                expect(await response.json()).to.be.an('object');
+                expect(await response.json<LibraryResponse>()).to.be.an('object');
             });
             describe('Library object', () => {
                 it('is an object with the full set of library properties', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibraryResponse>();
                     expect(body).to.have.property('name', 'backbone.js');
                     expect(body).to.have.property('latest').that.is.a('string');
                     expect(body).to.have.property('sri').that.is.a('string');
@@ -326,16 +328,16 @@ describe('/libraries/:library', () => {
                     expect(body).to.have.property('versions').that.is.an('array');
                 });
                 it('has a CDN url for the \'latest\' property', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibraryResponse>();
                     expect(body.latest).to.match(/https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/.+\/.+\/.*/);
                 });
                 it('has a \'type\' and \'url\' property for \'repository\'', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibraryResponse>();
                     expect(body.repository).to.have.property('type').that.is.a('string');
                     expect(body.repository).to.have.property('url').that.is.a('string');
                 });
                 it('has a \'type\'/\'source\' and \'target\' property for \'autoupdate\'', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibraryResponse>();
                     try {
                         expect(body.autoupdate).to.have.property('type').that.is.a('string');
                     } catch (_) {
@@ -345,7 +347,7 @@ describe('/libraries/:library', () => {
                 });
                 describe('Assets array', () => {
                     it('has \'version\', \'files\', \'rawFiles\' and \'sri\' properties for each entry', async () => {
-                        const body = await response.json();
+                        const body = await response.json<LibraryResponse>();
                         for (const result of body.assets) {
                             expect(result).to.have.property('version').that.is.a('string');
                             expect(result).to.have.property('files').that.is.an('array');
@@ -360,7 +362,7 @@ describe('/libraries/:library', () => {
             it('responds to requests with a trailing slash', async () => {
                 const res = await request(path + '/');
                 expect(res.status).to.eq(200);
-                expect(await res.json()).to.deep.equal(await response.json());
+                expect(await res.json<LibraryResponse>()).to.deep.equal(await response.json<LibraryResponse>());
             });
         });
 
@@ -392,14 +394,14 @@ describe('/libraries/:library', () => {
             });
             it('returns a JSON body that is a library object', async () => {
                 expect(response.headers.get('Content-Type')).to.match(/application\/json/);
-                expect(await response.json()).to.be.an('object');
+                expect(await response.json<LibraryResponse>()).to.be.an('object');
             });
             describe('Library object', () => {
                 it('is an object with only the \'assets\' property', async () => {
-                    expect(await response.json()).to.have.property('assets').that.is.an('array');
+                    expect(await response.json<LibraryResponse>()).to.have.property('assets').that.is.an('array');
                 });
                 it('has no other properties', async () => {
-                    expect(Object.keys(await response.json())).to.have.lengthOf(1);
+                    expect(Object.keys(await response.json<LibraryResponse>())).to.have.lengthOf(1);
                 });
             });
         });
@@ -420,16 +422,16 @@ describe('/libraries/:library', () => {
                 });
                 it('returns a JSON body that is a library object', async () => {
                     expect(response.headers.get('Content-Type')).to.match(/application\/json/);
-                    expect(await response.json()).to.be.an('object');
+                    expect(await response.json<LibraryResponse>()).to.be.an('object');
                 });
                 describe('Library object', () => {
                     it('is an object with only the \'name\' and \'assets\' properties', async () => {
-                        const body = await response.json();
+                        const body = await response.json<LibraryResponse>();
                         expect(body).to.have.property('name').that.is.a('string');
                         expect(body).to.have.property('assets').that.is.an('array');
                     });
                     it('has no other properties', async () => {
-                        expect(Object.keys(await response.json())).to.have.lengthOf(2);
+                        expect(Object.keys(await response.json<LibraryResponse>())).to.have.lengthOf(2);
                     });
                 });
             });
@@ -449,16 +451,16 @@ describe('/libraries/:library', () => {
                 });
                 it('returns a JSON body that is a library object', async () => {
                     expect(response.headers.get('Content-Type')).to.match(/application\/json/);
-                    expect(await response.json()).to.be.an('object');
+                    expect(await response.json<LibraryResponse>()).to.be.an('object');
                 });
                 describe('Library object', () => {
                     it('is an object with only the \'name\' and \'assets\' properties', async () => {
-                        const body = await response.json();
+                        const body = await response.json<LibraryResponse>();
                         expect(body).to.have.property('name').that.is.a('string');
                         expect(body).to.have.property('assets').that.is.an('array');
                     });
                     it('has no other properties', async () => {
-                        expect(Object.keys(await response.json())).to.have.lengthOf(2);
+                        expect(Object.keys(await response.json<LibraryResponse>())).to.have.lengthOf(2);
                     });
                 });
             });
@@ -478,16 +480,16 @@ describe('/libraries/:library', () => {
                 });
                 it('returns a JSON body that is a library object', async () => {
                     expect(response.headers.get('Content-Type')).to.match(/application\/json/);
-                    expect(await response.json()).to.be.an('object');
+                    expect(await response.json<LibraryResponse>()).to.be.an('object');
                 });
                 describe('Library object', () => {
                     it('is an object with only the \'name\' and \'assets\' properties', async () => {
-                        const body = await response.json();
+                        const body = await response.json<LibraryResponse>();
                         expect(body).to.have.property('name').that.is.a('string');
                         expect(body).to.have.property('assets').that.is.an('array');
                     });
                     it('has no other properties', async () => {
-                        expect(Object.keys(await response.json())).to.have.lengthOf(2);
+                        expect(Object.keys(await response.json<LibraryResponse>())).to.have.lengthOf(2);
                     });
                 });
             });
@@ -508,12 +510,12 @@ describe('/libraries/:library', () => {
             });
             it('returns a JSON body that is a library object', async () => {
                 expect(response.headers.get('Content-Type')).to.match(/application\/json/);
-                expect(await response.json()).to.be.an('object');
+                expect(await response.json<LibraryResponse>()).to.be.an('object');
             });
             describe('Library object', () => {
                 // Behaves the same as not including the fields query param
                 it('is an object with the full set of library properties', async () => {
-                    const body = await response.json();
+                    const body = await response.json<LibraryResponse>();
                     expect(body).to.have.property('name', 'backbone.js');
                     expect(body).to.have.property('latest').that.is.a('string');
                     expect(body).to.have.property('sri').that.is.a('string');
@@ -550,7 +552,7 @@ describe('/libraries/:library', () => {
             it('returns a JSON body that is a valid error response', async () => {
                 expect(response.headers.get('Content-Type')).to.match(/application\/json/);
 
-                const body = await response.json();
+                const body = await response.json<ErrorResponse>();
                 expect(body).to.be.an('object');
                 expect(body).to.have.property('error', true);
                 expect(body).to.have.property('status', 404);
