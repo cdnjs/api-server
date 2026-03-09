@@ -6,10 +6,10 @@ export type Libraries = z.infer<typeof librariesSchema>;
 
 export const librarySchema = z.object({
     name: z.string(),
-    filename: z.string(),
-    version: z.string(),
     description: z.string(),
     keywords: z.array(z.string()),
+    version: z.string(),
+    filename: z.string().optional(),
     homepage: z.string().optional(),
     license: z.string().optional(),
     author: z.string().optional(),
