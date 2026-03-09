@@ -36,39 +36,7 @@ npm run dev
 This command will run the worker entirely locally, and you can access the API at
 [`http://localhost:8787`](http://localhost:8787) (note that the root path redirects to the docs).
 
-## Testing and Linting
-
-### Linting
-
-Our full set of linting can be run at any time with:
-
-```sh
-npm run lint
-```
-
-Included in this repository are an [eslint config file](eslint.config.js) as well as an
-[editorconfig file](.editorconfig) to help with ensuring a consistent style in the codebase for the
-API server.
-
-To help enforce this, we use both eslint and echint in our testing. To run eslint at any time, which
-checks the code style of any TypeScript, you can use:
-
-```sh
-npm run lint:eslint
-```
-
-eslint also provides automatic fixing capabilities, these can be run against the codebase with:
-
-```sh
-npm run lint:eslint:fix
-```
-
-The more generic rules defined in the [editorconfig file](.editorconfig) apply to all files in the
-repository and this is enforced by echint, which can be run at any time with:
-
-```sh
-npm run lint:echint
-```
+## Testing and More
 
 ### Testing
 
@@ -88,6 +56,56 @@ any commit pushed to GitHub, for any pull requests, and prior to any staging/pro
 
 `VITEST_EXTERNAL_API_URL` can be set to target a deployed version of the API instead, which is used
 as the last step in our staging/production deployment workflows to verify the updated API worker.
+
+### Type-Checking
+
+The API server is written in TypeScript, and the types are checked as part of the test suite. If you
+want to run the type-checking separately, you can use:
+
+```sh
+npm run types
+```
+
+If you've made changes to the [Wrangler config file](wrangler.toml), such as adding a new
+environment variable or binding, you'll need to regenerate the worker types for these changes to be
+reflected in the type system. This can be done with:
+
+```sh
+npm run prepare:types
+```
+
+### Linting
+
+Included in this repository is an [eslint config file](eslint.config.js) to help with ensuring a
+consistent style and safely written codebase for the API server. To run eslint at any time, which
+checks all the TypeScript files, you can use:
+
+```sh
+npm run lint
+```
+
+eslint also provides automatic fixing capabilities, these can be run against the codebase with:
+
+```sh
+npm run lint:fix
+```
+
+### Formatting
+
+We also rely on our [Prettier config](prettier.config.js) and our [editorconfig file](.editorconfig)
+config to ensure a consistent style and formatting across the codebase. To check that your code is
+properly formatted, you can run:
+
+```sh
+npm run format
+```
+
+prettier also provides automatic formatting capabilities. Via husky + lint-staged, this will be
+done for you when you commit changes, but you can also run it manually against the codebase with:
+
+```sh
+npm run format:fix
+```
 
 ## Error Logging
 
