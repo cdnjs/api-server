@@ -18,7 +18,7 @@ export const librarySchema = z.object({
             type: z.string(),
             url: z.string(),
         })
-        .nullable(),
+        .optional(),
     autoupdate: z
         .union([
             z.object({
