@@ -32,7 +32,9 @@ If you have a feature suggestion for the tool, read through the following steps:
 ## Feature request
 
 ### Feature description
+
 <!-- What feature are you suggesting? -->
 
 ### How the feature is useful
+
 <!-- How is the feature useful to users of the API? -->

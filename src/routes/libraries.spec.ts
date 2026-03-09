@@ -1,21 +1,29 @@
-import { createHash } from 'crypto';
-
 import { env } from 'cloudflare:test';
-import { describe, it, expect, vi } from 'vitest';
+import { createHash } from 'crypto';
+import { describe, expect, it, vi } from 'vitest';
 
+import type { Library } from '../utils/algolia.schema.ts';
 import testCors from '../utils/spec/cors.ts';
 import testHuman from '../utils/spec/human.ts';
-import { beforeRequest, externalApiUrl, request } from '../utils/spec/request.ts';
-import type { Library } from '../utils/algolia.schema.ts';
+import {
+    beforeRequest,
+    externalApiUrl,
+    request,
+} from '../utils/spec/request.ts';
+
 import type { LibrariesResponse } from './libraries.schema.ts';
 
 const kvExpectEmpty = async () => {
-    expect(await env.CACHE.list()).to.have.property('keys').that.is.an('array').that.is.empty;
+    expect(await env.CACHE.list())
+        .to.have.property('keys')
+        .that.is.an('array').that.is.empty;
 };
 
 const kvExpectNonEmpty = async () => {
     await vi.waitFor(async () => {
-        expect(await env.CACHE.list()).to.have.property('keys').that.is.an('array').that.is.not.empty;
+        expect(await env.CACHE.list())
+            .to.have.property('keys')
+            .that.is.an('array').that.is.not.empty;
     });
 };
 
@@ -28,13 +36,17 @@ describe('/libraries', () => {
         // Test the endpoint
         testCors(path, response);
         it('returns the correct Cache headers', () => {
-            expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
+            expect(response.headers.get('Cache-Control')).to.eq(
+                'public, max-age=21600',
+            ); // Six hours
         });
         it('returns the correct status code', () => {
             expect(response.status).to.eq(200);
         });
-        it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
-            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+        it("returns a JSON body with 'results', 'total' and 'available' properties", async () => {
+            expect(response.headers.get('Content-Type')).to.match(
+                /application\/json/,
+            );
 
             const body = await response.json<LibrariesResponse>();
             expect(body).to.have.property('results').that.is.an('array');
@@ -47,22 +59,26 @@ describe('/libraries', () => {
             expect(body.results).to.have.lengthOf(body.available);
         });
         describe('Library object', () => {
-            it('is an object with \'name\' and \'latest\' properties', async () => {
+            it("is an object with 'name' and 'latest' properties", async () => {
                 const body = await response.json<LibrariesResponse>();
                 for (const result of body.results) {
                     expect(result).to.have.property('name').that.is.a('string');
                     try {
-                        expect(result).to.have.property('latest').that.is.a('string');
+                        expect(result)
+                            .to.have.property('latest')
+                            .that.is.a('string');
                     } catch {
                         expect(result).to.have.property('latest').that.is.null;
                     }
                 }
             });
-            it('has a CDN url for the \'latest\' property', async () => {
+            it("has a CDN url for the 'latest' property", async () => {
                 const body = await response.json<LibrariesResponse>();
                 for (const result of body.results) {
                     try {
-                        expect(result.latest).to.match(/https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/.+\/.+\/.*/);
+                        expect(result.latest).to.match(
+                            /https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/.+\/.+\/.*/,
+                        );
                     } catch {
                         expect(result.latest).to.be.null;
                     }
@@ -80,7 +96,9 @@ describe('/libraries', () => {
         it('responds to requests with a trailing slash', async () => {
             const res = await request(path + '/');
             expect(res.status).to.eq(200);
-            expect(await res.json<LibrariesResponse>()).to.deep.equal(await response.json<LibrariesResponse>());
+            expect(await res.json<LibrariesResponse>()).to.deep.equal(
+                await response.json<LibrariesResponse>(),
+            );
         });
     });
 
@@ -92,7 +110,9 @@ describe('/libraries', () => {
         // Test the endpoint
         testCors(path, response);
         it('returns the correct Cache headers', () => {
-            expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
+            expect(response.headers.get('Cache-Control')).to.eq(
+                'public, max-age=21600',
+            ); // Six hours
         });
         testHuman(response);
     });
@@ -105,13 +125,17 @@ describe('/libraries', () => {
         // Test the endpoint
         testCors(path, response);
         it('returns the correct Cache headers', () => {
-            expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
+            expect(response.headers.get('Cache-Control')).to.eq(
+                'public, max-age=21600',
+            ); // Six hours
         });
         it('returns the correct status code', () => {
             expect(response.status).to.eq(200);
         });
-        it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
-            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+        it("returns a JSON body with 'results', 'total' and 'available' properties", async () => {
+            expect(response.headers.get('Content-Type')).to.match(
+                /application\/json/,
+            );
 
             const body = await response.json<LibrariesResponse>();
             expect(body).to.have.property('results').that.is.an('array');
@@ -134,13 +158,17 @@ describe('/libraries', () => {
         // Test the endpoint
         testCors(path, response);
         it('returns the correct Cache headers', () => {
-            expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
+            expect(response.headers.get('Cache-Control')).to.eq(
+                'public, max-age=21600',
+            ); // Six hours
         });
         it('returns the correct status code', () => {
             expect(response.status).to.eq(200);
         });
-        it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
-            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+        it("returns a JSON body with 'results', 'total' and 'available' properties", async () => {
+            expect(response.headers.get('Content-Type')).to.match(
+                /application\/json/,
+            );
 
             const body = await response.json<LibrariesResponse>();
             expect(body).to.have.property('results').that.is.an('array');
@@ -153,16 +181,20 @@ describe('/libraries', () => {
             expect(body.results).to.have.lengthOf(body.available);
         });
         describe('Library object', () => {
-            it('is an object with \'name\', \'latest\' and requested \'version\' properties', async () => {
+            it("is an object with 'name', 'latest' and requested 'version' properties", async () => {
                 const body = await response.json<LibrariesResponse>();
                 for (const result of body.results) {
                     expect(result).to.have.property('name').that.is.a('string');
                     try {
-                        expect(result).to.have.property('latest').that.is.a('string');
+                        expect(result)
+                            .to.have.property('latest')
+                            .that.is.a('string');
                     } catch {
                         expect(result).to.have.property('latest').that.is.null;
                     }
-                    expect(result).to.have.property('version').that.is.a('string');
+                    expect(result)
+                        .to.have.property('version')
+                        .that.is.a('string');
                 }
             });
             it('has no other properties', async () => {
@@ -183,13 +215,17 @@ describe('/libraries', () => {
             // Test the endpoint
             testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
+                expect(response.headers.get('Cache-Control')).to.eq(
+                    'public, max-age=21600',
+                ); // Six hours
             });
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
-                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+            it("returns a JSON body with 'results', 'total' and 'available' properties", async () => {
+                expect(response.headers.get('Content-Type')).to.match(
+                    /application\/json/,
+                );
 
                 const body = await response.json<LibrariesResponse>();
                 expect(body).to.have.property('results').that.is.an('array');
@@ -202,16 +238,23 @@ describe('/libraries', () => {
                 expect(body.results).to.have.lengthOf(body.available);
             });
             describe('Library object', () => {
-                it('is an object with \'name\', \'latest\' and requested \'fileType\' properties', async () => {
+                it("is an object with 'name', 'latest' and requested 'fileType' properties", async () => {
                     const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
-                        expect(result).to.have.property('name').that.is.a('string');
+                        expect(result)
+                            .to.have.property('name')
+                            .that.is.a('string');
                         try {
-                            expect(result).to.have.property('latest').that.is.a('string');
+                            expect(result)
+                                .to.have.property('latest')
+                                .that.is.a('string');
                         } catch {
-                            expect(result).to.have.property('latest').that.is.null;
+                            expect(result).to.have.property('latest').that.is
+                                .null;
                         }
-                        expect(result).to.have.property('fileType').that.is.a('string');
+                        expect(result)
+                            .to.have.property('fileType')
+                            .that.is.a('string');
                     }
                 });
                 it('has no other properties', async () => {
@@ -231,13 +274,17 @@ describe('/libraries', () => {
             // Test the endpoint
             testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
+                expect(response.headers.get('Cache-Control')).to.eq(
+                    'public, max-age=21600',
+                ); // Six hours
             });
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
-                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+            it("returns a JSON body with 'results', 'total' and 'available' properties", async () => {
+                expect(response.headers.get('Content-Type')).to.match(
+                    /application\/json/,
+                );
 
                 const body = await response.json<LibrariesResponse>();
                 expect(body).to.have.property('results').that.is.an('array');
@@ -250,16 +297,23 @@ describe('/libraries', () => {
                 expect(body.results).to.have.lengthOf(body.available);
             });
             describe('Library object', () => {
-                it('is an object with \'name\', \'latest\' and requested \'fileType\' properties', async () => {
+                it("is an object with 'name', 'latest' and requested 'fileType' properties", async () => {
                     const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
-                        expect(result).to.have.property('name').that.is.a('string');
+                        expect(result)
+                            .to.have.property('name')
+                            .that.is.a('string');
                         try {
-                            expect(result).to.have.property('latest').that.is.a('string');
+                            expect(result)
+                                .to.have.property('latest')
+                                .that.is.a('string');
                         } catch {
-                            expect(result).to.have.property('latest').that.is.null;
+                            expect(result).to.have.property('latest').that.is
+                                .null;
                         }
-                        expect(result).to.have.property('fileType').that.is.a('string');
+                        expect(result)
+                            .to.have.property('fileType')
+                            .that.is.a('string');
                     }
                 });
                 it('has no other properties', async () => {
@@ -281,13 +335,17 @@ describe('/libraries', () => {
             // Test the endpoint
             testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
+                expect(response.headers.get('Cache-Control')).to.eq(
+                    'public, max-age=21600',
+                ); // Six hours
             });
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
-                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+            it("returns a JSON body with 'results', 'total' and 'available' properties", async () => {
+                expect(response.headers.get('Content-Type')).to.match(
+                    /application\/json/,
+                );
 
                 const body = await response.json<LibrariesResponse>();
                 expect(body).to.have.property('results').that.is.an('array');
@@ -300,7 +358,7 @@ describe('/libraries', () => {
                 expect(body.results).to.have.lengthOf(body.available);
             });
             describe('Library object', () => {
-                it('is an object with \'name\', \'latest\' and requested \'filename\' & \'version\' properties', async () => {
+                it("is an object with 'name', 'latest' and requested 'filename' & 'version' properties", async () => {
                     const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
                         expect(result).to.have.property('name');
@@ -326,13 +384,17 @@ describe('/libraries', () => {
             // Test the endpoint
             testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
+                expect(response.headers.get('Cache-Control')).to.eq(
+                    'public, max-age=21600',
+                ); // Six hours
             });
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
-                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+            it("returns a JSON body with 'results', 'total' and 'available' properties", async () => {
+                expect(response.headers.get('Content-Type')).to.match(
+                    /application\/json/,
+                );
 
                 const body = await response.json<LibrariesResponse>();
                 expect(body).to.have.property('results').that.is.an('array');
@@ -345,7 +407,7 @@ describe('/libraries', () => {
                 expect(body.results).to.have.lengthOf(body.available);
             });
             describe('Library object', () => {
-                it('is an object with \'name\', \'latest\' and requested \'filename\' & \'version\' properties', async () => {
+                it("is an object with 'name', 'latest' and requested 'filename' & 'version' properties", async () => {
                     const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
                         expect(result).to.have.property('name');
@@ -371,13 +433,17 @@ describe('/libraries', () => {
             // Test the endpoint
             testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
+                expect(response.headers.get('Cache-Control')).to.eq(
+                    'public, max-age=21600',
+                ); // Six hours
             });
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
-                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+            it("returns a JSON body with 'results', 'total' and 'available' properties", async () => {
+                expect(response.headers.get('Content-Type')).to.match(
+                    /application\/json/,
+                );
 
                 const body = await response.json<LibrariesResponse>();
                 expect(body).to.have.property('results').that.is.an('array');
@@ -390,7 +456,7 @@ describe('/libraries', () => {
                 expect(body.results).to.have.lengthOf(body.available);
             });
             describe('Library object', () => {
-                it('is an object with \'name\', \'latest\' and requested \'filename\' & \'version\' properties', async () => {
+                it("is an object with 'name', 'latest' and requested 'filename' & 'version' properties", async () => {
                     const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
                         expect(result).to.have.property('name');
@@ -417,13 +483,17 @@ describe('/libraries', () => {
         // Test the endpoint
         testCors(path, response);
         it('returns the correct Cache headers', () => {
-            expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
+            expect(response.headers.get('Cache-Control')).to.eq(
+                'public, max-age=21600',
+            ); // Six hours
         });
         it('returns the correct status code', () => {
             expect(response.status).to.eq(200);
         });
-        it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
-            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+        it("returns a JSON body with 'results', 'total' and 'available' properties", async () => {
+            expect(response.headers.get('Content-Type')).to.match(
+                /application\/json/,
+            );
 
             const body = await response.json<LibrariesResponse>();
             expect(body).to.have.property('results').that.is.an('array');
@@ -441,36 +511,66 @@ describe('/libraries', () => {
                 for (const result of body.results) {
                     expect(result).to.have.property('name').that.is.a('string');
                     try {
-                        expect(result).to.have.property('latest').that.is.a('string');
+                        expect(result)
+                            .to.have.property('latest')
+                            .that.is.a('string');
                     } catch {
                         expect(result).to.have.property('latest').that.is.null;
                     }
-                    expect(result).to.have.property('filename').that.is.a('string');
-                    expect(result).to.have.property('description').that.is.a('string');
-                    expect(result).to.have.property('version').that.is.a('string');
+                    expect(result)
+                        .to.have.property('filename')
+                        .that.is.a('string');
+                    expect(result)
+                        .to.have.property('description')
+                        .that.is.a('string');
+                    expect(result)
+                        .to.have.property('version')
+                        .that.is.a('string');
                     try {
-                        expect(result).to.have.property('keywords').that.is.an('array');
+                        expect(result)
+                            .to.have.property('keywords')
+                            .that.is.an('array');
                     } catch {
-                        expect(result).to.have.property('keywords').that.is.null;
+                        expect(result).to.have.property('keywords').that.is
+                            .null;
                     }
-                    expect(result).to.have.property('alternativeNames').that.is.an('array');
-                    expect(result).to.have.property('fileType').that.is.a('string');
+                    expect(result)
+                        .to.have.property('alternativeNames')
+                        .that.is.an('array');
+                    expect(result)
+                        .to.have.property('fileType')
+                        .that.is.a('string');
                     try {
-                        expect(result).to.have.property('github').that.is.an('object');
+                        expect(result)
+                            .to.have.property('github')
+                            .that.is.an('object');
                     } catch {
                         expect(result).to.have.property('github').that.is.null;
                     }
-                    expect(result).to.have.property('license').that.is.a('string');
-                    expect(result).to.have.property('homepage').that.is.a('string');
+                    expect(result)
+                        .to.have.property('license')
+                        .that.is.a('string');
+                    expect(result)
+                        .to.have.property('homepage')
+                        .that.is.a('string');
                     try {
-                        expect(result).to.have.property('repository').that.is.an('object');
+                        expect(result)
+                            .to.have.property('repository')
+                            .that.is.an('object');
                     } catch {
-                        expect(result).to.have.property('repository').that.is.null;
+                        expect(result).to.have.property('repository').that.is
+                            .null;
                     }
-                    expect(result).to.have.property('author').that.is.a('string');
-                    expect(result).to.have.property('originalName').that.is.a('string');
+                    expect(result)
+                        .to.have.property('author')
+                        .that.is.a('string');
+                    expect(result)
+                        .to.have.property('originalName')
+                        .that.is.a('string');
                     expect(result).to.have.property('sri').that.is.a('string');
-                    expect(result).to.have.property('objectID').that.is.a('string');
+                    expect(result)
+                        .to.have.property('objectID')
+                        .that.is.a('string');
                 }
             });
         });
@@ -489,13 +589,17 @@ describe('/libraries', () => {
             // Test the endpoint
             testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
+                expect(response.headers.get('Cache-Control')).to.eq(
+                    'public, max-age=21600',
+                ); // Six hours
             });
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
-                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+            it("returns a JSON body with 'results', 'total' and 'available' properties", async () => {
+                expect(response.headers.get('Content-Type')).to.match(
+                    /application\/json/,
+                );
 
                 const body = await response.json<LibrariesResponse>();
                 expect(body).to.have.property('results').that.is.an('array');
@@ -508,15 +612,22 @@ describe('/libraries', () => {
                 expect(body.results).to.have.lengthOf(body.available);
             });
             describe('Library object', async () => {
-                it('returns the \'twitter-bootstrap\' package as the first object', async () => {
+                it("returns the 'twitter-bootstrap' package as the first object", async () => {
                     const body = await response.json<LibrariesResponse>();
-                    expect(body.results[0]).to.have.property('name', 'font-awesome');
+                    expect(body.results[0]).to.have.property(
+                        'name',
+                        'font-awesome',
+                    );
                 });
-                it('is an object with \'name\' and \'latest\' properties', async () => {
+                it("is an object with 'name' and 'latest' properties", async () => {
                     const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
-                        expect(result).to.have.property('name').that.is.a('string');
-                        expect(result).to.have.property('latest').that.is.a('string');
+                        expect(result)
+                            .to.have.property('name')
+                            .that.is.a('string');
+                        expect(result)
+                            .to.have.property('latest')
+                            .that.is.a('string');
                     }
                 });
                 it('has no other properties', async () => {
@@ -536,13 +647,17 @@ describe('/libraries', () => {
             // Test the endpoint
             testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
+                expect(response.headers.get('Cache-Control')).to.eq(
+                    'public, max-age=21600',
+                ); // Six hours
             });
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
-                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+            it("returns a JSON body with 'results', 'total' and 'available' properties", async () => {
+                expect(response.headers.get('Content-Type')).to.match(
+                    /application\/json/,
+                );
 
                 const body = await response.json<LibrariesResponse>();
                 expect(body).to.have.property('results').that.is.an('array');
@@ -566,13 +681,17 @@ describe('/libraries', () => {
             // Test the endpoint
             testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
+                expect(response.headers.get('Cache-Control')).to.eq(
+                    'public, max-age=21600',
+                ); // Six hours
             });
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
-                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+            it("returns a JSON body with 'results', 'total' and 'available' properties", async () => {
+                expect(response.headers.get('Content-Type')).to.match(
+                    /application\/json/,
+                );
 
                 const body = await response.json<LibrariesResponse>();
                 expect(body).to.have.property('results').that.is.an('array');
@@ -597,24 +716,33 @@ describe('/libraries', () => {
         describe('Providing search fields that are valid', () => {
             describe('through comma-separated string (?search=backbone.js&search_fields=keywords,github.user)', () => {
                 // Fetch the endpoint
-                const path = '/libraries?search=backbone.js&search_fields=keywords,github.user';
+                const path =
+                    '/libraries?search=backbone.js&search_fields=keywords,github.user';
                 const response = beforeRequest(path);
 
                 // Test the endpoint
                 testCors(path, response);
                 it('returns the correct Cache headers', () => {
-                    expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
+                    expect(response.headers.get('Cache-Control')).to.eq(
+                        'public, max-age=21600',
+                    ); // Six hours
                 });
                 it('returns the correct status code', () => {
                     expect(response.status).to.eq(200);
                 });
-                it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
-                    expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+                it("returns a JSON body with 'results', 'total' and 'available' properties", async () => {
+                    expect(response.headers.get('Content-Type')).to.match(
+                        /application\/json/,
+                    );
 
                     const body = await response.json<LibrariesResponse>();
-                    expect(body).to.have.property('results').that.is.an('array');
+                    expect(body)
+                        .to.have.property('results')
+                        .that.is.an('array');
                     expect(body).to.have.property('total').that.is.a('number');
-                    expect(body).to.have.property('available').that.is.a('number');
+                    expect(body)
+                        .to.have.property('available')
+                        .that.is.a('number');
                 });
                 it('returns all available hits', async () => {
                     const body = await response.json<LibrariesResponse>();
@@ -622,16 +750,20 @@ describe('/libraries', () => {
                     expect(body.results).to.have.lengthOf(body.available);
                 });
                 describe('Library object', () => {
-                    it('is an object with \'name\' and \'latest\' properties', async () => {
+                    it("is an object with 'name' and 'latest' properties", async () => {
                         const body = await response.json<LibrariesResponse>();
                         for (const result of body.results) {
-                            expect(result).to.have.property('name').that.is.a('string');
-                            expect(result).to.have.property('latest').that.is.a('string');
+                            expect(result)
+                                .to.have.property('name')
+                                .that.is.a('string');
+                            expect(result)
+                                .to.have.property('latest')
+                                .that.is.a('string');
                         }
                     });
                     // This is fragile!
                     // backbone.js doesn't have a keyword for itself and is owned by a user so we shouldn't see it
-                    it('doesn\'t return the \'backbone.js\' package', async () => {
+                    it("doesn't return the 'backbone.js' package", async () => {
                         const body = await response.json<LibrariesResponse>();
                         for (const result of body.results) {
                             expect(result.name).to.not.equal('backbone.js');
@@ -648,24 +780,33 @@ describe('/libraries', () => {
 
             describe('through space-separated string (?search=backbone.js&search_fields=keywords github.user)', () => {
                 // Fetch the endpoint
-                const path = '/libraries?search=backbone.js&search_fields=keywords github.user';
+                const path =
+                    '/libraries?search=backbone.js&search_fields=keywords github.user';
                 const response = beforeRequest(path);
 
                 // Test the endpoint
                 testCors(path, response);
                 it('returns the correct Cache headers', () => {
-                    expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
+                    expect(response.headers.get('Cache-Control')).to.eq(
+                        'public, max-age=21600',
+                    ); // Six hours
                 });
                 it('returns the correct status code', () => {
                     expect(response.status).to.eq(200);
                 });
-                it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
-                    expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+                it("returns a JSON body with 'results', 'total' and 'available' properties", async () => {
+                    expect(response.headers.get('Content-Type')).to.match(
+                        /application\/json/,
+                    );
 
                     const body = await response.json<LibrariesResponse>();
-                    expect(body).to.have.property('results').that.is.an('array');
+                    expect(body)
+                        .to.have.property('results')
+                        .that.is.an('array');
                     expect(body).to.have.property('total').that.is.a('number');
-                    expect(body).to.have.property('available').that.is.a('number');
+                    expect(body)
+                        .to.have.property('available')
+                        .that.is.a('number');
                 });
                 it('returns all available hits', async () => {
                     const body = await response.json<LibrariesResponse>();
@@ -673,16 +814,20 @@ describe('/libraries', () => {
                     expect(body.results).to.have.lengthOf(body.available);
                 });
                 describe('Library object', () => {
-                    it('is an object with \'name\' and \'latest\' properties', async () => {
+                    it("is an object with 'name' and 'latest' properties", async () => {
                         const body = await response.json<LibrariesResponse>();
                         for (const result of body.results) {
-                            expect(result).to.have.property('name').that.is.a('string');
-                            expect(result).to.have.property('latest').that.is.a('string');
+                            expect(result)
+                                .to.have.property('name')
+                                .that.is.a('string');
+                            expect(result)
+                                .to.have.property('latest')
+                                .that.is.a('string');
                         }
                     });
                     // This is fragile!
                     // backbone.js doesn't have a keyword for itself and is owned by a user so we shouldn't see it
-                    it('doesn\'t return the \'backbone.js\' package', async () => {
+                    it("doesn't return the 'backbone.js' package", async () => {
                         const body = await response.json<LibrariesResponse>();
                         for (const result of body.results) {
                             expect(result.name).to.not.equal('backbone.js');
@@ -699,24 +844,33 @@ describe('/libraries', () => {
 
             describe('through multiple query parameters (?search=backbone.js&search_fields=keywords&search_fields=github.user)', () => {
                 // Fetch the endpoint
-                const path = '/libraries?search=backbone.js&search_fields=keywords&search_fields=github.user';
+                const path =
+                    '/libraries?search=backbone.js&search_fields=keywords&search_fields=github.user';
                 const response = beforeRequest(path);
 
                 // Test the endpoint
                 testCors(path, response);
                 it('returns the correct Cache headers', () => {
-                    expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
+                    expect(response.headers.get('Cache-Control')).to.eq(
+                        'public, max-age=21600',
+                    ); // Six hours
                 });
                 it('returns the correct status code', () => {
                     expect(response.status).to.eq(200);
                 });
-                it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
-                    expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+                it("returns a JSON body with 'results', 'total' and 'available' properties", async () => {
+                    expect(response.headers.get('Content-Type')).to.match(
+                        /application\/json/,
+                    );
 
                     const body = await response.json<LibrariesResponse>();
-                    expect(body).to.have.property('results').that.is.an('array');
+                    expect(body)
+                        .to.have.property('results')
+                        .that.is.an('array');
                     expect(body).to.have.property('total').that.is.a('number');
-                    expect(body).to.have.property('available').that.is.a('number');
+                    expect(body)
+                        .to.have.property('available')
+                        .that.is.a('number');
                 });
                 it('returns all available hits', async () => {
                     const body = await response.json<LibrariesResponse>();
@@ -724,16 +878,20 @@ describe('/libraries', () => {
                     expect(body.results).to.have.lengthOf(body.available);
                 });
                 describe('Library object', () => {
-                    it('is an object with \'name\' and \'latest\' properties', async () => {
+                    it("is an object with 'name' and 'latest' properties", async () => {
                         const body = await response.json<LibrariesResponse>();
                         for (const result of body.results) {
-                            expect(result).to.have.property('name').that.is.a('string');
-                            expect(result).to.have.property('latest').that.is.a('string');
+                            expect(result)
+                                .to.have.property('name')
+                                .that.is.a('string');
+                            expect(result)
+                                .to.have.property('latest')
+                                .that.is.a('string');
                         }
                     });
                     // This is fragile!
                     // backbone.js doesn't have a keyword for itself and is owned by a user so we shouldn't see it
-                    it('doesn\'t return the \'backbone.js\' package', async () => {
+                    it("doesn't return the 'backbone.js' package", async () => {
                         const body = await response.json<LibrariesResponse>();
                         for (const result of body.results) {
                             expect(result.name).to.not.equal('backbone.js');
@@ -758,13 +916,17 @@ describe('/libraries', () => {
             // Test the endpoint
             testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // Six hours
+                expect(response.headers.get('Cache-Control')).to.eq(
+                    'public, max-age=21600',
+                ); // Six hours
             });
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with \'results\', \'total\' and \'available\' properties', async () => {
-                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+            it("returns a JSON body with 'results', 'total' and 'available' properties", async () => {
+                expect(response.headers.get('Content-Type')).to.match(
+                    /application\/json/,
+                );
 
                 const body = await response.json<LibrariesResponse>();
                 expect(body).to.have.property('results').that.is.an('array');
@@ -777,14 +939,19 @@ describe('/libraries', () => {
                 expect(body.results).to.have.lengthOf(body.available);
             });
             describe('Library object', () => {
-                it('is an object with \'name\' and \'latest\' properties', async () => {
+                it("is an object with 'name' and 'latest' properties", async () => {
                     const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
-                        expect(result).to.have.property('name').that.is.a('string');
+                        expect(result)
+                            .to.have.property('name')
+                            .that.is.a('string');
                         try {
-                            expect(result).to.have.property('latest').that.is.a('string');
+                            expect(result)
+                                .to.have.property('latest')
+                                .that.is.a('string');
                         } catch {
-                            expect(result).to.have.property('latest').that.is.null;
+                            expect(result).to.have.property('latest').that.is
+                                .null;
                         }
                     }
                 });
@@ -810,38 +977,49 @@ describe('/libraries', () => {
             const { keys } = await env.CACHE.list();
             expect(keys).to.have.lengthOf(1);
             expect(keys[0]).to.have.property('name').that.equals(key);
-            expect(await env.CACHE.get(key, { type: 'json' })).to.be.an('array');
+            expect(await env.CACHE.get(key, { type: 'json' })).to.be.an(
+                'array',
+            );
         });
 
         it('reuses existing Algolia values from KV', async () => {
             // Create a stub set of Algolia results under the `:` key (no query, no fields)
             const key = `libraries:${createHash('sha512').update(':').digest('hex')}`;
-            await env.CACHE.put(key, JSON.stringify([ {
-                name: 'testing',
-                alternativeNames: [],
-                originalName: 'testing',
-                version: '1.0.0',
-                description: '',
-                keywords: [],
-                license: '',
-                homepage: '',
-                author: '',
-                filename: 'testing.js',
-                sri: '',
-                fileType: 'js',
-                github: null,
-                repository: null,
-                objectID: 'testing',
-            } satisfies Library ]));
+            await env.CACHE.put(
+                key,
+                JSON.stringify([
+                    {
+                        name: 'testing',
+                        alternativeNames: [],
+                        originalName: 'testing',
+                        version: '1.0.0',
+                        description: '',
+                        keywords: [],
+                        license: '',
+                        homepage: '',
+                        author: '',
+                        filename: 'testing.js',
+                        sri: '',
+                        fileType: 'js',
+                        github: null,
+                        repository: null,
+                        objectID: 'testing',
+                    } satisfies Library,
+                ]),
+            );
 
             // Check the response was generated from KV
             const response = await request('/libraries');
-            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+            expect(response.headers.get('Content-Type')).to.match(
+                /application\/json/,
+            );
 
             const body = await response.json<LibrariesResponse>();
             expect(body).to.have.property('results').that.is.an('array');
             expect(body.results).to.have.lengthOf(1);
-            expect(body.results[0]).to.have.property('name').that.equals('testing');
+            expect(body.results[0])
+                .to.have.property('name')
+                .that.equals('testing');
         });
 
         it('reuses the same KV cache no matter the query parameter order', async () => {
@@ -856,7 +1034,9 @@ describe('/libraries', () => {
             const { keys } = await env.CACHE.list();
             expect(keys).to.have.lengthOf(1);
             expect(keys[0]).to.have.property('name').that.equals(key);
-            expect(await env.CACHE.get(key, { type: 'json' })).to.be.an('array');
+            expect(await env.CACHE.get(key, { type: 'json' })).to.be.an(
+                'array',
+            );
 
             // Remove the key in KV to allow the next request to write to it again
             await env.CACHE.delete(key);
@@ -870,7 +1050,9 @@ describe('/libraries', () => {
             const { keys: keysTwo } = await env.CACHE.list();
             expect(keysTwo).to.have.lengthOf(1);
             expect(keysTwo[0]).to.have.property('name').that.equals(key);
-            expect(await env.CACHE.get(key, { type: 'json' })).to.be.an('array');
+            expect(await env.CACHE.get(key, { type: 'json' })).to.be.an(
+                'array',
+            );
         });
 
         it('reuses the same KV cache no matter the search fields order', async () => {
@@ -885,7 +1067,9 @@ describe('/libraries', () => {
             const { keys } = await env.CACHE.list();
             expect(keys).to.have.lengthOf(1);
             expect(keys[0]).to.have.property('name').that.equals(key);
-            expect(await env.CACHE.get(key, { type: 'json' })).to.be.an('array');
+            expect(await env.CACHE.get(key, { type: 'json' })).to.be.an(
+                'array',
+            );
 
             // Remove the key in KV to allow the next request to write to it again
             await env.CACHE.delete(key);
@@ -899,7 +1083,9 @@ describe('/libraries', () => {
             const { keys: keysTwo } = await env.CACHE.list();
             expect(keysTwo).to.have.lengthOf(1);
             expect(keysTwo[0]).to.have.property('name').that.equals(key);
-            expect(await env.CACHE.get(key, { type: 'json' })).to.be.an('array');
+            expect(await env.CACHE.get(key, { type: 'json' })).to.be.an(
+                'array',
+            );
         });
     });
 });

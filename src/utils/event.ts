@@ -8,7 +8,11 @@ import { routePath } from 'hono/route';
  * @param ctx Request context.
  * @param data Additional data to include in the log.
  */
-const event = (name: string, ctx: Context, data: Record<string, unknown> = {}) => {
+const event = (
+    name: string,
+    ctx: Context,
+    data: Record<string, unknown> = {},
+) => {
     const route = routePath(ctx);
     const ua = ctx.req.header('User-Agent') || '';
     console.log(

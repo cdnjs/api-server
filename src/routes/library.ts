@@ -3,12 +3,21 @@ import type { Context, Hono } from 'hono';
 import cache from '../utils/cache.ts';
 import files from '../utils/files.ts';
 import filter from '../utils/filter.ts';
-import { library, libraryVersion, libraryVersionSri, libraryVersions } from '../utils/kvMetadata.ts';
+import {
+    library,
+    libraryVersion,
+    libraryVersionSri,
+    libraryVersions,
+} from '../utils/kvMetadata.ts';
 import notFound from '../utils/notFound.ts';
 import { queryCheck } from '../utils/query.ts';
 import respond from '../utils/respond.ts';
 import sriForVersion from '../utils/sriForVersion.ts';
-import type { LibraryResponse, LibraryVersionResponse } from './library.schema.ts';
+
+import type {
+    LibraryResponse,
+    LibraryVersionResponse,
+} from './library.schema.ts';
 
 const extensions = Object.keys(files);
 
@@ -17,7 +26,8 @@ const extensions = Object.keys(files);
  *
  * @param file Filename to check.
  */
-const whitelisted = (file: string) => extensions.includes(file.split('.').slice(-1)[0] || '');
+const whitelisted = (file: string) =>
+    extensions.includes(file.split('.').slice(-1)[0] || '');
 
 /**
  * Handle GET /libraries/:library/:version requests.
@@ -26,14 +36,17 @@ const whitelisted = (file: string) => extensions.includes(file.split('.').slice(
  */
 const handleGetLibraryVersion = async (ctx: Context) => {
     // Get the library
-    const lib = await library(ctx.req.param('library')).catch(err => {
+    const lib = await library(ctx.req.param('library')).catch((err) => {
         if (err.status === 404) return;
         throw err;
     });
     if (!lib) return notFound(ctx, 'Library');
 
     // Get the version
-    const version = await libraryVersion(lib.name, ctx.req.param('version')).catch(err => {
+    const version = await libraryVersion(
+        lib.name,
+        ctx.req.param('version'),
+    ).catch((err) => {
         if (err.status === 404) return;
         throw err;
     });
@@ -54,8 +67,16 @@ const handleGetLibraryVersion = async (ctx: Context) => {
     // Load SRI data if needed
     if (requestedFields('sri')) {
         // Get SRI for version
-        const latestSriData = await libraryVersionSri(lib.name, ctx.req.param('version')).catch(() => ({}));
-        response.sri = sriForVersion(lib.name, ctx.req.param('version'), version, latestSriData);
+        const latestSriData = await libraryVersionSri(
+            lib.name,
+            ctx.req.param('version'),
+        ).catch(() => ({}));
+        response.sri = sriForVersion(
+            lib.name,
+            ctx.req.param('version'),
+            version,
+            latestSriData,
+        );
     }
 
     // Set a 355 day (same as CDN) life on this response
@@ -73,7 +94,7 @@ const handleGetLibraryVersion = async (ctx: Context) => {
  */
 const handleGetLibrary = async (ctx: Context) => {
     // Get the library
-    const lib = await library(ctx.req.param('library')).catch(err => {
+    const lib = await library(ctx.req.param('library')).catch((err) => {
         if (err.status === 404) return;
         throw err;
     });
@@ -87,7 +108,15 @@ const handleGetLibrary = async (ctx: Context) => {
             // Ensure name is first prop
             name,
             // Custom latest prop (and SRI value)
-            latest: lib.filename && lib.version ? 'https://cdnjs.cloudflare.com/ajax/libs/' + lib.name + '/' + lib.version + '/' + lib.filename : null,
+            latest:
+                lib.filename && lib.version
+                    ? 'https://cdnjs.cloudflare.com/ajax/libs/' +
+                      lib.name +
+                      '/' +
+                      lib.version +
+                      '/' +
+                      lib.filename
+                    : null,
             sri: null,
             // All other lib props
             ...rest,
@@ -96,7 +125,8 @@ const handleGetLibrary = async (ctx: Context) => {
     );
 
     // Get versions if needed
-    if (requestedFields('versions')) response.versions = await libraryVersions(lib.name);
+    if (requestedFields('versions'))
+        response.versions = await libraryVersions(lib.name);
 
     // Get assets if needed, inject SRI and do whitelist filtering
     // Returning assets for all versions is deprecated, we only return the latest version in the array
@@ -107,15 +137,20 @@ const handleGetLibrary = async (ctx: Context) => {
             const assets = await libraryVersion(lib.name, lib.version);
 
             // Fetch the SRI data, ignore errors as they'll be reported by sriForVersion
-            const sriData = await libraryVersionSri(lib.name, lib.version).catch(() => ({}));
+            const sriData = await libraryVersionSri(
+                lib.name,
+                lib.version,
+            ).catch(() => ({}));
 
             // Produce the assets array with just the latest version
-            response.assets = [ {
-                version: lib.version,
-                files: assets.filter(whitelisted),
-                rawFiles: assets,
-                sri: sriForVersion(lib.name, lib.version, assets, sriData),
-            } ];
+            response.assets = [
+                {
+                    version: lib.version,
+                    files: assets.filter(whitelisted),
+                    rawFiles: assets,
+                    sri: sriForVersion(lib.name, lib.version, assets, sriData),
+                },
+            ];
         }
     }
 
@@ -124,7 +159,9 @@ const handleGetLibrary = async (ctx: Context) => {
         if (lib.filename && lib.version) {
             // Handle if we've already fetched SRI
             if (response.assets) {
-                const latestVersion = response.assets.find(entry => entry.version === lib.version);
+                const latestVersion = response.assets.find(
+                    (entry) => entry.version === lib.version,
+                );
                 if (latestVersion) {
                     if (lib.filename in latestVersion.sri) {
                         response.sri = latestVersion.sri[lib.filename];
@@ -135,13 +172,17 @@ const handleGetLibrary = async (ctx: Context) => {
             // If no SRI value yet, fetch
             if (!response.sri) {
                 // Get SRI for version, ignore errors as they'll be reported by sriForVersion
-                const latestSriData = await libraryVersionSri(lib.name, lib.version).catch(() => ({}));
-                response.sri = sriForVersion(
+                const latestSriData = await libraryVersionSri(
                     lib.name,
                     lib.version,
-                    [ lib.filename ],
-                    latestSriData,
-                )[lib.filename] || null;
+                ).catch(() => ({}));
+                response.sri =
+                    sriForVersion(
+                        lib.name,
+                        lib.version,
+                        [lib.filename],
+                        latestSriData,
+                    )[lib.filename] || null;
             }
         }
     }

@@ -1,7 +1,6 @@
 import { env } from 'cloudflare:workers';
 
 import fetchJson from './fetchJson.ts';
-import sortVersions from './sort.ts';
 import {
     librariesSchema,
     librarySchema,
@@ -9,6 +8,7 @@ import {
     libraryVersionSriSchema,
     libraryVersionsSchema,
 } from './kvMetadata.schema.ts';
+import sortVersions from './sort.ts';
 
 const kvBase = env.METADATA_BASE || 'https://metadata.speedcdnjs.com';
 
@@ -16,8 +16,7 @@ const kvBase = env.METADATA_BASE || 'https://metadata.speedcdnjs.com';
  * Get a list of libraries.
  */
 export const libraries = () =>
-    fetchJson(`${kvBase}/packages`)
-        .then(librariesSchema.parse);
+    fetchJson(`${kvBase}/packages`).then(librariesSchema.parse);
 
 /**
  * Get the metadata for a library.
@@ -25,8 +24,9 @@ export const libraries = () =>
  * @param name Name of the library to fetch.
  */
 export const library = (name: string) =>
-    fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}`)
-        .then(librarySchema.parse);
+    fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}`).then(
+        librarySchema.parse,
+    );
 
 /**
  * Get the versions for a library.
@@ -45,8 +45,9 @@ export const libraryVersions = (name: string) =>
  * @param version Version of the library to fetch.
  */
 export const libraryVersion = (name: string, version: string) =>
-    fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}/versions/${encodeURIComponent(version)}`)
-        .then(libraryVersionSchema.parse);
+    fetchJson(
+        `${kvBase}/packages/${encodeURIComponent(name)}/versions/${encodeURIComponent(version)}`,
+    ).then(libraryVersionSchema.parse);
 
 /**
  * Get the SRI data for a library's version.
@@ -55,5 +56,6 @@ export const libraryVersion = (name: string, version: string) =>
  * @param version Version of the library to fetch.
  */
 export const libraryVersionSri = (name: string, version: string) =>
-    fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}/sris/${encodeURIComponent(version)}`)
-        .then(libraryVersionSriSchema.parse);
+    fetchJson(
+        `${kvBase}/packages/${encodeURIComponent(name)}/sris/${encodeURIComponent(version)}`,
+    ).then(libraryVersionSriSchema.parse);

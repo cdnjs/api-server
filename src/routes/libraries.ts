@@ -5,6 +5,7 @@ import cache from '../utils/cache.ts';
 import filter from '../utils/filter.ts';
 import { queryArray, queryCheck } from '../utils/query.ts';
 import respond from '../utils/respond.ts';
+
 import type { LibrariesResponse } from './libraries.schema.ts';
 
 /**
@@ -22,10 +23,18 @@ const handleGetLibraries = async (ctx: Context) => {
 
     // Transform the results into our filtered array
     const requestedFields = queryCheck(ctx.req.queries('fields'), false);
-    const response = results.map(hit => ({
+    const response = results.map((hit) => ({
         // Always send back name & latest
         name: hit.name,
-        latest: hit.filename && hit.version ? 'https://cdnjs.cloudflare.com/ajax/libs/' + hit.name + '/' + hit.version + '/' + hit.filename : null,
+        latest:
+            hit.filename && hit.version
+                ? 'https://cdnjs.cloudflare.com/ajax/libs/' +
+                  hit.name +
+                  '/' +
+                  hit.version +
+                  '/' +
+                  hit.filename
+                : null,
         // Send back whatever else was requested, only send all if '*' explicitly included
         ...filter(hit, requestedFields),
     }));

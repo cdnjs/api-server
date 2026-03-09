@@ -1,5 +1,5 @@
-import type { Context, Hono } from 'hono';
 import { env } from 'cloudflare:workers';
+import type { Context, Hono } from 'hono';
 
 import cache from '../utils/cache.ts';
 

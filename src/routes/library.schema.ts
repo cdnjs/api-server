@@ -1,26 +1,35 @@
 import * as z from 'zod';
+
 import { librarySchema } from '../utils/kvMetadata.schema';
 
-export const libraryVersionResponseSchema = z.object({
-    name: z.string(),
-    version: z.string(),
-    files: z.array(z.string()),
-    rawFiles: z.array(z.string()),
-    sri: z.record(z.string(), z.string()),
-}).partial();
-
-export type LibraryVersionResponse = z.infer<typeof libraryVersionResponseSchema>;
-
-export const libraryResponseSchema = librarySchema.extend({
-    latest: z.string().nullable(),
-    sri: z.string().nullable(),
-    versions: z.array(z.string()),
-    assets: z.array(z.object({
+export const libraryVersionResponseSchema = z
+    .object({
+        name: z.string(),
         version: z.string(),
         files: z.array(z.string()),
         rawFiles: z.array(z.string()),
         sri: z.record(z.string(), z.string()),
-    })),
-}).partial();
+    })
+    .partial();
+
+export type LibraryVersionResponse = z.infer<
+    typeof libraryVersionResponseSchema
+>;
+
+export const libraryResponseSchema = librarySchema
+    .extend({
+        latest: z.string().nullable(),
+        sri: z.string().nullable(),
+        versions: z.array(z.string()),
+        assets: z.array(
+            z.object({
+                version: z.string(),
+                files: z.array(z.string()),
+                rawFiles: z.array(z.string()),
+                sri: z.record(z.string(), z.string()),
+            }),
+        ),
+    })
+    .partial();
 
 export type LibraryResponse = z.infer<typeof libraryResponseSchema>;

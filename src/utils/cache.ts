@@ -1,5 +1,5 @@
-import type { Context } from 'hono';
 import { env } from 'cloudflare:workers';
+import type { Context } from 'hono';
 
 /**
  * Set cache headers on a response.
@@ -16,8 +16,11 @@ export default (ctx: Context, age: number, immutable = false) => {
         return;
     }
 
-    ctx.header('Expires',
-        new Date(Date.now() + age * 1000).toUTCString());
-    ctx.header('Cache-Control',
-        [ 'public', `max-age=${age}`, immutable ? 'immutable' : null ].filter(x => !!x).join(', '));
+    ctx.header('Expires', new Date(Date.now() + age * 1000).toUTCString());
+    ctx.header(
+        'Cache-Control',
+        ['public', `max-age=${age}`, immutable ? 'immutable' : null]
+            .filter((x) => !!x)
+            .join(', '),
+    );
 };

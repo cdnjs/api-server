@@ -1,12 +1,14 @@
-import type { Hono } from 'hono';
 import * as Sentry from '@sentry/cloudflare';
+import type { Hono } from 'hono';
 
-import type { ErrorResponse } from './errors.schema.ts';
 import cache from '../utils/cache.ts';
 import notFound from '../utils/notFound.ts';
 import respond from '../utils/respond.ts';
 
-const stringOrUndefined = (value: unknown) => typeof value === 'string' ? value : undefined;
+import type { ErrorResponse } from './errors.schema.ts';
+
+const stringOrUndefined = (value: unknown) =>
+    typeof value === 'string' ? value : undefined;
 
 /**
  * Register error handlers for routes.
@@ -25,7 +27,9 @@ export default (app: Hono) => {
         });
 
         Sentry.setUser({
-            ip: ctx.req.header('cf-connecting-ip') || ctx.req.header('x-forwarded-for'),
+            ip:
+                ctx.req.header('cf-connecting-ip') ||
+                ctx.req.header('x-forwarded-for'),
             userAgent: ctx.req.header('user-agent'),
         });
 
@@ -33,11 +37,11 @@ export default (app: Hono) => {
     });
 
     // Handle 404s
-    app.notFound(ctx => notFound(ctx, 'Endpoint'));
+    app.notFound((ctx) => notFound(ctx, 'Endpoint'));
 
     // Emit a test error
     app.get('/error', async () => {
-        await new Promise(resolve => setTimeout(resolve, 1));
+        await new Promise((resolve) => setTimeout(resolve, 1));
         throw new Error('Test error');
     });
 

@@ -1,11 +1,12 @@
 import type { Context, Hono } from 'hono';
 
-import type { WhitelistResponse } from './whitelist.schema.ts';
 import cache from '../utils/cache.ts';
 import files from '../utils/files.ts';
 import filter from '../utils/filter.ts';
 import { queryCheck } from '../utils/query.ts';
 import respond from '../utils/respond.ts';
+
+import type { WhitelistResponse } from './whitelist.schema.ts';
 
 /**
  * Handle GET /whitelist requests.

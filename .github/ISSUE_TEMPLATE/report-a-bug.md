@@ -17,13 +17,17 @@ If you are reporting a bug, please follow the following steps:
 ## Details
 
 ### Description
+
 <!-- Replace this with a brief summary of the bug. -->
 
 ### Steps to reproduce
+
 <!-- Replace this with exactly what you did to cause the bug. -->
 
 ### Expected behavior
+
 <!-- Replace this with what you expected to happen. -->
 
 ### Logs
+
 <!-- Replace this with additional logs (or code), if necessary. -->

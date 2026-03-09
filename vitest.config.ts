@@ -13,7 +13,8 @@ export default defineWorkersConfig({
                 miniflare: {
                     bindings: {
                         DISABLE_LOGGING: true,
-                        VITEST_EXTERNAL_API_URL: process.env.VITEST_EXTERNAL_API_URL || '',
+                        VITEST_EXTERNAL_API_URL:
+                            process.env.VITEST_EXTERNAL_API_URL || '',
                     },
                 },
             },
