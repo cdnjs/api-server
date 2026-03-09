@@ -12,7 +12,7 @@ export const librarySchema = z.object({
     keywords: z.array(z.string()),
     homepage: z.string().optional(),
     license: z.string().optional(),
-    author: z.string(),
+    author: z.string().optional(),
     repository: z
         .object({
             type: z.string(),
