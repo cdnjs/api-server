@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import testCors from '../utils/spec/cors.ts';
 import { beforeRequest, request } from '../utils/spec/request.ts';
@@ -11,7 +11,9 @@ describe('/', () => {
     // Test the endpoint
     testCors(path, response);
     it('returns the correct Cache headers', () => {
-        expect(response.headers.get('Cache-Control')).to.eq('public, max-age=30672000, immutable'); // 355 days
+        expect(response.headers.get('Cache-Control')).to.eq(
+            'public, max-age=30672000, immutable',
+        ); // 355 days
     });
     it('redirects to the cdnjs.com API docs as a 301', () => {
         expect(response.status).to.eq(301);
@@ -29,7 +31,9 @@ describe('/health', () => {
     it('returns the correct Cache headers', () => {
         expect(response.headers.get('Expires')).to.eq('0');
         expect(response.headers.get('Pragma')).to.eq('no-cache');
-        expect(response.headers.get('Cache-Control')).to.eq('no-cache, no-store, must-revalidate');
+        expect(response.headers.get('Cache-Control')).to.eq(
+            'no-cache, no-store, must-revalidate',
+        );
     });
     it('returns the correct status code', () => {
         expect(response.status).to.eq(200);
@@ -55,7 +59,9 @@ describe('/robots.txt', () => {
     // Test the endpoint
     testCors(path, response);
     it('returns the correct Cache headers', () => {
-        expect(response.headers.get('Cache-Control')).to.eq('public, max-age=30672000, immutable'); // 355 days
+        expect(response.headers.get('Cache-Control')).to.eq(
+            'public, max-age=30672000, immutable',
+        ); // 355 days
     });
     it('returns the correct status code', () => {
         expect(response.status).to.eq(200);

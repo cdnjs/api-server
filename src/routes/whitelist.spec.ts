@@ -1,9 +1,10 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-import type { WhitelistResponse } from './whitelist.schema.ts';
 import testCors from '../utils/spec/cors.ts';
 import testHuman from '../utils/spec/human.ts';
 import { beforeRequest, request } from '../utils/spec/request.ts';
+
+import type { WhitelistResponse } from './whitelist.schema.ts';
 
 describe('/whitelist', () => {
     describe('No query params', () => {
@@ -14,13 +15,17 @@ describe('/whitelist', () => {
         // Test the endpoint
         testCors(path, response);
         it('returns the correct Cache headers', () => {
-            expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours;
+            expect(response.headers.get('Cache-Control')).to.eq(
+                'public, max-age=21600',
+            ); // 6 hours;
         });
         it('returns the correct status code', () => {
             expect(response.status).to.eq(200);
         });
-        it('returns a JSON body with \'extensions\' and \'categories\' properties', async () => {
-            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+        it("returns a JSON body with 'extensions' and 'categories' properties", async () => {
+            expect(response.headers.get('Content-Type')).to.match(
+                /application\/json/,
+            );
 
             const body = await response.json<WhitelistResponse>();
             expect(body).to.be.an('object');
@@ -28,7 +33,9 @@ describe('/whitelist', () => {
             expect(body).to.have.property('categories').that.is.an('object');
         });
         it('has no other properties', async () => {
-            expect(Object.keys(await response.json<WhitelistResponse>())).to.have.lengthOf(2);
+            expect(
+                Object.keys(await response.json<WhitelistResponse>()),
+            ).to.have.lengthOf(2);
         });
         describe('Extensions array', () => {
             it('only has string elements', async () => {
@@ -39,7 +46,7 @@ describe('/whitelist', () => {
             });
         });
         describe('Categories object', () => {
-            it('has a key for each value in \'extensions\'', async () => {
+            it("has a key for each value in 'extensions'", async () => {
                 const body = await response.json<WhitelistResponse>();
                 const keys = Object.keys(body.categories!);
                 for (const result of body.extensions!) {
@@ -58,7 +65,9 @@ describe('/whitelist', () => {
         it('responds to requests with a trailing slash', async () => {
             const res = await request(path + '/');
             expect(res.status).to.eq(200);
-            expect(await res.json<WhitelistResponse>()).to.deep.equal(await response.json<WhitelistResponse>());
+            expect(await res.json<WhitelistResponse>()).to.deep.equal(
+                await response.json<WhitelistResponse>(),
+            );
         });
     });
 
@@ -70,7 +79,9 @@ describe('/whitelist', () => {
         // Test the endpoint
         testCors(path, response);
         it('returns the correct Cache headers', () => {
-            expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
+            expect(response.headers.get('Cache-Control')).to.eq(
+                'public, max-age=21600',
+            ); // 6 hours
         });
         testHuman(response);
     });
@@ -83,20 +94,26 @@ describe('/whitelist', () => {
         // Test the endpoint
         testCors(path, response);
         it('returns the correct Cache headers', () => {
-            expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
+            expect(response.headers.get('Cache-Control')).to.eq(
+                'public, max-age=21600',
+            ); // 6 hours
         });
         it('returns the correct status code', () => {
             expect(response.status).to.eq(200);
         });
-        it('returns a JSON body with the \'extensions\' property', async () => {
-            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+        it("returns a JSON body with the 'extensions' property", async () => {
+            expect(response.headers.get('Content-Type')).to.match(
+                /application\/json/,
+            );
 
             const body = await response.json<WhitelistResponse>();
             expect(body).to.be.an('object');
             expect(body).to.have.property('extensions').that.is.an('array');
         });
         it('has no other properties', async () => {
-            expect(Object.keys(await response.json<WhitelistResponse>())).to.have.lengthOf(1);
+            expect(
+                Object.keys(await response.json<WhitelistResponse>()),
+            ).to.have.lengthOf(1);
         });
     });
 
@@ -109,21 +126,29 @@ describe('/whitelist', () => {
             // Test the endpoint
             testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
+                expect(response.headers.get('Cache-Control')).to.eq(
+                    'public, max-age=21600',
+                ); // 6 hours
             });
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with the \'extensions\' and \'categories\' properties', async () => {
-                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+            it("returns a JSON body with the 'extensions' and 'categories' properties", async () => {
+                expect(response.headers.get('Content-Type')).to.match(
+                    /application\/json/,
+                );
 
                 const body = await response.json<WhitelistResponse>();
                 expect(body).to.be.an('object');
                 expect(body).to.have.property('extensions').that.is.an('array');
-                expect(body).to.have.property('categories').that.is.an('object');
+                expect(body)
+                    .to.have.property('categories')
+                    .that.is.an('object');
             });
             it('has no other properties', async () => {
-                expect(Object.keys(await response.json<WhitelistResponse>())).to.have.lengthOf(2);
+                expect(
+                    Object.keys(await response.json<WhitelistResponse>()),
+                ).to.have.lengthOf(2);
             });
         });
 
@@ -135,21 +160,29 @@ describe('/whitelist', () => {
             // Test the endpoint
             testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
+                expect(response.headers.get('Cache-Control')).to.eq(
+                    'public, max-age=21600',
+                ); // 6 hours
             });
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with the \'extensions\' and \'categories\' properties', async () => {
-                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+            it("returns a JSON body with the 'extensions' and 'categories' properties", async () => {
+                expect(response.headers.get('Content-Type')).to.match(
+                    /application\/json/,
+                );
 
                 const body = await response.json<WhitelistResponse>();
                 expect(body).to.be.an('object');
                 expect(body).to.have.property('extensions').that.is.an('array');
-                expect(body).to.have.property('categories').that.is.an('object');
+                expect(body)
+                    .to.have.property('categories')
+                    .that.is.an('object');
             });
             it('has no other properties', async () => {
-                expect(Object.keys(await response.json<WhitelistResponse>())).to.have.lengthOf(2);
+                expect(
+                    Object.keys(await response.json<WhitelistResponse>()),
+                ).to.have.lengthOf(2);
             });
         });
 
@@ -161,21 +194,29 @@ describe('/whitelist', () => {
             // Test the endpoint
             testCors(path, response);
             it('returns the correct Cache headers', () => {
-                expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
+                expect(response.headers.get('Cache-Control')).to.eq(
+                    'public, max-age=21600',
+                ); // 6 hours
             });
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
             });
-            it('returns a JSON body with the \'extensions\' and \'categories\' properties', async () => {
-                expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+            it("returns a JSON body with the 'extensions' and 'categories' properties", async () => {
+                expect(response.headers.get('Content-Type')).to.match(
+                    /application\/json/,
+                );
 
                 const body = await response.json<WhitelistResponse>();
                 expect(body).to.be.an('object');
                 expect(body).to.have.property('extensions').that.is.an('array');
-                expect(body).to.have.property('categories').that.is.an('object');
+                expect(body)
+                    .to.have.property('categories')
+                    .that.is.an('object');
             });
             it('has no other properties', async () => {
-                expect(Object.keys(await response.json<WhitelistResponse>())).to.have.lengthOf(2);
+                expect(
+                    Object.keys(await response.json<WhitelistResponse>()),
+                ).to.have.lengthOf(2);
             });
         });
     });
@@ -188,13 +229,17 @@ describe('/whitelist', () => {
         // Test the endpoint
         testCors(path, response);
         it('returns the correct Cache headers', () => {
-            expect(response.headers.get('Cache-Control')).to.eq('public, max-age=21600'); // 6 hours
+            expect(response.headers.get('Cache-Control')).to.eq(
+                'public, max-age=21600',
+            ); // 6 hours
         });
         it('returns the correct status code', () => {
             expect(response.status).to.eq(200);
         });
-        it('returns a JSON body with \'extensions\' and \'categories\' properties', async () => {
-            expect(response.headers.get('Content-Type')).to.match(/application\/json/);
+        it("returns a JSON body with 'extensions' and 'categories' properties", async () => {
+            expect(response.headers.get('Content-Type')).to.match(
+                /application\/json/,
+            );
 
             const body = await response.json<WhitelistResponse>();
             expect(body).to.be.an('object');
@@ -202,7 +247,9 @@ describe('/whitelist', () => {
             expect(body).to.have.property('categories').that.is.an('object');
         });
         it('has no other properties', async () => {
-            expect(Object.keys(await response.json<WhitelistResponse>())).to.have.lengthOf(2);
+            expect(
+                Object.keys(await response.json<WhitelistResponse>()),
+            ).to.have.lengthOf(2);
         });
     });
 });

@@ -9,9 +9,9 @@
  */
 export const queryArray = (query?: string | string[]) => {
     if (query) {
-        return (Array.isArray(query) ? query : [ query ])
-            .flatMap(part => part.toString().split(/[ ,]/))
-            .map(item => item.toLowerCase().trim());
+        return (Array.isArray(query) ? query : [query])
+            .flatMap((part) => part.toString().split(/[ ,]/))
+            .map((item) => item.toLowerCase().trim());
     }
     return [];
 };

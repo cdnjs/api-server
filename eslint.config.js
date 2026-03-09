@@ -1,10 +1,9 @@
 // @ts-check
-
 import eslint from '@eslint/js';
+import prettier from 'eslint-config-prettier';
+import jsdoc from 'eslint-plugin-jsdoc';
 import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
-import jsdoc from 'eslint-plugin-jsdoc';
-import prettier from 'eslint-config-prettier';
 
 export default defineConfig(
     eslint.configs.recommended,
@@ -19,19 +18,19 @@ export default defineConfig(
         name: 'custom/jsdoc',
         rules: {
             'jsdoc/require-returns': 'off',
-            'jsdoc/tag-lines': [ 'error', 'any', { startLines: 1 } ]
+            'jsdoc/tag-lines': ['error', 'any', { startLines: 1 }],
         },
     },
     {
         name: 'custom/spec',
-        files: [ '**/spec/**/*.ts', '**/*.spec.ts' ],
+        files: ['**/spec/**/*.ts', '**/*.spec.ts'],
         rules: {
             '@typescript-eslint/no-unused-expressions': 'off',
             '@typescript-eslint/no-non-null-assertion': 'off',
-        }
+        },
     },
     {
         name: 'custom/ignores',
-        ignores: [ 'dist-worker/**', 'types/worker.d.ts' ],
-    }
+        ignores: ['dist-worker/**', 'types/worker.d.ts'],
+    },
 );

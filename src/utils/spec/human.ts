@@ -1,4 +1,4 @@
-import { it, expect } from 'vitest';
+import { expect, it } from 'vitest';
 
 /**
  * Run tests to ensure a response is a valid pretty-printed HTML "human" response.
@@ -14,6 +14,8 @@ export default (response: Response) => {
         expect(await response.text()).to.match(/<html[^>]*>/);
     });
     it('returns the no-index meta tag', async () => {
-        expect(await response.text()).to.match(/<meta\s+name=["']robots["']\s+content=["']noindex["']\s*\/?>/);
+        expect(await response.text()).to.match(
+            /<meta\s+name=["']robots["']\s+content=["']noindex["']\s*\/?>/,
+        );
     });
 };

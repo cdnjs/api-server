@@ -16,9 +16,11 @@ If you are in need of help, please follow the following steps:
 ## Help request
 
 ### Problem
+
 <!-- What problem did you encounter? -->
 
 ### What I have tried
+
 <!-- What have you tried so far? -->
 <!-- Please include any code here to reproduce your issue,
       as well as any output (logs, headers, etc.) -->

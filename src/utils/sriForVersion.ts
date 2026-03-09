@@ -8,7 +8,12 @@
  * @param files Names of the files for this version of the library.
  * @param sriData SRI data for the library version.
  */
-export default (library: string, version: string, files: string[], sriData: Record<string, string>) => {
+export default (
+    library: string,
+    version: string,
+    files: string[],
+    sriData: Record<string, string>,
+) => {
     // Build the SRI object
     const sri: Record<string, string> = {};
     for (const file of files) {

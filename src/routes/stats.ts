@@ -1,11 +1,12 @@
 import type { Context, Hono } from 'hono';
 
-import type { StatsResponse } from './stats.schema.ts';
 import cache from '../utils/cache.ts';
 import filter from '../utils/filter.ts';
 import { libraries } from '../utils/kvMetadata.ts';
 import { queryCheck } from '../utils/query.ts';
 import respond from '../utils/respond.ts';
+
+import type { StatsResponse } from './stats.schema.ts';
 
 /**
  * Handle GET /stats requests.

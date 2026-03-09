@@ -13,20 +13,24 @@ export const librarySchema = z.object({
     homepage: z.string().optional(),
     license: z.string().optional(),
     author: z.string(),
-    repository: z.object({
-        type: z.string(),
-        url: z.string(),
-    }).nullable(),
-    autoupdate: z.union([
-        z.object({
+    repository: z
+        .object({
             type: z.string(),
-            target: z.string(),
-        }),
-        z.object({
-            source: z.string(),
-            target: z.string(),
-        }),
-    ]).optional(),
+            url: z.string(),
+        })
+        .nullable(),
+    autoupdate: z
+        .union([
+            z.object({
+                type: z.string(),
+                target: z.string(),
+            }),
+            z.object({
+                source: z.string(),
+                target: z.string(),
+            }),
+        ])
+        .optional(),
 });
 
 export type Library = z.infer<typeof librarySchema>;
