@@ -31,6 +31,6 @@ export default defineConfig(
     },
     {
         name: 'custom/ignores',
-        ignores: ['dist-worker/**', 'types/worker.d.ts'],
+        ignores: ['dist-worker/**', '.wrangler/**', 'types/worker.d.ts'],
     },
 );
