@@ -6,4 +6,5 @@ export default {
         body: '#454647',
     },
     spacing: (value: number) => `${value * 8}px`,
+    radius: '4px',
 };
