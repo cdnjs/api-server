@@ -3,6 +3,8 @@ import type { Child } from 'hono/jsx';
 
 import theme from '../theme.ts';
 
+import Footer from './footer.tsx';
+
 const styles = {
     body: css`
         display: flex;
@@ -49,6 +51,7 @@ export default ({ children }: { children?: Child }) => (
         </head>
         <body class={cx(styles.body, styles.background)}>
             <main class={cx(styles.main, styles.container)}>{children}</main>
+            <Footer class={styles.container} />
             <script
                 defer
                 dangerouslySetInnerHTML={{
