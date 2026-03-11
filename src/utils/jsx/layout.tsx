@@ -3,6 +3,8 @@ import type { Child } from 'hono/jsx';
 
 import theme from '../theme.ts';
 
+import Footer from './footer.tsx';
+
 const styles = {
     body: css`
         display: flex;
@@ -10,6 +12,7 @@ const styles = {
         min-height: 100vh;
         font-size: ${theme.font.body.size};
         font-weight: ${theme.font.body.weight};
+        overflow-x: hidden;
     `,
     background: css`
         background: ${theme.background.body};
@@ -55,6 +58,7 @@ export default ({ children }: { children?: Child }) => (
         </head>
         <body class={cx(styles.body, styles.background)}>
             <main class={cx(styles.main, styles.container)}>{children}</main>
+            <Footer class={styles.container} />
             <script
                 defer
                 dangerouslySetInnerHTML={{
