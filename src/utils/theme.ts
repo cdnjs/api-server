@@ -18,4 +18,5 @@ export default {
             weight: 400,
         },
     },
+    radius: '4px',
 };
