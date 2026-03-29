@@ -1,23 +1,24 @@
-import { defineWorkersConfig } from '@cloudflare/vitest-pool-workers/config';
+import { cloudflareTest } from '@cloudflare/vitest-pool-workers';
+import { defineConfig } from 'vitest/config';
 
-export default defineWorkersConfig({
+export default defineConfig({
     test: {
         silent: 'passed-only',
         reporters: [
-            'verbose',
+            'tree',
             process.env.GITHUB_ACTIONS && 'github-actions',
         ].filter((x): x is string => !!x),
-        poolOptions: {
-            workers: {
-                wrangler: { configPath: './wrangler.toml' },
-                miniflare: {
-                    bindings: {
-                        DISABLE_LOGGING: true,
-                        VITEST_EXTERNAL_API_URL:
-                            process.env.VITEST_EXTERNAL_API_URL || '',
-                    },
+    },
+    plugins: [
+        cloudflareTest({
+            wrangler: { configPath: './wrangler.toml' },
+            miniflare: {
+                bindings: {
+                    DISABLE_LOGGING: true,
+                    VITEST_EXTERNAL_API_URL:
+                        process.env.VITEST_EXTERNAL_API_URL || '',
                 },
             },
-        },
-    },
+        }),
+    ],
 });
