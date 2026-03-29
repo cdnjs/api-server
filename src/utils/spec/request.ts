@@ -1,8 +1,9 @@
-import { SELF, env } from 'cloudflare:test';
+import { env, exports } from 'cloudflare:workers';
 import { beforeAll } from 'vitest';
 
 // Allow tests to run against an external API Worker by setting VITEST_EXTERNAL_API_URL.
 export const externalApiUrl =
+    // @ts-expect-error - This is injected by Miniflare in the Vitest config.
     env.VITEST_EXTERNAL_API_URL?.replace(/\/+$/, '') || null;
 
 /**
@@ -21,7 +22,7 @@ export const request = async (route: string, opts: RequestInit = {}) => {
     };
     const response = externalApiUrl
         ? await fetch(`${externalApiUrl}${route}`, init)
-        : await SELF.fetch(`http://local${route}`, init);
+        : await exports.default.fetch(`http://local${route}`, init);
     const text = await response.text();
 
     return new Proxy({} as Response, {

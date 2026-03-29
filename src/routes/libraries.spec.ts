@@ -1,6 +1,6 @@
-import { env } from 'cloudflare:test';
+import { env } from 'cloudflare:workers';
 import { createHash } from 'crypto';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Library } from '../utils/algolia.schema.ts';
 import testCors from '../utils/spec/cors.ts';
@@ -967,6 +967,11 @@ describe('/libraries', () => {
 
     // Don't run these tests against an external API Worker as we won't have KV access
     describe.skipIf(externalApiUrl)('Caching Algolia data with KV', () => {
+        beforeEach(async () => {
+            const { keys } = await env.CACHE.list();
+            await Promise.all(keys.map((key) => env.CACHE.delete(key.name)));
+        });
+
         it('writes the results from Algolia to KV', async () => {
             await kvExpectEmpty();
             await request('/libraries');
