@@ -58,7 +58,7 @@
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.56.1",
         "vitest": "^4.1.2",
-        "wrangler": "^4.68.1"
+        "wrangler": "^4.78.0"
     },
     "overrides": {
         "@cloudflare/vitest-pool-workers": {
