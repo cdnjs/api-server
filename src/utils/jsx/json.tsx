@@ -1,3 +1,16 @@
+import { css, cx } from 'hono/css';
+
+import theme from '../theme.ts';
+
+const styles = {
+    pre: css`
+        margin: 0;
+    `,
+    code: css`
+        border-radius: ${theme.radius};
+    `,
+};
+
 /**
  * Standard cdnjs HTML layout for pretty-printing JSON data.
  *
@@ -14,8 +27,10 @@ export default ({ json }: { json: unknown }) => (
             referrerpolicy="no-referrer"
         />
 
-        <pre>
-            <code class="language-json">{JSON.stringify(json, null, 2)}</code>
+        <pre class={styles.pre}>
+            <code class={cx(styles.code, 'language-json')}>
+                {JSON.stringify(json, null, 2)}
+            </code>
         </pre>
 
         <script
