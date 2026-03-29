@@ -1,4 +1,4 @@
-import { env } from 'cloudflare:test';
+import { env } from 'cloudflare:workers';
 import { createHash } from 'crypto';
 import { describe, expect, it, vi } from 'vitest';
 
