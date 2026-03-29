@@ -35,21 +35,25 @@ const whitelisted = (file: string) =>
  * @param ctx Request context.
  */
 const handleGetLibraryVersion = async (ctx: Context) => {
+    // Validate params (Hono already did this, but this keeps TypeScript happy)
+    const params = ctx.req.param();
+    if (!params.library || !params.version)
+        throw new Error('Missing library or version param');
+
     // Get the library
-    const lib = await library(ctx.req.param('library')).catch((err) => {
+    const lib = await library(params.library).catch((err) => {
         if (err.status === 404) return;
         throw err;
     });
     if (!lib) return notFound(ctx, 'Library');
 
     // Get the version
-    const version = await libraryVersion(
-        lib.name,
-        ctx.req.param('version'),
-    ).catch((err) => {
-        if (err.status === 404) return;
-        throw err;
-    });
+    const version = await libraryVersion(lib.name, params.version).catch(
+        (err) => {
+            if (err.status === 404) return;
+            throw err;
+        },
+    );
     if (!version) return notFound(ctx, 'Version');
 
     // Generate the initial filtered response (without SRI data)
@@ -57,7 +61,7 @@ const handleGetLibraryVersion = async (ctx: Context) => {
     const response: LibraryVersionResponse = filter(
         {
             name: lib.name,
-            version: ctx.req.param('version'),
+            version: params.version,
             rawFiles: version,
             files: version.filter(whitelisted),
         },
@@ -69,11 +73,11 @@ const handleGetLibraryVersion = async (ctx: Context) => {
         // Get SRI for version
         const latestSriData = await libraryVersionSri(
             lib.name,
-            ctx.req.param('version'),
+            params.version,
         ).catch(() => ({}));
         response.sri = sriForVersion(
             lib.name,
-            ctx.req.param('version'),
+            params.version,
             version,
             latestSriData,
         );
@@ -93,8 +97,12 @@ const handleGetLibraryVersion = async (ctx: Context) => {
  * @param ctx Request context.
  */
 const handleGetLibrary = async (ctx: Context) => {
+    // Validate params (Hono already did this, but this keeps TypeScript happy)
+    const params = ctx.req.param();
+    if (!params.library) throw new Error('Missing library or version param');
+
     // Get the library
-    const lib = await library(ctx.req.param('library')).catch((err) => {
+    const lib = await library(params.library).catch((err) => {
         if (err.status === 404) return;
         throw err;
     });
