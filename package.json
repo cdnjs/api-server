@@ -41,7 +41,7 @@
         "zod": "^4.3.6"
     },
     "devDependencies": {
-        "@cloudflare/vitest-pool-workers": "^0.12.17",
+        "@cloudflare/vitest-pool-workers": "^0.13.5",
         "@eslint/js": "^10.0.1",
         "@trivago/prettier-plugin-sort-imports": "^6.0.2",
         "@types/is-deflate": "^1.0.0",
@@ -57,7 +57,7 @@
         "prettier": "^3.8.1",
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.56.1",
-        "vitest": "~3.2.0",
+        "vitest": "^4.1.2",
         "wrangler": "^4.68.1"
     },
     "overrides": {
