@@ -46,7 +46,7 @@
         "@trivago/prettier-plugin-sort-imports": "^6.0.2",
         "@types/is-deflate": "^1.0.0",
         "@types/is-gzip": "^2.0.2",
-        "@types/node": "~24.11.0",
+        "@types/node": "~25.5.0",
         "@types/pako": "^2.0.4",
         "@types/semver": "^7.7.1",
         "eslint": "^10.1.0",
