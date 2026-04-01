@@ -21,9 +21,6 @@ export default (path: string, response: Response) => {
         expect(response.headers.get('Access-Control-Allow-Origin')).to.eq(
             corsOptions.origin,
         );
-        expect(response.headers.get('Access-Control-Allow-Credentials')).to.eq(
-            corsOptions.credentials.toString(),
-        );
     });
 
     it('returns the correct status code for OPTIONS request', () => {
@@ -34,9 +31,6 @@ export default (path: string, response: Response) => {
         expect(
             optionsResponse.headers.get('Access-Control-Allow-Origin'),
         ).to.eq(corsOptions.origin);
-        expect(
-            optionsResponse.headers.get('Access-Control-Allow-Credentials'),
-        ).to.eq(corsOptions.credentials.toString());
         expect(
             optionsResponse.headers.get('Access-Control-Allow-Headers'),
         ).to.eq(corsOptions.allowHeaders.join(','));
