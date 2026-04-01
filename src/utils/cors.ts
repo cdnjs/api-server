@@ -1,6 +1,5 @@
 export default {
     origin: '*',
-    credentials: true,
     allowHeaders: [
         'Accept',
         'Accept-Version',
