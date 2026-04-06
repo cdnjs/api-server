@@ -5,6 +5,7 @@ import theme from '../theme.ts';
 
 import Banner from './banner.tsx';
 import Footer from './footer.tsx';
+import Navigation from './navigation.tsx';
 
 const styles = {
     body: css`
@@ -61,6 +62,7 @@ export default ({ children }: { children?: Child }) => (
         </head>
         <body class={cx(styles.body, styles.background)}>
             <main class={styles.main}>
+                <Navigation class={styles.container} />
                 <div class={cx(styles.content, styles.container)}>
                     {children}
                 </div>
