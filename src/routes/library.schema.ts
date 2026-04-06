@@ -1,6 +1,6 @@
 import * as z from 'zod';
 
-import { librarySchema } from '../utils/kvMetadata.schema';
+import { librarySchema } from '../utils/metadata.schema';
 
 export const libraryVersionResponseSchema = z
     .object({

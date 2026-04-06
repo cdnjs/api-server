@@ -8,7 +8,7 @@ import {
     libraryVersion,
     libraryVersionSri,
     libraryVersions,
-} from '../utils/kvMetadata.ts';
+} from '../utils/metadata.ts';
 import { queryCheck } from '../utils/query.ts';
 import respond, { notFound } from '../utils/respond.ts';
 
