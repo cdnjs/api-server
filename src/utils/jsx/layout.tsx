@@ -3,13 +3,11 @@ import type { Child } from 'hono/jsx';
 
 import theme from '../theme.ts';
 
+import Banner from './banner.tsx';
 import Footer from './footer.tsx';
 
 const styles = {
     body: css`
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
         font-size: ${theme.font.body.size};
         font-weight: ${theme.font.body.weight};
         overflow-x: hidden;
@@ -19,7 +17,12 @@ const styles = {
         color: ${theme.text.primary};
     `,
     main: css`
-        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    `,
+    content: css`
+        flex-grow: 1;
     `,
     container: css`
         margin: 0 auto;
@@ -57,7 +60,12 @@ export default ({ children }: { children?: Child }) => (
             />
         </head>
         <body class={cx(styles.body, styles.background)}>
-            <main class={cx(styles.main, styles.container)}>{children}</main>
+            <main class={styles.main}>
+                <div class={cx(styles.content, styles.container)}>
+                    {children}
+                </div>
+                <Banner class={styles.container} />
+            </main>
             <Footer class={styles.container} />
             <script
                 defer
