@@ -9,9 +9,8 @@ import {
     libraryVersionSri,
     libraryVersions,
 } from '../utils/kvMetadata.ts';
-import notFound from '../utils/notFound.ts';
 import { queryCheck } from '../utils/query.ts';
-import respond from '../utils/respond.ts';
+import respond, { notFound } from '../utils/respond.ts';
 import sriForVersion from '../utils/sriForVersion.ts';
 
 import type {

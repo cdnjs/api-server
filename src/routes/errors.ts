@@ -2,8 +2,7 @@ import * as Sentry from '@sentry/cloudflare';
 import type { Hono } from 'hono';
 
 import cache from '../utils/cache.ts';
-import notFound from '../utils/notFound.ts';
-import respond from '../utils/respond.ts';
+import respond, { notFound } from '../utils/respond.ts';
 
 import type { ErrorResponse } from './errors.schema.ts';
 
