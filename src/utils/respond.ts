@@ -38,7 +38,7 @@ export const withCache = (ctx: Context, age: number, immutable = false) => {
  */
 const respond = (ctx: Context, data: unknown) => {
     if (ctx.req.query('output') === 'human') {
-        event('human-output', ctx);
+        event('human-output', { ctx });
         ctx.header('X-Robots-Tag', 'noindex');
         return ctx.render(Json({ json: data }));
     }
