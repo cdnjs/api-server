@@ -73,18 +73,21 @@ const styles = {
         }
     `,
     logo: css`
+        display: block;
         max-width: 100%;
         width: ${theme.spacing(32)};
         margin: 0 0 ${theme.spacing(2)};
     `,
 };
 
+interface Link {
+    label: string;
+    href: string;
+}
+
 interface Section {
     title: string;
-    links: {
-        label: string;
-        href: string;
-    }[];
+    links: Link[];
 }
 
 const sections: Section[][] = [

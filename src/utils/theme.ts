@@ -10,8 +10,9 @@ export default {
     },
     background: {
         body: '#454647',
-        brand: '#d9643a',
+        navigation: '#343535',
         footer: '#242525',
+        brand: '#d9643a',
     },
     spacing: (value: number) => `${value * 8}px`,
     breakpoints: {
