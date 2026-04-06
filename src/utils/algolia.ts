@@ -4,6 +4,7 @@ import { env, waitUntil } from 'cloudflare:workers';
 import * as z from 'zod';
 
 import { type Library, librarySchema } from './algolia.schema.ts';
+import event from './event.ts';
 
 /**
  * Convert an ArrayBuffer to a hex string.
@@ -106,17 +107,20 @@ export const libraries = async (
                     if (parsed.success) {
                         hits.push(parsed.data);
                     } else {
-                        console.warn(
-                            'Found bad entry in Algolia data',
-                            parsed.error.issues,
-                            hit,
-                        );
                         Sentry.withScope((scope) => {
                             scope.setExtra('issues', parsed.error.issues);
                             scope.setExtra('hit', hit);
-                            Sentry.captureException(
+                            const sentry = Sentry.captureException(
                                 new Error('Bad entry in Algolia data'),
                             );
+                            event('bad-algolia-entry', {
+                                level: 'warn',
+                                data: {
+                                    issues: parsed.error.issues,
+                                    hit,
+                                    sentry,
+                                },
+                            });
                         });
                     }
                 });

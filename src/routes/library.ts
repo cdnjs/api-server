@@ -1,6 +1,5 @@
 import type { Context, Hono } from 'hono';
 
-import cache from '../utils/cache.ts';
 import files from '../utils/files.ts';
 import filter from '../utils/filter.ts';
 import {
@@ -8,18 +7,55 @@ import {
     libraryVersion,
     libraryVersionSri,
     libraryVersions,
-} from '../utils/kvMetadata.ts';
-import notFound from '../utils/notFound.ts';
+} from '../utils/metadata.ts';
 import { queryCheck } from '../utils/query.ts';
-import respond from '../utils/respond.ts';
-import sriForVersion from '../utils/sriForVersion.ts';
+import respond, { notFound, withCache } from '../utils/respond.ts';
 
 import type {
     LibraryResponse,
     LibraryVersionResponse,
 } from './library.schema.ts';
 
-const extensions = Object.keys(files);
+/**
+ * Create a map of file names to SRI hashes, based on library files and SRI data.
+ *
+ * @param library Name of the library.
+ * @param version Version of the library.
+ * @param files Names of the files for this version of the library.
+ * @param sriData SRI data for the library version.
+ */
+const sriForVersion = (
+    library: string,
+    version: string,
+    files: string[],
+    sriData: Record<string, string>,
+) => {
+    // Build the SRI object
+    const sri: Record<string, string> = {};
+    for (const file of files) {
+        const fullFile = `${library}/${version}/${file}`;
+
+        // If we have an SRI entry for this, add it
+        if (sriData && sriData[fullFile]) {
+            sri[file] = sriData[fullFile];
+            continue;
+        }
+
+        // If we don't have an SRI entry, but expect one, error!
+        // if (file.endsWith('.js') || file.endsWith('.css')) {
+        //     Sentry.withScope(scope => {
+        //         scope.setTag('library', library);
+        //         scope.setTag('library.version', version);
+        //         scope.setTag('library.file', file);
+        //         scope.setTag('library.file.full', fullFile);
+        //         Sentry.captureException(new Error('Missing SRI entry'));
+        //     });
+        // }
+    }
+
+    // Done
+    return sri;
+};
 
 /**
  * Check if a file is whitelisted for cdnjs, based on its extension.
@@ -27,7 +63,7 @@ const extensions = Object.keys(files);
  * @param file Filename to check.
  */
 const whitelisted = (file: string) =>
-    extensions.includes(file.split('.').slice(-1)[0] || '');
+    Object.keys(files).includes(file.split('.').slice(-1)[0] || '');
 
 /**
  * Handle GET /libraries/:library/:version requests.
@@ -85,7 +121,7 @@ const handleGetLibraryVersion = async (ctx: Context) => {
 
     // Set a 355 day (same as CDN) life on this response
     // This is also immutable as a version will never change
-    cache(ctx, 355 * 24 * 60 * 60, true);
+    withCache(ctx, 355 * 24 * 60 * 60, true);
 
     // Send the response
     return respond(ctx, response);
@@ -196,7 +232,7 @@ const handleGetLibrary = async (ctx: Context) => {
     }
 
     // Set a 6 hour life on this response
-    cache(ctx, 6 * 60 * 60);
+    withCache(ctx, 6 * 60 * 60);
 
     // Send the response
     return respond(ctx, response);

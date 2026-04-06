@@ -1,22 +1,22 @@
 import { env } from 'cloudflare:workers';
 
-import fetchJson from './fetchJson.ts';
+import fetch from './fetch.ts';
 import {
     librariesSchema,
     librarySchema,
     libraryVersionSchema,
     libraryVersionSriSchema,
     libraryVersionsSchema,
-} from './kvMetadata.schema.ts';
+} from './metadata.schema.ts';
 import sortVersions from './sort.ts';
 
-const kvBase = env.METADATA_BASE || 'https://metadata.speedcdnjs.com';
+const base = env.METADATA_BASE || 'https://metadata.speedcdnjs.com';
 
 /**
  * Get a list of libraries.
  */
 export const libraries = () =>
-    fetchJson(`${kvBase}/packages`).then(librariesSchema.parse);
+    fetch(`${base}/packages`).then(librariesSchema.parse);
 
 /**
  * Get the metadata for a library.
@@ -24,7 +24,7 @@ export const libraries = () =>
  * @param name Name of the library to fetch.
  */
 export const library = (name: string) =>
-    fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}`).then(
+    fetch(`${base}/packages/${encodeURIComponent(name)}`).then(
         librarySchema.parse,
     );
 
@@ -34,7 +34,7 @@ export const library = (name: string) =>
  * @param name Name of the library to fetch.
  */
 export const libraryVersions = (name: string) =>
-    fetchJson(`${kvBase}/packages/${encodeURIComponent(name)}/versions`)
+    fetch(`${base}/packages/${encodeURIComponent(name)}/versions`)
         .then(libraryVersionsSchema.parse)
         .then(sortVersions);
 
@@ -45,8 +45,8 @@ export const libraryVersions = (name: string) =>
  * @param version Version of the library to fetch.
  */
 export const libraryVersion = (name: string, version: string) =>
-    fetchJson(
-        `${kvBase}/packages/${encodeURIComponent(name)}/versions/${encodeURIComponent(version)}`,
+    fetch(
+        `${base}/packages/${encodeURIComponent(name)}/versions/${encodeURIComponent(version)}`,
     ).then(libraryVersionSchema.parse);
 
 /**
@@ -56,6 +56,6 @@ export const libraryVersion = (name: string, version: string) =>
  * @param version Version of the library to fetch.
  */
 export const libraryVersionSri = (name: string, version: string) =>
-    fetchJson(
-        `${kvBase}/packages/${encodeURIComponent(name)}/sris/${encodeURIComponent(version)}`,
+    fetch(
+        `${base}/packages/${encodeURIComponent(name)}/sris/${encodeURIComponent(version)}`,
     ).then(libraryVersionSriSchema.parse);

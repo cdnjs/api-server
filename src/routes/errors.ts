@@ -1,9 +1,8 @@
 import * as Sentry from '@sentry/cloudflare';
 import type { Hono } from 'hono';
 
-import cache from '../utils/cache.ts';
-import notFound from '../utils/notFound.ts';
-import respond from '../utils/respond.ts';
+import event from '../utils/event.ts';
+import respond, { notFound, withCache } from '../utils/respond.ts';
 
 import type { ErrorResponse } from './errors.schema.ts';
 
@@ -48,11 +47,15 @@ export default (app: Hono) => {
     // Handle errors
     app.onError((err, ctx) => {
         // Log the error
-        console.error(err.stack);
         const sentry = Sentry.captureException(err);
+        event('unhandled-error', {
+            ctx,
+            level: 'error',
+            data: { message: err.message, stack: err.stack, sentry },
+        });
 
         // Never cache this
-        cache(ctx, -1);
+        withCache(ctx, -1);
 
         // Send the error response
         ctx.status(500);
