@@ -1,8 +1,7 @@
 import * as Sentry from '@sentry/cloudflare';
 import type { Hono } from 'hono';
 
-import cache from '../utils/cache.ts';
-import respond, { notFound } from '../utils/respond.ts';
+import respond, { notFound, withCache } from '../utils/respond.ts';
 
 import type { ErrorResponse } from './errors.schema.ts';
 
@@ -51,7 +50,7 @@ export default (app: Hono) => {
         const sentry = Sentry.captureException(err);
 
         // Never cache this
-        cache(ctx, -1);
+        withCache(ctx, -1);
 
         // Send the error response
         ctx.status(500);

@@ -1,6 +1,5 @@
 import type { Context, Hono } from 'hono';
 
-import cache from '../utils/cache.ts';
 import files from '../utils/files.ts';
 import filter from '../utils/filter.ts';
 import {
@@ -10,7 +9,7 @@ import {
     libraryVersions,
 } from '../utils/metadata.ts';
 import { queryCheck } from '../utils/query.ts';
-import respond, { notFound } from '../utils/respond.ts';
+import respond, { notFound, withCache } from '../utils/respond.ts';
 
 import type {
     LibraryResponse,
@@ -122,7 +121,7 @@ const handleGetLibraryVersion = async (ctx: Context) => {
 
     // Set a 355 day (same as CDN) life on this response
     // This is also immutable as a version will never change
-    cache(ctx, 355 * 24 * 60 * 60, true);
+    withCache(ctx, 355 * 24 * 60 * 60, true);
 
     // Send the response
     return respond(ctx, response);
@@ -233,7 +232,7 @@ const handleGetLibrary = async (ctx: Context) => {
     }
 
     // Set a 6 hour life on this response
-    cache(ctx, 6 * 60 * 60);
+    withCache(ctx, 6 * 60 * 60);
 
     // Send the response
     return respond(ctx, response);

@@ -1,10 +1,9 @@
 import type { Context, Hono } from 'hono';
 
-import cache from '../utils/cache.ts';
 import filter from '../utils/filter.ts';
 import { libraries } from '../utils/metadata.ts';
 import { queryCheck } from '../utils/query.ts';
-import respond from '../utils/respond.ts';
+import respond, { withCache } from '../utils/respond.ts';
 
 import type { StatsResponse } from './stats.schema.ts';
 
@@ -23,7 +22,7 @@ const handleGetStats = async (ctx: Context) => {
     );
 
     // Set a 6 hour life on this response
-    cache(ctx, 6 * 60 * 60);
+    withCache(ctx, 6 * 60 * 60);
 
     // Send the response
     return respond(ctx, response);

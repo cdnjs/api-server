@@ -1,10 +1,9 @@
 import type { Context, Hono } from 'hono';
 
 import { libraries } from '../utils/algolia.ts';
-import cache from '../utils/cache.ts';
 import filter from '../utils/filter.ts';
 import { queryArray, queryCheck } from '../utils/query.ts';
-import respond from '../utils/respond.ts';
+import respond, { withCache } from '../utils/respond.ts';
 
 import type { LibrariesResponse } from './libraries.schema.ts';
 
@@ -44,7 +43,7 @@ const handleGetLibraries = async (ctx: Context) => {
     const trimmed = limit ? response.slice(0, limit) : response;
 
     // Set a 6 hour life on this response
-    cache(ctx, 6 * 60 * 60);
+    withCache(ctx, 6 * 60 * 60);
 
     // Send the response
     return respond(ctx, {
