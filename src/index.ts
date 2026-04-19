@@ -5,6 +5,7 @@ import { cors } from 'hono/cors';
 import { jsxRenderer } from 'hono/jsx-renderer';
 import { logger } from 'hono/logger';
 
+import apiRoutes from './routes/api.ts';
 import errorRoutes from './routes/errors.ts';
 import indexRoutes from './routes/index.ts';
 import librariesRoutes from './routes/libraries.ts';
@@ -22,6 +23,7 @@ app.use('*', jsxRenderer(layout));
 
 // Load the routes
 indexRoutes(app);
+apiRoutes(app);
 statsRoutes(app);
 whitelistRoutes(app);
 libraryRoutes(app);
