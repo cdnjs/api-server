@@ -5,6 +5,8 @@ import { cors } from 'hono/cors';
 import { jsxRenderer } from 'hono/jsx-renderer';
 import { logger } from 'hono/logger';
 
+import './utils/openapi.ts';
+
 import apiRoutes from './routes/api.ts';
 import errorRoutes from './routes/errors.ts';
 import indexRoutes from './routes/index.ts';
