@@ -1,3 +1,4 @@
+import { cache } from '@emotion/css';
 import { env } from 'cloudflare:workers';
 import type { Context } from 'hono';
 
@@ -5,6 +6,36 @@ import type { ErrorResponse } from '../routes/errors.schema.ts';
 
 import event from './event.ts';
 import Json from './jsx/json.tsx';
+
+/**
+ * Extract the critical CSS from Emotion for a given HTML string.
+ *
+ * @param html HTML to extract critical CSS from.
+ * @returns Critical CSS for the given HTML string.
+ */
+const getCriticalEmotionCss = (html: string) => {
+    const ids: string[] = [];
+    const seen = new Set<string>();
+    const classNamePattern = new RegExp(`${cache.key}-([A-Za-z0-9_-]+)`, 'g');
+
+    for (const match of html.matchAll(classNamePattern)) {
+        const id = match[1];
+        if (!id || seen.has(id)) {
+            continue;
+        }
+
+        const rule = cache.inserted[id];
+        if (typeof rule === 'string') {
+            ids.push(id);
+            seen.add(id);
+        }
+    }
+
+    return ids
+        .map((id) => cache.inserted[id])
+        .filter((rule): rule is string => typeof rule === 'string')
+        .join('');
+};
 
 /**
  * Set cache headers on a response.
@@ -36,11 +67,21 @@ export const withCache = (ctx: Context, age: number, immutable = false) => {
  * @param ctx Request context.
  * @param data Data to be included in the response.
  */
-const respond = <T = never>(ctx: Context, data: NoInfer<T>) => {
+const respond = async <T = never>(ctx: Context, data: NoInfer<T>) => {
     if (ctx.req.query('output') === 'human') {
         event('human-output', { ctx });
         ctx.header('X-Robots-Tag', 'noindex');
-        return ctx.render(Json({ json: data }));
+
+        const response = await ctx.render(Json({ json: data }));
+        const body = await response.text();
+        const styles = `<style>${getCriticalEmotionCss(body)}</style>`;
+
+        return new Response(
+            body.includes('</head>')
+                ? body.replace('</head>', `${styles}</head>`)
+                : `${styles}${body}`,
+            response,
+        );
     }
 
     return ctx.json(data);
