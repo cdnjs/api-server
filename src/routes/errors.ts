@@ -59,11 +59,11 @@ export default (app: Hono) => {
 
         // Send the error response
         ctx.status(500);
-        return respond(ctx, {
+        return respond<ErrorResponse>(ctx, {
             error: true,
             status: 500,
             message: err.message,
             ref: sentry,
-        } satisfies ErrorResponse);
+        });
     });
 };
