@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import * as z from 'zod/mini';
 
 import theme from '../../theme.ts';
-import withIsland from '../island.tsx';
+import createIsland from '../island.tsx';
 
 const indicatorSchema = z.literal(['none', 'minor', 'major', 'critical']);
 type Indicator = z.infer<typeof indicatorSchema>;
@@ -78,4 +78,4 @@ const Status = () => {
     );
 };
 
-export default withIsland(Status, 'status.tsx');
+export default createIsland(Status, 'status.tsx');

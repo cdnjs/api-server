@@ -1,5 +1,4 @@
 import { cloudflareTest } from '@cloudflare/vitest-pool-workers';
-import { mkdirSync } from 'node:fs';
 import { stripVTControlCharacters } from 'node:util';
 import { defineConfig } from 'vitest/config';
 
@@ -14,10 +13,9 @@ console.log = (...args) => {
     return originalLog(...args);
 };
 
-mkdirSync('dist-client', { recursive: true });
-
 export default defineConfig({
     test: {
+        globalSetup: './vitest.setup.ts',
         silent: 'passed-only',
         reporters: [
             'tree',

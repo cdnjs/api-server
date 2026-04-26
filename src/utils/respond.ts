@@ -7,6 +7,7 @@ import { renderToString } from 'react-dom/server';
 import type { ErrorResponse } from '../routes/errors.schema.ts';
 
 import event from './event.ts';
+import { createIslandProvider } from './jsx/island.tsx';
 import Json from './jsx/json.tsx';
 import Layout from './jsx/layout.tsx';
 
@@ -77,13 +78,22 @@ export const withCache = (ctx: Context, age: number, immutable = false) => {
  * @param ctx Request context.
  * @param data Data to be included in the response.
  */
-const respond = <T = never>(ctx: Context, data: NoInfer<T>) => {
+const respond = async <T = never>(ctx: Context, data: NoInfer<T>) => {
     if (ctx.req.query('output') === 'human') {
         event('human-output', { ctx });
         ctx.header('X-Robots-Tag', 'noindex');
 
+        const Provider = await createIslandProvider();
         const body = renderToString(
-            createElement(Layout, null, createElement(Json, { json: data })),
+            createElement(
+                Provider,
+                null,
+                createElement(
+                    Layout,
+                    null,
+                    createElement(Json, { json: data }),
+                ),
+            ),
         );
         const styles = getCriticalEmotionCss(body);
 

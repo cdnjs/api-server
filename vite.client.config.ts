@@ -30,9 +30,9 @@ const islandEntryByPath = new Map(
     islandEntries.map((entry) => [entry.path, entry]),
 );
 
-const parseWithIslandDeclaration = (source: string) => {
+const parseCreateIslandDeclaration = (source: string) => {
     const match = source.match(
-        /export\s+default\s+withIsland\(\s*([^,]+)\s*,\s*['"]([^'"]+)['"]\s*\)\s*;?/,
+        /export\s+default\s+createIsland\(\s*([^,]+)\s*,\s*['"]([^'"]+)['"]\s*\)\s*;?/,
     );
     if (!match || !match[1] || !match[2]) {
         return null;
@@ -64,10 +64,10 @@ export default defineConfig({
                     return null;
                 }
 
-                const declaration = parseWithIslandDeclaration(code);
+                const declaration = parseCreateIslandDeclaration(code);
                 if (!declaration) {
                     throw new Error(
-                        `Island file "${id}" must export its default component via withIsland(..., '<file>.tsx').`,
+                        `Island file "${id}" must export its default component via createIsland(..., '<file>.tsx').`,
                     );
                 }
 
@@ -75,16 +75,21 @@ export default defineConfig({
                     throw new Error(
                         [
                             `Island filename mismatch for "${entry.path}".`,
-                            `withIsland declares "${declaration.declaredFile}", but the actual file builds as "${entry.name}.tsx".`,
+                            `createIsland declares "${declaration.declaredFile}", but the actual file builds as "${entry.name}.tsx".`,
                             'Keep these names aligned so SSR script tags match generated client bundles.',
                         ].join(' '),
                     );
                 }
 
-                return code.replace(
-                    declaration.fullMatch,
-                    `export default ${declaration.componentReference};`,
-                );
+                return code
+                    .replace(
+                        declaration.fullMatch,
+                        `export default ${declaration.componentReference};`,
+                    )
+                    .replace(
+                        /import\s+(?:createIsland\s+)?from\s+['"]\.\.\/island\.tsx['"];?\n?/g,
+                        '',
+                    );
             },
             // Generate one virtual hydration entry per island source file.
             load(id) {
@@ -114,6 +119,7 @@ export default defineConfig({
         outDir: outputDirectory,
         emptyOutDir: true,
         sourcemap: true,
+        manifest: 'islands/manifest.json',
         rollupOptions: {
             // Generate a separate client entry for each island, based on the file name.
             input: Object.fromEntries(
@@ -124,7 +130,7 @@ export default defineConfig({
             ),
             output: {
                 // Place island chunks in a directory that doesn't conflict with the API.
-                entryFileNames: 'islands/[name].js',
+                entryFileNames: 'islands/[name]-[hash].js',
                 chunkFileNames: 'islands/chunks/[name]-[hash].js',
                 assetFileNames: 'islands/assets/[name]-[hash][extname]',
                 // Share the core React hydration code across all islands as a separate chunk.

@@ -1,4 +1,44 @@
-import { type ComponentType, useId } from 'react';
+import { env } from 'cloudflare:workers';
+import { type ComponentType, createContext, useContext, useId } from 'react';
+import * as z from 'zod';
+
+const manifestSchema = z.record(
+    z.string(),
+    z.object({
+        file: z.string(),
+    }),
+);
+
+type Manifest = z.infer<typeof manifestSchema>;
+
+const IslandContext = createContext<{ manifest: Manifest } | null>(null);
+
+/**
+ * Loads the entry manifest for client islands and returns a context provider to supply it to server-rendered islands.
+ */
+export const createIslandProvider = async () => {
+    const response = await env.ASSETS.fetch(
+        'https://assets.local/islands/manifest.json',
+    );
+    if (!response.ok) {
+        throw new Error(
+            `Failed to load island manifest: ${response.status} ${response.statusText}`,
+        );
+    }
+    const manifest = manifestSchema.parse(await response.json());
+
+    /**
+     * Server helper for providing the entry manifest to server-rendered client islands via context.
+     *
+     * @param props Wrapper props.
+     * @param props.children Children to be rendered within the provider to access the context.
+     */
+    return ({ children }: { children: React.ReactNode }) => (
+        <IslandContext.Provider value={{ manifest }}>
+            {children}
+        </IslandContext.Provider>
+    );
+};
 
 const serializeProps = (props: object) =>
     JSON.stringify(props)
@@ -26,6 +66,18 @@ const Island = <T extends object>({
     const instanceId = useId().replaceAll(':', '');
     const propsScriptId = `island-props-${name}-${instanceId}`;
 
+    const { manifest } = useContext(IslandContext) ?? {};
+    if (!manifest) {
+        throw new Error(
+            'Island component must be rendered within an IslandProvider',
+        );
+    }
+
+    const entry = manifest[`virtual:island-entry:${name}`];
+    if (!entry) {
+        throw new Error(`Missing manifest entry for island "${name}"`);
+    }
+
     return (
         <>
             <div data-island={name} data-island-props={propsScriptId}>
@@ -40,7 +92,7 @@ const Island = <T extends object>({
                 }}
             />
 
-            <script type="module" src={`/islands/${name}.js`} />
+            <script type="module" src={`/${entry.file}`} />
         </>
     );
 };
@@ -53,7 +105,7 @@ const Island = <T extends object>({
  * @param component Island component.
  * @param file Island file name (used to infer client entrypoint).
  */
-const withIsland =
+const createIsland =
     <T extends object>(
         component: ComponentType<T>,
         file: `${string}.tsx`,
@@ -66,4 +118,4 @@ const withIsland =
         />
     );
 
-export default withIsland;
+export default createIsland;
