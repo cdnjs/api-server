@@ -2,19 +2,19 @@
  * <cdnjs> SVG logo
  *
  * @param props Component props.
- * @param props.class Optional additional class name(s) to apply to the logo.
+ * @param props.className Optional additional class name(s) to apply to the logo.
  */
-export default ({ class: className }: { class?: string }) => (
+export default ({ className }: { className?: string }) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 412 113"
-        class={className}
+        className={className}
     >
         <g fill="none">
             <path
                 stroke="#a6a6a6"
-                stroke-linecap="round"
-                stroke-width="10.24"
+                strokeLinecap="round"
+                strokeWidth="10.24"
                 d="M60.54 6.736 7.229 54.333a5.53 5.53 0 0 0 .113 8.348l53.2 44.97M350.845 6.736l53.313 47.597a5.53 5.53 0 0 1-.113 8.348l-53.2 44.97"
             />
             <path

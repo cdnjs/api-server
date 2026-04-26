@@ -1,5 +1,5 @@
 import { css, cx } from '@emotion/css';
-import type { Child } from 'hono/jsx';
+import type { ReactNode } from 'react';
 
 import theme from '../theme.ts';
 
@@ -43,15 +43,15 @@ const styles = {
  * @param props Component props.
  * @param props.children Content to be included in the body of the page.
  */
-export default ({ children }: { children?: Child }) => (
-    <html lang="en" class={styles.background}>
+export default ({ children }: { children?: ReactNode }) => (
+    <html lang="en" className={styles.background}>
         <head>
             <link
                 rel="stylesheet"
                 href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/3.0.1/modern-normalize.min.css"
                 integrity="sha512-q6WgHqiHlKyOqslT/lgBgodhd03Wp4BEqKeW6nNtlOY4quzyG3VoQKFrieaCeSnuVseNKRGpGeDU3qPmabCANg=="
-                crossorigin="anonymous"
-                referrerpolicy="no-referrer"
+                crossOrigin="anonymous"
+                referrerPolicy="no-referrer"
             />
             <meta name="robots" content="noindex" />
             <meta
@@ -59,15 +59,15 @@ export default ({ children }: { children?: Child }) => (
                 content="width=device-width, initial-scale=1"
             />
         </head>
-        <body class={cx(styles.body, styles.background)}>
-            <main class={styles.main}>
-                <Navigation class={styles.container} />
-                <div class={cx(styles.content, styles.container)}>
+        <body className={cx(styles.body, styles.background)}>
+            <main className={styles.main}>
+                <Navigation className={styles.container} />
+                <div className={cx(styles.content, styles.container)}>
                     {children}
                 </div>
-                <Banner class={styles.container} />
+                <Banner className={styles.container} />
             </main>
-            <Footer class={styles.container} />
+            <Footer className={styles.container} />
             <script
                 defer
                 dangerouslySetInnerHTML={{

@@ -1,4 +1,5 @@
 import { css, cx } from '@emotion/css';
+import { Fragment } from 'react';
 
 import theme from '../theme.ts';
 
@@ -157,40 +158,38 @@ const sections: Section[][] = [
  * Standard cdnjs HTML layout for the page footer.
  *
  * @param props Component props.
- * @param props.class Optional additional class name(s) to apply to the footer.
+ * @param props.className Optional additional class name(s) to apply to the footer.
  */
-export default ({ class: className }: { class?: string }) => (
-    <footer class={cx(styles.footer, className)}>
-        <dl class={cx(styles.list, styles.copyright)}>
+export default ({ className }: { className?: string }) => (
+    <footer className={cx(styles.footer, className)}>
+        <dl className={cx(styles.list, styles.copyright)}>
             <dt>
                 <a href="https://cdnjs.com" rel="noopener" aria-label="cdnjs">
-                    <Logo class={styles.logo} />
+                    <Logo className={styles.logo} />
                 </a>
             </dt>
-            <dd class={styles.item}>
+            <dd className={styles.item}>
                 &copy; {new Date().getFullYear()} cdnjs.
             </dd>
         </dl>
 
         {sections.map((group, i) => (
-            <dl key={i} class={styles.list}>
+            <dl key={i} className={styles.list}>
                 {group.map((section) => (
-                    <>
-                        <dt key={section.title} class={styles.title}>
-                            {section.title}
-                        </dt>
+                    <Fragment key={section.title}>
+                        <dt className={styles.title}>{section.title}</dt>
                         {section.links.map((link) => (
-                            <dd key={link.href} class={styles.item}>
+                            <dd key={link.href} className={styles.item}>
                                 <a
                                     href={link.href}
                                     rel="noopener"
-                                    class={styles.link}
+                                    className={styles.link}
                                 >
                                     {link.label}
                                 </a>
                             </dd>
                         ))}
-                    </>
+                    </Fragment>
                 ))}
             </dl>
         ))}
