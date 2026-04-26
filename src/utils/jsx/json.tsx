@@ -1,4 +1,4 @@
-import { css, cx } from 'hono/css';
+import { css, cx } from '@emotion/css';
 
 import theme from '../theme.ts';
 

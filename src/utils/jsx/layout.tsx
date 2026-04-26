@@ -1,4 +1,4 @@
-import { Style, css, cx } from 'hono/css';
+import { cache, css, cx } from '@emotion/css';
 import type { Child } from 'hono/jsx';
 
 import theme from '../theme.ts';
@@ -37,6 +37,11 @@ const styles = {
     `,
 };
 
+const getEmotionCssText = () =>
+    Object.values(cache.inserted)
+        .filter((rule): rule is string => typeof rule === 'string')
+        .join('');
+
 /**
  * Standard cdnjs HTML layout.
  *
@@ -53,7 +58,12 @@ export default ({ children }: { children?: Child }) => (
                 crossorigin="anonymous"
                 referrerpolicy="no-referrer"
             />
-            <Style />
+            <style
+                data-emotion={cache.key}
+                dangerouslySetInnerHTML={{
+                    __html: getEmotionCssText(),
+                }}
+            />
             <meta name="robots" content="noindex" />
             <meta
                 name="viewport"

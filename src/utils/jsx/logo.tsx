@@ -4,7 +4,7 @@
  * @param props Component props.
  * @param props.class Optional additional class name(s) to apply to the logo.
  */
-export default ({ class: className }: { class?: string | Promise<string> }) => (
+export default ({ class: className }: { class?: string }) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 412 113"

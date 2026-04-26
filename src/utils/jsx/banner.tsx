@@ -1,4 +1,4 @@
-import { css, cx } from 'hono/css';
+import { css, cx } from '@emotion/css';
 
 import theme from '../theme.ts';
 
@@ -52,7 +52,7 @@ const styles = {
  * @param props Component props.
  * @param props.class Optional additional class name(s) to apply to the banner.
  */
-export default ({ class: className }: { class?: string | Promise<string> }) => (
+export default ({ class: className }: { class?: string }) => (
     <div class={cx(styles.banner, className)}>
         <p class={styles.intro}>Help support cdnjs</p>
         <p class={styles.text}>
