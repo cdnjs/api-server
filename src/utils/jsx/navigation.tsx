@@ -1,4 +1,4 @@
-import { css, cx } from 'hono/css';
+import { css, cx } from '@emotion/css';
 
 import theme from '../theme.ts';
 
@@ -117,7 +117,7 @@ const links: Link[] = [
  * @param props Component props.
  * @param props.class Optional additional class name(s) to apply to the navigation.
  */
-export default ({ class: className }: { class?: string | Promise<string> }) => (
+export default ({ class: className }: { class?: string }) => (
     <nav class={cx(styles.navigation, className)}>
         <ul class={styles.list}>
             <li>

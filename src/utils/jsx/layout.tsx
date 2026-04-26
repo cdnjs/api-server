@@ -1,4 +1,4 @@
-import { Style, css, cx } from 'hono/css';
+import { css, cx } from '@emotion/css';
 import type { Child } from 'hono/jsx';
 
 import theme from '../theme.ts';
@@ -53,7 +53,6 @@ export default ({ children }: { children?: Child }) => (
                 crossorigin="anonymous"
                 referrerpolicy="no-referrer"
             />
-            <Style />
             <meta name="robots" content="noindex" />
             <meta
                 name="viewport"
