@@ -105,7 +105,7 @@ const Island = <T extends object>({
  * @param component Island component.
  * @param file Island file name (used to infer client entrypoint).
  */
-const withIsland =
+const createIsland =
     <T extends object>(
         component: ComponentType<T>,
         file: `${string}.tsx`,
@@ -118,4 +118,4 @@ const withIsland =
         />
     );
 
-export default withIsland;
+export default createIsland;

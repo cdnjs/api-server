@@ -30,9 +30,9 @@ const islandEntryByPath = new Map(
     islandEntries.map((entry) => [entry.path, entry]),
 );
 
-const parseWithIslandDeclaration = (source: string) => {
+const parseCreateIslandDeclaration = (source: string) => {
     const match = source.match(
-        /export\s+default\s+withIsland\(\s*([^,]+)\s*,\s*['"]([^'"]+)['"]\s*\)\s*;?/,
+        /export\s+default\s+createIsland\(\s*([^,]+)\s*,\s*['"]([^'"]+)['"]\s*\)\s*;?/,
     );
     if (!match || !match[1] || !match[2]) {
         return null;
@@ -64,10 +64,10 @@ export default defineConfig({
                     return null;
                 }
 
-                const declaration = parseWithIslandDeclaration(code);
+                const declaration = parseCreateIslandDeclaration(code);
                 if (!declaration) {
                     throw new Error(
-                        `Island file "${id}" must export its default component via withIsland(..., '<file>.tsx').`,
+                        `Island file "${id}" must export its default component via createIsland(..., '<file>.tsx').`,
                     );
                 }
 
@@ -75,7 +75,7 @@ export default defineConfig({
                     throw new Error(
                         [
                             `Island filename mismatch for "${entry.path}".`,
-                            `withIsland declares "${declaration.declaredFile}", but the actual file builds as "${entry.name}.tsx".`,
+                            `createIsland declares "${declaration.declaredFile}", but the actual file builds as "${entry.name}.tsx".`,
                             'Keep these names aligned so SSR script tags match generated client bundles.',
                         ].join(' '),
                     );
@@ -87,7 +87,7 @@ export default defineConfig({
                         `export default ${declaration.componentReference};`,
                     )
                     .replace(
-                        /import\s+(?:withIsland\s+)?from\s+['"]\.\.\/island\.tsx['"];?\n?/g,
+                        /import\s+(?:createIsland\s+)?from\s+['"]\.\.\/island\.tsx['"];?\n?/g,
                         '',
                     );
             },

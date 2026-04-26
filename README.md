@@ -43,13 +43,13 @@ which will be bundled by Vite from [`src/utils/jsx/islands/`](src/utils/jsx/isla
 The client hydration entrypoints are built automatically for each island into `dist-client/`, via
 the [`[build]` hook in `wrangler.toml`](wrangler.toml), and served as static assets by the worker.
 
-Client components use the `withIsland` wrapper during server-side rendering to associate them with
+Client components use the `createIsland` wrapper during server-side rendering to associate them with
 their serialize props and their client hydration entrypoint:
 
 ```tsx
 import { useState } from 'react';
 
-import withIsland from '../island.tsx';
+import createIsland from '../island.tsx';
 
 const Counter = ({ label, button }: { label: string; button: string }) => {
     const [count, setCount] = useState(0);
@@ -64,11 +64,11 @@ const Counter = ({ label, button }: { label: string; button: string }) => {
     );
 };
 
-export default withIsland(Counter, 'counter.tsx');
+export default createIsland(Counter, 'counter.tsx');
 ```
 
 The components can then be used throughout the server-rendered JSX, and will be automatically
-hydrated on the client, with the Vite build automatically stripping the `withIsland` wrapper to
+hydrated on the client, with the Vite build automatically stripping the `createIsland` wrapper to
 access the underlying component for the client bundles.
 
 ## Testing and More
