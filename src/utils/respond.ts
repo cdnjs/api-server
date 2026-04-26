@@ -36,7 +36,7 @@ export const withCache = (ctx: Context, age: number, immutable = false) => {
  * @param ctx Request context.
  * @param data Data to be included in the response.
  */
-const respond = (ctx: Context, data: unknown) => {
+const respond = <T = never>(ctx: Context, data: NoInfer<T>) => {
     if (ctx.req.query('output') === 'human') {
         event('human-output', { ctx });
         ctx.header('X-Robots-Tag', 'noindex');
@@ -60,9 +60,9 @@ export const notFound = (ctx: Context, resource: string) => {
 
     // Send the error response
     ctx.status(404);
-    return respond(ctx, {
+    return respond<ErrorResponse>(ctx, {
         error: true,
         status: 404,
         message: `${resource} not found`,
-    } satisfies ErrorResponse);
+    });
 };

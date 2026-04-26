@@ -124,7 +124,7 @@ const handleGetLibraryVersion = async (ctx: Context) => {
     withCache(ctx, 355 * 24 * 60 * 60, true);
 
     // Send the response
-    return respond(ctx, response);
+    return respond<LibraryVersionResponse>(ctx, response);
 };
 
 /**
@@ -235,7 +235,7 @@ const handleGetLibrary = async (ctx: Context) => {
     withCache(ctx, 6 * 60 * 60);
 
     // Send the response
-    return respond(ctx, response);
+    return respond<LibraryResponse>(ctx, response);
 };
 
 /**

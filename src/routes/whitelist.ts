@@ -26,7 +26,7 @@ const handleGetWhitelist = (ctx: Context) => {
     withCache(ctx, 6 * 60 * 60);
 
     // Send the response
-    return respond(ctx, response);
+    return respond<WhitelistResponse>(ctx, response);
 };
 
 /**
