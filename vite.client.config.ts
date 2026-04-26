@@ -1,7 +1,8 @@
-import { globSync } from 'node:fs';
+import { existsSync, globSync, mkdirSync, rmSync } from 'node:fs';
 import { basename, extname, resolve } from 'node:path';
 import { defineConfig } from 'vite';
 
+const outputDirectory = resolve('dist-client');
 const virtualEntryPrefix = 'virtual:island-entry:';
 const hydrationRuntimePath = resolve('src/utils/island.ts');
 
@@ -12,6 +13,15 @@ const islandEntries = globSync('src/utils/jsx/islands/*.tsx')
         name: basename(file, extname(file)),
         path: resolve(file),
     }));
+
+if (islandEntries.length === 0) {
+    console.warn('No island entries found. Skipping client build.');
+    if (existsSync(outputDirectory)) {
+        rmSync(outputDirectory, { recursive: true });
+    }
+    mkdirSync(outputDirectory, { recursive: true });
+    process.exit(0);
+}
 
 const islandEntryByName = new Map(
     islandEntries.map((entry) => [entry.name, entry]),
@@ -101,7 +111,7 @@ export default defineConfig({
     ],
     build: {
         target: 'es2022',
-        outDir: 'dist-client',
+        outDir: outputDirectory,
         emptyOutDir: true,
         sourcemap: true,
         rollupOptions: {
