@@ -14,6 +14,12 @@ export default {
         footer: '#242525',
         brand: '#d9643a',
     },
+    status: {
+        none: '#2ecc71',
+        minor: '#f1c40f',
+        major: '#e67e22',
+        critical: '#e74c3c',
+    },
     spacing: (value: number) => `${value * 8}px`,
     breakpoints: {
         medium: breakpoint(96),

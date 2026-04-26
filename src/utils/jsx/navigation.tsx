@@ -1,7 +1,9 @@
 import { css, cx } from '@emotion/css';
+import type { ReactNode } from 'react';
 
 import theme from '../theme.ts';
 
+import Status from './islands/status.tsx';
 import Logo from './logo.tsx';
 
 const styles = {
@@ -48,7 +50,9 @@ const styles = {
         }
     `,
     link: css`
-        display: block;
+        display: flex;
+        align-items: baseline;
+        gap: ${theme.spacing(1)};
         padding: ${theme.spacing(1)};
         color: ${theme.text.primary};
         text-decoration: none;
@@ -99,7 +103,7 @@ const styles = {
 };
 
 interface Link {
-    label: string;
+    label: ReactNode;
     href: string;
 }
 
@@ -108,7 +112,15 @@ const links: Link[] = [
     { label: 'Libraries', href: 'https://cdnjs.com/libraries' },
     { label: 'API', href: 'https://cdnjs.com/api' },
     { label: 'GitHub', href: 'https://github.com/cdnjs' },
-    { label: 'Status', href: 'https://status.cdnjs.com' },
+    {
+        label: (
+            <>
+                Status
+                <Status />
+            </>
+        ),
+        href: 'https://status.cdnjs.com',
+    },
 ];
 
 /**
