@@ -11,6 +11,7 @@ watch_dir = "src"
 
 [assets]
 directory = "./dist-client"
+binding = "ASSETS"
 
 [observability.logs]
 enabled = true

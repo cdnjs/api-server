@@ -81,10 +81,15 @@ export default defineConfig({
                     );
                 }
 
-                return code.replace(
-                    declaration.fullMatch,
-                    `export default ${declaration.componentReference};`,
-                );
+                return code
+                    .replace(
+                        declaration.fullMatch,
+                        `export default ${declaration.componentReference};`,
+                    )
+                    .replace(
+                        /import\s+(?:withIsland\s+)?from\s+['"]\.\.\/island\.tsx['"];?\n?/g,
+                        '',
+                    );
             },
             // Generate one virtual hydration entry per island source file.
             load(id) {
@@ -114,6 +119,7 @@ export default defineConfig({
         outDir: outputDirectory,
         emptyOutDir: true,
         sourcemap: true,
+        manifest: 'islands/manifest.json',
         rollupOptions: {
             // Generate a separate client entry for each island, based on the file name.
             input: Object.fromEntries(
@@ -124,7 +130,7 @@ export default defineConfig({
             ),
             output: {
                 // Place island chunks in a directory that doesn't conflict with the API.
-                entryFileNames: 'islands/[name].js',
+                entryFileNames: 'islands/[name]-[hash].js',
                 chunkFileNames: 'islands/chunks/[name]-[hash].js',
                 assetFileNames: 'islands/assets/[name]-[hash][extname]',
                 // Share the core React hydration code across all islands as a separate chunk.
