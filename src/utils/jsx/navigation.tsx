@@ -115,20 +115,20 @@ const links: Link[] = [
  * Standard cdnjs HTML layout for the page navigation.
  *
  * @param props Component props.
- * @param props.class Optional additional class name(s) to apply to the navigation.
+ * @param props.className Optional additional class name(s) to apply to the navigation.
  */
-export default ({ class: className }: { class?: string }) => (
-    <nav class={cx(styles.navigation, className)}>
-        <ul class={styles.list}>
+export default ({ className }: { className?: string }) => (
+    <nav className={cx(styles.navigation, className)}>
+        <ul className={styles.list}>
             <li>
                 <a href="https://cdnjs.com" rel="noopener" aria-label="cdnjs">
-                    <Logo class={styles.logo} />
+                    <Logo className={styles.logo} />
                 </a>
             </li>
 
             {links.map((link) => (
                 <li key={link.href}>
-                    <a href={link.href} rel="noopener" class={styles.link}>
+                    <a href={link.href} rel="noopener" className={styles.link}>
                         {link.label}
                     </a>
                 </li>
@@ -137,19 +137,19 @@ export default ({ class: className }: { class?: string }) => (
             <li>
                 <details>
                     <summary
-                        class={cx(styles.link, styles.toggle)}
+                        className={cx(styles.link, styles.toggle)}
                         aria-label="Navigation links"
                     >
                         &equiv;
                     </summary>
 
-                    <ul class={styles.mobile}>
+                    <ul className={styles.mobile}>
                         {links.map((link) => (
                             <li key={link.href}>
                                 <a
                                     href={link.href}
                                     rel="noopener"
-                                    class={styles.link}
+                                    className={styles.link}
                                 >
                                     {link.label}
                                 </a>
