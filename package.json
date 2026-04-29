@@ -32,12 +32,15 @@
     },
     "dependencies": {
         "@asteasolutions/zod-to-openapi": "^8.5.0",
+        "@emotion/css": "^11.13.5",
         "@sentry/cloudflare": "^10.46.0",
         "algoliasearch": "^5.50.0",
         "hono": "^4.12.14",
         "is-deflate": "^1.0.0",
         "is-gzip": "^2.0.0",
         "pako": "^2.1.0",
+        "react": "^19.2.5",
+        "react-dom": "^19.2.5",
         "semver": "^7.7.4",
         "zod": "^4.3.6"
     },
@@ -49,6 +52,8 @@
         "@types/is-gzip": "^2.0.2",
         "@types/node": "~24.12.0",
         "@types/pako": "^2.0.4",
+        "@types/react": "^19.2.14",
+        "@types/react-dom": "^19.2.3",
         "@types/semver": "^7.7.1",
         "eslint": "^10.1.0",
         "eslint-config-prettier": "^10.1.8",
@@ -58,6 +63,7 @@
         "prettier": "^3.8.1",
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.57.2",
+        "vite": "^8.0.10",
         "vitest": "^4.1.2",
         "wrangler": "^4.78.0"
     },
