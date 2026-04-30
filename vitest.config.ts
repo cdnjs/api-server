@@ -15,6 +15,7 @@ console.log = (...args) => {
 
 export default defineConfig({
     test: {
+        globalSetup: './vitest.setup.ts',
         silent: 'passed-only',
         reporters: [
             'tree',

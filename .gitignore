@@ -4,5 +4,6 @@ node_modules/
 .vscode/
 
 dist-worker/
+dist-client/
 .wrangler/
 worker-configuration.d.ts

@@ -1,7 +1,9 @@
-import { css, cx } from 'hono/css';
+import { css, cx } from '@emotion/css';
+import type { ReactNode } from 'react';
 
 import theme from '../theme.ts';
 
+import Status from './islands/status.tsx';
 import Logo from './logo.tsx';
 
 const styles = {
@@ -48,7 +50,9 @@ const styles = {
         }
     `,
     link: css`
-        display: block;
+        display: flex;
+        align-items: baseline;
+        gap: ${theme.spacing(1)};
         padding: ${theme.spacing(1)};
         color: ${theme.text.primary};
         text-decoration: none;
@@ -99,7 +103,7 @@ const styles = {
 };
 
 interface Link {
-    label: string;
+    label: ReactNode;
     href: string;
 }
 
@@ -108,27 +112,35 @@ const links: Link[] = [
     { label: 'Libraries', href: 'https://cdnjs.com/libraries' },
     { label: 'API', href: 'https://cdnjs.com/api' },
     { label: 'GitHub', href: 'https://github.com/cdnjs' },
-    { label: 'Status', href: 'https://status.cdnjs.com' },
+    {
+        label: (
+            <>
+                Status
+                <Status />
+            </>
+        ),
+        href: 'https://status.cdnjs.com',
+    },
 ];
 
 /**
  * Standard cdnjs HTML layout for the page navigation.
  *
  * @param props Component props.
- * @param props.class Optional additional class name(s) to apply to the navigation.
+ * @param props.className Optional additional class name(s) to apply to the navigation.
  */
-export default ({ class: className }: { class?: string | Promise<string> }) => (
-    <nav class={cx(styles.navigation, className)}>
-        <ul class={styles.list}>
+export default ({ className }: { className?: string }) => (
+    <nav className={cx(styles.navigation, className)}>
+        <ul className={styles.list}>
             <li>
                 <a href="https://cdnjs.com" rel="noopener" aria-label="cdnjs">
-                    <Logo class={styles.logo} />
+                    <Logo className={styles.logo} />
                 </a>
             </li>
 
             {links.map((link) => (
                 <li key={link.href}>
-                    <a href={link.href} rel="noopener" class={styles.link}>
+                    <a href={link.href} rel="noopener" className={styles.link}>
                         {link.label}
                     </a>
                 </li>
@@ -137,19 +149,19 @@ export default ({ class: className }: { class?: string | Promise<string> }) => (
             <li>
                 <details>
                     <summary
-                        class={cx(styles.link, styles.toggle)}
+                        className={cx(styles.link, styles.toggle)}
                         aria-label="Navigation links"
                     >
                         &equiv;
                     </summary>
 
-                    <ul class={styles.mobile}>
+                    <ul className={styles.mobile}>
                         {links.map((link) => (
                             <li key={link.href}>
                                 <a
                                     href={link.href}
                                     rel="noopener"
-                                    class={styles.link}
+                                    className={styles.link}
                                 >
                                     {link.label}
                                 </a>

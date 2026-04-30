@@ -1,4 +1,4 @@
-import { css, cx } from 'hono/css';
+import { css, cx } from '@emotion/css';
 
 import theme from '../theme.ts';
 
@@ -50,17 +50,17 @@ const styles = {
  * Standard cdnjs HTML layout for the page pre-footer banner.
  *
  * @param props Component props.
- * @param props.class Optional additional class name(s) to apply to the banner.
+ * @param props.className Optional additional class name(s) to apply to the banner.
  */
-export default ({ class: className }: { class?: string | Promise<string> }) => (
-    <div class={cx(styles.banner, className)}>
-        <p class={styles.intro}>Help support cdnjs</p>
-        <p class={styles.text}>
+export default ({ className }: { className?: string }) => (
+    <div className={cx(styles.banner, className)}>
+        <p className={styles.intro}>Help support cdnjs</p>
+        <p className={styles.text}>
             You can{' '}
             <a
                 href="https://github.com/cdnjs/packages/issues"
                 rel="noopener"
-                class={styles.link}
+                className={styles.link}
             >
                 contribute on GitHub
             </a>{' '}
@@ -69,7 +69,7 @@ export default ({ class: className }: { class?: string | Promise<string> }) => (
             <a
                 href="https://github.com/cdnjs/packages?sponsor"
                 rel="noopener"
-                class={styles.link}
+                className={styles.link}
             >
                 GitHub Sponsors
             </a>
@@ -77,7 +77,7 @@ export default ({ class: className }: { class?: string | Promise<string> }) => (
             <a
                 href="https://opencollective.com/cdnjs"
                 rel="noopener"
-                class={styles.link}
+                className={styles.link}
             >
                 Open Collective
             </a>
@@ -85,7 +85,7 @@ export default ({ class: className }: { class?: string | Promise<string> }) => (
             <a
                 href="https://www.patreon.com/cdnjs"
                 rel="noopener"
-                class={styles.link}
+                className={styles.link}
             >
                 Patreon
             </a>

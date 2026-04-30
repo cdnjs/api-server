@@ -1,4 +1,4 @@
-import { css, cx } from 'hono/css';
+import { css, cx } from '@emotion/css';
 
 import theme from '../theme.ts';
 
@@ -23,12 +23,12 @@ export default ({ json }: { json: unknown }) => (
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css"
             integrity="sha512-hasIneQUHlh06VNBe7f6ZcHmeRTLIaQWFd43YriJ0UND19bvYRauxthDg8E4eVNPm9bRUhr5JGeqH7FRFXQu5g=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
+            crossOrigin="anonymous"
+            referrerPolicy="no-referrer"
         />
 
-        <pre class={styles.pre}>
-            <code class={cx(styles.code, 'language-json')}>
+        <pre className={styles.pre}>
+            <code className={cx(styles.code, 'language-json')}>
                 {JSON.stringify(json, null, 2)}
             </code>
         </pre>
@@ -36,14 +36,14 @@ export default ({ json }: { json: unknown }) => (
         <script
             src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"
             integrity="sha512-EBLzUL8XLl+va/zAsmXwS7Z2B1F9HUHkZwyS/VKwh3S7T/U0nF4BaU29EP/ZSf6zgiIxYAnKLu6bJ8dqpmX5uw=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
+            crossOrigin="anonymous"
+            referrerPolicy="no-referrer"
         />
         <script
             src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/json.min.js"
             integrity="sha512-f2/ljYb/tG4fTHu6672tyNdoyhTIpt4N1bGrBE8ZjwIgrjDCd+rljLpWCZ2Vym9PBWQy2Tl9O22Pp2rMOMvH4g=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
+            crossOrigin="anonymous"
+            referrerPolicy="no-referrer"
         />
         <script
             defer

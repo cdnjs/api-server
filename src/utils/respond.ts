@@ -1,10 +1,52 @@
+import { cache } from '@emotion/css';
 import { env } from 'cloudflare:workers';
 import type { Context } from 'hono';
+import { createElement } from 'react';
+import { renderToString } from 'react-dom/server';
 
 import type { ErrorResponse } from '../routes/errors.schema.ts';
 
 import event from './event.ts';
+import { createIslandProvider } from './jsx/island.tsx';
 import Json from './jsx/json.tsx';
+import Layout from './jsx/layout.tsx';
+
+/**
+ * Extract the critical CSS from Emotion for a given HTML string.
+ *
+ * Reimplementation of https://github.com/emotion-js/emotion/blob/%40emotion/server%4011.11.0/packages/server/src/create-instance/extract-critical.js
+ *  without the reliance on Node.js APIs from other parts of the \@emotion/server package.
+ *
+ * @param html HTML to extract critical CSS from.
+ * @returns Critical CSS for the given HTML string.
+ */
+const getCriticalEmotionCss = (html: string) => {
+    const seen = new Set<string>();
+    for (const match of html.matchAll(
+        new RegExp(`${cache.key}-([A-Za-z0-9_-]+)`, 'g'),
+    )) {
+        const id = match[1];
+        if (!id || seen.has(id)) {
+            continue;
+        }
+        seen.add(id);
+    }
+
+    let css = '';
+    const ids = Object.keys(cache.inserted).filter((id) => {
+        if (
+            (seen.has(id) ||
+                cache.registered[`${cache.key}-${id}`] === undefined) &&
+            cache.inserted[id] !== true
+        ) {
+            css += cache.inserted[id];
+            return true;
+        }
+        return false;
+    });
+
+    return `<style data-emotion="${cache.key} ${ids.join(' ')}">${css}</style>`;
+};
 
 /**
  * Set cache headers on a response.
@@ -36,11 +78,30 @@ export const withCache = (ctx: Context, age: number, immutable = false) => {
  * @param ctx Request context.
  * @param data Data to be included in the response.
  */
-const respond = (ctx: Context, data: unknown) => {
+const respond = async <T = never>(ctx: Context, data: NoInfer<T>) => {
     if (ctx.req.query('output') === 'human') {
         event('human-output', { ctx });
         ctx.header('X-Robots-Tag', 'noindex');
-        return ctx.render(Json({ json: data }));
+
+        const Provider = await createIslandProvider();
+        const body = renderToString(
+            createElement(
+                Provider,
+                null,
+                createElement(
+                    Layout,
+                    null,
+                    createElement(Json, { json: data }),
+                ),
+            ),
+        );
+        const styles = getCriticalEmotionCss(body);
+
+        return ctx.html(
+            body.includes('</head>')
+                ? body.replace('</head>', `${styles}</head>`)
+                : `${styles}${body}`,
+        );
     }
 
     return ctx.json(data);
@@ -60,9 +121,9 @@ export const notFound = (ctx: Context, resource: string) => {
 
     // Send the error response
     ctx.status(404);
-    return respond(ctx, {
+    return respond<ErrorResponse>(ctx, {
         error: true,
         status: 404,
         message: `${resource} not found`,
-    } satisfies ErrorResponse);
+    });
 };

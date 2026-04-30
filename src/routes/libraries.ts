@@ -46,11 +46,11 @@ const handleGetLibraries = async (ctx: Context) => {
     withCache(ctx, 6 * 60 * 60);
 
     // Send the response
-    return respond(ctx, {
+    return respond<LibrariesResponse>(ctx, {
         results: trimmed,
         total: trimmed.length, // Total results we're sending back
         available: response.length, // Total number available without trimming
-    } satisfies LibrariesResponse);
+    });
 };
 
 /**
