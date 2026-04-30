@@ -8,6 +8,7 @@ import { z } from 'zod';
 import respond, { withCache } from '../utils/respond.ts';
 
 import { openApiResponseSchema } from './api.schema.ts';
+import type { OpenApiResponse } from './api.schema.ts';
 import { errorResponseSchema } from './errors.schema.ts';
 import { librariesResponseSchema } from './libraries.schema.ts';
 import {
@@ -296,7 +297,7 @@ const handleGetApi = (ctx: Context) => {
     // Set a 6 hour life on this response
     withCache(ctx, 6 * 60 * 60);
 
-    return respond(ctx, openApiSpec);
+    return respond<OpenApiResponse>(ctx, openApiSpec);
 };
 
 /**
