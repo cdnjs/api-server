@@ -1,4 +1,6 @@
+import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import type { Context, Hono } from 'hono';
+import * as z from 'zod';
 
 import files from '../utils/files.ts';
 import filter from '../utils/filter.ts';
@@ -11,9 +13,12 @@ import {
 import { queryCheck } from '../utils/query.ts';
 import respond, { notFound, withCache } from '../utils/respond.ts';
 
-import type {
-    LibraryResponse,
-    LibraryVersionResponse,
+import { errorResponseSchema } from './errors.schema.ts';
+import {
+    type LibraryResponse,
+    type LibraryVersionResponse,
+    libraryResponseSchema,
+    libraryVersionResponseSchema,
 } from './library.schema.ts';
 
 /**
@@ -242,13 +247,97 @@ const handleGetLibrary = async (ctx: Context) => {
  * Register library routes.
  *
  * @param app App instance.
+ * @param registry OpenAPI registry instance.
  */
-export default (app: Hono) => {
+export default (app: Hono, registry: OpenAPIRegistry) => {
     // Library version
     app.get('/libraries/:library/:version', handleGetLibraryVersion);
     app.get('/libraries/:library/:version/', handleGetLibraryVersion);
 
+    registry.registerPath({
+        method: 'get',
+        path: '/libraries/{library}/{version}',
+        summary: 'Getting a specific version for a library on cdnjs',
+        description:
+            'The `/libraries/:library/:version` endpoint returns a JSON object with details specific to a requested version of a library on cdnjs.\n\nThe cache lifetime on this endpoint is 355 days, identical to the CDN. The response is also marked as immutable, as a version on cdnjs will never change once published.\n\ncdnjs only allows access to specific versions of a library, and these are considered immutable. Access to tags for a library, such as `latest`, is not supported as these have a mutable definition, which would go against what cdnjs aims to provide with long-life caching on responses and SRI hashes.',
+        tags: ['libraries'],
+        request: {
+            params: z.object({
+                library: z
+                    .string()
+                    .openapi({ description: 'The name of the library.' }),
+                version: z
+                    .string()
+                    .openapi({ description: 'The version of the library.' }),
+            }),
+            query: z.object({
+                fields: z.string().optional().openapi({
+                    description:
+                        'Provide a comma-separated string of fields to return.',
+                }),
+            }),
+        },
+        responses: {
+            200: {
+                description: 'Library version details',
+                content: {
+                    'application/json': {
+                        schema: libraryVersionResponseSchema,
+                    },
+                },
+            },
+            404: {
+                description: 'Library or version not found',
+                content: {
+                    'application/json': {
+                        schema: errorResponseSchema,
+                    },
+                },
+            },
+        },
+    });
+
     // Library
     app.get('/libraries/:library', handleGetLibrary);
     app.get('/libraries/:library/', handleGetLibrary);
+
+    registry.registerPath({
+        method: 'get',
+        path: '/libraries/{library}',
+        summary: 'Getting a specific library on cdnjs',
+        description:
+            'Accessing `assets` for all versions of a library using this endpoint is deprecated. The `assets` property now only contains a single entry for the latest version. To access the assets of any version, use the `/libraries/:library/:version` endpoint.\n\nSee [cdnjs/cdnjs issue #14140](https://github.com/cdnjs/cdnjs/issues/14140) for more information.\n\nThe `/libraries/:library` endpoint allows for data on a specific library to be requested and will return a JSON object with all library data properties by default.\n\nThe cache lifetime on this endpoint is six hours.',
+        tags: ['libraries'],
+        request: {
+            params: z.object({
+                library: z
+                    .string()
+                    .openapi({ description: 'The name of the library.' }),
+            }),
+            query: z.object({
+                fields: z.string().optional().openapi({
+                    description:
+                        'Provide a comma-separated string of fields to return in the library object.',
+                }),
+            }),
+        },
+        responses: {
+            200: {
+                description: 'Library details',
+                content: {
+                    'application/json': {
+                        schema: libraryResponseSchema,
+                    },
+                },
+            },
+            404: {
+                description: 'Library not found',
+                content: {
+                    'application/json': {
+                        schema: errorResponseSchema,
+                    },
+                },
+            },
+        },
+    });
 };

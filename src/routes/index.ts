@@ -1,3 +1,4 @@
+import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { env } from 'cloudflare:workers';
 import type { Context, Hono } from 'hono';
 
@@ -53,8 +54,9 @@ const handleGetRobotsTxt = (ctx: Context) => {
  * Register core routes.
  *
  * @param app App instance.
+ * @param _registry OpenAPI registry instance.
  */
-export default (app: Hono) => {
+export default (app: Hono, _registry: OpenAPIRegistry) => {
     // Redirect root the API docs
     app.get('/', handleGet);
 

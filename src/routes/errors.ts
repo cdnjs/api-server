@@ -1,3 +1,4 @@
+import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import * as Sentry from '@sentry/cloudflare';
 import type { Hono } from 'hono';
 
@@ -13,8 +14,9 @@ const stringOrUndefined = (value: unknown) =>
  * Register error handlers for routes.
  *
  * @param app App instance.
+ * @param _registry OpenAPI registry instance.
  */
-export default (app: Hono) => {
+export default (app: Hono, _registry: OpenAPIRegistry) => {
     // Pass request context to Sentry
     app.use('*', async (ctx, next) => {
         Sentry.setTags({

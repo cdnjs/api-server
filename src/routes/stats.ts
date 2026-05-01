@@ -1,11 +1,13 @@
+import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import type { Context, Hono } from 'hono';
+import * as z from 'zod';
 
 import filter from '../utils/filter.ts';
 import { libraries } from '../utils/metadata.ts';
 import { queryCheck } from '../utils/query.ts';
 import respond, { withCache } from '../utils/respond.ts';
 
-import type { StatsResponse } from './stats.schema.ts';
+import { type StatsResponse, statsResponseSchema } from './stats.schema.ts';
 
 /**
  * Handle GET /stats requests.
@@ -32,8 +34,36 @@ const handleGetStats = async (ctx: Context) => {
  * Register stats routes.
  *
  * @param app App instance.
+ * @param registry OpenAPI registry instance.
  */
-export default (app: Hono) => {
+export default (app: Hono, registry: OpenAPIRegistry) => {
     app.get('/stats', handleGetStats);
     app.get('/stats/', handleGetStats);
+
+    registry.registerPath({
+        method: 'get',
+        path: '/stats',
+        summary: 'Fetch basic statistics for cdnjs',
+        description:
+            'The `/stats` endpoint returns a JSON object containing a set of statistics relating to cdnjs.\n\nThe cache lifetime on this endpoint is 6 hours.',
+        tags: ['meta'],
+        request: {
+            query: z.object({
+                fields: z.string().optional().openapi({
+                    description:
+                        'Provide a comma-separated string of fields to return in the stats object.',
+                }),
+            }),
+        },
+        responses: {
+            200: {
+                description: 'Statistics',
+                content: {
+                    'application/json': {
+                        schema: statsResponseSchema,
+                    },
+                },
+            },
+        },
+    });
 };
