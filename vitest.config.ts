@@ -1,17 +1,5 @@
 import { cloudflareTest } from '@cloudflare/vitest-pool-workers';
-import { stripVTControlCharacters } from 'node:util';
 import { defineConfig } from 'vitest/config';
-
-// FIXME: https://github.com/cloudflare/workers-sdk/issues/12014
-const originalLog = console.log;
-console.log = (...args) => {
-    const prefix =
-        typeof args[0] === 'string'
-            ? stripVTControlCharacters(args[0]).split(' ')[0]
-            : undefined;
-    if (prefix === '[vpw:debug]' || prefix === '[vpw:info]') return;
-    return originalLog(...args);
-};
 
 export default defineConfig({
     test: {
