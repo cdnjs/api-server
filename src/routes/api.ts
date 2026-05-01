@@ -15,7 +15,9 @@ const createHandleGetApi = (registry: OpenAPIRegistry) => {
 
     const getOrGenerateSpec = () => {
         if (!spec) {
-            registry.definitions.forEach((def) => {
+            const definitions = registry.definitions.slice();
+
+            definitions.forEach((def) => {
                 if (def.type === 'route') {
                     def.route.request ??= {};
                     def.route.request.query ??= z.object({});
@@ -46,9 +48,38 @@ const createHandleGetApi = (registry: OpenAPIRegistry) => {
                 }
             });
 
-            spec = new OpenApiGeneratorV3(
-                registry.definitions,
-            ).generateDocument({
+            definitions.sort((a, b) => {
+                if (a.type === 'route' && b.type === 'route') {
+                    // Sort by method first
+                    const methodOrder = [
+                        'get',
+                        'post',
+                        'patch',
+                        'put',
+                        'delete',
+                    ];
+                    const methodComparison =
+                        methodOrder.indexOf(a.route.method) -
+                        methodOrder.indexOf(b.route.method);
+                    if (methodComparison !== 0) {
+                        return methodComparison;
+                    }
+
+                    // Then, sort by how deep the route is
+                    const aDepth = a.route.path.split('/').length;
+                    const bDepth = b.route.path.split('/').length;
+                    if (aDepth !== bDepth) {
+                        return aDepth - bDepth;
+                    }
+
+                    // Finally, sort alphabetically
+                    return a.route.path.localeCompare(b.route.path);
+                }
+
+                return 0;
+            });
+
+            spec = new OpenApiGeneratorV3(definitions).generateDocument({
                 openapi: '3.0.0',
                 info: {
                     title: 'cdnjs API',
