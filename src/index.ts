@@ -4,6 +4,9 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 
+import './utils/openapi.ts';
+
+import apiRoutes from './routes/api.ts';
 import errorRoutes from './routes/errors.ts';
 import indexRoutes from './routes/index.ts';
 import librariesRoutes from './routes/libraries.ts';
@@ -19,6 +22,7 @@ app.use('*', cors(corsOptions));
 
 // Load the routes
 indexRoutes(app);
+apiRoutes(app);
 statsRoutes(app);
 whitelistRoutes(app);
 libraryRoutes(app);
