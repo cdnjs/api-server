@@ -1,3 +1,4 @@
+import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import type { Context, Hono } from 'hono';
 
 import files from '../utils/files.ts';
@@ -242,8 +243,9 @@ const handleGetLibrary = async (ctx: Context) => {
  * Register library routes.
  *
  * @param app App instance.
+ * @param _registry OpenAPI registry instance.
  */
-export default (app: Hono) => {
+export default (app: Hono, _registry: OpenAPIRegistry) => {
     // Library version
     app.get('/libraries/:library/:version', handleGetLibraryVersion);
     app.get('/libraries/:library/:version/', handleGetLibraryVersion);

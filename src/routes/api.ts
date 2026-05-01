@@ -303,8 +303,9 @@ const handleGetApi = (ctx: Context) => {
  * Register api route.
  *
  * @param app App instance.
+ * @param _registry OpenAPI registry instance.
  */
-export default (app: Hono) => {
+export default (app: Hono, _registry: OpenAPIRegistry) => {
     app.get('/api', handleGetApi);
     app.get('/api/', handleGetApi);
 };

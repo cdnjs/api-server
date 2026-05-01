@@ -1,3 +1,4 @@
+import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import type { Context, Hono } from 'hono';
 
 import { libraries } from '../utils/algolia.ts';
@@ -57,8 +58,9 @@ const handleGetLibraries = async (ctx: Context) => {
  * Register libraries routes.
  *
  * @param app App instance.
+ * @param _registry OpenAPI registry instance.
  */
-export default (app: Hono) => {
+export default (app: Hono, _registry: OpenAPIRegistry) => {
     app.get('/libraries', handleGetLibraries);
     app.get('/libraries/', handleGetLibraries);
 };

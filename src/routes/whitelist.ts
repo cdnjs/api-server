@@ -1,3 +1,4 @@
+import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import type { Context, Hono } from 'hono';
 
 import files from '../utils/files.ts';
@@ -33,8 +34,9 @@ const handleGetWhitelist = (ctx: Context) => {
  * Register whitelist routes.
  *
  * @param app App instance.
+ * @param _registry OpenAPI registry instance.
  */
-export default (app: Hono) => {
+export default (app: Hono, _registry: OpenAPIRegistry) => {
     // Whitelist
     app.get('/whitelist', handleGetWhitelist);
     app.get('/whitelist/', handleGetWhitelist);

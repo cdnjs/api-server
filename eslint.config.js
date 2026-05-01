@@ -15,6 +15,15 @@ export default defineConfig(
         ...prettier,
     },
     {
+        name: 'custom/typescript',
+        rules: {
+            '@typescript-eslint/no-unused-vars': [
+                'error',
+                { argsIgnorePattern: '^_' },
+            ],
+        },
+    },
+    {
         name: 'custom/jsdoc',
         rules: {
             'jsdoc/require-returns': 'off',
