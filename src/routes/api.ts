@@ -3,43 +3,89 @@ import {
     OpenApiGeneratorV3,
 } from '@asteasolutions/zod-to-openapi';
 import type { Context, Hono } from 'hono';
+import * as z from 'zod';
 
 import respond, { withCache } from '../utils/respond.ts';
 
 import { type OpenApiResponse, openApiResponseSchema } from './api.schema.ts';
+import { errorResponseSchema } from './errors.schema.ts';
 
-const registry = new OpenAPIRegistry();
+const createHandleGetApi = (registry: OpenAPIRegistry) => {
+    let spec: ReturnType<OpenApiGeneratorV3['generateDocument']>;
 
-const generator = new OpenApiGeneratorV3(registry.definitions);
+    const getOrGenerateSpec = () => {
+        if (!spec) {
+            registry.definitions.forEach((def) => {
+                if (def.type === 'route') {
+                    def.route.request ??= {};
+                    def.route.request.query ??= z.object({});
 
-const openApiSpec = generator.generateDocument({
-    openapi: '3.0.0',
-    info: {
-        title: 'cdnjs API',
-        description:
-            'The cdnjs API allows for easy programmatic navigation of our libraries.',
-        version: '1.0.0',
-    },
-    servers: [{ url: 'https://api.cdnjs.com', description: 'Production' }],
-});
+                    if (!(def.route.request.query instanceof z.ZodObject)) {
+                        throw new Error(
+                            `Expected query schema for ${def.route.method.toUpperCase()} ${def.route.path} to be a ZodObject`,
+                        );
+                    }
 
-if (
-    openApiSpec.components?.parameters &&
-    Object.keys(openApiSpec.components.parameters).length === 0
-) {
-    delete openApiSpec.components.parameters;
-}
+                    // Inject the human output query parameter that all routes support
+                    def.route.request.query = def.route.request.query.extend({
+                        output: z.string().optional().openapi({
+                            description:
+                                'Use the output value human to receive the JSON results in pretty print format, presented on a HTML page.',
+                        }),
+                    });
 
-/**
- * Handle GET /api requests.
- *
- * @param ctx Request context.
- */
-const handleGetApi = (ctx: Context) => {
-    // Set a 6 hour life on this response
-    withCache(ctx, 6 * 60 * 60);
+                    // Inject the standard 500 response that all routes could return
+                    def.route.responses[500] = {
+                        description: 'Internal server error',
+                        content: {
+                            'application/json': {
+                                schema: errorResponseSchema,
+                            },
+                        },
+                    };
+                }
+            });
 
-    return respond<OpenApiResponse>(ctx, openApiSpec);
+            spec = new OpenApiGeneratorV3(
+                registry.definitions,
+            ).generateDocument({
+                openapi: '3.0.0',
+                info: {
+                    title: 'cdnjs API',
+                    description:
+                        'The cdnjs API allows for easy programmatic navigation of our libraries.',
+                    version: '1.0.0',
+                },
+                servers: [
+                    { url: 'https://api.cdnjs.com', description: 'Production' },
+                ],
+            });
+
+            // Clean up the empty parameters components object, as the OpenAPI linter doesn't like it
+            if (
+                spec.components?.parameters &&
+                Object.keys(spec.components.parameters).length === 0
+            ) {
+                delete spec.components.parameters;
+            }
+        }
+
+        return spec;
+    };
+
+    /**
+     * Handle GET /api requests.
+     *
+     * @param ctx Request context.
+     */
+    const handleGetApi = (ctx: Context) => {
+        // Set a 6 hour life on this response
+        withCache(ctx, 6 * 60 * 60);
+
+        return respond<OpenApiResponse>(ctx, getOrGenerateSpec());
+    };
+
+    return handleGetApi;
 };
 
 /**
@@ -49,8 +95,8 @@ const handleGetApi = (ctx: Context) => {
  * @param registry OpenAPI registry instance.
  */
 export default (app: Hono, registry: OpenAPIRegistry) => {
-    app.get('/api', handleGetApi);
-    app.get('/api/', handleGetApi);
+    app.get('/api', createHandleGetApi(registry));
+    app.get('/api/', createHandleGetApi(registry));
 
     registry.registerPath({
         method: 'get',
