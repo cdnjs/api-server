@@ -1,12 +1,16 @@
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import type { Context, Hono } from 'hono';
+import * as z from 'zod';
 
 import files from '../utils/files.ts';
 import filter from '../utils/filter.ts';
 import { queryCheck } from '../utils/query.ts';
 import respond, { withCache } from '../utils/respond.ts';
 
-import type { WhitelistResponse } from './whitelist.schema.ts';
+import {
+    type WhitelistResponse,
+    whitelistResponseSchema,
+} from './whitelist.schema.ts';
 
 /**
  * Handle GET /whitelist requests.
@@ -34,10 +38,37 @@ const handleGetWhitelist = (ctx: Context) => {
  * Register whitelist routes.
  *
  * @param app App instance.
- * @param _registry OpenAPI registry instance.
+ * @param registry OpenAPI registry instance.
  */
-export default (app: Hono, _registry: OpenAPIRegistry) => {
+export default (app: Hono, registry: OpenAPIRegistry) => {
     // Whitelist
     app.get('/whitelist', handleGetWhitelist);
     app.get('/whitelist/', handleGetWhitelist);
+
+    registry.registerPath({
+        method: 'get',
+        path: '/whitelist',
+        summary: 'Fetch details about the cdnjs file extension whitelist',
+        description:
+            'The `/whitelist` endpoint returns a JSON object containing a list of extensions permitted on the CDN as well as categories for those extensions.\n\nThe cache lifetime on this endpoint is 6 hours.',
+        tags: ['meta'],
+        request: {
+            query: z.object({
+                fields: z.string().optional().openapi({
+                    description:
+                        'Provide a comma-separated string of fields to return from the available whitelist data.',
+                }),
+            }),
+        },
+        responses: {
+            200: {
+                description: 'Whitelist details',
+                content: {
+                    'application/json': {
+                        schema: whitelistResponseSchema,
+                    },
+                },
+            },
+        },
+    });
 };
