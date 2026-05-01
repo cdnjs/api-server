@@ -33,9 +33,9 @@
     "dependencies": {
         "@asteasolutions/zod-to-openapi": "^8.5.0",
         "@emotion/css": "^11.13.5",
-        "@sentry/cloudflare": "^10.46.0",
-        "algoliasearch": "^5.50.0",
-        "hono": "^4.12.14",
+        "@sentry/cloudflare": "^10.50.0",
+        "algoliasearch": "^5.51.0",
+        "hono": "^4.12.15",
         "is-deflate": "^1.0.0",
         "is-gzip": "^2.0.0",
         "pako": "^2.1.0",
