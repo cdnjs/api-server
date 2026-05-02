@@ -109,6 +109,15 @@ const createHandleGetApi = (registry: OpenAPIRegistry) => {
             ) {
                 delete spec.components.parameters;
             }
+
+            // Sort the schemas in the components object alphabetically, for easier navigation by humans
+            if (spec.components?.schemas) {
+                spec.components.schemas = Object.fromEntries(
+                    Object.entries(spec.components.schemas).sort(([a], [b]) =>
+                        a.localeCompare(b),
+                    ),
+                );
+            }
         }
 
         return spec;

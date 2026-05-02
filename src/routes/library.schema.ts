@@ -10,7 +10,8 @@ export const libraryVersionResponseSchema = z
         rawFiles: z.array(z.string()),
         sri: z.record(z.string(), z.string()),
     })
-    .partial();
+    .partial()
+    .openapi('LibraryVersion');
 
 export type LibraryVersionResponse = z.infer<
     typeof libraryVersionResponseSchema
@@ -30,6 +31,7 @@ export const libraryResponseSchema = librarySchema
             }),
         ),
     })
-    .partial();
+    .partial()
+    .openapi('Library');
 
 export type LibraryResponse = z.infer<typeof libraryResponseSchema>;

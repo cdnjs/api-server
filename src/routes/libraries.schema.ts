@@ -4,12 +4,15 @@ import { librarySchema } from '../utils/algolia.schema';
 
 export const librariesResponseSchema = z.object({
     results: z.array(
-        librarySchema.partial().and(
-            z.object({
-                name: z.string(),
-                latest: z.string().nullable(),
-            }),
-        ),
+        librarySchema
+            .partial()
+            .and(
+                z.object({
+                    name: z.string(),
+                    latest: z.string().nullable(),
+                }),
+            )
+            .openapi('LibraryResult'),
     ),
     total: z.number(),
     available: z.number(),
