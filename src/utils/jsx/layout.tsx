@@ -24,6 +24,8 @@ const styles = {
     `,
     content: css`
         flex-grow: 1;
+        isolation: isolate;
+        position: relative;
     `,
     container: css`
         margin: 0 auto;

@@ -1,7 +1,9 @@
 import { css } from '@emotion/css';
+import { useState } from 'react';
 import SwaggerUI from 'swagger-ui-react';
 import swaggerStyles from 'swagger-ui-react/swagger-ui.css';
 
+import theme from '../../theme.ts';
 import createIsland from '../island.tsx';
 
 const styles = {
@@ -20,6 +22,21 @@ const styles = {
             }
         }
     `,
+    loader: css`
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity ${theme.transition};
+        transition-delay: 0.5s;
+
+        @starting-style {
+            opacity: 0;
+        }
+    `,
 };
 
 const scopedSwaggerStyles = swaggerStyles
@@ -32,22 +49,32 @@ const scopedSwaggerStyles = swaggerStyles
  * @param props Component props.
  * @param props.spec OpenAPI specification to render.
  */
-const Swagger = ({ spec }: { spec: object }) => (
-    <>
-        <style
-            dangerouslySetInnerHTML={{
-                __html: `@layer { ${scopedSwaggerStyles} }`,
-            }}
-        />
-        <div className={styles.container}>
-            <SwaggerUI
-                spec={spec}
-                supportedSubmitMethods={['get']}
-                tryItOutEnabled
-                displayRequestDuration
+const Swagger = ({ spec }: { spec: object }) => {
+    const [loading, setLoading] = useState(true);
+
+    return (
+        <>
+            <style
+                dangerouslySetInnerHTML={{
+                    __html: `@layer { ${scopedSwaggerStyles} }`,
+                }}
             />
-        </div>
-    </>
-);
+            <div className={styles.container}>
+                <SwaggerUI
+                    spec={spec}
+                    onComplete={() => setLoading(false)}
+                    supportedSubmitMethods={['get']}
+                    tryItOutEnabled
+                    displayRequestDuration
+                />
+            </div>
+            {loading && (
+                <div className={styles.loader}>
+                    Loading OpenAPI specification...
+                </div>
+            )}
+        </>
+    );
+};
 
 export default createIsland(Swagger, 'swagger.tsx');
