@@ -20,7 +20,8 @@ export default {
         major: '#e67e22',
         critical: '#e74c3c',
     },
-    spacing: (value: number) => `${value * 8}px`,
+    spacing: (...values: number[]) =>
+        values.map((value) => `${value * 8}px`).join(' '),
     breakpoints: {
         medium: breakpoint(96),
     },

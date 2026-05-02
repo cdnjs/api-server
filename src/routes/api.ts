@@ -51,7 +51,16 @@ const createHandleGetApi = (registry: OpenAPIRegistry) => {
 
             definitions.sort((a, b) => {
                 if (a.type === 'route' && b.type === 'route') {
-                    // Sort by method first
+                    // Hoist routes with the libraries tag, as they are the core of cdnjs
+                    const aHasLibrariesTag =
+                        a.route.tags?.includes('libraries');
+                    const bHasLibrariesTag =
+                        b.route.tags?.includes('libraries');
+                    if (aHasLibrariesTag !== bHasLibrariesTag) {
+                        return aHasLibrariesTag ? -1 : 1;
+                    }
+
+                    // Otherwise, sort by method first
                     const methodOrder = [
                         'get',
                         'post',
