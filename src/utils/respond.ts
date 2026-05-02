@@ -1,7 +1,7 @@
 import { cache } from '@emotion/css';
 import { env } from 'cloudflare:workers';
 import type { Context } from 'hono';
-import { createElement } from 'react';
+import { type ComponentType, createElement } from 'react';
 import { renderToString } from 'react-dom/server';
 
 import type { ErrorResponse } from '../routes/errors.schema.ts';
@@ -77,8 +77,13 @@ export const withCache = (ctx: Context, age: number, immutable = false) => {
  *
  * @param ctx Request context.
  * @param data Data to be included in the response.
+ * @param component Optional custom component to use for human-readable output (defaults to Json).
  */
-const respond = async <T = never>(ctx: Context, data: NoInfer<T>) => {
+const respond = async <T = never>(
+    ctx: Context,
+    data: NoInfer<T>,
+    component: ComponentType<{ data: NoInfer<T> }> = Json,
+) => {
     if (ctx.req.query('output') === 'human') {
         event('human-output', { ctx });
         ctx.header('X-Robots-Tag', 'noindex');
@@ -88,11 +93,7 @@ const respond = async <T = never>(ctx: Context, data: NoInfer<T>) => {
             createElement(
                 Provider,
                 null,
-                createElement(
-                    Layout,
-                    null,
-                    createElement(Json, { json: data }),
-                ),
+                createElement(Layout, null, createElement(component, { data })),
             ),
         );
         const styles = getCriticalEmotionCss(body);
