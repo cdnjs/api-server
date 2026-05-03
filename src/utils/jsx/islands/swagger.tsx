@@ -14,6 +14,7 @@ const mixins = {
         padding: ${theme.spacing(1.5, 2)} !important;
         border-radius: ${theme.radius};
         font-size: ${theme.font.small.size};
+        font-weight: ${theme.font.small.weight};
         margin: 0;
         display: block;
         width: 100%;
@@ -27,6 +28,7 @@ const mixins = {
         padding: ${theme.spacing(0.25, 0.75)};
         border-radius: ${theme.radius};
         font-size: ${theme.font.small.size};
+        font-weight: ${theme.font.small.weight};
     `,
     body: css`
         padding: ${theme.spacing(1.5, 2)};
@@ -58,6 +60,18 @@ const styles = {
 
                 &:hover {
                     text-decoration: underline;
+                }
+            }
+
+            blockquote {
+                background: rgb(from ${theme.background.brand} r g b / 0.05);
+                border: 1px solid ${theme.background.brand};
+                border-radius: ${theme.radius};
+                margin: ${theme.spacing(1, 0)};
+                padding: ${theme.spacing(0, 2)};
+
+                p {
+                    margin: ${theme.spacing(1.5, 0)};
                 }
             }
 

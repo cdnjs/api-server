@@ -306,7 +306,7 @@ export default (app: Hono, registry: OpenAPIRegistry) => {
         path: '/libraries/{library}',
         summary: 'Getting a specific library on cdnjs',
         description:
-            'Accessing `assets` for all versions of a library using this endpoint is deprecated. The `assets` property now only contains a single entry for the latest version. To access the assets of any version, use the `/libraries/:library/:version` endpoint.\n\nSee [cdnjs/cdnjs issue #14140](https://github.com/cdnjs/cdnjs/issues/14140) for more information.\n\nThe `/libraries/:library` endpoint allows for data on a specific library to be requested and will return a JSON object with all library data properties by default.\n\nThe cache lifetime on this endpoint is six hours.',
+            'The `/libraries/:library` endpoint allows for data on a specific library to be requested and will return a JSON object with all library data properties by default.\n\nThe cache lifetime on this endpoint is six hours.\n\n> Accessing `assets` for all versions of a library using this endpoint is deprecated. The `assets` property now only contains a single entry for the latest version. To access the assets of any version, use the `/libraries/:library/:version` endpoint.\n>\n> See [cdnjs/cdnjs issue #14140](https://github.com/cdnjs/cdnjs/issues/14140) for more information.',
         tags: ['libraries'],
         request: {
             params: z.object({
