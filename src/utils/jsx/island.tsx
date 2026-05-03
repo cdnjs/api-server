@@ -1,3 +1,4 @@
+import { css } from '@emotion/css';
 import { env } from 'cloudflare:workers';
 import { type ComponentType, createContext, useContext, useId } from 'react';
 import * as z from 'zod';
@@ -46,6 +47,12 @@ const serializeProps = (props: object) =>
         .replaceAll('\u2028', '\\u2028')
         .replaceAll('\u2029', '\\u2029');
 
+const styles = {
+    island: css`
+        display: contents;
+    `,
+};
+
 /**
  * Server helper for rendering an island with serialized props and entrypoint script.
  *
@@ -80,7 +87,11 @@ const Island = <T extends object>({
 
     return (
         <>
-            <div data-island={name} data-island-props={propsScriptId}>
+            <div
+                className={styles.island}
+                data-island={name}
+                data-island-props={propsScriptId}
+            >
                 <Component {...props} />
             </div>
 

@@ -6,6 +6,8 @@ const outputDirectory = resolve('dist-client');
 const virtualEntryPrefix = 'virtual:island-entry:';
 const hydrationRuntimePath = resolve('src/utils/island.ts');
 
+const isCssImport = (source: string) => /\.css(?:$|\?)/.test(source);
+
 const islandEntries = globSync('src/utils/jsx/islands/*.tsx')
     .filter((file) => !file.endsWith('.spec.ts'))
     .sort()
@@ -48,6 +50,22 @@ const parseCreateIslandDeclaration = (source: string) => {
 export default defineConfig({
     publicDir: false,
     plugins: [
+        {
+            name: 'raw-css-imports',
+            enforce: 'pre',
+            // Force CSS to be imported as a raw string, matching how Wrangler handles CSS imports.
+            resolveId(source, importer, options) {
+                if (!isCssImport(source)) {
+                    return null;
+                }
+
+                return this.resolve(
+                    `${source}${source.includes('?') ? '&' : '?'}raw`,
+                    importer,
+                    { ...options, skipSelf: true },
+                );
+            },
+        },
         {
             name: 'virtual-island-entries',
             resolveId(source) {

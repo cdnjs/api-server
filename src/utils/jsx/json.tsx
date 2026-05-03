@@ -15,9 +15,9 @@ const styles = {
  * Standard cdnjs HTML layout for pretty-printing JSON data.
  *
  * @param props Component props.
- * @param props.json Data to be pretty-printed on the page.
+ * @param props.data Data to be pretty-printed on the page.
  */
-export default ({ json }: { json: unknown }) => (
+export default ({ data }: { data: unknown }) => (
     <>
         <link
             rel="stylesheet"
@@ -29,7 +29,7 @@ export default ({ json }: { json: unknown }) => (
 
         <pre className={styles.pre}>
             <code className={cx(styles.code, 'language-json')}>
-                {JSON.stringify(json, null, 2)}
+                {JSON.stringify(data, null, 2)}
             </code>
         </pre>
 

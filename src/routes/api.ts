@@ -7,6 +7,7 @@ import * as z from 'zod';
 
 import respond, { withCache } from '../utils/respond.ts';
 
+import ApiPage from './api.page.tsx';
 import { type OpenApiResponse, openApiResponseSchema } from './api.schema.ts';
 import { errorResponseSchema } from './errors.schema.ts';
 
@@ -50,7 +51,16 @@ const createHandleGetApi = (registry: OpenAPIRegistry) => {
 
             definitions.sort((a, b) => {
                 if (a.type === 'route' && b.type === 'route') {
-                    // Sort by method first
+                    // Hoist routes with the libraries tag, as they are the core of cdnjs
+                    const aHasLibrariesTag =
+                        a.route.tags?.includes('libraries');
+                    const bHasLibrariesTag =
+                        b.route.tags?.includes('libraries');
+                    if (aHasLibrariesTag !== bHasLibrariesTag) {
+                        return aHasLibrariesTag ? -1 : 1;
+                    }
+
+                    // Otherwise, sort by method first
                     const methodOrder = [
                         'get',
                         'post',
@@ -99,6 +109,15 @@ const createHandleGetApi = (registry: OpenAPIRegistry) => {
             ) {
                 delete spec.components.parameters;
             }
+
+            // Sort the schemas in the components object alphabetically, for easier navigation by humans
+            if (spec.components?.schemas) {
+                spec.components.schemas = Object.fromEntries(
+                    Object.entries(spec.components.schemas).sort(([a], [b]) =>
+                        a.localeCompare(b),
+                    ),
+                );
+            }
         }
 
         return spec;
@@ -113,7 +132,7 @@ const createHandleGetApi = (registry: OpenAPIRegistry) => {
         // Set a 6 hour life on this response
         withCache(ctx, 6 * 60 * 60);
 
-        return respond<OpenApiResponse>(ctx, getOrGenerateSpec());
+        return respond<OpenApiResponse>(ctx, getOrGenerateSpec(), ApiPage);
     };
 
     return handleGetApi;

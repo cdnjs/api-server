@@ -49,7 +49,7 @@ export const request = async (route: string, opts: RequestInit = {}) => {
                     );
             }
 
-            return Reflect.get(response, prop);
+            return Reflect.get(response, prop, response);
         },
     });
 };
@@ -63,11 +63,15 @@ export const request = async (route: string, opts: RequestInit = {}) => {
 export const beforeRequest = (route: string, opts: RequestInit = {}) => {
     let response: Response;
 
-    beforeAll(async () => {
-        response = await request(route, opts);
-    });
+    beforeAll(
+        async () => {
+            response = await request(route, opts);
+        },
+        // Allow time for the worker to compile when running against the Miniflare instance
+        externalApiUrl ? 5_000 : 30_000,
+    );
 
     return new Proxy({} as Response, {
-        get: (_, prop) => Reflect.get(response, prop),
+        get: (_, prop) => Reflect.get(response, prop, response),
     });
 };

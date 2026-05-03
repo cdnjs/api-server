@@ -9,6 +9,11 @@ kv_namespaces = [ { binding = "CACHE" } ]
 command = "vite build --config vite.client.config.ts"
 watch_dir = "src"
 
+[[rules]]
+type = "Text"
+globs = [ "**/*.css" ]
+fallthrough = true
+
 [assets]
 directory = "./dist-client"
 binding = "ASSETS"
