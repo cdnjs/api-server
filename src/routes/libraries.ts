@@ -72,23 +72,54 @@ export default (app: Hono, registry: OpenAPIRegistry) => {
         method: 'get',
         path: '/libraries',
         summary: 'Browsing all libraries on cdnjs',
-        description:
-            'The `/libraries` endpoint will return a JSON object with three top-level properties.\n\nThis API endpoint can also be used to search cdnjs for libraries, by making use of the optional `search` URL query parameter.\n\nThe cache lifetime on this endpoint is six hours.',
+        description: [
+            'The `/libraries` endpoint will return a JSON object with key information on all available libraries on cdnjs.',
+            '',
+            'This API endpoint can also be used to search cdnjs for specific libraries, by making use of the optional `search` URL query parameter.',
+            '',
+            'The cache lifetime on this endpoint is six hours.',
+        ].join('\n'),
         tags: ['libraries'],
         request: {
             query: z.object({
-                search: z.string().optional().openapi({
-                    description:
-                        "The value to use when searching the libraries index on cdnjs.\n\nLibraries will not be ranked by search relevance when they are returned, they will be ranked using the same ranking as when no search query is provided.\n\n*This ranking is done by Algolia and is primarily based on the number of stars each library's associated GitHub repo has.*",
-                }),
-                fields: z.string().optional().openapi({
-                    description:
-                        'Provide a comma-separated string of fields to return in each library object from the cdnjs Algolia index. name and latest will always be present in every object. Any field requested that does not exist will be included in each object with a null value. Currently, the following fields (case-sensitive) are published in the Algolia index for each library and can be requested via this parameter: filename, description, version, keywords, alternativeNames, fileType, github, objectID, license, homepage, repository, author, originalName, sri. The available fields are based on the SearchEntry structure in our tools repo.',
-                }),
-                search_fields: z.string().optional().openapi({
-                    description:
-                        'Provide a comma-separated string of fields to be considered when searching for a given search query parameter. Not all fields are supported for this, any unsupported fields given will be silently ignored. Currently, the following fields (case-sensitive) are supported: name, alternativeNames, github.repo, description, keywords, filename, repositories.url, github.user, maintainers.name. The supported fields are controlled by our Algolia settings and are mirrored in the API server libraries route logic.',
-                }),
+                search: z
+                    .string()
+                    .optional()
+                    .openapi({
+                        description: [
+                            'The value to use when searching the libraries index on cdnjs.',
+                            '',
+                            'Libraries will not be ranked by search relevance when they are returned, they will be ranked using the same ranking as when no search query is provided.',
+                            '',
+                            "*This ranking is done by Algolia and is primarily based on the number of stars each library's associated GitHub repo has.*",
+                        ].join('\n'),
+                    }),
+                fields: z
+                    .string()
+                    .optional()
+                    .openapi({
+                        description: [
+                            'Provide a comma-separated string of fields to return in each library object from the cdnjs Algolia index.',
+                            '',
+                            'The following fields (case-sensitive) are published in the Algolia index for each library and can be requested via this parameter: `filename`, `description`, `version`, `keywords`, `alternativeNames`, `fileType`, `github`, `objectID`, `license`, `homepage`, `repository`, `author`, `originalName`, `sri`.',
+                            '',
+                            'The `name` and `latest` fields are always returned for each result. If no field are specified, only these fields will be returned. `*` can be provided to return all available fields.',
+                            '',
+                            '*The available fields are based on the [SearchEntry structure in our tools repo](https://github.com/cdnjs/tools/blob/master/cmd/algolia/main.go).*',
+                        ].join('\n'),
+                    }),
+                search_fields: z
+                    .string()
+                    .optional()
+                    .openapi({
+                        description: [
+                            'Provide a comma-separated string of fields to be considered when searching for a given search query parameter.',
+                            '',
+                            'The following fields (case-sensitive) are supported for searching: `name`, `alternativeNames`, `github.repo`, `description`, `keywords`, `filename`, `repositories.url`, `github.user`, `maintainers.name`. Any unsupported fields provided will be silently ignored.',
+                            '',
+                            '*The supported fields are controlled by our Algolia settings and are mirrored in the [API server Algolia libraries logic](https://github.com/cdnjs/api-server/blob/master/src/utils/algolia.ts).*',
+                        ].join('\n'),
+                    }),
                 limit: z.number().optional().openapi({
                     description:
                         'Limit the number of library objects that are returned in the results array. This value will be reflected in the total top-level property, but the available property will return the full number with no limit applied.',

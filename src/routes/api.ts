@@ -33,7 +33,7 @@ const createHandleGetApi = (registry: OpenAPIRegistry) => {
                     def.route.request.query = def.route.request.query.extend({
                         output: z.string().optional().openapi({
                             description:
-                                'Use the output value human to receive the JSON results in pretty print format, presented on a HTML page.',
+                                'Request a `human` output to receive the JSON results in pretty print format, presented on a HTML page.',
                         }),
                     });
 
@@ -151,8 +151,12 @@ export default (app: Hono, registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'get',
         path: '/api',
-        summary: 'Get OpenAPI Specification',
-        description: 'Returns the OpenAPI specification for the cdnjs API.',
+        summary: 'Getting the OpenAPI specification for the cdnjs API',
+        description: [
+            'The `/api` endpoint will return a JSON object with full OpenAPI specification for the cdnjs API.',
+            '',
+            'The cache lifetime on this endpoint is six hours.',
+        ].join('\n'),
         tags: ['meta'],
         responses: {
             200: {

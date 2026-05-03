@@ -44,14 +44,17 @@ export default (app: Hono, registry: OpenAPIRegistry) => {
         method: 'get',
         path: '/stats',
         summary: 'Fetch basic statistics for cdnjs',
-        description:
-            'The `/stats` endpoint returns a JSON object containing a set of statistics relating to cdnjs.\n\nThe cache lifetime on this endpoint is 6 hours.',
+        description: [
+            'The `/stats` endpoint returns a JSON object containing a set of statistics relating to cdnjs.',
+            '',
+            'The cache lifetime on this endpoint is 6 hours.',
+        ].join('\n'),
         tags: ['meta'],
         request: {
             query: z.object({
                 fields: z.string().optional().openapi({
                     description:
-                        'Provide a comma-separated string of fields to return in the stats object.',
+                        'Provide a comma-separated string of fields to return in the stats object. If no field are specified, all fields will be returned.',
                 }),
             }),
         },
