@@ -175,6 +175,10 @@ const styles = {
             /* Make the response schema models match the example value code. */
             .model {
                 font-size: ${theme.font.small.size};
+
+                .description {
+                    display: none;
+                }
             }
             .model-example .model-box {
                 ${mixins.pre};
@@ -507,6 +511,7 @@ const plugin = (system: System) => ({
                                 if (!entry) return null;
 
                                 const [name, schema] = entry;
+                                const { description } = schema.toObject();
                                 const fullPath = [...specPathBase, name];
                                 const expanded = system.layoutSelectors.isShown(
                                     fullPath,
@@ -529,6 +534,7 @@ const plugin = (system: System) => ({
                                             expanded={expanded}
                                         >
                                             <code>{name}</code>
+                                            {description}
                                         </Summary>
                                         {expanded && (
                                             <div className={mixins.body}>

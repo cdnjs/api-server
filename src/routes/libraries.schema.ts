@@ -12,7 +12,10 @@ export const librariesResponseSchema = z.object({
                     latest: z.string().nullable(),
                 }),
             )
-            .openapi('LibraryResult'),
+            .openapi('LibraryResult', {
+                description:
+                    'Information about a library on cdnjs when browsing the libraries list',
+            }),
     ),
     total: z.number(),
     available: z.number(),
