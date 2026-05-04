@@ -94,6 +94,7 @@ const styles = {
         right: 0;
         background: ${theme.background.navigation};
         border-top: ${theme.spacing(0.25)} solid ${theme.background.brand};
+        border-bottom: ${theme.spacing(0.25)} solid ${theme.background.footer};
         display: flex;
         flex-direction: column;
         gap: ${theme.spacing(0.5)};
