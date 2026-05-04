@@ -11,7 +11,10 @@ export const libraryVersionResponseSchema = z
         sri: z.record(z.string(), z.string()),
     })
     .partial()
-    .openapi('LibraryVersion');
+    .openapi('LibraryVersion', {
+        description:
+            'Information about a specific version of a library on cdnjs',
+    });
 
 export type LibraryVersionResponse = z.infer<
     typeof libraryVersionResponseSchema
@@ -32,6 +35,8 @@ export const libraryResponseSchema = librarySchema
         ),
     })
     .partial()
-    .openapi('Library');
+    .openapi('Library', {
+        description: 'Information about a library on cdnjs',
+    });
 
 export type LibraryResponse = z.infer<typeof libraryResponseSchema>;

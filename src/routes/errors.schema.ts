@@ -7,6 +7,6 @@ export const errorResponseSchema = z
         message: z.string(),
         ref: z.string().optional(),
     })
-    .openapi('Error');
+    .openapi('Error', { description: 'An error response from the cdnjs API' });
 
 export type ErrorResponse = z.infer<typeof errorResponseSchema>;

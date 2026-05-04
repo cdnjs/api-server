@@ -49,14 +49,17 @@ export default (app: Hono, registry: OpenAPIRegistry) => {
         method: 'get',
         path: '/whitelist',
         summary: 'Fetch details about the cdnjs file extension whitelist',
-        description:
-            'The `/whitelist` endpoint returns a JSON object containing a list of extensions permitted on the CDN as well as categories for those extensions.\n\nThe cache lifetime on this endpoint is 6 hours.',
+        description: [
+            'The `/whitelist` endpoint returns a JSON object containing a list of extensions permitted on the CDN as well as categories for those extensions.',
+            '',
+            'The cache lifetime on this endpoint is 6 hours.',
+        ].join('\n'),
         tags: ['meta'],
         request: {
             query: z.object({
                 fields: z.string().optional().openapi({
                     description:
-                        'Provide a comma-separated string of fields to return from the available whitelist data.',
+                        'Provide a comma-separated string of fields to return from the available whitelist data. If no field are specified, all fields will be returned.',
                 }),
             }),
         },

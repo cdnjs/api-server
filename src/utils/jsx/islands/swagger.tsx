@@ -14,6 +14,7 @@ const mixins = {
         padding: ${theme.spacing(1.5, 2)} !important;
         border-radius: ${theme.radius};
         font-size: ${theme.font.small.size};
+        font-weight: ${theme.font.small.weight};
         margin: 0;
         display: block;
         width: 100%;
@@ -27,6 +28,7 @@ const mixins = {
         padding: ${theme.spacing(0.25, 0.75)};
         border-radius: ${theme.radius};
         font-size: ${theme.font.small.size};
+        font-weight: ${theme.font.small.weight};
     `,
     body: css`
         padding: ${theme.spacing(1.5, 2)};
@@ -58,6 +60,18 @@ const styles = {
 
                 &:hover {
                     text-decoration: underline;
+                }
+            }
+
+            blockquote {
+                background: rgb(from ${theme.background.brand} r g b / 0.05);
+                border: 1px solid ${theme.background.brand};
+                border-radius: ${theme.radius};
+                margin: ${theme.spacing(1, 0)};
+                padding: ${theme.spacing(0, 2)};
+
+                p {
+                    margin: ${theme.spacing(1.5, 0)};
                 }
             }
 
@@ -161,6 +175,10 @@ const styles = {
             /* Make the response schema models match the example value code. */
             .model {
                 font-size: ${theme.font.small.size};
+
+                .description {
+                    display: none;
+                }
             }
             .model-example .model-box {
                 ${mixins.pre};
@@ -493,6 +511,7 @@ const plugin = (system: System) => ({
                                 if (!entry) return null;
 
                                 const [name, schema] = entry;
+                                const { description } = schema.toObject();
                                 const fullPath = [...specPathBase, name];
                                 const expanded = system.layoutSelectors.isShown(
                                     fullPath,
@@ -515,6 +534,7 @@ const plugin = (system: System) => ({
                                             expanded={expanded}
                                         >
                                             <code>{name}</code>
+                                            {description}
                                         </Summary>
                                         {expanded && (
                                             <div className={mixins.body}>
