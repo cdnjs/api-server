@@ -10,6 +10,7 @@ const styles = {
     navigation: css`
         position: relative;
         isolation: isolate;
+        z-index: 1;
 
         &::before {
             content: '';
