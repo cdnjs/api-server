@@ -151,7 +151,7 @@ export default (app: Hono, registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'get',
         path: '/api',
-        summary: 'Getting the OpenAPI specification for the cdnjs API',
+        summary: 'Fetch the OpenAPI specification for the cdnjs API',
         description: [
             'The `/api` endpoint will return a JSON object with full OpenAPI specification for the cdnjs API.',
             '',

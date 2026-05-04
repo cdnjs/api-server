@@ -1,6 +1,6 @@
 import { css } from '@emotion/css';
 import { Iterable, List, Map } from 'immutable';
-import { type ComponentType, type ReactNode, useState } from 'react';
+import { type ComponentType, Fragment, type ReactNode, useState } from 'react';
 import SwaggerUI from 'swagger-ui-react';
 import swaggerStyles from 'swagger-ui-react/swagger-ui.css';
 
@@ -232,6 +232,9 @@ const styles = {
             flex-shrink: 0;
         }
     `,
+    path: css`
+        text-wrap: nowrap;
+    `,
     loader: css`
         position: absolute;
         inset: 0;
@@ -447,15 +450,12 @@ const plugin = (system: System) => ({
                     expanded={isShown}
                 >
                     <code>
-                        {path?.split(/\//g).map((part, i) =>
-                            i === 0 ? (
-                                part
-                            ) : (
-                                <>
-                                    <wbr key={`wbr-${i}`} />/{part}
-                                </>
-                            ),
-                        )}
+                        {path?.split(/(?=\/)/g).map((part) => (
+                            <Fragment key={part}>
+                                <wbr />
+                                <span className={styles.path}>{part}</span>
+                            </Fragment>
+                        ))}
                     </code>
                     <span>{summary}</span>
                 </Summary>

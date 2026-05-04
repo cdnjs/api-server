@@ -48,7 +48,7 @@ export default (app: Hono, registry: OpenAPIRegistry) => {
     registry.registerPath({
         method: 'get',
         path: '/whitelist',
-        summary: 'Fetch details about the cdnjs file extension whitelist',
+        summary: 'Fetch the cdnjs file extension whitelist',
         description: [
             'The `/whitelist` endpoint returns a JSON object containing a list of extensions permitted on the CDN as well as categories for those extensions.',
             '',
