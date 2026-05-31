@@ -73,6 +73,13 @@ export const withCache = (ctx: Context, age: number, immutable = false) => {
 };
 
 /**
+ * Check if the request is asking for human-readable output (HTML) instead of the regular JSON response.
+ *
+ * @param ctx Request context.
+ */
+export const isHuman = (ctx: Context) => ctx.req.query('output') === 'human';
+
+/**
  * Respond to a request with data, handling if it should be returned as JSON or pretty-printed in HTML.
  *
  * @param ctx Request context.
@@ -84,7 +91,7 @@ const respond = async <T = never>(
     data: NoInfer<T>,
     component: ComponentType<{ data: NoInfer<T> }> = Json,
 ) => {
-    if (ctx.req.query('output') === 'human') {
+    if (isHuman(ctx)) {
         event('human-output', { ctx });
         ctx.header('X-Robots-Tag', 'noindex');
 
