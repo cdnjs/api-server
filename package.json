@@ -72,6 +72,17 @@
     "overrides": {
         "@cloudflare/vitest-pool-workers": {
             "wrangler": "$wrangler"
+        },
+        "swagger-ui-react": {
+            "react-copy-to-clipboard": {
+                "react": "$react"
+            },
+            "react-debounce-input": {
+                "react": "$react"
+            },
+            "react-inspector": {
+                "react": "$react"
+            }
         }
     }
 }
