@@ -15,6 +15,7 @@ import { queryCheck } from '../utils/query.ts';
 import respond, { isHuman, notFound, withCache } from '../utils/respond.ts';
 
 import { errorResponseSchema } from './errors.schema.ts';
+import LibraryPage from './library.page.tsx';
 import {
     type LibraryResponse,
     type LibraryVersionResponse,
@@ -130,7 +131,9 @@ const handleGetLibraryVersion = async (ctx: Context) => {
     withCache(ctx, 355 * 24 * 60 * 60, true);
 
     // Send the response
-    return respond<LibraryVersionResponse>(ctx, response);
+    return respond<LibraryVersionResponse>(ctx, response, ({ data }) =>
+        LibraryPage({ library: lib, version: data }),
+    );
 };
 
 /**

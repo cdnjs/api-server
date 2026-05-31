@@ -34,6 +34,7 @@
         "@asteasolutions/zod-to-openapi": "^8.5.0",
         "@emotion/css": "^11.13.5",
         "@sentry/cloudflare": "^10.55.0",
+        "@tanstack/react-virtual": "^3.14.2",
         "algoliasearch": "^5.53.0",
         "hono": "^4.12.23",
         "is-deflate": "^1.0.0",
