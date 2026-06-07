@@ -43,6 +43,7 @@
         "react": "^19.2.6",
         "react-dom": "^19.2.6",
         "semver": "^7.7.4",
+        "spdx-license-ids": "^3.0.23",
         "swagger-ui-react": "^5.32.6",
         "zod": "^4.4.3"
     },
@@ -57,6 +58,7 @@
         "@types/react": "^19.2.15",
         "@types/react-dom": "^19.2.3",
         "@types/semver": "^7.7.1",
+        "@types/spdx-license-ids": "^3.0.0",
         "@types/swagger-ui-react": "^5.18.0",
         "eslint": "^10.4.0",
         "eslint-config-prettier": "^10.1.8",
