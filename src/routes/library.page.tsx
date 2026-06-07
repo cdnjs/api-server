@@ -199,6 +199,7 @@ export default ({
                 files={version.files}
                 sri={version.sri}
                 versions={library.versions}
+                featured={library.filename}
             />
         </>
     );

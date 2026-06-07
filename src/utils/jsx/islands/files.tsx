@@ -1,4 +1,4 @@
-import { css } from '@emotion/css';
+import { css, cx } from '@emotion/css';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import {
     type CSSProperties,
@@ -11,6 +11,10 @@ import {
 
 import fileTypes from '../../files.ts';
 import theme from '../../theme.ts';
+import IconCheck from '../icons/check.tsx';
+import IconCode from '../icons/code.tsx';
+import IconLink from '../icons/link.tsx';
+import IconShield from '../icons/shield.tsx';
 import createIsland from '../island.tsx';
 
 const styles = {
@@ -61,6 +65,34 @@ const styles = {
                 color: ${theme.text.brand};
             }
         }
+    `,
+    list: css`
+        list-style: none;
+        padding: 0;
+        margin: ${theme.spacing(2, 0)};
+    `,
+    file: css`
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: ${theme.spacing(0.5)};
+        padding: ${theme.spacing(0.5, 1)};
+        background: ${theme.background.navigation};
+        border-radius: ${theme.radius};
+
+        a {
+            font-size: ${theme.font.body.size};
+            font-weight: ${theme.font.body.weight};
+            color: ${theme.text.brand};
+            text-decoration: underline;
+
+            &:hover {
+                text-decoration: none;
+            }
+        }
+    `,
+    featured: css`
+        outline: 2px solid ${theme.background.brand};
     `,
 };
 
@@ -163,16 +195,21 @@ const File = ({
     version,
     file,
     sri,
+    featured = false,
     style,
 }: {
     name: string;
     version: string;
     file: string;
     sri?: string;
+    featured?: boolean;
     style?: CSSProperties;
 }) => {
     return (
-        <li style={style}>
+        <li
+            style={style}
+            className={cx(styles.file, featured && styles.featured)}
+        >
             <a
                 href={`https://cdnjs.cloudflare.com/ajax/libs/${encodeURIComponent(name)}/${encodeURIComponent(version)}/${file}`}
                 target="_blank"
@@ -195,6 +232,7 @@ const File = ({
  * @param props.files List of files for the library version.
  * @param props.sri Map of file names to SRI hashes for the library version.
  * @param props.versions List of all versions for the library.
+ * @param props.featured Featured file to highlight at the top of the list.
  */
 const Files = ({
     name,
@@ -202,14 +240,31 @@ const Files = ({
     files,
     sri,
     versions,
+    featured,
 }: {
     name: string;
     version: string;
     files: string[];
     sri: Record<string, string>;
     versions: string[];
+    featured?: string;
 }) => {
-    const [listFiles, setListFiles] = useState(files);
+    const sortedFiles = useMemo(
+        () =>
+            [...files].sort((a, b) => {
+                if (a === featured) return -1;
+                if (b === featured) return 1;
+
+                const aDepth = a.split('/').length;
+                const bDepth = b.split('/').length;
+                if (aDepth !== bDepth) return aDepth - bDepth;
+
+                return a.localeCompare(b);
+            }),
+        [files, featured],
+    );
+
+    const [listFiles, setListFiles] = useState(sortedFiles);
     const listRef = useRef<HTMLUListElement | null>(null);
     const listOffsetRef = useRef(0);
 
@@ -219,7 +274,8 @@ const Files = ({
 
     const virtualizer = useWindowVirtualizer({
         count: listFiles.length,
-        estimateSize: () => 35,
+        estimateSize: () => Number(theme.spacing(5).replace('px', '')),
+        gap: Number(theme.spacing(1).replace('px', '')),
         overscan: 5,
         scrollMargin: listOffsetRef.current,
     });
@@ -231,7 +287,7 @@ const Files = ({
                     {`https://cdnjs.cloudflare.com/ajax/libs/${name}/${version}/...`}
                 </code>
                 <Versions name={name} version={version} versions={versions} />
-                <Filter files={files} onChange={setListFiles} />
+                <Filter files={sortedFiles} onChange={setListFiles} />
             </div>
             <ul
                 ref={listRef}
@@ -239,6 +295,7 @@ const Files = ({
                     height: `${virtualizer.getTotalSize()}px`,
                     position: 'relative',
                 }}
+                className={styles.list}
             >
                 {virtualizer.getVirtualItems().map((item) => {
                     const file = listFiles[item.index];
@@ -251,6 +308,7 @@ const Files = ({
                             version={version}
                             file={file}
                             sri={sri[file]}
+                            featured={file === featured}
                             style={{
                                 position: 'absolute',
                                 top: 0,
