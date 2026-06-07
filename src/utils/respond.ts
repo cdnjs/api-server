@@ -2,7 +2,7 @@ import { cache } from '@emotion/css';
 import { env } from 'cloudflare:workers';
 import type { Context } from 'hono';
 import { type ComponentType, createElement } from 'react';
-import { renderToString } from 'react-dom/server';
+import { prerender } from 'react-dom/static';
 
 import type { ErrorResponse } from '../routes/errors.schema.ts';
 
@@ -89,13 +89,14 @@ const respond = async <T = never>(
         ctx.header('X-Robots-Tag', 'noindex');
 
         const Provider = await createIslandProvider();
-        const body = renderToString(
+        const { prelude } = await prerender(
             createElement(
                 Provider,
                 null,
                 createElement(Layout, null, createElement(component, { data })),
             ),
         );
+        const body = await new Response(prelude).text();
         const styles = getCriticalEmotionCss(body);
 
         return ctx.html(
