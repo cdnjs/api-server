@@ -11,6 +11,7 @@ export default {
     background: {
         body: '#454647',
         navigation: '#343535',
+        header: '#3a3c3c',
         footer: '#242525',
         brand: '#d9643a',
     },
@@ -26,6 +27,10 @@ export default {
         medium: breakpoint(96),
     },
     font: {
+        heading: {
+            size: '3rem',
+            weight: 600,
+        },
         large: {
             size: '1.25rem',
             weight: 400,

@@ -537,7 +537,7 @@ describe('/libraries/:library', () => {
         describe('Requesting human response (?output=human)', () => {
             // Fetch the endpoint
             const path = '/libraries/backbone.js?output=human';
-            const response = beforeRequest(path);
+            const response = beforeRequest(path, { redirect: 'manual' });
 
             // Test the endpoint
             testCors(path, response);
@@ -546,7 +546,12 @@ describe('/libraries/:library', () => {
                     'public, max-age=21600',
                 ); // 6 hours
             });
-            testHuman(response);
+            it('returns a redirect to the latest version', () => {
+                expect(response.status).to.eq(302);
+                expect(response.headers.get('Location')).to.match(
+                    /^\/libraries\/backbone\.js\/[^/]+$/,
+                );
+            });
         });
 
         describe('Requesting a field (?fields=assets)', () => {
