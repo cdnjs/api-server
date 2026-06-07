@@ -30,6 +30,10 @@ export const librarySchema = z.object({
                 target: z.string(),
             }),
         ])
+        .transform((autoupdate) => ({
+            source: 'type' in autoupdate ? autoupdate.type : autoupdate.source,
+            target: autoupdate.target,
+        }))
         .optional(),
 });
 
