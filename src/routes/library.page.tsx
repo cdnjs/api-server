@@ -107,7 +107,7 @@ export default ({
     library: LibraryResponse;
     version: LibraryVersionResponse;
 }) => {
-    if (!required(library, 'name', 'description', 'version')) {
+    if (!required(library, 'name', 'description', 'versions')) {
         throw new Error('Library data is missing required fields');
     }
 
@@ -193,12 +193,12 @@ export default ({
                 )}
             </div>
 
-            <h2>Version {version.version}</h2>
             <Files
                 name={library.name}
                 version={version.version}
                 files={version.files}
                 sri={version.sri}
+                versions={library.versions}
             />
         </>
     );

@@ -131,9 +131,10 @@ const handleGetLibraryVersion = async (ctx: Context) => {
     withCache(ctx, 355 * 24 * 60 * 60, true);
 
     // Send the response
-    return respond<LibraryVersionResponse>(ctx, response, ({ data }) =>
-        LibraryPage({ library: lib, version: data }),
-    );
+    return respond<LibraryVersionResponse>(ctx, response, async ({ data }) => {
+        const versions = await libraryVersions(lib.name);
+        return LibraryPage({ library: { ...lib, versions }, version: data });
+    });
 };
 
 /**
