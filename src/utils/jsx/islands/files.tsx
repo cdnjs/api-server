@@ -2,6 +2,7 @@ import { css, cx } from '@emotion/css';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import {
     type CSSProperties,
+    type ComponentType,
     useEffect,
     useLayoutEffect,
     useMemo,
@@ -93,6 +94,29 @@ const styles = {
     `,
     featured: css`
         outline: 2px solid ${theme.background.brand};
+    `,
+    buttons: css`
+        display: flex;
+        align-items: center;
+        gap: ${theme.spacing(0.5)};
+        margin: 0 0 0 auto;
+    `,
+    copy: css`
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: ${theme.spacing(0.5)};
+        line-height: 0;
+        color: ${theme.text.primary};
+        transition: color ${theme.transition};
+
+        &:hover {
+            color: ${theme.text.brand};
+        }
+    `,
+    icon: css`
+        width: ${theme.spacing(2.5)};
+        height: ${theme.spacing(2.5)};
     `,
 };
 
@@ -190,6 +214,43 @@ const Filter = ({
     );
 };
 
+const Copy = ({
+    text,
+    label,
+    icon: Icon,
+}: {
+    text: string;
+    label: string;
+    icon: ComponentType<{ className?: string }>;
+}) => {
+    const [copied, setCopied] = useState(false);
+    const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const copy = () => {
+        navigator.clipboard.writeText(text);
+        setCopied(true);
+        if (timer.current) clearTimeout(timer.current);
+        timer.current = setTimeout(() => setCopied(false), 2000);
+    };
+
+    useEffect(
+        () => () => {
+            if (timer.current) clearTimeout(timer.current);
+        },
+        [],
+    );
+
+    return (
+        <button onClick={copy} title={label} className={styles.copy}>
+            {copied ? (
+                <IconCheck className={styles.icon} />
+            ) : (
+                <Icon className={styles.icon} />
+            )}
+        </button>
+    );
+};
+
 const File = ({
     name,
     version,
@@ -205,6 +266,8 @@ const File = ({
     featured?: boolean;
     style?: CSSProperties;
 }) => {
+    const integrity = sri ? ` integrity="${sri}" crossorigin="anonymous"` : '';
+
     return (
         <li
             style={style}
@@ -218,7 +281,41 @@ const File = ({
                 {file}
             </a>
 
-            {sri && <code style={{ marginLeft: '0.5em' }}>(SRI: {sri})</code>}
+            <div className={styles.buttons}>
+                <Copy
+                    text={`https://cdnjs.cloudflare.com/ajax/libs/${encodeURIComponent(name)}/${encodeURIComponent(version)}/${file}`}
+                    label="Copy URL"
+                    icon={IconLink}
+                />
+
+                {file.endsWith('.js') && (
+                    <Copy
+                        text={`<script src="https://cdnjs.cloudflare.com/ajax/libs/${encodeURIComponent(name)}/${encodeURIComponent(version)}/${file}"${integrity} referrerpolicy="no-referrer"></script>`}
+                        label="Copy <script> HTML"
+                        icon={IconCode}
+                    />
+                )}
+
+                {file.endsWith('mjs') && (
+                    <Copy
+                        text={`<script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/${encodeURIComponent(name)}/${encodeURIComponent(version)}/${file}"${integrity} referrerpolicy="no-referrer"></script>`}
+                        label="Copy <script type='module'> HTML"
+                        icon={IconCode}
+                    />
+                )}
+
+                {file.endsWith('.css') && (
+                    <Copy
+                        text={`<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/${encodeURIComponent(name)}/${encodeURIComponent(version)}/${file}"${integrity} referrerpolicy="no-referrer">`}
+                        label="Copy <link> HTML"
+                        icon={IconCode}
+                    />
+                )}
+
+                {sri && (
+                    <Copy text={sri} label="Copy SRI hash" icon={IconShield} />
+                )}
+            </div>
         </li>
     );
 };
