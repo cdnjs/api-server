@@ -1,7 +1,15 @@
 import { css } from '@emotion/css';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
-import { type CSSProperties, useLayoutEffect, useRef, useState } from 'react';
+import {
+    type CSSProperties,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 
+import fileTypes from '../../files.ts';
 import theme from '../../theme.ts';
 import createIsland from '../island.tsx';
 
@@ -90,6 +98,66 @@ const Versions = ({
     );
 };
 
+const Filter = ({
+    files,
+    onChange,
+}: {
+    files: string[];
+    onChange: (files: string[]) => void;
+}) => {
+    const [selected, setSelected] = useState<string>('');
+
+    const [types, mapped] = useMemo(() => {
+        const found = new Set<string>();
+        return [
+            found,
+            files.map((file) => {
+                const ext = file.split('.').slice(-1)[0] || '';
+                const type =
+                    ext in fileTypes
+                        ? fileTypes[ext as keyof typeof fileTypes]
+                        : 'Other';
+                found.add(type);
+                return { file, type };
+            }),
+        ];
+    }, [files]);
+
+    useEffect(() => {
+        if (!types.has(selected) || types.size <= 1) {
+            setSelected('');
+        }
+    }, [types, selected]);
+
+    useEffect(() => {
+        onChange(
+            selected === ''
+                ? mapped.map((x) => x.file)
+                : mapped.filter((x) => x.type === selected).map((x) => x.file),
+        );
+    }, [selected, mapped, onChange]);
+
+    if (types.size <= 1) return null;
+
+    return (
+        <div className={styles.dropdown}>
+            <label htmlFor="filter">Filter:</label>
+            <select
+                id="filter"
+                value={selected}
+                onChange={(e) => setSelected(e.target.value)}
+            >
+                <option value="">All assets</option>
+                {[...types].map((type) => (
+                    <option key={type} value={type}>
+                        {type}
+                    </option>
+                ))}
+            </select>
+        </div>
+    );
+};
+
 const File = ({
     name,
     version,
@@ -141,6 +209,7 @@ const Files = ({
     sri: Record<string, string>;
     versions: string[];
 }) => {
+    const [listFiles, setListFiles] = useState(files);
     const listRef = useRef<HTMLUListElement | null>(null);
     const listOffsetRef = useRef(0);
 
@@ -149,7 +218,7 @@ const Files = ({
     }, []);
 
     const virtualizer = useWindowVirtualizer({
-        count: files.length,
+        count: listFiles.length,
         estimateSize: () => 35,
         overscan: 5,
         scrollMargin: listOffsetRef.current,
@@ -162,6 +231,7 @@ const Files = ({
                     {`https://cdnjs.cloudflare.com/ajax/libs/${name}/${version}/...`}
                 </code>
                 <Versions name={name} version={version} versions={versions} />
+                <Filter files={files} onChange={setListFiles} />
             </div>
             <ul
                 ref={listRef}
@@ -171,7 +241,7 @@ const Files = ({
                 }}
             >
                 {virtualizer.getVirtualItems().map((item) => {
-                    const file = files[item.index];
+                    const file = listFiles[item.index];
                     if (!file) return null;
 
                     return (
