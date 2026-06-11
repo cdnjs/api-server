@@ -51,7 +51,7 @@ head_sampling_rate = 1
 [env.staging.vars]
 DISABLE_LOGGING = true
 DISABLE_CACHING = false
-METADATA_BASE = ""
+METADATA_BASE = "https://metadata-staging.cdnjs.cloudflare.com"
 SENTRY_DSN = "" # Will be injected by build pipeline
 SENTRY_RELEASE = "" # Will be injected by build pipeline
 SENTRY_ENVIRONMENT = "staging"
@@ -72,7 +72,7 @@ head_sampling_rate = 0.05
 [env.production.vars]
 DISABLE_LOGGING = true
 DISABLE_CACHING = false
-METADATA_BASE = ""
+METADATA_BASE = "https://metadata.cdnjs.cloudflare.com"
 SENTRY_DSN = "" # Will be injected by build pipeline
 SENTRY_RELEASE = "" # Will be injected by build pipeline
 SENTRY_ENVIRONMENT = "production"
