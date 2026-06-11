@@ -10,7 +10,7 @@ import {
 } from './metadata.schema.ts';
 import sortVersions from './sort.ts';
 
-const base = env.METADATA_BASE || 'https://metadata.speedcdnjs.com';
+const base = env.METADATA_BASE || 'https://metadata.cdnjs.cloudflare.com';
 
 /**
  * Get a list of libraries.
