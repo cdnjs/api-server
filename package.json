@@ -36,7 +36,7 @@
         "@sentry/cloudflare": "^10.55.0",
         "@tanstack/react-virtual": "^3.14.2",
         "algoliasearch": "^5.53.0",
-        "hono": "^4.12.23",
+        "hono": "^4.12.25",
         "is-deflate": "^1.0.0",
         "is-gzip": "^2.0.0",
         "pako": "^2.1.0",
