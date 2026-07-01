@@ -44,7 +44,7 @@
         "react-dom": "^19.2.6",
         "semver": "^7.7.4",
         "spdx-license-ids": "^3.0.23",
-        "swagger-ui-react": "^5.32.6",
+        "swagger-ui-react": "^5.32.8",
         "zod": "^4.4.3"
     },
     "devDependencies": {
