@@ -87,7 +87,7 @@ export default async (
         .then((raw) => new Uint8Array(raw))
         .then((raw) =>
             isGzip(raw) || isDeflate(raw)
-                ? inflate(raw, { to: 'string' })
+                ? inflate(raw, { toText: true })
                 : new TextDecoder('utf-8').decode(raw),
         )
         .then((text) => JSON.parse(text))
