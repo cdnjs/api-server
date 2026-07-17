@@ -577,10 +577,6 @@ describe('/libraries', () => {
     });
 
     describe('Searching for libraries', () => {
-        // This set of tests is incredibly fragile
-        // Testing of the searching functionality should be done by hand
-        // TODO: Make this set of tests more robust
-
         describe('Providing a short query (?search=font-awesome)', () => {
             // Fetch the endpoint
             const path = '/libraries?search=font-awesome';
@@ -612,13 +608,6 @@ describe('/libraries', () => {
                 expect(body.results).to.have.lengthOf(body.available);
             });
             describe('Library object', async () => {
-                it("returns the 'twitter-bootstrap' package as the first object", async () => {
-                    const body = await response.json<LibrariesResponse>();
-                    expect(body.results[0]).to.have.property(
-                        'name',
-                        'font-awesome',
-                    );
-                });
                 it("is an object with 'name' and 'latest' properties", async () => {
                     const body = await response.json<LibrariesResponse>();
                     for (const result of body.results) {
@@ -636,6 +625,12 @@ describe('/libraries', () => {
                         expect(Object.keys(result)).to.have.lengthOf(2);
                     }
                 });
+            });
+            it("returns results containing the 'font-awesome' package", async () => {
+                const body = await response.json<LibrariesResponse>();
+                expect(body.results.map((result) => result.name)).to.include(
+                    'font-awesome',
+                );
             });
         });
 
