@@ -12,6 +12,11 @@ const styles = {
         font-size: ${theme.font.body.size};
         font-weight: ${theme.font.body.weight};
         overflow-x: hidden;
+
+        *:focus-visible {
+            outline: ${theme.spacing(0.25)} solid ${theme.text.brand};
+            border-radius: ${theme.radius};
+        }
     `,
     background: css`
         background: ${theme.background.body};
@@ -43,9 +48,10 @@ const styles = {
  * Standard cdnjs HTML layout.
  *
  * @param props Component props.
+ * @param props.path Path of the page being rendered (used for canonical link).
  * @param props.children Content to be included in the body of the page.
  */
-export default ({ children }: { children?: ReactNode }) => (
+export default ({ path, children }: { path: string; children?: ReactNode }) => (
     <html lang="en" className={styles.background}>
         <head>
             <link
@@ -55,6 +61,7 @@ export default ({ children }: { children?: ReactNode }) => (
                 crossOrigin="anonymous"
                 referrerPolicy="no-referrer"
             />
+            <link rel="canonical" href={path} />
             <meta name="robots" content="noindex" />
             <meta
                 name="viewport"

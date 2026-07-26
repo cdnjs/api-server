@@ -100,7 +100,11 @@ const respond = async <T = never>(
             createElement(
                 Provider,
                 null,
-                createElement(Layout, null, createElement(component, { data })),
+                createElement(
+                    Layout,
+                    { path: ctx.req.path },
+                    createElement(component, { data }),
+                ),
             ),
         );
         const body = await new Response(prelude).text();

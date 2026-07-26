@@ -5,8 +5,9 @@ import * as z from 'zod';
 import { libraries } from '../utils/algolia.ts';
 import filter from '../utils/filter.ts';
 import { queryArray, queryCheck } from '../utils/query.ts';
-import respond, { withCache } from '../utils/respond.ts';
+import respond, { isHuman, withCache } from '../utils/respond.ts';
 
+import LibrariesPage from './libraries.page.tsx';
 import {
     type LibrariesResponse,
     librariesResponseSchema,
@@ -40,7 +41,14 @@ const handleGetLibraries = async (ctx: Context) => {
                   hit.filename
                 : null,
         // Send back whatever else was requested, only send all if '*' explicitly included
-        ...filter(hit, requestedFields),
+        // But, always include some fields for the human-readable page
+        ...filter(
+            hit,
+            (field) =>
+                (isHuman(ctx) &&
+                    ['version', 'description', 'sri'].includes(field)) ||
+                requestedFields(field),
+        ),
     }));
 
     // If they want less data, allow that
@@ -51,11 +59,16 @@ const handleGetLibraries = async (ctx: Context) => {
     withCache(ctx, 6 * 60 * 60);
 
     // Send the response
-    return respond<LibrariesResponse>(ctx, {
-        results: trimmed,
-        total: trimmed.length, // Total results we're sending back
-        available: response.length, // Total number available without trimming
-    });
+    return respond<LibrariesResponse>(
+        ctx,
+        {
+            results: trimmed,
+            total: trimmed.length, // Total results we're sending back
+            available: response.length, // Total number available without trimming
+        },
+        ({ data }) =>
+            LibrariesPage({ data, search: ctx.req.query('search') || '' }),
+    );
 };
 
 /**

@@ -1,8 +1,8 @@
 import { css, cx } from '@emotion/css';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import {
-    type CSSProperties,
-    type ComponentType,
+    type HTMLAttributes,
+    type RefAttributes,
     useEffect,
     useLayoutEffect,
     useMemo,
@@ -12,10 +12,7 @@ import {
 
 import fileTypes from '../../files.ts';
 import theme from '../../theme.ts';
-import IconCheck from '../icons/check.tsx';
-import IconCode from '../icons/code.tsx';
-import IconLink from '../icons/link.tsx';
-import IconShield from '../icons/shield.tsx';
+import Copy from '../copy.tsx';
 import createIsland from '../island.tsx';
 
 const styles = {
@@ -71,6 +68,11 @@ const styles = {
         list-style: none;
         padding: 0;
         margin: ${theme.spacing(2, 0)};
+        transition: opacity ${theme.transition};
+
+        @starting-style {
+            opacity: 0;
+        }
     `,
     file: css`
         width: 100%;
@@ -78,7 +80,7 @@ const styles = {
         align-items: center;
         gap: ${theme.spacing(0.5)};
         padding: ${theme.spacing(0.5, 1)};
-        background: ${theme.background.navigation};
+        background: ${theme.background.footer};
         border-radius: ${theme.radius};
 
         a {
@@ -94,29 +96,6 @@ const styles = {
     `,
     featured: css`
         outline: 2px solid ${theme.background.brand};
-    `,
-    buttons: css`
-        display: flex;
-        align-items: center;
-        gap: ${theme.spacing(0.5)};
-        margin: 0 0 0 auto;
-    `,
-    copy: css`
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: ${theme.spacing(0.5)};
-        line-height: 0;
-        color: ${theme.text.primary};
-        transition: color ${theme.transition};
-
-        &:hover {
-            color: ${theme.text.brand};
-        }
-    `,
-    icon: css`
-        width: ${theme.spacing(2.5)};
-        height: ${theme.spacing(2.5)};
     `,
 };
 
@@ -214,64 +193,29 @@ const Filter = ({
     );
 };
 
-const Copy = ({
-    text,
-    label,
-    icon: Icon,
-}: {
-    text: string;
-    label: string;
-    icon: ComponentType<{ className?: string }>;
-}) => {
-    const [copied, setCopied] = useState(false);
-    const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-    const copy = () => {
-        navigator.clipboard.writeText(text);
-        setCopied(true);
-        if (timer.current) clearTimeout(timer.current);
-        timer.current = setTimeout(() => setCopied(false), 2000);
-    };
-
-    useEffect(
-        () => () => {
-            if (timer.current) clearTimeout(timer.current);
-        },
-        [],
-    );
-
-    return (
-        <button onClick={copy} title={label} className={styles.copy}>
-            {copied ? (
-                <IconCheck className={styles.icon} />
-            ) : (
-                <Icon className={styles.icon} />
-            )}
-        </button>
-    );
-};
-
 const File = ({
     name,
     version,
     file,
     sri,
     featured = false,
-    style,
+    ...props
 }: {
     name: string;
     version: string;
     file: string;
     sri?: string;
     featured?: boolean;
-    style?: CSSProperties;
-}) => {
-    const integrity = sri ? ` integrity="${sri}" crossorigin="anonymous"` : '';
-
+} & HTMLAttributes<HTMLLIElement> &
+    RefAttributes<HTMLLIElement>) => {
     return (
         <li
-            style={style}
-            className={cx(styles.file, featured && styles.featured)}
+            {...props}
+            className={cx(
+                styles.file,
+                featured && styles.featured,
+                props.className,
+            )}
         >
             <a
                 href={`https://cdnjs.cloudflare.com/ajax/libs/${encodeURIComponent(name)}/${encodeURIComponent(version)}/${file}`}
@@ -281,41 +225,7 @@ const File = ({
                 {file}
             </a>
 
-            <div className={styles.buttons}>
-                <Copy
-                    text={`https://cdnjs.cloudflare.com/ajax/libs/${encodeURIComponent(name)}/${encodeURIComponent(version)}/${file}`}
-                    label="Copy URL"
-                    icon={IconLink}
-                />
-
-                {file.endsWith('.js') && (
-                    <Copy
-                        text={`<script src="https://cdnjs.cloudflare.com/ajax/libs/${encodeURIComponent(name)}/${encodeURIComponent(version)}/${file}"${integrity} referrerpolicy="no-referrer"></script>`}
-                        label="Copy <script> HTML"
-                        icon={IconCode}
-                    />
-                )}
-
-                {file.endsWith('mjs') && (
-                    <Copy
-                        text={`<script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/${encodeURIComponent(name)}/${encodeURIComponent(version)}/${file}"${integrity} referrerpolicy="no-referrer"></script>`}
-                        label="Copy <script type='module'> HTML"
-                        icon={IconCode}
-                    />
-                )}
-
-                {file.endsWith('.css') && (
-                    <Copy
-                        text={`<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/${encodeURIComponent(name)}/${encodeURIComponent(version)}/${file}"${integrity} referrerpolicy="no-referrer">`}
-                        label="Copy <link> HTML"
-                        icon={IconCode}
-                    />
-                )}
-
-                {sri && (
-                    <Copy text={sri} label="Copy SRI hash" icon={IconShield} />
-                )}
-            </div>
+            <Copy name={name} version={version} file={file} sri={sri} />
         </li>
     );
 };
@@ -375,7 +285,12 @@ const Files = ({
         gap: Number(theme.spacing(1).replace('px', '')),
         overscan: 5,
         scrollMargin: listOffsetRef.current,
+        initialRect: { width: 0, height: 1000 },
     });
+
+    useEffect(() => {
+        virtualizer.measure();
+    }, [listFiles, virtualizer]);
 
     return (
         <>
@@ -409,9 +324,11 @@ const Files = ({
                             style={{
                                 position: 'absolute',
                                 top: 0,
-                                height: `${item.size}px`,
+                                left: 0,
                                 transform: `translateY(${item.start - virtualizer.options.scrollMargin}px)`,
                             }}
+                            data-index={item.index}
+                            ref={virtualizer.measureElement}
                         />
                     );
                 })}
