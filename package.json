@@ -76,9 +76,6 @@
             "wrangler": "$wrangler"
         },
         "swagger-ui-react": {
-            "react-copy-to-clipboard": {
-                "react": "$react"
-            },
             "react-debounce-input": {
                 "react": "$react"
             },
