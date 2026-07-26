@@ -12,6 +12,11 @@ const styles = {
         font-size: ${theme.font.body.size};
         font-weight: ${theme.font.body.weight};
         overflow-x: hidden;
+
+        *:focus-visible {
+            outline: ${theme.spacing(0.25)} solid ${theme.text.brand};
+            border-radius: ${theme.radius};
+        }
     `,
     background: css`
         background: ${theme.background.body};

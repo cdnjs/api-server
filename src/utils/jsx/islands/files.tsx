@@ -74,7 +74,7 @@ const styles = {
         align-items: center;
         gap: ${theme.spacing(0.5)};
         padding: ${theme.spacing(0.5, 1)};
-        background: ${theme.background.navigation};
+        background: ${theme.background.footer};
         border-radius: ${theme.radius};
 
         a {
