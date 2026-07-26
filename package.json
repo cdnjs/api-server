@@ -44,7 +44,7 @@
         "react-dom": "^19.2.7",
         "semver": "^7.7.4",
         "spdx-license-ids": "^3.0.23",
-        "swagger-ui-react": "^5.32.8",
+        "swagger-ui-react": "^5.32.11",
         "zod": "^4.4.3"
     },
     "devDependencies": {
@@ -76,9 +76,6 @@
             "wrangler": "$wrangler"
         },
         "swagger-ui-react": {
-            "react-copy-to-clipboard": {
-                "react": "$react"
-            },
             "react-debounce-input": {
                 "react": "$react"
             },
