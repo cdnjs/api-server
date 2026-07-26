@@ -1,7 +1,8 @@
 import { css, cx } from '@emotion/css';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import {
-    type CSSProperties,
+    type HTMLAttributes,
+    type RefAttributes,
     useEffect,
     useLayoutEffect,
     useMemo,
@@ -67,6 +68,11 @@ const styles = {
         list-style: none;
         padding: 0;
         margin: ${theme.spacing(2, 0)};
+        transition: opacity ${theme.transition};
+
+        @starting-style {
+            opacity: 0;
+        }
     `,
     file: css`
         width: 100%;
@@ -193,19 +199,23 @@ const File = ({
     file,
     sri,
     featured = false,
-    style,
+    ...props
 }: {
     name: string;
     version: string;
     file: string;
     sri?: string;
     featured?: boolean;
-    style?: CSSProperties;
-}) => {
+} & HTMLAttributes<HTMLLIElement> &
+    RefAttributes<HTMLLIElement>) => {
     return (
         <li
-            style={style}
-            className={cx(styles.file, featured && styles.featured)}
+            {...props}
+            className={cx(
+                styles.file,
+                featured && styles.featured,
+                props.className,
+            )}
         >
             <a
                 href={`https://cdnjs.cloudflare.com/ajax/libs/${encodeURIComponent(name)}/${encodeURIComponent(version)}/${file}`}
@@ -275,7 +285,12 @@ const Files = ({
         gap: Number(theme.spacing(1).replace('px', '')),
         overscan: 5,
         scrollMargin: listOffsetRef.current,
+        initialRect: { width: 0, height: 1000 },
     });
+
+    useEffect(() => {
+        virtualizer.measure();
+    }, [listFiles, virtualizer]);
 
     return (
         <>
@@ -309,9 +324,11 @@ const Files = ({
                             style={{
                                 position: 'absolute',
                                 top: 0,
-                                height: `${item.size}px`,
+                                left: 0,
                                 transform: `translateY(${item.start - virtualizer.options.scrollMargin}px)`,
                             }}
+                            data-index={item.index}
+                            ref={virtualizer.measureElement}
                         />
                     );
                 })}

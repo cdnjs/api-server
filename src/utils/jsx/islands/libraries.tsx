@@ -1,5 +1,6 @@
 import { css } from '@emotion/css';
-import { useEffect, useState } from 'react';
+import { useWindowVirtualizer } from '@tanstack/react-virtual';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import theme from '../../theme.ts';
 import Copy from '../copy.tsx';
@@ -63,12 +64,20 @@ const styles = {
         }
     `,
     results: css`
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: ${theme.spacing(2)};
         padding: 0;
         margin: 0;
         list-style: none;
+        transition: opacity ${theme.transition};
+
+        @starting-style {
+            opacity: 0;
+        }
+    `,
+    row: css`
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: ${theme.spacing(2)};
 
         ${theme.breakpoints.medium} {
             grid-template-columns: 1fr;
@@ -183,6 +192,62 @@ const Libraries = ({
         setTotal(results.length.toLocaleString());
     }, [results.length]);
 
+    const [columns, setColumns] = useState(2);
+    const listRef = useRef<HTMLUListElement | null>(null);
+    const listOffsetRef = useRef(0);
+
+    useLayoutEffect(() => {
+        listOffsetRef.current = listRef.current?.offsetTop ?? 0;
+    }, []);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+
+        const media = window.matchMedia(
+            theme.breakpoints.medium.replace('@media ', ''),
+        );
+        const updateColumns = () => setColumns(media.matches ? 1 : 2);
+        updateColumns();
+
+        media.addEventListener('change', updateColumns);
+        return () => media.removeEventListener('change', updateColumns);
+    }, []);
+
+    const rows = useMemo(() => {
+        const count = Math.ceil(results.length / columns);
+        return Array.from({ length: count }, (_, index) => {
+            const values = results.slice(
+                index * columns,
+                index * columns + columns,
+            );
+
+            return {
+                key: values
+                    .map((result) =>
+                        JSON.stringify([
+                            result.name,
+                            result.version,
+                            result.description,
+                            result.latest,
+                            result.sri,
+                        ]),
+                    )
+                    .join('|'),
+                values,
+            };
+        });
+    }, [columns, results]);
+
+    const virtualizer = useWindowVirtualizer({
+        count: rows.length,
+        estimateSize: () => Number(theme.spacing(12).replace('px', '')),
+        gap: Number(theme.spacing(2).replace('px', '')),
+        overscan: 5,
+        scrollMargin: listOffsetRef.current,
+        getItemKey: (index) => rows[index]?.key ?? index,
+        initialRect: { width: 0, height: 1000 },
+    });
+
     return (
         <>
             <div className={styles.header}>
@@ -207,10 +272,40 @@ const Libraries = ({
                 </p>
             </div>
 
-            <ul className={styles.results}>
-                {results.map((result) => (
-                    <Result key={result.name} {...result} />
-                ))}
+            <ul
+                ref={listRef}
+                style={{
+                    height: `${virtualizer.getTotalSize()}px`,
+                    position: 'relative',
+                }}
+                className={styles.results}
+            >
+                {virtualizer.getVirtualItems().map((item) => {
+                    const row = rows[item.index];
+                    if (!row) return null;
+
+                    return (
+                        <div
+                            key={item.key}
+                            className={styles.row}
+                            style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                transform: `translateY(${item.start - virtualizer.options.scrollMargin}px)`,
+                            }}
+                            data-index={item.index}
+                            ref={virtualizer.measureElement}
+                        >
+                            {row.values.map((result) => (
+                                <Result
+                                    key={`${result.name}:${result.version}`}
+                                    {...result}
+                                />
+                            ))}
+                        </div>
+                    );
+                })}
             </ul>
         </>
     );
