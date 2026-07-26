@@ -1,11 +1,39 @@
 import { css } from '@emotion/css';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import * as z from 'zod/mini';
 
 import theme from '../../theme.ts';
 import Copy from '../copy.tsx';
+import IconCross from '../icons/cross.tsx';
+import IconLoading from '../icons/loading.tsx';
 import IconSearch from '../icons/search.tsx';
 import createIsland from '../island.tsx';
+
+const resultSchema = z.object({
+    name: z.string(),
+    version: z.string(),
+    description: z.string(),
+    latest: z.nullable(z.string()),
+    sri: z.string(),
+});
+type Result = z.infer<typeof resultSchema>;
+
+const getResults = async (search: string, signal?: AbortSignal) => {
+    const res = await fetch(
+        `https://api.cdnjs.com/libraries?search=${encodeURIComponent(search)}&fields=name,latest,version,description,sri`,
+        { signal },
+    );
+    if (!res.ok) {
+        throw new Error(
+            `Failed to fetch status: ${res.status} ${res.statusText}`,
+            { cause: await res.text() },
+        );
+    }
+
+    const data = await res.json();
+    return z.object({ results: z.array(resultSchema) }).parse(data).results;
+};
 
 const styles = {
     header: css`
@@ -174,18 +202,46 @@ const Libraries = ({
     initial,
 }: {
     initial: {
-        results: {
-            name: string;
-            version: string;
-            description: string;
-            latest: string | null;
-            sri: string;
-        }[];
+        results: Result[];
         search: string;
     };
 }) => {
+    const [state, setState] = useState<'idle' | 'loading' | 'failed'>('idle');
     const [results, setResults] = useState(initial.results);
     const [search, setSearch] = useState(initial.search);
+    const abortRef = useRef<AbortController | null>(null);
+
+    useEffect(() => {
+        const timer = setTimeout(async () => {
+            try {
+                setState('loading');
+
+                const controller = new AbortController();
+                abortRef.current?.abort();
+                abortRef.current = controller;
+
+                setResults(
+                    search === initial.search
+                        ? initial.results
+                        : await getResults(search, controller.signal),
+                );
+                setState('idle');
+
+                const url = new URL(window.location.href);
+                if (search === '') {
+                    url.searchParams.delete('search');
+                } else {
+                    url.searchParams.set('search', search);
+                }
+                window.history.replaceState({}, '', url.toString());
+            } catch (err) {
+                console.error(err);
+                setState('failed');
+            }
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [search, initial.search, initial.results]);
 
     const [total, setTotal] = useState(results.length.toLocaleString('en-US'));
     useEffect(() => {
@@ -253,10 +309,10 @@ const Libraries = ({
             <div className={styles.header}>
                 <form
                     className={styles.search}
-                    action="/libraries"
-                    method="get"
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                    }}
                 >
-                    <input type="hidden" name="output" value="human" />
                     <input
                         type="text"
                         name="search"
@@ -264,7 +320,13 @@ const Libraries = ({
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="Search libraries on cdnjs..."
                     />
-                    <IconSearch />
+                    {
+                        {
+                            idle: <IconSearch />,
+                            loading: <IconLoading />,
+                            failed: <IconCross />,
+                        }[state]
+                    }
                 </form>
 
                 <p className={styles.found}>
