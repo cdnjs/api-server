@@ -1,5 +1,5 @@
 import { css } from '@emotion/css';
-import { Iterable, List, Map } from 'immutable';
+import { Collection, List, Map } from 'immutable';
 import { type ComponentType, Fragment, type ReactNode, useState } from 'react';
 import SwaggerUI from 'swagger-ui-react';
 import swaggerStyles from 'swagger-ui-react/swagger-ui.css';
@@ -264,7 +264,7 @@ interface System {
     };
     specSelectors: {
         isOAS3: () => boolean;
-        definitions: () => Map<string, unknown>;
+        definitions: () => Map<string, Map<string, unknown>>;
     };
 }
 
@@ -422,7 +422,7 @@ const plugin = (system: System) => ({
          * @param props Props passed by swagger-ui.
          * @param props.isShown Whether the operation body is currently expanded.
          * @param props.toggleShown Handler to toggle the operation body expansion.
-         * @param props.operationProps Iterable of the operation's properties.
+         * @param props.operationProps Collection of the operation's properties.
          */
         OperationSummary: ({
             isShown,
@@ -431,7 +431,7 @@ const plugin = (system: System) => ({
         }: {
             isShown: boolean;
             toggleShown: () => void;
-            operationProps: Iterable<string, unknown>;
+            operationProps: Collection<string, unknown>;
         }) => {
             const { method, path, summary } = operationProps.toObject();
             if (
@@ -534,7 +534,7 @@ const plugin = (system: System) => ({
                                             expanded={expanded}
                                         >
                                             <code>{name}</code>
-                                            {description}
+                                            {String(description)}
                                         </Summary>
                                         {expanded && (
                                             <div className={mixins.body}>
@@ -580,7 +580,7 @@ const plugin = (system: System) => ({
          * @param props Props passed by swagger-ui.
          * @param props.value Enum values to render.
          */
-        EnumModel: ({ value }: { value: Iterable<string, unknown> }) => (
+        EnumModel: ({ value }: { value: Collection<string, unknown> }) => (
             <span className="prop-enum">
                 Enum: [ {value.map(String).join(', ')} ]
             </span>
