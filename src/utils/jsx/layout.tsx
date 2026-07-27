@@ -19,10 +19,15 @@ const styles = {
         }
     `,
     background: css`
-        background: ${theme.background.body};
+        background: linear-gradient(
+                ${theme.background.navigation} 45%,
+                ${theme.background.footer} 55%
+            )
+            fixed;
         color: ${theme.text.primary};
     `,
     main: css`
+        background: ${theme.background.body};
         display: flex;
         flex-direction: column;
         min-height: 100vh;
