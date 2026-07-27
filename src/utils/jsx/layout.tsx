@@ -31,6 +31,8 @@ const styles = {
         flex-grow: 1;
         isolation: isolate;
         position: relative;
+        display: flex;
+        flex-direction: column;
     `,
     container: css`
         margin: 0 auto;

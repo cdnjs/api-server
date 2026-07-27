@@ -43,6 +43,10 @@ export default {
             size: '0.875rem',
             weight: 400,
         },
+        tiny: {
+            size: '0.75rem',
+            weight: 400,
+        },
     },
     radius: '4px',
     transition: '0.2s ease-in-out',
