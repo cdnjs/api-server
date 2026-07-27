@@ -1,17 +1,36 @@
 import { css } from '@emotion/css';
 
+import Grid from '../utils/jsx/grid.tsx';
 import Search from '../utils/jsx/search.tsx';
 import theme from '../utils/theme.ts';
 
 const styles = {
+    background: css`
+        color: ${theme.background.brand};
+        position: absolute;
+        width: 100vw;
+        height: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 0;
+        bottom: 0;
+        z-index: -1;
+    `,
     content: css`
         display: flex;
         flex-direction: column;
-        flex-grow: 1;
         align-items: center;
         justify-content: center;
         text-align: center;
         gap: ${theme.spacing(4)};
+        margin: auto;
+        max-width: 100%;
+        background: radial-gradient(
+            ellipse at center,
+            rgb(from ${theme.background.body} r g b / 0.9) 0%,
+            rgb(from ${theme.background.body} r g b / 0) 100%
+        );
+        padding: ${theme.spacing(4, 2)};
     `,
     badge: css`
         display: flex;
@@ -83,22 +102,30 @@ const styles = {
  */
 export default () => {
     return (
-        <div className={styles.content}>
-            <p className={styles.badge}>Powered by Cloudflare</p>
+        <>
+            <Grid className={styles.background} />
 
-            <h1 className={styles.title}>
-                The free CDN for
-                <br /> <strong>open source libraries.</strong>
-            </h1>
+            <div className={styles.content}>
+                <p className={styles.badge}>Powered by Cloudflare</p>
 
-            <p className={styles.prose}>
-                JavaScript, CSS, and font resources, globally cached on
-                Cloudflare's network.
-                <br /> Trusted by <strong>12.5% of all websites</strong>,
-                serving <strong>250 billion requests per month</strong>.
-            </p>
+                <h1 className={styles.title}>
+                    The free CDN for
+                    <br /> <strong>open source libraries.</strong>
+                </h1>
 
-            <Search value="" onChange={() => {}} className={styles.search} />
-        </div>
+                <p className={styles.prose}>
+                    JavaScript, CSS, and font resources, globally cached on
+                    Cloudflare's network.
+                    <br /> Trusted by <strong>12.5% of all websites</strong>,
+                    serving <strong>250 billion requests per month</strong>.
+                </p>
+
+                <Search
+                    value=""
+                    onChange={() => {}}
+                    className={styles.search}
+                />
+            </div>
+        </>
     );
 };
