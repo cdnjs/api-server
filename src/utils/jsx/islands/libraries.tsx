@@ -5,10 +5,8 @@ import * as z from 'zod/mini';
 
 import theme from '../../theme.ts';
 import Copy from '../copy.tsx';
-import IconCross from '../icons/cross.tsx';
-import IconLoading from '../icons/loading.tsx';
-import IconSearch from '../icons/search.tsx';
 import createIsland from '../island.tsx';
+import Search from '../search.tsx';
 
 const resultSchema = z.object({
     name: z.string(),
@@ -58,34 +56,15 @@ const styles = {
             z-index: -1;
         }
     `,
-    search: css`
-        position: relative;
-        color: ${theme.text.inverted};
-
-        input {
-            width: 100%;
-            padding: ${theme.spacing(1, 6, 1, 1)};
-            font-size: ${theme.font.large.size};
-            font-weight: ${theme.font.large.weight};
-            border: ${theme.spacing(0.125)} solid ${theme.background.body};
-            border-radius: ${theme.radius};
-        }
-
-        svg {
-            position: absolute;
-            right: ${theme.spacing(2)};
-            top: 50%;
-            transform: translateY(-50%);
-            width: ${theme.spacing(3)};
-            height: ${theme.spacing(3)};
-            pointer-events: none;
-        }
-    `,
     found: css`
         color: ${theme.text.secondary};
-        font-size: ${theme.font.small.size};
-        font-weight: ${theme.font.small.weight};
         margin: 0;
+
+        &,
+        strong {
+            font-size: ${theme.font.small.size};
+            font-weight: ${theme.font.small.weight};
+        }
 
         strong {
             color: ${theme.text.brand};
@@ -308,27 +287,7 @@ const Libraries = ({
     return (
         <>
             <div className={styles.header}>
-                <form
-                    className={styles.search}
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                    }}
-                >
-                    <input
-                        type="text"
-                        name="search"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder="Search libraries on cdnjs..."
-                    />
-                    {
-                        {
-                            idle: <IconSearch />,
-                            loading: <IconLoading />,
-                            failed: <IconCross />,
-                        }[state]
-                    }
-                </form>
+                <Search value={search} onChange={setSearch} state={state} />
 
                 <p className={styles.found}>
                     Found <strong>{total}</strong> libraries available on cdnjs.
