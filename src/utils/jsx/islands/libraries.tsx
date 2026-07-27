@@ -213,13 +213,12 @@ const Libraries = ({
 
     useEffect(() => {
         const timer = setTimeout(async () => {
+            const controller = new AbortController();
+            abortRef.current?.abort();
+            abortRef.current = controller;
+
             try {
                 setState('loading');
-
-                const controller = new AbortController();
-                abortRef.current?.abort();
-                abortRef.current = controller;
-
                 setResults(
                     search === initial.search
                         ? initial.results
@@ -235,8 +234,10 @@ const Libraries = ({
                 }
                 window.history.replaceState({}, '', url.toString());
             } catch (err) {
-                console.error(err);
-                setState('failed');
+                if (!controller.signal.aborted) {
+                    console.error(err);
+                    setState('failed');
+                }
             }
         }, 300);
 
