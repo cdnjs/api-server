@@ -1,6 +1,6 @@
 import { existsSync, globSync, mkdirSync, rmSync } from 'node:fs';
 import { basename, extname, resolve } from 'node:path';
-import { defineConfig } from 'vite';
+import { defineConfig, normalizePath } from 'vite';
 
 const outputDirectory = resolve('dist-client');
 const virtualEntryPrefix = 'virtual:island-entry:';
@@ -29,7 +29,7 @@ const islandEntryByName = new Map(
     islandEntries.map((entry) => [entry.name, entry]),
 );
 const islandEntryByPath = new Map(
-    islandEntries.map((entry) => [entry.path, entry]),
+    islandEntries.map((entry) => [normalizePath(entry.path), entry]),
 );
 
 const parseCreateIslandDeclaration = (source: string) => {
@@ -77,7 +77,7 @@ export default defineConfig({
             },
             // Strip the SSR wrapper from island modules in the client build.
             transform(code, id) {
-                const entry = islandEntryByPath.get(id);
+                const entry = islandEntryByPath.get(normalizePath(id));
                 if (!entry) {
                     return null;
                 }
@@ -153,13 +153,12 @@ export default defineConfig({
                 assetFileNames: 'islands/assets/[name]-[hash][extname]',
                 // Share the core React hydration code across all islands as a separate chunk.
                 manualChunks(id) {
-                    const normalizedId = id.replaceAll('\\', '/');
+                    const normalizedId = normalizePath(id);
 
                     if (
                         normalizedId.includes('/node_modules/react/') ||
                         normalizedId.includes('/node_modules/react-dom/') ||
-                        normalizedId ===
-                            hydrationRuntimePath.replaceAll('\\', '/')
+                        normalizedId === normalizePath(hydrationRuntimePath)
                     ) {
                         return 'hydration-runtime';
                     }
