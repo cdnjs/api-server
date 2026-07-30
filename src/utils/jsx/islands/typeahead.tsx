@@ -62,7 +62,7 @@ const styles = {
 
         p {
             color: rgb(from ${theme.text.secondary} r g b / 0.75);
-            font-family: monospace;
+            font-family: ${theme.font.families.mono};
             text-transform: uppercase;
             margin: 0;
         }
@@ -121,7 +121,7 @@ const styles = {
 
                 small {
                     color: rgb(from ${theme.text.secondary} r g b / 0.75);
-                    font-family: monospace;
+                    font-family: ${theme.font.families.mono};
                     font-size: ${theme.font.tiny.size};
                     font-weight: ${theme.font.tiny.weight};
                 }

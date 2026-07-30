@@ -47,6 +47,11 @@ export default {
             size: '0.75rem',
             weight: 400,
         },
+        families: {
+            home: '"Space Grotesk", system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
+            body: '"Inter", system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
+            mono: '"JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace',
+        },
     },
     radius: '4px',
     transition: '0.2s ease-in-out',

@@ -158,7 +158,7 @@ const styles = {
                     width: auto;
                     height: auto;
                     display: inline-block;
-                    font-family: monospace;
+                    font-family: ${theme.font.families.mono};
                     font-size: ${theme.font.small.size};
                     font-weight: ${theme.font.small.weight};
                     line-height: 1;

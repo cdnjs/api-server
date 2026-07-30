@@ -1,5 +1,5 @@
 import { css, cx } from '@emotion/css';
-import type { ReactNode } from 'react';
+import { Fragment, type ReactNode } from 'react';
 
 import theme from '../theme.ts';
 
@@ -11,6 +11,7 @@ const styles = {
     body: css`
         font-size: ${theme.font.body.size};
         font-weight: ${theme.font.body.weight};
+        font-family: ${theme.font.families.body};
         overflow-x: hidden;
 
         *:focus-visible {
@@ -51,6 +52,50 @@ const styles = {
     `,
 };
 
+const stylesheets = [
+    {
+        href: 'https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/3.0.1/modern-normalize.min.css',
+        integrity:
+            'sha512-q6WgHqiHlKyOqslT/lgBgodhd03Wp4BEqKeW6nNtlOY4quzyG3VoQKFrieaCeSnuVseNKRGpGeDU3qPmabCANg==',
+    },
+    {
+        href: 'https://cdnjs.cloudflare.com/ajax/libs/fontsource-inter/5.2.8/index.min.css',
+        integrity:
+            'sha512-6arWMnMEofnjQzuSHcwFlEMCPRJLWifo5SNG8mG46UaPdY9dwR+eRYwNKv+c/jQwFrSE56Pox98ubnJuALLjzA==',
+        preload: [
+            {
+                href: 'https://cdnjs.cloudflare.com/ajax/libs/fontsource-inter/5.2.8/files/inter-latin-400-normal.woff2',
+                as: 'font',
+                type: 'font/woff2',
+            },
+        ],
+    },
+    {
+        href: 'https://cdnjs.cloudflare.com/ajax/libs/fontsource-jetbrains-mono/5.2.8/index.min.css',
+        integrity:
+            'sha512-wy9HCEuMc2WciAissjPymKPuomtDPAqHxed+9+led70ajmRqU1AD8dcFQW6FbTkgPeAaUmUq1mzfBjJ2hMxJ3w==',
+        preload: [
+            {
+                href: 'https://cdnjs.cloudflare.com/ajax/libs/fontsource-jetbrains-mono/5.2.8/files/jetbrains-mono-latin-400-normal.woff2',
+                as: 'font',
+                type: 'font/woff2',
+            },
+        ],
+    },
+    {
+        href: 'https://cdnjs.cloudflare.com/ajax/libs/fontsource-space-grotesk/5.2.8/index.min.css',
+        integrity:
+            'sha512-FT7MJI83N9vNo9hTY75CYSWvGhs8EJUrgb2cqLlJrBbG99yJW9Vm7FYbYsB4xDYVFfD7FjnERyaU/MdDuxTGQg==',
+        preload: [
+            {
+                href: 'https://cdnjs.cloudflare.com/ajax/libs/fontsource-space-grotesk/5.2.8/files/space-grotesk-latin-400-normal.woff2',
+                as: 'font',
+                type: 'font/woff2',
+            },
+        ],
+    },
+];
+
 /**
  * Standard cdnjs HTML layout.
  *
@@ -61,14 +106,37 @@ const styles = {
 export default ({ path, children }: { path: string; children?: ReactNode }) => (
     <html lang="en" className={styles.background}>
         <head>
-            <link
-                rel="stylesheet"
-                href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/3.0.1/modern-normalize.min.css"
-                integrity="sha512-q6WgHqiHlKyOqslT/lgBgodhd03Wp4BEqKeW6nNtlOY4quzyG3VoQKFrieaCeSnuVseNKRGpGeDU3qPmabCANg=="
-                crossOrigin="anonymous"
-                referrerPolicy="no-referrer"
-            />
-            <link rel="canonical" href={path} />
+            {stylesheets.map((sheet) => (
+                <Fragment key={sheet.href}>
+                    <link
+                        rel="preload"
+                        href={sheet.href}
+                        as="style"
+                        integrity={sheet.integrity}
+                        crossOrigin="anonymous"
+                        referrerPolicy="no-referrer"
+                    />
+                    {sheet.preload?.map((preload) => (
+                        <link
+                            key={preload.href}
+                            rel="preload"
+                            href={preload.href}
+                            as={preload.as}
+                            type={preload.type}
+                            crossOrigin="anonymous"
+                            referrerPolicy="no-referrer"
+                        />
+                    ))}
+                    <link
+                        rel="stylesheet"
+                        href={sheet.href}
+                        integrity={sheet.integrity}
+                        crossOrigin="anonymous"
+                        referrerPolicy="no-referrer"
+                    />
+                </Fragment>
+            ))}
+            <link rel="canonical" href={`https://cdnjs.com${path}`} />
             <meta name="robots" content="noindex" />
             <meta
                 name="viewport"

@@ -41,7 +41,7 @@ const styles = {
             rgb(from ${theme.background.brand} r g b / 0.75);
         border-radius: ${theme.spacing(4)};
         color: ${theme.text.brand};
-        font-family: monospace;
+        font-family: ${theme.font.families.mono};
         font-size: ${theme.font.tiny.size};
         font-weight: ${theme.font.tiny.weight};
         line-height: 1;
@@ -61,6 +61,7 @@ const styles = {
         }
     `,
     title: css`
+        font-family: ${theme.font.families.home};
         line-height: 1.125;
         margin: 0;
 
