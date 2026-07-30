@@ -35,11 +35,17 @@ const styles = {
 const Search = ({
     value,
     onChange,
+    onFocus,
+    onBlur,
+    onSubmit,
     state,
     className,
 }: {
     value: string;
     onChange: (value: string) => void;
+    onFocus?: () => void;
+    onBlur?: () => void;
+    onSubmit?: () => void;
     state?: 'idle' | 'loading' | 'failed';
     className?: string;
 }) => {
@@ -48,6 +54,7 @@ const Search = ({
             className={cx(styles.form, className)}
             onSubmit={(e) => {
                 e.preventDefault();
+                onSubmit?.();
             }}
         >
             <input
@@ -55,7 +62,10 @@ const Search = ({
                 name="search"
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
+                onFocus={onFocus}
+                onBlur={onBlur}
                 placeholder="Search libraries on cdnjs..."
+                autoComplete="off"
                 className={styles.input}
             />
             {

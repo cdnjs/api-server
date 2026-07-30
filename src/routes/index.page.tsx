@@ -1,7 +1,7 @@
 import { css } from '@emotion/css';
 
 import Grid from '../utils/jsx/grid.tsx';
-import Search from '../utils/jsx/search.tsx';
+import Typeahead from '../utils/jsx/islands/typeahead.tsx';
 import theme from '../utils/theme.ts';
 
 const styles = {
@@ -120,11 +120,7 @@ export default () => {
                     serving <strong>250 billion requests per month</strong>.
                 </p>
 
-                <Search
-                    value=""
-                    onChange={() => {}}
-                    className={styles.search}
-                />
+                <Typeahead className={styles.search} />
             </div>
         </>
     );
