@@ -226,6 +226,7 @@ const Typeahead = ({ className }: { className?: string }) => {
                             popoverRef.current = el;
                             if (el) popover();
                         }}
+                        onMouseDown={(e) => e.preventDefault()}
                         className={styles.popover}
                     >
                         <div className={styles.bar}>
