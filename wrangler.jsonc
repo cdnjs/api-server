@@ -1,0 +1,109 @@
+{
+    "$schema": "./node_modules/wrangler/config-schema.json",
+    "name": "cdnjs-api-worker",
+    "main": "src/index.ts",
+    "send_metrics": false,
+    "compatibility_date": "2022-11-30",
+    "compatibility_flags": ["nodejs_als"],
+    "kv_namespaces": [
+        {
+            "binding": "CACHE",
+        },
+    ],
+    "build": {
+        "command": "vite build --config vite.client.config.ts",
+        "watch_dir": "src",
+    },
+    "rules": [
+        {
+            "type": "Text",
+            "globs": ["**/*.css"],
+            "fallthrough": true,
+        },
+    ],
+    "assets": {
+        "directory": "./dist-client",
+        "binding": "ASSETS",
+    },
+    "observability": {
+        "logs": {
+            "enabled": true,
+            "head_sampling_rate": 1,
+            "invocation_logs": false,
+        },
+        "traces": {
+            "enabled": true,
+            "head_sampling_rate": 1,
+        },
+    },
+    "vars": {
+        "DISABLE_LOGGING": false,
+        "DISABLE_CACHING": false,
+        "METADATA_BASE": "",
+        "SENTRY_DSN": "",
+        "SENTRY_RELEASE": "",
+        "SENTRY_ENVIRONMENT": "development",
+    },
+    "env": {
+        "staging": {
+            "route": {
+                "pattern": "api.cdnjs.dev/*",
+                "zone_name": "cdnjs.dev",
+            },
+            "kv_namespaces": [
+                {
+                    "binding": "CACHE",
+                },
+            ],
+            "observability": {
+                "logs": {
+                    "enabled": true,
+                    "head_sampling_rate": 1,
+                    "invocation_logs": false,
+                },
+                "traces": {
+                    "enabled": true,
+                    "head_sampling_rate": 1,
+                },
+            },
+            "vars": {
+                "DISABLE_LOGGING": true,
+                "DISABLE_CACHING": false,
+                "METADATA_BASE": "https://metadata.cdnjs.cloudflare.com",
+                "SENTRY_DSN": "", // Will be injected by build pipeline
+                "SENTRY_RELEASE": "", // Will be injected by build pipeline
+                "SENTRY_ENVIRONMENT": "staging",
+            },
+        },
+        "production": {
+            "route": {
+                "pattern": "api.cdnjs.com/*",
+                "zone_name": "cdnjs.com",
+            },
+            "kv_namespaces": [
+                {
+                    "binding": "CACHE",
+                },
+            ],
+            "observability": {
+                "logs": {
+                    "enabled": true,
+                    "head_sampling_rate": 1,
+                    "invocation_logs": false,
+                },
+                "traces": {
+                    "enabled": true,
+                    "head_sampling_rate": 0.05,
+                },
+            },
+            "vars": {
+                "DISABLE_LOGGING": true,
+                "DISABLE_CACHING": false,
+                "METADATA_BASE": "https://metadata.cdnjs.cloudflare.com",
+                "SENTRY_DSN": "", // Will be injected by build pipeline
+                "SENTRY_RELEASE": "", // Will be injected by build pipeline
+                "SENTRY_ENVIRONMENT": "production",
+            },
+        },
+    },
+}
