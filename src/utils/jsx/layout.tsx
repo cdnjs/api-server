@@ -20,15 +20,11 @@ const styles = {
         }
     `,
     background: css`
-        background: linear-gradient(
-                ${theme.background.navigation} 45%,
-                ${theme.background.footer} 55%
-            )
-            fixed;
+        background: ${theme.background.elevated};
         color: ${theme.text.primary};
     `,
     main: css`
-        background: ${theme.background.body};
+        background: ${theme.background.primary};
         display: flex;
         flex-direction: column;
         min-height: 100vh;

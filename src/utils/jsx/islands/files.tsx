@@ -19,11 +19,12 @@ const styles = {
     toolbar: css`
         display: flex;
         flex-wrap: wrap;
-        align-items: baseline;
+        align-items: center;
         justify-content: space-between;
         gap: ${theme.spacing(1, 2)};
+        margin: ${theme.spacing(2, 0)};
     `,
-    url: css`
+    count: css`
         color: ${theme.text.secondary};
         font-size: ${theme.font.small.size};
         font-weight: ${theme.font.small.weight};
@@ -47,7 +48,7 @@ const styles = {
         }
 
         select {
-            background: ${theme.background.navigation};
+            background: ${theme.background.elevated};
             color: ${theme.text.primary};
             cursor: pointer;
             padding: ${theme.spacing(0.5, 1)};
@@ -67,7 +68,7 @@ const styles = {
     list: css`
         list-style: none;
         padding: 0;
-        margin: ${theme.spacing(2, 0)};
+        margin: 0;
         transition: opacity ${theme.transition};
 
         @starting-style {
@@ -80,7 +81,7 @@ const styles = {
         align-items: center;
         gap: ${theme.spacing(0.5)};
         padding: ${theme.spacing(0.5, 1)};
-        background: ${theme.background.footer};
+        background: ${theme.background.elevated};
         border-radius: ${theme.radius};
 
         a {
@@ -93,9 +94,6 @@ const styles = {
                 text-decoration: none;
             }
         }
-    `,
-    featured: css`
-        outline: 2px solid ${theme.background.brand};
     `,
 };
 
@@ -198,25 +196,16 @@ const File = ({
     version,
     file,
     sri,
-    featured = false,
     ...props
 }: {
     name: string;
     version: string;
     file: string;
     sri?: string;
-    featured?: boolean;
 } & HTMLAttributes<HTMLLIElement> &
     RefAttributes<HTMLLIElement>) => {
     return (
-        <li
-            {...props}
-            className={cx(
-                styles.file,
-                featured && styles.featured,
-                props.className,
-            )}
-        >
+        <li {...props} className={cx(styles.file, props.className)}>
             <a
                 href={`https://cdnjs.cloudflare.com/ajax/libs/${encodeURIComponent(name)}/${encodeURIComponent(version)}/${file}`}
                 target="_blank"
@@ -239,7 +228,6 @@ const File = ({
  * @param props.files List of files for the library version.
  * @param props.sri Map of file names to SRI hashes for the library version.
  * @param props.versions List of all versions for the library.
- * @param props.featured Featured file to highlight at the top of the list.
  */
 const Files = ({
     name,
@@ -247,28 +235,22 @@ const Files = ({
     files,
     sri,
     versions,
-    featured,
 }: {
     name: string;
     version: string;
     files: string[];
     sri: Record<string, string>;
     versions: string[];
-    featured?: string;
 }) => {
     const sortedFiles = useMemo(
         () =>
             [...files].sort((a, b) => {
-                if (a === featured) return -1;
-                if (b === featured) return 1;
-
                 const aDepth = a.split('/').length;
                 const bDepth = b.split('/').length;
                 if (aDepth !== bDepth) return aDepth - bDepth;
-
                 return a.localeCompare(b);
             }),
-        [files, featured],
+        [files],
     );
 
     const [listFiles, setListFiles] = useState(sortedFiles);
@@ -292,12 +274,19 @@ const Files = ({
         virtualizer.measure();
     }, [listFiles, virtualizer]);
 
+    const [total, setTotal] = useState(
+        listFiles.length.toLocaleString('en-US'),
+    );
+    useEffect(() => {
+        setTotal(listFiles.length.toLocaleString());
+    }, [listFiles.length]);
+
     return (
         <>
             <div className={styles.toolbar}>
-                <code className={styles.url}>
-                    {`https://cdnjs.cloudflare.com/ajax/libs/${name}/${version}/...`}
-                </code>
+                <p className={styles.count}>
+                    {total} file{listFiles.length !== 1 ? 's' : ''}
+                </p>
                 <Versions name={name} version={version} versions={versions} />
                 <Filter files={sortedFiles} onChange={setListFiles} />
             </div>
@@ -320,7 +309,6 @@ const Files = ({
                             version={version}
                             file={file}
                             sri={sri[file]}
-                            featured={file === featured}
                             style={{
                                 position: 'absolute',
                                 top: 0,

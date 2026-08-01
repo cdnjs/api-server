@@ -18,7 +18,7 @@ const styles = {
             width: 100vw;
             left: 50%;
             transform: translateX(-50%);
-            background: ${theme.background.navigation};
+            background: ${theme.background.elevated};
             top: 0;
             bottom: 0;
             z-index: -1;
@@ -92,9 +92,9 @@ const styles = {
         top: 100%;
         left: 0;
         right: 0;
-        background: ${theme.background.navigation};
+        background: ${theme.background.elevated};
         border-top: ${theme.spacing(0.25)} solid ${theme.background.brand};
-        border-bottom: ${theme.spacing(0.25)} solid ${theme.background.footer};
+        border-bottom: ${theme.spacing(0.25)} solid ${theme.background.elevated};
         display: flex;
         flex-direction: column;
         gap: ${theme.spacing(0.5)};

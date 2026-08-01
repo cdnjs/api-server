@@ -38,10 +38,10 @@ const styles = {
     `,
     popover: css`
         position: absolute;
-        background: ${theme.background.footer};
+        background: ${theme.background.elevated};
         border-radius: ${theme.radius};
-        box-shadow: 0 0 ${theme.spacing(2)} ${theme.background.footer};
-        outline: ${theme.spacing(0.125)} solid ${theme.background.body};
+        box-shadow: 0 0 ${theme.spacing(2)} ${theme.background.elevated};
+        outline: ${theme.spacing(0.125)} solid ${theme.background.primary};
         padding: ${theme.spacing(1, 0)};
         margin: ${theme.spacing(1, 0, 0)};
         overflow: hidden;
@@ -146,15 +146,14 @@ const styles = {
 };
 
 const Typeahead = ({ className }: { className?: string }) => {
-    const [state, setState] = useState<'idle' | 'loading' | 'failed'>(
-        'loading',
-    );
+    const [state, setState] = useState<'idle' | 'loading' | 'failed'>('idle');
     const [results, setResults] = useState<Result[]>([]);
     const [total, setTotal] = useState('0');
     const [queried, setQueried] = useState('');
     const [query, setQuery] = useState('');
     const [active, setActive] = useState(false);
     const abortRef = useRef<AbortController | null>(null);
+    const mountedRef = useRef(false);
 
     const runSearch = useCallback(async (search: string) => {
         const controller = new AbortController();
@@ -180,6 +179,11 @@ const Typeahead = ({ className }: { className?: string }) => {
     }, []);
 
     useEffect(() => {
+        if (!mountedRef.current) {
+            mountedRef.current = true;
+            return;
+        }
+
         const timer = setTimeout(() => runSearch(query), 300);
         return () => clearTimeout(timer);
     }, [runSearch, query]);
@@ -214,9 +218,12 @@ const Typeahead = ({ className }: { className?: string }) => {
                 }}
                 onBlur={() => setActive(false)}
                 onSubmit={() => {
-                    window.location.href = `/libraries?search=${encodeURIComponent(query)}&output=human`;
+                    window.location.href = query.length
+                        ? `/libraries?search=${encodeURIComponent(query)}&output=human`
+                        : '/libraries?output=human';
                 }}
                 state={state}
+                elevated
             />
 
             {active &&
@@ -244,7 +251,11 @@ const Typeahead = ({ className }: { className?: string }) => {
 
                             {state === 'idle' && results.length > 0 && (
                                 <a
-                                    href={`/libraries?search=${encodeURIComponent(queried)}&output=human`}
+                                    href={
+                                        queried.length
+                                            ? `/libraries?search=${encodeURIComponent(queried)}&output=human`
+                                            : '/libraries?output=human'
+                                    }
                                 >
                                     View all
                                 </a>

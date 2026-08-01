@@ -9,24 +9,30 @@ import createIsland from '../island.tsx';
 
 const mixins = {
     pre: css`
-        background: ${theme.background.footer} !important;
+        background: ${theme.background.elevated} !important;
         color: ${theme.text.primary};
         padding: ${theme.spacing(1.5, 2)} !important;
         border-radius: ${theme.radius};
-        font-size: ${theme.font.small.size};
-        font-weight: ${theme.font.small.weight};
         margin: 0;
         display: block;
         width: 100%;
         box-sizing: border-box;
         max-height: ${theme.spacing(50)};
         overflow: auto;
+
+        &,
+        code {
+            font-family: ${theme.font.families.mono};
+            font-size: ${theme.font.small.size};
+            font-weight: ${theme.font.small.weight};
+        }
     `,
     code: css`
-        background: ${theme.background.body};
+        background: ${theme.background.primary};
         color: ${theme.text.primary};
         padding: ${theme.spacing(0.25, 0.75)};
         border-radius: ${theme.radius};
+        font-family: ${theme.font.families.mono};
         font-size: ${theme.font.small.size};
         font-weight: ${theme.font.small.weight};
     `,
@@ -37,6 +43,8 @@ const mixins = {
 
 const styles = {
     container: css`
+        margin: ${theme.spacing(2, 0, 0)};
+
         .swagger-ui {
             pre {
                 ${mixins.pre};
@@ -86,13 +94,16 @@ const styles = {
 
             /* Replace the default background of operation section headers. */
             .opblock .opblock-section-header {
-                background: ${theme.background.footer};
+                background: ${theme.background.primary};
                 box-shadow: none;
                 border-radius: ${theme.radius};
+                margin: ${theme.spacing(0, 1)};
+                padding: ${theme.spacing(1.5, 2, 0)};
+                min-height: 0;
             }
 
             /* Add a consistent indicator to the "Parameters" + "Responses" tabs. */
-            .opblock .opblock-section-header .tab-item h4 span,
+            .opblock .opblock-section-header .tab-item.active h4 span,
             .opblock .responses-wrapper .opblock-section-header h4 {
                 position: relative;
                 display: inline-block;
@@ -107,7 +118,8 @@ const styles = {
                     width: 100%;
                     height: ${theme.spacing(0.5)};
                     background: ${theme.background.brand};
-                    margin-top: ${theme.spacing(0.5)};
+                    border-radius: ${theme.radius};
+                    margin-top: ${theme.spacing(0.75)};
                     bottom: auto;
                     left: auto;
                 }
@@ -142,8 +154,14 @@ const styles = {
             }
 
             /* Remove the duplicate model title from standalone schemas. */
-            section.models .model-box-control:has(.model-title) {
-                display: none;
+            section.models {
+                &.is-open {
+                    padding: 0;
+                }
+
+                .model-box-control:has(.model-title) {
+                    display: none;
+                }
             }
 
             /* Replace the default SVG with +/- for the toggles in models. */
@@ -192,9 +210,9 @@ const styles = {
     `,
     wrapper: css`
         display: block;
-        border: ${theme.spacing(0.125)} solid ${theme.background.body};
+        border: ${theme.spacing(0.125)} solid ${theme.background.primary};
         border-radius: ${theme.radius};
-        background: ${theme.background.navigation};
+        background: ${theme.background.elevated};
         margin: 0 0 ${theme.spacing(1.5)};
         overflow: hidden;
     `,
@@ -203,7 +221,7 @@ const styles = {
         display: flex;
         align-items: center;
         gap: ${theme.spacing(1.5)};
-        background: ${theme.background.footer};
+        background: ${theme.background.elevated};
         cursor: pointer;
 
         > span:first-child {

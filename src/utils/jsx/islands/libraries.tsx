@@ -5,6 +5,7 @@ import * as z from 'zod/mini';
 
 import theme from '../../theme.ts';
 import Copy from '../copy.tsx';
+import Header from '../header.tsx';
 import createIsland from '../island.tsx';
 import Search from '../search.tsx';
 
@@ -38,23 +39,7 @@ const styles = {
         display: flex;
         flex-direction: column;
         gap: ${theme.spacing(2)};
-        margin: ${theme.spacing(-2, 0, 2)};
         padding: ${theme.spacing(2, 0)};
-        position: relative;
-        isolation: isolate;
-        z-index: 1;
-
-        &::before {
-            content: '';
-            position: absolute;
-            width: 100vw;
-            left: 50%;
-            transform: translateX(-50%);
-            background: ${theme.background.header};
-            top: 0;
-            bottom: 0;
-            z-index: -1;
-        }
     `,
     found: css`
         color: ${theme.text.secondary};
@@ -72,7 +57,7 @@ const styles = {
     `,
     results: css`
         padding: 0;
-        margin: 0;
+        margin: ${theme.spacing(2, 0, 0)};
         list-style: none;
         transition: opacity ${theme.transition};
 
@@ -95,14 +80,14 @@ const styles = {
         flex-direction: column;
         gap: ${theme.spacing(1)};
         padding: ${theme.spacing(2)};
-        background: ${theme.background.footer};
+        background: ${theme.background.elevated};
         border-radius: ${theme.radius};
         position: relative;
         isolation: isolate;
         transition: background ${theme.transition};
 
         &:has(a:hover, a:focus) {
-            background: rgb(from ${theme.background.footer} r g b / 0.75);
+            background: rgb(from ${theme.background.elevated} r g b / 0.75);
         }
     `,
     name: css`
@@ -291,13 +276,22 @@ const Libraries = ({
 
     return (
         <>
-            <div className={styles.header}>
-                <Search value={search} onChange={setSearch} state={state} />
+            <Header
+                title={
+                    <>
+                        Browse <strong>cdnjs</strong>
+                    </>
+                }
+            >
+                <div className={styles.header}>
+                    <Search value={search} onChange={setSearch} state={state} />
 
-                <p className={styles.found}>
-                    Found <strong>{total}</strong> libraries available on cdnjs.
-                </p>
-            </div>
+                    <p className={styles.found}>
+                        Found <strong>{total}</strong> libraries available on
+                        cdnjs.
+                    </p>
+                </div>
+            </Header>
 
             <ul
                 ref={listRef}

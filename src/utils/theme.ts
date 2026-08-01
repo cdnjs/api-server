@@ -9,10 +9,8 @@ export default {
         brand: '#d9643a',
     },
     background: {
-        body: '#454647',
-        navigation: '#343535',
-        header: '#3a3c3c',
-        footer: '#242525',
+        primary: '#454647',
+        elevated: '#242525',
         brand: '#d9643a',
     },
     status: {

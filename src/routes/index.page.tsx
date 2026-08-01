@@ -8,8 +8,6 @@ const styles = {
     search: css`
         width: ${theme.spacing(80)};
         max-width: 100%;
-        border-radius: ${theme.radius};
-        box-shadow: 0 0 ${theme.spacing(2)} ${theme.background.footer};
     `,
 };
 
@@ -34,8 +32,7 @@ export default () => {
                 </>
             }
             fill
-        >
-            <Typeahead className={styles.search} />
-        </Header>
+            extra={<Typeahead className={styles.search} />}
+        />
     );
 };
