@@ -8,6 +8,7 @@ import Grid from './grid.tsx';
 const styles = {
     header: css`
         position: relative;
+        isolation: isolate;
         display: flex;
         flex-direction: column;
     `,
@@ -100,6 +101,23 @@ const styles = {
             color: ${theme.text.primary};
         }
     `,
+    after: css`
+        position: relative;
+        isolation: isolate;
+        padding: ${theme.spacing(2, 0)};
+
+        &::before {
+            content: '';
+            position: absolute;
+            width: 100vw;
+            left: 50%;
+            transform: translateX(-50%);
+            background: ${theme.background.footer};
+            top: 0;
+            bottom: 0;
+            z-index: -1;
+        }
+    `,
 };
 
 /**
@@ -109,32 +127,42 @@ const styles = {
  * @param props.title The title of the page.
  * @param props.prose The prose content of the page.
  * @param props.fill If the header should grow to fill the parent.
- * @param props.children Optional additional content to render in the header.
+ * @param props.extra Optional additional content to render inside the header.
+ * @param props.children Optional additional content to render after the header.
  */
 export default ({
     title,
-    prose,
+    prose = "A free, open-source CDN for the web's most popular JavaScript, CSS, and font resources.",
     fill,
+    extra,
     children,
 }: {
     title: ReactNode;
-    prose: ReactNode;
+    prose?: ReactNode;
     fill?: boolean;
+    extra?: ReactNode;
     children?: ReactNode;
 }) => {
     return (
-        <div className={cx(styles.header, fill && styles.fill)}>
-            <Grid className={styles.background} height={fill ? undefined : 3} />
+        <>
+            <div className={cx(styles.header, fill && styles.fill)}>
+                <Grid
+                    className={styles.background}
+                    height={fill ? undefined : 3}
+                />
 
-            <div className={styles.content}>
-                <p className={styles.badge}>Powered by Cloudflare</p>
+                <div className={styles.content}>
+                    <p className={styles.badge}>Powered by Cloudflare</p>
 
-                <h1 className={styles.title}>{title}</h1>
+                    <h1 className={styles.title}>{title}</h1>
 
-                <p className={styles.prose}>{prose}</p>
+                    <p className={styles.prose}>{prose}</p>
 
-                {children}
+                    {extra}
+                </div>
             </div>
-        </div>
+
+            {children && <div className={styles.after}>{children}</div>}
+        </>
     );
 };

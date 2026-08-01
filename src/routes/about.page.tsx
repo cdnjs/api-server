@@ -24,27 +24,12 @@ const styles = {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: ${theme.spacing(4)};
-        padding: ${theme.spacing(4, 0)};
+        padding: ${theme.spacing(2, 0)};
         margin: 0;
         list-style: none;
-        position: relative;
-        isolation: isolate;
-        z-index: 1;
 
         ${theme.breakpoints.medium} {
             grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        &::before {
-            content: '';
-            position: absolute;
-            width: 100vw;
-            left: 50%;
-            transform: translateX(-50%);
-            background: ${theme.background.footer};
-            top: 0;
-            bottom: 0;
-            z-index: -1;
         }
     `,
     stat: css`
@@ -315,32 +300,25 @@ export default () => {
                         About <strong>cdnjs</strong>
                     </>
                 }
-                prose={
-                    <>
-                        A free, open-source CDN for the web's most popular
-                        JavaScript, CSS, and font resources &mdash; globally
-                        cached on Cloudflare's network since 2011.
-                    </>
-                }
-            />
+            >
+                <ul className={styles.stats}>
+                    <li className={styles.stat}>
+                        <strong>12.5%</strong> of all websites
+                    </li>
 
-            <ul className={styles.stats}>
-                <li className={styles.stat}>
-                    <strong>12.5%</strong> of all websites
-                </li>
+                    <li className={styles.stat}>
+                        <strong>250B+</strong> Requests per month
+                    </li>
 
-                <li className={styles.stat}>
-                    <strong>250B+</strong> Requests per month
-                </li>
+                    <li className={styles.stat}>
+                        <strong>330+</strong> Edge locations
+                    </li>
 
-                <li className={styles.stat}>
-                    <strong>330+</strong> Edge locations
-                </li>
-
-                <li className={styles.stat}>
-                    <strong>2011</strong> Founded
-                </li>
-            </ul>
+                    <li className={styles.stat}>
+                        <strong>2011</strong> Founded
+                    </li>
+                </ul>
+            </Header>
 
             <div className={styles.section}>
                 <h2 className={styles.heading} id="what-is-cdnjs">

@@ -11,7 +11,7 @@ const styles = {
         position: relative;
     `,
     input: css`
-        background: ${theme.background.footer};
+        background: ${theme.background.body};
         border: none;
         border-radius: ${theme.radius};
         color: ${theme.text.primary};
@@ -19,6 +19,10 @@ const styles = {
         font-weight: ${theme.font.body.weight};
         width: 100%;
         padding: ${theme.spacing(2, 6, 2, 2)};
+    `,
+    elevated: css`
+        background: ${theme.background.footer};
+        box-shadow: 0 0 ${theme.spacing(2)} ${theme.background.footer};
     `,
     icon: css`
         color: ${theme.text.primary};
@@ -39,7 +43,7 @@ const Search = ({
     onBlur,
     onSubmit,
     state,
-    className,
+    elevated,
 }: {
     value: string;
     onChange: (value: string) => void;
@@ -47,11 +51,11 @@ const Search = ({
     onBlur?: () => void;
     onSubmit?: () => void;
     state?: 'idle' | 'loading' | 'failed';
-    className?: string;
+    elevated?: boolean;
 }) => {
     return (
         <form
-            className={cx(styles.form, className)}
+            className={styles.form}
             onSubmit={(e) => {
                 e.preventDefault();
                 onSubmit?.();
@@ -66,7 +70,7 @@ const Search = ({
                 onBlur={onBlur}
                 placeholder="Search libraries on cdnjs..."
                 autoComplete="off"
-                className={styles.input}
+                className={cx(styles.input, elevated && styles.elevated)}
             />
             {
                 {
