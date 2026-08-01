@@ -1,0 +1,40 @@
+import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import type { Context, Hono } from 'hono';
+
+import respond, { isHuman, withCache } from '../utils/respond.ts';
+
+import AboutPage from './about.page.tsx';
+
+/**
+ * Handle GET /about requests.
+ *
+ * @param ctx Request context.
+ */
+const handleGetAbout = (ctx: Context) => {
+    // Render a human-readable page
+    if (isHuman(ctx)) {
+        // Set a 6 hour life on this response
+        withCache(ctx, 6 * 60 * 60);
+
+        return respond<undefined>(ctx, undefined, AboutPage);
+    }
+
+    // Set a 355 day (same as CDN) life on this response
+    // This is also immutable
+    withCache(ctx, 355 * 24 * 60 * 60, true);
+
+    // Redirect to the about page
+    return ctx.redirect('https://cdnjs.com/about', 301);
+};
+
+/**
+ * Register about routes.
+ *
+ * @param app App instance.
+ * @param _registry OpenAPI registry instance.
+ */
+export default (app: Hono, _registry: OpenAPIRegistry) => {
+    // Redirect to the about page
+    app.get('/about', handleGetAbout);
+    app.get('/about/', handleGetAbout);
+};

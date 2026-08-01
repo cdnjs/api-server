@@ -189,12 +189,24 @@ const styles = {
  * Homepage grid background
  *
  * @param props Component props.
+ * @param props.width The number of columns to display in the grid.
+ * @param props.height The number of rows to display in the grid.
  * @param props.className Optional additional class name(s) to apply to the logo.
  */
-export default ({ className }: { className?: string }) => (
+export default ({
+    width = cols,
+    height = rows,
+    className,
+}: {
+    width?: number;
+    height?: number;
+    className?: string;
+}) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
-        viewBox={`0 0 ${cols * size} ${rows * size}`}
+        // The base viewBox would be `0 0 ${cols * size} ${rows * size}`
+        // But, we want to center that around whatever width and height are passed in
+        viewBox={`${(cols * size - width * size) / 2} ${(rows * size - height * size) / 2} ${width * size} ${height * size}`}
         preserveAspectRatio="xMidYMid slice"
         aria-hidden="true"
         className={className}

@@ -99,6 +99,11 @@ const styles = {
         border-radius: ${theme.radius};
         position: relative;
         isolation: isolate;
+        transition: background ${theme.transition};
+
+        &:has(a:hover, a:focus) {
+            background: rgb(from ${theme.background.footer} r g b / 0.75);
+        }
     `,
     name: css`
         display: flex;
