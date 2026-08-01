@@ -13,20 +13,26 @@ const mixins = {
         color: ${theme.text.primary};
         padding: ${theme.spacing(1.5, 2)} !important;
         border-radius: ${theme.radius};
-        font-size: ${theme.font.small.size};
-        font-weight: ${theme.font.small.weight};
         margin: 0;
         display: block;
         width: 100%;
         box-sizing: border-box;
         max-height: ${theme.spacing(50)};
         overflow: auto;
+
+        &,
+        code {
+            font-family: ${theme.font.families.mono};
+            font-size: ${theme.font.small.size};
+            font-weight: ${theme.font.small.weight};
+        }
     `,
     code: css`
         background: ${theme.background.body};
         color: ${theme.text.primary};
         padding: ${theme.spacing(0.25, 0.75)};
         border-radius: ${theme.radius};
+        font-family: ${theme.font.families.mono};
         font-size: ${theme.font.small.size};
         font-weight: ${theme.font.small.weight};
     `,
@@ -37,6 +43,8 @@ const mixins = {
 
 const styles = {
     container: css`
+        margin: ${theme.spacing(2, 0, 0)};
+
         .swagger-ui {
             pre {
                 ${mixins.pre};
@@ -142,8 +150,14 @@ const styles = {
             }
 
             /* Remove the duplicate model title from standalone schemas. */
-            section.models .model-box-control:has(.model-title) {
-                display: none;
+            section.models {
+                &.is-open {
+                    padding: 0;
+                }
+
+                .model-box-control:has(.model-title) {
+                    display: none;
+                }
             }
 
             /* Replace the default SVG with +/- for the toggles in models. */
