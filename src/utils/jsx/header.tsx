@@ -85,6 +85,13 @@ const styles = {
         strong {
             color: ${theme.text.brand};
         }
+
+        small {
+            color: ${theme.text.secondary};
+            font-family: ${theme.font.families.mono};
+            font-size: ${theme.font.body.size};
+            font-weight: ${theme.font.body.weight};
+        }
     `,
     prose: css`
         color: ${theme.text.secondary};

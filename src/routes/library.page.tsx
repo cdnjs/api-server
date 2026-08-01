@@ -2,6 +2,8 @@ import { css } from '@emotion/css';
 import spdxLicenseIds from 'spdx-license-ids';
 
 import { required } from '../utils/filter.ts';
+import Header from '../utils/jsx/header.tsx';
+import File from '../utils/jsx/islands/file.tsx';
 import Files from '../utils/jsx/islands/files.tsx';
 import theme from '../utils/theme.ts';
 
@@ -119,79 +121,95 @@ export default ({
 
     return (
         <>
-            <div className={styles.header}>
-                <div className={styles.row}>
-                    <h1 className={styles.name}>{library.name}</h1>
-                    <p className={styles.description}>{library.description}</p>
-                </div>
+            <Header
+                title={
+                    <>
+                        <strong>{library.name}</strong>{' '}
+                        <small>{library.version}</small>
+                    </>
+                }
+                prose={library.description}
+                extra={
+                    <>
+                        <div className={styles.row}>
+                            {library.license && (
+                                <p className={styles.link}>
+                                    {spdxLicenseIds.includes(
+                                        library.license,
+                                    ) ? (
+                                        <a
+                                            href={`https://spdx.org/licenses/${encodeURIComponent(library.license)}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            {library.license}
+                                        </a>
+                                    ) : (
+                                        library.license
+                                    )}{' '}
+                                    licensed
+                                </p>
+                            )}
 
-                <div className={styles.row}>
-                    {library.license && (
-                        <p className={styles.link}>
-                            {spdxLicenseIds.includes(library.license) ? (
-                                <a
-                                    href={`https://spdx.org/licenses/${encodeURIComponent(library.license)}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    {library.license}
-                                </a>
-                            ) : (
-                                library.license
-                            )}{' '}
-                            licensed
-                        </p>
-                    )}
+                            {library.autoupdate?.source === 'npm' && (
+                                <p className={styles.link}>
+                                    <a
+                                        href={`https://www.npmjs.com/package/${encodeURIComponent(library.autoupdate?.target)}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        npm package
+                                    </a>
+                                </p>
+                            )}
 
-                    {library.autoupdate?.source === 'npm' && (
-                        <p className={styles.link}>
-                            <a
-                                href={`https://www.npmjs.com/package/${encodeURIComponent(library.autoupdate?.target)}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                npm package
-                            </a>
-                        </p>
-                    )}
+                            {repo && (
+                                <p className={styles.link}>
+                                    <a
+                                        href={`https://github.com/${encodeURIComponent(repo.owner)}/${encodeURIComponent(repo.name)}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        GitHub repository
+                                    </a>
+                                </p>
+                            )}
 
-                    {repo && (
-                        <p className={styles.link}>
-                            <a
-                                href={`https://github.com/${encodeURIComponent(repo.owner)}/${encodeURIComponent(repo.name)}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                GitHub repository
-                            </a>
-                        </p>
-                    )}
+                            {library.homepage && (
+                                <p className={styles.link}>
+                                    <a
+                                        href={library.homepage}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        {library.homepage}
+                                    </a>
+                                </p>
+                            )}
+                        </div>
 
-                    {library.homepage && (
-                        <p className={styles.link}>
-                            <a
-                                href={library.homepage}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                {library.homepage}
-                            </a>
-                        </p>
-                    )}
-                </div>
-
-                {!!library.keywords?.length && (
-                    <p className={styles.keywords}>
-                        Keywords:{' '}
-                        {library.keywords.map((keyword, index, arr) => (
-                            <span key={index}>
-                                {keyword}
-                                {index < arr.length - 1 && ', '}
-                            </span>
-                        ))}
-                    </p>
-                )}
-            </div>
+                        {!!library.keywords?.length && (
+                            <p className={styles.keywords}>
+                                Keywords:{' '}
+                                {library.keywords.map((keyword, index, arr) => (
+                                    <span key={index}>
+                                        {keyword}
+                                        {index < arr.length - 1 && ', '}
+                                    </span>
+                                ))}
+                            </p>
+                        )}
+                    </>
+                }
+            >
+                <File
+                    name={library.name}
+                    version={version.version}
+                    filename={library.filename}
+                    files={version.files}
+                    sri={version.sri}
+                />
+            </Header>
 
             <Files
                 name={library.name}
@@ -199,7 +217,6 @@ export default ({
                 files={version.files}
                 sri={version.sri}
                 versions={library.versions}
-                featured={library.filename}
             />
         </>
     );
