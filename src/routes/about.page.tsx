@@ -98,7 +98,7 @@ const styles = {
         }
     `,
     package: css`
-        background: ${theme.background.footer};
+        background: ${theme.background.elevated};
         border-radius: ${theme.radius};
         padding: ${theme.spacing(2)};
         margin: ${theme.spacing(2, 0, 0)};
@@ -119,7 +119,7 @@ const styles = {
         `,
     },
     team: css`
-        background: ${theme.background.footer};
+        background: ${theme.background.elevated};
         border-radius: ${theme.radius};
         display: flex;
         flex-direction: row;
@@ -157,7 +157,7 @@ const styles = {
                 width: ${theme.spacing(0.5)};
                 height: ${theme.spacing(0.5)};
                 border-radius: 50%;
-                background: ${theme.background.body};
+                background: ${theme.background.primary};
             }
         }
     `,
@@ -178,14 +178,14 @@ const styles = {
             flex-direction: column;
             gap: ${theme.spacing(1)};
             padding: ${theme.spacing(2)};
-            background: ${theme.background.footer};
+            background: ${theme.background.elevated};
             border-radius: ${theme.radius};
             position: relative;
             isolation: isolate;
             transition: background ${theme.transition};
 
             &:has(a:hover, a:focus) {
-                background: rgb(from ${theme.background.footer} r g b / 0.75);
+                background: rgb(from ${theme.background.elevated} r g b / 0.75);
             }
 
             p {

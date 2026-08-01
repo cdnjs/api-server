@@ -38,10 +38,10 @@ const styles = {
     `,
     popover: css`
         position: absolute;
-        background: ${theme.background.footer};
+        background: ${theme.background.elevated};
         border-radius: ${theme.radius};
-        box-shadow: 0 0 ${theme.spacing(2)} ${theme.background.footer};
-        outline: ${theme.spacing(0.125)} solid ${theme.background.body};
+        box-shadow: 0 0 ${theme.spacing(2)} ${theme.background.elevated};
+        outline: ${theme.spacing(0.125)} solid ${theme.background.primary};
         padding: ${theme.spacing(1, 0)};
         margin: ${theme.spacing(1, 0, 0)};
         overflow: hidden;

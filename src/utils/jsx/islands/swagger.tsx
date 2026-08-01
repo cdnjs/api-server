@@ -9,7 +9,7 @@ import createIsland from '../island.tsx';
 
 const mixins = {
     pre: css`
-        background: ${theme.background.footer} !important;
+        background: ${theme.background.elevated} !important;
         color: ${theme.text.primary};
         padding: ${theme.spacing(1.5, 2)} !important;
         border-radius: ${theme.radius};
@@ -28,7 +28,7 @@ const mixins = {
         }
     `,
     code: css`
-        background: ${theme.background.body};
+        background: ${theme.background.primary};
         color: ${theme.text.primary};
         padding: ${theme.spacing(0.25, 0.75)};
         border-radius: ${theme.radius};
@@ -94,13 +94,16 @@ const styles = {
 
             /* Replace the default background of operation section headers. */
             .opblock .opblock-section-header {
-                background: ${theme.background.footer};
+                background: ${theme.background.primary};
                 box-shadow: none;
                 border-radius: ${theme.radius};
+                margin: ${theme.spacing(0, 1)};
+                padding: ${theme.spacing(1.5, 2, 0)};
+                min-height: 0;
             }
 
             /* Add a consistent indicator to the "Parameters" + "Responses" tabs. */
-            .opblock .opblock-section-header .tab-item h4 span,
+            .opblock .opblock-section-header .tab-item.active h4 span,
             .opblock .responses-wrapper .opblock-section-header h4 {
                 position: relative;
                 display: inline-block;
@@ -115,7 +118,8 @@ const styles = {
                     width: 100%;
                     height: ${theme.spacing(0.5)};
                     background: ${theme.background.brand};
-                    margin-top: ${theme.spacing(0.5)};
+                    border-radius: ${theme.radius};
+                    margin-top: ${theme.spacing(0.75)};
                     bottom: auto;
                     left: auto;
                 }
@@ -206,9 +210,9 @@ const styles = {
     `,
     wrapper: css`
         display: block;
-        border: ${theme.spacing(0.125)} solid ${theme.background.body};
+        border: ${theme.spacing(0.125)} solid ${theme.background.primary};
         border-radius: ${theme.radius};
-        background: ${theme.background.navigation};
+        background: ${theme.background.elevated};
         margin: 0 0 ${theme.spacing(1.5)};
         overflow: hidden;
     `,
@@ -217,7 +221,7 @@ const styles = {
         display: flex;
         align-items: center;
         gap: ${theme.spacing(1.5)};
-        background: ${theme.background.footer};
+        background: ${theme.background.elevated};
         cursor: pointer;
 
         > span:first-child {

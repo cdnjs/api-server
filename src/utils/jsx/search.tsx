@@ -11,7 +11,7 @@ const styles = {
         position: relative;
     `,
     input: css`
-        background: ${theme.background.body};
+        background: ${theme.background.primary};
         border: none;
         border-radius: ${theme.radius};
         color: ${theme.text.primary};
@@ -21,8 +21,8 @@ const styles = {
         padding: ${theme.spacing(2, 6, 2, 2)};
     `,
     elevated: css`
-        background: ${theme.background.footer};
-        box-shadow: 0 0 ${theme.spacing(2)} ${theme.background.footer};
+        background: ${theme.background.elevated};
+        box-shadow: 0 0 ${theme.spacing(2)} ${theme.background.elevated};
     `,
     icon: css`
         color: ${theme.text.primary};

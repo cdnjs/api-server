@@ -24,7 +24,7 @@ const styles = {
             width: 100vw;
             left: 50%;
             transform: translateX(-50%);
-            background: ${theme.background.footer};
+            background: ${theme.background.elevated};
             top: 0;
             bottom: 0;
             z-index: -1;

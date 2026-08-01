@@ -48,7 +48,7 @@ const styles = {
         }
 
         select {
-            background: ${theme.background.navigation};
+            background: ${theme.background.elevated};
             color: ${theme.text.primary};
             cursor: pointer;
             padding: ${theme.spacing(0.5, 1)};
@@ -81,7 +81,7 @@ const styles = {
         align-items: center;
         gap: ${theme.spacing(0.5)};
         padding: ${theme.spacing(0.5, 1)};
-        background: ${theme.background.footer};
+        background: ${theme.background.elevated};
         border-radius: ${theme.radius};
 
         a {

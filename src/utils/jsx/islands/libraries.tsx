@@ -80,14 +80,14 @@ const styles = {
         flex-direction: column;
         gap: ${theme.spacing(1)};
         padding: ${theme.spacing(2)};
-        background: ${theme.background.footer};
+        background: ${theme.background.elevated};
         border-radius: ${theme.radius};
         position: relative;
         isolation: isolate;
         transition: background ${theme.transition};
 
         &:has(a:hover, a:focus) {
-            background: rgb(from ${theme.background.footer} r g b / 0.75);
+            background: rgb(from ${theme.background.elevated} r g b / 0.75);
         }
     `,
     name: css`

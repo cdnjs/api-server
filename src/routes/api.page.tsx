@@ -24,7 +24,7 @@ const styles = {
         }
 
         code {
-            background: ${theme.background.body};
+            background: ${theme.background.primary};
             border-radius: ${theme.radius};
             color: ${theme.text.primary};
             font-family: ${theme.font.families.mono};

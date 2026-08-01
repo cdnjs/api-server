@@ -37,8 +37,8 @@ const styles = {
         max-width: 100%;
         background: radial-gradient(
             ellipse at center,
-            rgb(from ${theme.background.body} r g b / 0.9) 0%,
-            rgb(from ${theme.background.body} r g b / 0) 100%
+            rgb(from ${theme.background.primary} r g b / 0.9) 0%,
+            rgb(from ${theme.background.primary} r g b / 0) 100%
         );
         padding: ${theme.spacing(4, 2)};
     `,
@@ -119,7 +119,7 @@ const styles = {
             width: 100vw;
             left: 50%;
             transform: translateX(-50%);
-            background: ${theme.background.footer};
+            background: ${theme.background.elevated};
             top: 0;
             bottom: 0;
             z-index: -1;

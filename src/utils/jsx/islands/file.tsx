@@ -13,7 +13,7 @@ const styles = {
         gap: ${theme.spacing(1)};
     `,
     url: css`
-        background: ${theme.background.body};
+        background: ${theme.background.primary};
         border-radius: ${theme.radius};
         color: ${theme.text.primary};
         font-family: ${theme.font.families.mono};
