@@ -8,6 +8,7 @@ import './utils/openapi.ts';
 
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 
+import aboutRoutes from './routes/about.ts';
 import apiRoutes from './routes/api.ts';
 import errorRoutes from './routes/errors.ts';
 import indexRoutes from './routes/index.ts';
@@ -25,6 +26,7 @@ app.use('*', cors(corsOptions));
 
 // Load the routes
 indexRoutes(app, registry);
+aboutRoutes(app, registry);
 apiRoutes(app, registry);
 statsRoutes(app, registry);
 whitelistRoutes(app, registry);
