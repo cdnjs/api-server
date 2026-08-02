@@ -47,10 +47,16 @@
     },
     "env": {
         "staging": {
-            "route": {
-                "pattern": "api.cdnjs.dev/*",
-                "zone_name": "cdnjs.dev",
-            },
+            "routes": [
+                {
+                    "pattern": "api.cdnjs.dev/*",
+                    "zone_name": "cdnjs.dev",
+                },
+                {
+                    "pattern": "cdnjs.dev/*",
+                    "zone_name": "cdnjs.dev",
+                },
+            ],
             "kv_namespaces": [
                 {
                     "binding": "CACHE",
