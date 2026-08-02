@@ -8,7 +8,7 @@ import type { ErrorResponse } from '../routes/errors.schema.ts';
 
 import { createIslandProvider } from './jsx/island.tsx';
 import Json from './jsx/json.tsx';
-import Layout from './jsx/layout.tsx';
+import Layout, { type Meta } from './jsx/layout.tsx';
 
 /**
  * Extract the critical CSS from Emotion for a given HTML string.
@@ -85,14 +85,19 @@ export const isWebsite = (ctx: Context) =>
  * @param ctx Request context.
  * @param data Data to be included in the response.
  * @param component Optional custom component to use for website React output (defaults to Json).
+ * @param meta Optional metadata overrides to use for the website React output (defaults to the standard cdnjs metadata).
  */
 const respond = async <T = never>(
     ctx: Context,
     data: NoInfer<T>,
     component: ComponentType<{ data: NoInfer<T> }> = Json,
+    meta?: Partial<Meta>,
 ) => {
     if (isWebsite(ctx)) {
-        ctx.header('X-Robots-Tag', 'noindex');
+        // Only the production site at cdnjs.com should ever be indexable
+        if (env.WEBSITE_BASE !== 'https://cdnjs.com') {
+            ctx.header('X-Robots-Tag', 'noindex');
+        }
 
         const Provider = await createIslandProvider();
         const { prelude } = await prerender(
@@ -101,7 +106,46 @@ const respond = async <T = never>(
                 null,
                 createElement(
                     Layout,
-                    { path: ctx.req.path },
+                    {
+                        path: ctx.req.path,
+                        meta: {
+                            title: [meta?.title, 'cdnjs']
+                                .filter((x) => !!x)
+                                .join(' - '),
+                            description: [
+                                meta?.description,
+                                "cdnjs is the free, open-source CDN for the web's most popular libraries. JavaScript, CSS, and font resources, globally cached on Cloudflare's network. Trusted by 12.5% of all websites, serving 250 billion requests per month.",
+                            ]
+                                .filter((x) => !!x)
+                                .join(' '),
+                            keywords: [
+                                ...new Set([
+                                    ...(meta?.keywords ?? []),
+                                    'cdn',
+                                    'cache',
+                                    'cdnjs',
+                                    'cloudflare',
+                                    'js',
+                                    'javascript',
+                                    'css',
+                                    'font',
+                                    'fonts',
+                                    'library',
+                                    'package',
+                                    'resource',
+                                    'web',
+                                    'frontend',
+                                    'front-end',
+                                    'free',
+                                    'open-source',
+                                    'open source',
+                                    'oss',
+                                    'npm',
+                                    'github',
+                                ]),
+                            ],
+                        },
+                    },
                     createElement(component, { data }),
                 ),
             ),
@@ -133,9 +177,14 @@ export const notFound = (ctx: Context, resource: string) => {
 
     // Send the error response
     ctx.status(404);
-    return respond<ErrorResponse>(ctx, {
-        error: true,
-        status: 404,
-        message: `${resource} not found`,
-    });
+    return respond<ErrorResponse>(
+        ctx,
+        {
+            error: true,
+            status: 404,
+            message: `${resource} not found`,
+        },
+        Json,
+        { title: `${resource} Not Found` },
+    );
 };
