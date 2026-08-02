@@ -83,7 +83,9 @@ export default defineConfig({
             api: {
                 host,
                 port: browserPort,
-                strictPort: true,
+                // The probe releases the port before Vite binds it. Let Vite
+                // advance if another process wins that race.
+                strictPort: false,
             },
             enabled: true,
             headless: true,

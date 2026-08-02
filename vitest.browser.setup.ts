@@ -1,6 +1,8 @@
 import { createTestHarness } from 'wrangler';
 
 const configPath = './wrangler.jsonc';
+// isWebsite() uses startsWith(), so the trailing colon matches every
+// dynamically allocated loopback port without matching another host.
 const websiteBase = 'http://127.0.0.1:';
 
 /**
