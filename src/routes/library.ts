@@ -99,7 +99,9 @@ const handleGetLibraryVersion = async (ctx: Context) => {
     if (!version) return notFound(ctx, 'Version');
 
     // Generate the initial filtered response (without SRI data)
-    const requestedFields = queryCheck(ctx.req.queries('fields'));
+    const requestedFields = isWebsite(ctx)
+        ? (field: string) => ['version', 'files', 'sri'].includes(field)
+        : queryCheck(ctx.req.queries('fields'));
     const response: LibraryVersionResponse = filter(
         {
             name: lib.name,
@@ -157,6 +159,14 @@ const handleGetLibrary = async (ctx: Context) => {
         throw err;
     });
     if (!lib) return notFound(ctx, 'Library');
+
+    // Redirect to the version endpoint for website requests
+    if (isWebsite(ctx)) {
+        // Set a 6 hour life on this response
+        withCache(ctx, 6 * 60 * 60);
+
+        return ctx.redirect(`/libraries/${lib.name}/${lib.version}`);
+    }
 
     // Generate the initial filtered response (without SRI, versions or assets data)
     const requestedFields = queryCheck(ctx.req.queries('fields'));
@@ -247,11 +257,6 @@ const handleGetLibrary = async (ctx: Context) => {
 
     // Set a 6 hour life on this response
     withCache(ctx, 6 * 60 * 60);
-
-    // Redirect to the version endpoint for website requests
-    if (isWebsite(ctx)) {
-        return ctx.redirect(`/libraries/${lib.name}/${lib.version}`);
-    }
 
     // Send the response
     return respond<LibraryResponse>(ctx, response);
