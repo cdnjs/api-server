@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import openHumanRoute from '../utils/spec/browser.ts';
+import openWebsiteRoute from '../utils/spec/browser.ts';
 
-describe('/api human output', () => {
+describe('/api website output', () => {
     it('renders accessible navigation and documentation', async () => {
-        const frame = await openHumanRoute('/api?output=human');
+        const frame = await openWebsiteRoute('/api');
 
         await expect.element(frame.getByRole('navigation')).toBeInTheDocument();
         await expect

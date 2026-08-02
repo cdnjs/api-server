@@ -1,12 +1,12 @@
 import { page } from 'vitest/browser';
 
 /**
- * Open a human-readable Worker route in a browser-test frame.
+ * Open a website Worker route in a browser-test frame.
  *
- * @param path Worker route, including the human-output query parameter.
+ * @param path Website Worker route.
  */
 export default async (path: string) => {
-    const title = `Human output: ${path}`;
+    const title = `Website output: ${path}`;
     const frame = document.createElement('iframe');
     frame.title = title;
     frame.src = `/__worker${path}`;

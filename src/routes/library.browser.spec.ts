@@ -1,12 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import openHumanRoute from '../utils/spec/browser.ts';
+import openWebsiteRoute from '../utils/spec/browser.ts';
 
-describe('/libraries/:library/:version human output', () => {
+describe('/libraries/:library/:version website output', () => {
     it('renders an immutable version and hydrates its file filter', async () => {
-        const frame = await openHumanRoute(
-            '/libraries/backbone.js/1.1.0?output=human',
-        );
+        const frame = await openWebsiteRoute('/libraries/backbone.js/1.1.0');
 
         await expect
             .element(
