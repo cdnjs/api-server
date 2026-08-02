@@ -1,15 +1,20 @@
 import { describe, expect, it } from 'vitest';
 
 import testCors from '../utils/spec/cors.ts';
-import testHuman from '../utils/spec/human.ts';
-import { beforeRequest, request } from '../utils/spec/request.ts';
+import {
+    beforeRequest,
+    externalApiUrl,
+    request,
+} from '../utils/spec/request.ts';
+import testWebsite from '../utils/spec/website.ts';
 
 import type { StatsResponse } from './stats.schema.ts';
 
 describe('/stats', () => {
+    const path = '/stats';
+
     describe('No query params', () => {
         // Fetch the endpoint
-        const path = '/stats';
         const response = beforeRequest(path);
 
         // Test the endpoint
@@ -51,10 +56,10 @@ describe('/stats', () => {
         });
     });
 
-    describe('Requesting human response (?output=human)', () => {
+    // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
+    describe.skipIf(externalApiUrl)('Website React output', () => {
         // Fetch the endpoint
-        const path = '/stats?output=human';
-        const response = beforeRequest(path);
+        const response = beforeRequest(path, {}, true);
 
         // Test the endpoint
         testCors(path, response);
@@ -63,6 +68,6 @@ describe('/stats', () => {
                 'public, max-age=21600',
             ); // 6 hours
         });
-        testHuman(response);
+        testWebsite(response);
     });
 });

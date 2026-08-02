@@ -4,12 +4,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Library } from '../utils/algolia.schema.ts';
 import testCors from '../utils/spec/cors.ts';
-import testHuman from '../utils/spec/human.ts';
 import {
     beforeRequest,
     externalApiUrl,
     request,
 } from '../utils/spec/request.ts';
+import testWebsite from '../utils/spec/website.ts';
 
 import type { LibrariesResponse } from './libraries.schema.ts';
 
@@ -28,9 +28,10 @@ const kvExpectNonEmpty = async () => {
 };
 
 describe('/libraries', () => {
+    const path = '/libraries';
+
     describe('No query params', () => {
         // Fetch the endpoint
-        const path = '/libraries';
         const response = beforeRequest(path);
 
         // Test the endpoint
@@ -102,10 +103,10 @@ describe('/libraries', () => {
         });
     });
 
-    describe('Requesting human response (?output=human)', () => {
+    // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
+    describe.skipIf(externalApiUrl)('Website React output', () => {
         // Fetch the endpoint
-        const path = '/libraries?output=human';
-        const response = beforeRequest(path);
+        const response = beforeRequest(path, {}, true);
 
         // Test the endpoint
         testCors(path, response);
@@ -114,13 +115,12 @@ describe('/libraries', () => {
                 'public, max-age=21600',
             ); // Six hours
         });
-        testHuman(response);
+        testWebsite(response);
     });
 
     describe('Limiting number of results (?limit=10)', () => {
         // Fetch the endpoint
-        const path = '/libraries?limit=10';
-        const response = beforeRequest(path);
+        const response = beforeRequest(`${path}?limit=10`);
 
         // Test the endpoint
         testCors(path, response);
@@ -152,8 +152,7 @@ describe('/libraries', () => {
 
     describe('Requesting a field (?fields=version)', () => {
         // Fetch the endpoint
-        const path = '/libraries?fields=version';
-        const response = beforeRequest(path);
+        const response = beforeRequest(`${path}?fields=version`);
 
         // Test the endpoint
         testCors(path, response);
@@ -209,8 +208,7 @@ describe('/libraries', () => {
     describe('Requesting a case-sensitive field', () => {
         describe('with the correct casing (?fields=fileType)', () => {
             // Fetch the endpoint
-            const path = '/libraries?fields=fileType';
-            const response = beforeRequest(path);
+            const response = beforeRequest(`${path}?fields=fileType`);
 
             // Test the endpoint
             testCors(path, response);
@@ -268,8 +266,7 @@ describe('/libraries', () => {
 
         describe('with incorrect casing (?fields=filetype)', () => {
             // Fetch the endpoint
-            const path = '/libraries?fields=filetype';
-            const response = beforeRequest(path);
+            const response = beforeRequest(`${path}?fields=filetype`);
 
             // Test the endpoint
             testCors(path, response);
@@ -329,8 +326,7 @@ describe('/libraries', () => {
     describe('Requesting multiple fields', () => {
         describe('through comma-separated string (?fields=filename,version)', () => {
             // Fetch the endpoint
-            const path = '/libraries?fields=filename,version';
-            const response = beforeRequest(path);
+            const response = beforeRequest(`${path}?fields=filename,version`);
 
             // Test the endpoint
             testCors(path, response);
@@ -378,8 +374,7 @@ describe('/libraries', () => {
 
         describe('through space-separated string (?fields=filename version)', () => {
             // Fetch the endpoint
-            const path = '/libraries?fields=filename version';
-            const response = beforeRequest(path);
+            const response = beforeRequest(`${path}?fields=filename version`);
 
             // Test the endpoint
             testCors(path, response);
@@ -427,8 +422,9 @@ describe('/libraries', () => {
 
         describe('through multiple query parameters (?fields=filename&fields=version)', () => {
             // Fetch the endpoint
-            const path = '/libraries?fields=filename&fields=version';
-            const response = beforeRequest(path);
+            const response = beforeRequest(
+                `${path}?fields=filename&fields=version`,
+            );
 
             // Test the endpoint
             testCors(path, response);
@@ -477,8 +473,7 @@ describe('/libraries', () => {
 
     describe('Requesting all fields (?fields=*)', () => {
         // Fetch the endpoint
-        const path = '/libraries?fields=*';
-        const response = beforeRequest(path);
+        const response = beforeRequest(`${path}?fields=*`);
 
         // Test the endpoint
         testCors(path, response);
@@ -579,8 +574,7 @@ describe('/libraries', () => {
     describe('Searching for libraries', () => {
         describe('Providing a short query (?search=font-awesome)', () => {
             // Fetch the endpoint
-            const path = '/libraries?search=font-awesome';
-            const response = beforeRequest(path);
+            const response = beforeRequest(`${path}?search=font-awesome`);
 
             // Test the endpoint
             testCors(path, response);
@@ -636,8 +630,9 @@ describe('/libraries', () => {
 
         describe('Providing a plain-text query that is longer than max that Algolia allows (?search=...)', () => {
             // Fetch the endpoint
-            const path = `/libraries?search=${encodeURIComponent('a'.repeat(1024))}`;
-            const response = beforeRequest(path);
+            const response = beforeRequest(
+                `${path}?search=${encodeURIComponent('a'.repeat(1024))}`,
+            );
 
             // Test the endpoint
             testCors(path, response);
@@ -670,8 +665,9 @@ describe('/libraries', () => {
 
         describe('Providing a unicode query that is longer than max that Algolia allows (?search=...)', () => {
             // Fetch the endpoint
-            const path = `/libraries?search=${encodeURIComponent('à'.repeat(1024))}`;
-            const response = beforeRequest(path);
+            const response = beforeRequest(
+                `${path}?search=${encodeURIComponent('à'.repeat(1024))}`,
+            );
 
             // Test the endpoint
             testCors(path, response);
@@ -711,9 +707,9 @@ describe('/libraries', () => {
         describe('Providing search fields that are valid', () => {
             describe('through comma-separated string (?search=backbone.js&search_fields=keywords,github.user)', () => {
                 // Fetch the endpoint
-                const path =
-                    '/libraries?search=backbone.js&search_fields=keywords,github.user';
-                const response = beforeRequest(path);
+                const response = beforeRequest(
+                    `${path}?search=backbone.js&search_fields=keywords,github.user`,
+                );
 
                 // Test the endpoint
                 testCors(path, response);
@@ -775,9 +771,9 @@ describe('/libraries', () => {
 
             describe('through space-separated string (?search=backbone.js&search_fields=keywords github.user)', () => {
                 // Fetch the endpoint
-                const path =
-                    '/libraries?search=backbone.js&search_fields=keywords github.user';
-                const response = beforeRequest(path);
+                const response = beforeRequest(
+                    `${path}?search=backbone.js&search_fields=keywords github.user`,
+                );
 
                 // Test the endpoint
                 testCors(path, response);
@@ -839,9 +835,9 @@ describe('/libraries', () => {
 
             describe('through multiple query parameters (?search=backbone.js&search_fields=keywords&search_fields=github.user)', () => {
                 // Fetch the endpoint
-                const path =
-                    '/libraries?search=backbone.js&search_fields=keywords&search_fields=github.user';
-                const response = beforeRequest(path);
+                const response = beforeRequest(
+                    `${path}?search=backbone.js&search_fields=keywords&search_fields=github.user`,
+                );
 
                 // Test the endpoint
                 testCors(path, response);
@@ -905,8 +901,9 @@ describe('/libraries', () => {
         // If invalid fields make it to Aloglia, it will error, so this tests that we're filtering them first
         describe('Providing search fields that are invalid (?search_fields=this-field-doesnt-exist)', () => {
             // Fetch the endpoint
-            const path = '/libraries?search_fields=this-field-doesnt-exist';
-            const response = beforeRequest(path);
+            const response = beforeRequest(
+                `${path}?search_fields=this-field-doesnt-exist`,
+            );
 
             // Test the endpoint
             testCors(path, response);
@@ -969,7 +966,7 @@ describe('/libraries', () => {
 
         it('writes the results from Algolia to KV', async () => {
             await kvExpectEmpty();
-            await request('/libraries');
+            await request(path);
             await kvExpectNonEmpty();
 
             // Check that the results were stored under the `:` key (no query, no fields)
@@ -1009,7 +1006,7 @@ describe('/libraries', () => {
             );
 
             // Check the response was generated from KV
-            const response = await request('/libraries');
+            const response = await request(path);
             expect(response.headers.get('Content-Type')).to.match(
                 /application\/json/,
             );
@@ -1027,7 +1024,7 @@ describe('/libraries', () => {
 
             // Run the request with the `name` parameter first
             await kvExpectEmpty();
-            await request('/libraries?search=test&search_fields=name');
+            await request(`${path}?search=test&search_fields=name`);
             await kvExpectNonEmpty();
 
             // Check that the results were stored under the expected key
@@ -1043,7 +1040,7 @@ describe('/libraries', () => {
 
             // Run the request with the `search_fields` parameter first
             await kvExpectEmpty();
-            await request('/libraries?search_fields=name&search=test');
+            await request(`${path}?search_fields=name&search=test`);
             await kvExpectNonEmpty();
 
             // Check that the results were stored under the expected key
@@ -1060,7 +1057,7 @@ describe('/libraries', () => {
 
             // Run the request with the `name` search field first
             await kvExpectEmpty();
-            await request('/libraries?search=test&search_fields=name,keywords');
+            await request(`${path}?search=test&search_fields=name,keywords`);
             await kvExpectNonEmpty();
 
             // Check that the results were stored under the expected key
@@ -1076,7 +1073,7 @@ describe('/libraries', () => {
 
             // Run the request with the `keywords` search field first
             await kvExpectEmpty();
-            await request('/libraries?search=test&search_fields=keywords,name');
+            await request(`${path}?search=test&search_fields=keywords,name`);
             await kvExpectNonEmpty();
 
             // Check that the results were stored under the expected key

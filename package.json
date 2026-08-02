@@ -8,7 +8,7 @@
     "scripts": {
         "prepare": "npm run prepare:husky && npm run prepare:types",
         "prepare:husky": "husky",
-        "prepare:types": "wrangler types",
+        "prepare:types": "wrangler types --strict-vars false",
         "lint": "eslint",
         "lint:fix": "eslint --fix",
         "format": "prettier --check .",
