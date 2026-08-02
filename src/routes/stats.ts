@@ -5,7 +5,7 @@ import * as z from 'zod';
 import filter from '../utils/filter.ts';
 import { libraries } from '../utils/metadata.ts';
 import { queryCheck } from '../utils/query.ts';
-import respond, { withCache } from '../utils/respond.ts';
+import respond, { isWebsite, notFound, withCache } from '../utils/respond.ts';
 
 import { type StatsResponse, statsResponseSchema } from './stats.schema.ts';
 
@@ -15,6 +15,11 @@ import { type StatsResponse, statsResponseSchema } from './stats.schema.ts';
  * @param ctx Request context.
  */
 const handleGetStats = async (ctx: Context) => {
+    // Make this an API-only endpoint, no React page
+    if (isWebsite(ctx)) {
+        return notFound(ctx, 'Endpoint');
+    }
+
     const libs = await libraries();
     const response: StatsResponse = filter(
         {
