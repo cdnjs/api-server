@@ -2,7 +2,7 @@ import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { env } from 'cloudflare:workers';
 import type { Context, Hono } from 'hono';
 
-import respond, { isHuman, withCache } from '../utils/respond.ts';
+import respond, { isWebsite, withCache } from '../utils/respond.ts';
 
 import IndexPage from './index.page.tsx';
 
@@ -12,8 +12,8 @@ import IndexPage from './index.page.tsx';
  * @param ctx Request context.
  */
 const handleGet = (ctx: Context) => {
-    // Render a human-readable page
-    if (isHuman(ctx)) {
+    // Render the React page for website requests
+    if (isWebsite(ctx)) {
         // Set a 6 hour life on this response
         withCache(ctx, 6 * 60 * 60);
 

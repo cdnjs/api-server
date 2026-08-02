@@ -148,7 +148,7 @@ const Result = ({
         <li className={styles.card}>
             <div className={styles.name}>
                 <a
-                    href={`/libraries/${encodeURIComponent(name)}/${encodeURIComponent(version)}?output=human`}
+                    href={`/libraries/${encodeURIComponent(name)}/${encodeURIComponent(version)}`}
                 >
                     {name} <small>@ {version}</small>
                 </a>

@@ -2,7 +2,6 @@ import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import type { Context, Hono } from 'hono';
 import * as z from 'zod';
 
-import event from '../utils/event.ts';
 import files from '../utils/files.ts';
 import filter from '../utils/filter.ts';
 import {
@@ -12,7 +11,7 @@ import {
     libraryVersions,
 } from '../utils/metadata.ts';
 import { queryCheck } from '../utils/query.ts';
-import respond, { isHuman, notFound, withCache } from '../utils/respond.ts';
+import respond, { isWebsite, notFound, withCache } from '../utils/respond.ts';
 
 import { errorResponseSchema } from './errors.schema.ts';
 import LibraryPage from './library.page.tsx';
@@ -244,12 +243,9 @@ const handleGetLibrary = async (ctx: Context) => {
     // Set a 6 hour life on this response
     withCache(ctx, 6 * 60 * 60);
 
-    // Redirect to the version endpoint if requesting a human-readable page
-    if (isHuman(ctx)) {
-        event('human-redirect', { ctx });
-        return ctx.redirect(
-            `/libraries/${lib.name}/${lib.version}?output=human`,
-        );
+    // Redirect to the version endpoint for website requests
+    if (isWebsite(ctx)) {
+        return ctx.redirect(`/libraries/${lib.name}/${lib.version}`);
     }
 
     // Send the response

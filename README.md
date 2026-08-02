@@ -36,12 +36,22 @@ npm run dev
 This command will run the worker entirely locally, and you can access the API at
 [`http://localhost:8787`](http://localhost:8787) (note that the root path redirects to the docs).
 
-### Client Islands
+### Website React Output
 
-For the HTML output of the API, client-side islands can be used for interactive React components,
-which will be bundled by Vite from [`src/utils/jsx/islands/`](src/utils/jsx/islands/).
+The same API server worker also powers the [cdnjs.com](https://cdnjs.com) website, returning
+rendered React responses. This done by setting the `WEBSITE_BASE` Worker environment variable, which
+will cause the API server to return HTML instead of JSON when a request has a matching base URL.
+While the worker cannot be served from multiple base URLs in development mode, you can run the
+worker with the `WEBSITE_BASE` environment variable set to `http://localhost:8787` to test locally:
+
+```sh
+npm run dev:web
+```
+
+When building pages for the website output, client-side islands can be used for interactive React
+components, which will be bundled by Vite from [`src/utils/jsx/islands/`](src/utils/jsx/islands/).
 The client hydration entrypoints are built automatically for each island into `dist-client/`, via
-the [`[build]` hook in `wrangler.toml`](wrangler.toml), and served as static assets by the worker.
+the [`[build]` hook in `wrangler.jsonc`](wrangler.jsonc), and served as static assets by the worker.
 
 Client components use the `createIsland` wrapper during server-side rendering to associate them with
 their serialize props and their client hydration entrypoint:
@@ -101,7 +111,7 @@ want to run the type-checking separately, you can use:
 npm run types
 ```
 
-If you've made changes to the [Wrangler config file](wrangler.toml), such as adding a new
+If you've made changes to the [Wrangler config file](wrangler.jsonc), such as adding a new
 environment variable or binding, you'll need to regenerate the worker types for these changes to be
 reflected in the type system. This can be done with:
 
@@ -145,7 +155,7 @@ npm run format:fix
 ## Error Logging
 
 We use Sentry to handle our error logging. To enable Sentry in the API server, set the `SENTRY_DSN`
-environment variable in the [Wrangler config file](wrangler.toml) for the appropriate environment to
+environment variable in the [Wrangler config file](wrangler.jsonc) for the appropriate environment to
 a valid DSN URL from Sentry. The `SENTRY_RELEASE` environment variable can also be set to identify a
 specific release of the worker (our GitHub Actions workflows for deployments set this to the current
 commit hash).
@@ -159,7 +169,7 @@ staging/production branches, automatically handling not only deploying the worke
 a Sentry release with full source maps.
 
 Before deploying, ensure that you generate the required KV namespace for the environment you are
-deploying to and update [`wrangler.toml`](wrangler.toml) to use the correct ID:
+deploying to and update [`wrangler.jsonc`](wrangler.jsonc) to use the correct ID:
 
 ```sh
 wrangler kv:namespace create CACHE --env=staging

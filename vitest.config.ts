@@ -12,7 +12,7 @@ export default defineConfig({
     },
     plugins: [
         cloudflareTest({
-            wrangler: { configPath: './wrangler.toml' },
+            wrangler: { configPath: './wrangler.jsonc' },
             miniflare: {
                 bindings: {
                     DISABLE_LOGGING: true,

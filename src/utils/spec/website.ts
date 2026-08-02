@@ -1,9 +1,9 @@
 import { expect, it } from 'vitest';
 
 /**
- * Run tests to ensure a response is a valid pretty-printed HTML "human" response.
+ * Run tests to ensure a response is a valid website React output.
  *
- * @param response Response from the API worker to test as a "human" response.
+ * @param response Response from the API worker to test.
  */
 export default (response: Response) => {
     it('returns the no-index header', () => {
