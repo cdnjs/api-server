@@ -9,7 +9,7 @@ export default {
         brand: '#d9643a',
     },
     background: {
-        primary: '#454647',
+        primary: '#3a3c3c',
         elevated: '#242525',
         brand: '#d9643a',
     },
