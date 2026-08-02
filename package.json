@@ -15,7 +15,8 @@
         "format:fix": "prettier --write .",
         "test": "vitest run",
         "types": "tsc --noEmit",
-        "dev": "wrangler dev"
+        "dev": "wrangler dev",
+        "dev:web": "wrangler dev --var WEBSITE_BASE:http://localhost:8787"
     },
     "repository": {
         "type": "git",

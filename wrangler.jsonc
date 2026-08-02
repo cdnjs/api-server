@@ -40,6 +40,7 @@
         "DISABLE_LOGGING": false,
         "DISABLE_CACHING": false,
         "METADATA_BASE": "",
+        "WEBSITE_BASE": "",
         "SENTRY_DSN": "",
         "SENTRY_RELEASE": "",
         "SENTRY_ENVIRONMENT": "development",
@@ -70,6 +71,7 @@
                 "DISABLE_LOGGING": true,
                 "DISABLE_CACHING": false,
                 "METADATA_BASE": "https://metadata.cdnjs.cloudflare.com",
+                "WEBSITE_BASE": "https://cdnjs.dev",
                 "SENTRY_DSN": "", // Will be injected by build pipeline
                 "SENTRY_RELEASE": "", // Will be injected by build pipeline
                 "SENTRY_ENVIRONMENT": "staging",
@@ -100,6 +102,7 @@
                 "DISABLE_LOGGING": true,
                 "DISABLE_CACHING": false,
                 "METADATA_BASE": "https://metadata.cdnjs.cloudflare.com",
+                "WEBSITE_BASE": "https://cdnjs.com",
                 "SENTRY_DSN": "", // Will be injected by build pipeline
                 "SENTRY_RELEASE": "", // Will be injected by build pipeline
                 "SENTRY_ENVIRONMENT": "production",

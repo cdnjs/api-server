@@ -1,7 +1,7 @@
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import type { Context, Hono } from 'hono';
 
-import respond, { isHuman, withCache } from '../utils/respond.ts';
+import respond, { isWebsite, withCache } from '../utils/respond.ts';
 
 import AboutPage from './about.page.tsx';
 
@@ -11,8 +11,8 @@ import AboutPage from './about.page.tsx';
  * @param ctx Request context.
  */
 const handleGetAbout = (ctx: Context) => {
-    // Render a human-readable page
-    if (isHuman(ctx)) {
+    // Render the React page for website requests
+    if (isWebsite(ctx)) {
         // Set a 6 hour life on this response
         withCache(ctx, 6 * 60 * 60);
 

@@ -36,10 +36,20 @@ npm run dev
 This command will run the worker entirely locally, and you can access the API at
 [`http://localhost:8787`](http://localhost:8787) (note that the root path redirects to the docs).
 
-### Client Islands
+### Website React Output
 
-For the HTML output of the API, client-side islands can be used for interactive React components,
-which will be bundled by Vite from [`src/utils/jsx/islands/`](src/utils/jsx/islands/).
+The same API server worker also powers the [cdnjs.com](https://cdnjs.com) website, returning
+rendered React responses. This done by setting the `WEBSITE_BASE` Worker environment variable, which
+will cause the API server to return HTML instead of JSON when a request has a matching base URL.
+While the worker cannot be served from multiple base URLs in development mode, you can run the
+worker with the `WEBSITE_BASE` environment variable set to `http://localhost:8787` to test locally:
+
+```sh
+npm run dev:web
+```
+
+When building pages for the website output, client-side islands can be used for interactive React
+components, which will be bundled by Vite from [`src/utils/jsx/islands/`](src/utils/jsx/islands/).
 The client hydration entrypoints are built automatically for each island into `dist-client/`, via
 the [`[build]` hook in `wrangler.jsonc`](wrangler.jsonc), and served as static assets by the worker.
 
