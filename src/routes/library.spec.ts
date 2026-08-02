@@ -87,8 +87,8 @@ describe('/libraries/:library/:version', () => {
                 testCors(path, response);
                 it('returns the correct Cache headers', () => {
                     expect(response.headers.get('Cache-Control')).to.eq(
-                        'public, max-age=30672000, immutable',
-                    ); // 355 days
+                        'public, max-age=21600',
+                    ); // 6 hours
                 });
                 it('returns the correct status code', () => {
                     expect(response.status).to.eq(200);
