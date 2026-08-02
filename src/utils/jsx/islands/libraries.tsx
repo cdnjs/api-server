@@ -150,14 +150,18 @@ const Result = ({
                 <a
                     href={`/libraries/${encodeURIComponent(name)}/${encodeURIComponent(version)}`}
                 >
-                    {name} <small>@ {version}</small>
+                    {name}
+                    <small> @ {version}</small>
                 </a>
 
                 {latest && (
                     <Copy
                         name={name}
                         version={version}
-                        file={latest}
+                        file={latest.replace(
+                            /https:\/\/cdnjs.cloudflare.com\/ajax\/libs\/[^/]+\/[^/]+\//,
+                            '',
+                        )}
                         sri={sri}
                     />
                 )}
