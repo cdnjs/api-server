@@ -61,6 +61,9 @@ describe('/api', () => {
                 'public, max-age=21600',
             ); // 6 hours
         });
+        it('returns the correct status code', () => {
+            expect(response.status).to.eq(200);
+        });
         testWebsite(response);
     });
 });

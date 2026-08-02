@@ -39,7 +39,7 @@ describe('/libraries', () => {
         it('returns the correct Cache headers', () => {
             expect(response.headers.get('Cache-Control')).to.eq(
                 'public, max-age=21600',
-            ); // Six hours
+            ); // 6 hours
         });
         it('returns the correct status code', () => {
             expect(response.status).to.eq(200);
@@ -113,7 +113,10 @@ describe('/libraries', () => {
         it('returns the correct Cache headers', () => {
             expect(response.headers.get('Cache-Control')).to.eq(
                 'public, max-age=21600',
-            ); // Six hours
+            ); // 6 hours
+        });
+        it('returns the correct status code', () => {
+            expect(response.status).to.eq(200);
         });
         testWebsite(response);
     });
@@ -127,7 +130,7 @@ describe('/libraries', () => {
         it('returns the correct Cache headers', () => {
             expect(response.headers.get('Cache-Control')).to.eq(
                 'public, max-age=21600',
-            ); // Six hours
+            ); // 6 hours
         });
         it('returns the correct status code', () => {
             expect(response.status).to.eq(200);
@@ -159,7 +162,7 @@ describe('/libraries', () => {
         it('returns the correct Cache headers', () => {
             expect(response.headers.get('Cache-Control')).to.eq(
                 'public, max-age=21600',
-            ); // Six hours
+            ); // 6 hours
         });
         it('returns the correct status code', () => {
             expect(response.status).to.eq(200);
@@ -215,7 +218,7 @@ describe('/libraries', () => {
             it('returns the correct Cache headers', () => {
                 expect(response.headers.get('Cache-Control')).to.eq(
                     'public, max-age=21600',
-                ); // Six hours
+                ); // 6 hours
             });
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
@@ -273,7 +276,7 @@ describe('/libraries', () => {
             it('returns the correct Cache headers', () => {
                 expect(response.headers.get('Cache-Control')).to.eq(
                     'public, max-age=21600',
-                ); // Six hours
+                ); // 6 hours
             });
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
@@ -333,7 +336,7 @@ describe('/libraries', () => {
             it('returns the correct Cache headers', () => {
                 expect(response.headers.get('Cache-Control')).to.eq(
                     'public, max-age=21600',
-                ); // Six hours
+                ); // 6 hours
             });
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
@@ -381,7 +384,7 @@ describe('/libraries', () => {
             it('returns the correct Cache headers', () => {
                 expect(response.headers.get('Cache-Control')).to.eq(
                     'public, max-age=21600',
-                ); // Six hours
+                ); // 6 hours
             });
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
@@ -431,7 +434,7 @@ describe('/libraries', () => {
             it('returns the correct Cache headers', () => {
                 expect(response.headers.get('Cache-Control')).to.eq(
                     'public, max-age=21600',
-                ); // Six hours
+                ); // 6 hours
             });
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
@@ -480,7 +483,7 @@ describe('/libraries', () => {
         it('returns the correct Cache headers', () => {
             expect(response.headers.get('Cache-Control')).to.eq(
                 'public, max-age=21600',
-            ); // Six hours
+            ); // 6 hours
         });
         it('returns the correct status code', () => {
             expect(response.status).to.eq(200);
@@ -581,7 +584,7 @@ describe('/libraries', () => {
             it('returns the correct Cache headers', () => {
                 expect(response.headers.get('Cache-Control')).to.eq(
                     'public, max-age=21600',
-                ); // Six hours
+                ); // 6 hours
             });
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
@@ -639,7 +642,7 @@ describe('/libraries', () => {
             it('returns the correct Cache headers', () => {
                 expect(response.headers.get('Cache-Control')).to.eq(
                     'public, max-age=21600',
-                ); // Six hours
+                ); // 6 hours
             });
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
@@ -674,7 +677,7 @@ describe('/libraries', () => {
             it('returns the correct Cache headers', () => {
                 expect(response.headers.get('Cache-Control')).to.eq(
                     'public, max-age=21600',
-                ); // Six hours
+                ); // 6 hours
             });
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);
@@ -716,7 +719,7 @@ describe('/libraries', () => {
                 it('returns the correct Cache headers', () => {
                     expect(response.headers.get('Cache-Control')).to.eq(
                         'public, max-age=21600',
-                    ); // Six hours
+                    ); // 6 hours
                 });
                 it('returns the correct status code', () => {
                     expect(response.status).to.eq(200);
@@ -780,7 +783,7 @@ describe('/libraries', () => {
                 it('returns the correct Cache headers', () => {
                     expect(response.headers.get('Cache-Control')).to.eq(
                         'public, max-age=21600',
-                    ); // Six hours
+                    ); // 6 hours
                 });
                 it('returns the correct status code', () => {
                     expect(response.status).to.eq(200);
@@ -844,7 +847,7 @@ describe('/libraries', () => {
                 it('returns the correct Cache headers', () => {
                     expect(response.headers.get('Cache-Control')).to.eq(
                         'public, max-age=21600',
-                    ); // Six hours
+                    ); // 6 hours
                 });
                 it('returns the correct status code', () => {
                     expect(response.status).to.eq(200);
@@ -910,7 +913,7 @@ describe('/libraries', () => {
             it('returns the correct Cache headers', () => {
                 expect(response.headers.get('Cache-Control')).to.eq(
                     'public, max-age=21600',
-                ); // Six hours
+                ); // 6 hours
             });
             it('returns the correct status code', () => {
                 expect(response.status).to.eq(200);

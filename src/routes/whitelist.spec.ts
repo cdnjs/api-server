@@ -85,8 +85,11 @@ describe('/whitelist', () => {
         testCors(path, response);
         it('returns the correct Cache headers', () => {
             expect(response.headers.get('Cache-Control')).to.eq(
-                'public, max-age=21600',
-            ); // 6 hours
+                'public, max-age=3600',
+            ); // 1 hour
+        });
+        it('returns the correct status code', () => {
+            expect(response.status).to.eq(404);
         });
         testWebsite(response);
     });
