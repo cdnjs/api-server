@@ -5,10 +5,9 @@ import * as z from 'zod/mini';
 
 import theme from '../../theme.ts';
 import Copy from '../copy.tsx';
-import IconCross from '../icons/cross.tsx';
-import IconLoading from '../icons/loading.tsx';
-import IconSearch from '../icons/search.tsx';
+import Header from '../header.tsx';
 import createIsland from '../island.tsx';
+import Search from '../search.tsx';
 
 const resultSchema = z.object({
     name: z.string(),
@@ -40,52 +39,17 @@ const styles = {
         display: flex;
         flex-direction: column;
         gap: ${theme.spacing(2)};
-        margin: ${theme.spacing(-2, 0, 2)};
         padding: ${theme.spacing(2, 0)};
-        position: relative;
-        isolation: isolate;
-        z-index: 1;
-
-        &::before {
-            content: '';
-            position: absolute;
-            width: 100vw;
-            left: 50%;
-            transform: translateX(-50%);
-            background: ${theme.background.header};
-            top: 0;
-            bottom: 0;
-            z-index: -1;
-        }
-    `,
-    search: css`
-        position: relative;
-        color: ${theme.text.inverted};
-
-        input {
-            width: 100%;
-            padding: ${theme.spacing(1, 6, 1, 1)};
-            font-size: ${theme.font.large.size};
-            font-weight: ${theme.font.large.weight};
-            border: ${theme.spacing(0.125)} solid ${theme.background.body};
-            border-radius: ${theme.radius};
-        }
-
-        svg {
-            position: absolute;
-            right: ${theme.spacing(2)};
-            top: 50%;
-            transform: translateY(-50%);
-            width: ${theme.spacing(3)};
-            height: ${theme.spacing(3)};
-            pointer-events: none;
-        }
     `,
     found: css`
         color: ${theme.text.secondary};
-        font-size: ${theme.font.small.size};
-        font-weight: ${theme.font.small.weight};
         margin: 0;
+
+        &,
+        strong {
+            font-size: ${theme.font.small.size};
+            font-weight: ${theme.font.small.weight};
+        }
 
         strong {
             color: ${theme.text.brand};
@@ -93,7 +57,7 @@ const styles = {
     `,
     results: css`
         padding: 0;
-        margin: 0;
+        margin: ${theme.spacing(2, 0, 0)};
         list-style: none;
         transition: opacity ${theme.transition};
 
@@ -116,10 +80,15 @@ const styles = {
         flex-direction: column;
         gap: ${theme.spacing(1)};
         padding: ${theme.spacing(2)};
-        background: ${theme.background.footer};
+        background: ${theme.background.elevated};
         border-radius: ${theme.radius};
         position: relative;
         isolation: isolate;
+        transition: background ${theme.transition};
+
+        &:has(a:hover, a:focus) {
+            background: rgb(from ${theme.background.elevated} r g b / 0.75);
+        }
     `,
     name: css`
         display: flex;
@@ -213,13 +182,12 @@ const Libraries = ({
 
     useEffect(() => {
         const timer = setTimeout(async () => {
+            const controller = new AbortController();
+            abortRef.current?.abort();
+            abortRef.current = controller;
+
             try {
                 setState('loading');
-
-                const controller = new AbortController();
-                abortRef.current?.abort();
-                abortRef.current = controller;
-
                 setResults(
                     search === initial.search
                         ? initial.results
@@ -235,8 +203,10 @@ const Libraries = ({
                 }
                 window.history.replaceState({}, '', url.toString());
             } catch (err) {
-                console.error(err);
-                setState('failed');
+                if (!controller.signal.aborted) {
+                    console.error(err);
+                    setState('failed');
+                }
             }
         }, 300);
 
@@ -306,33 +276,22 @@ const Libraries = ({
 
     return (
         <>
-            <div className={styles.header}>
-                <form
-                    className={styles.search}
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                    }}
-                >
-                    <input
-                        type="text"
-                        name="search"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder="Search libraries on cdnjs..."
-                    />
-                    {
-                        {
-                            idle: <IconSearch />,
-                            loading: <IconLoading />,
-                            failed: <IconCross />,
-                        }[state]
-                    }
-                </form>
+            <Header
+                title={
+                    <>
+                        Browse <strong>cdnjs</strong>
+                    </>
+                }
+            >
+                <div className={styles.header}>
+                    <Search value={search} onChange={setSearch} state={state} />
 
-                <p className={styles.found}>
-                    Found <strong>{total}</strong> libraries available on cdnjs.
-                </p>
-            </div>
+                    <p className={styles.found}>
+                        Found <strong>{total}</strong> libraries available on
+                        cdnjs.
+                    </p>
+                </div>
+            </Header>
 
             <ul
                 ref={listRef}

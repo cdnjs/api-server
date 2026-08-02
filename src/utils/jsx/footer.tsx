@@ -1,6 +1,7 @@
 import { css, cx } from '@emotion/css';
 import { Fragment } from 'react';
 
+import sponsors from '../sponsors.ts';
 import theme from '../theme.ts';
 
 import Logo from './logo.tsx';
@@ -23,7 +24,7 @@ const styles = {
             width: 100vw;
             left: 50%;
             transform: translateX(-50%);
-            background: ${theme.background.footer};
+            background: ${theme.background.elevated};
             top: 0;
             bottom: 0;
             z-index: -1;
@@ -142,14 +143,10 @@ const sections: Section[][] = [
     [
         {
             title: 'Sponsors',
-            links: [
-                { label: 'Cloudflare', href: 'https://www.cloudflare.com' },
-                { label: 'Algolia', href: 'https://www.algolia.com' },
-                { label: 'DigitalOcean', href: 'https://www.digitalocean.com' },
-                { label: 'Statuspage', href: 'https://www.statuspage.io' },
-                { label: 'Sentry', href: 'https://sentry.io' },
-                { label: 'UptimeRobot', href: 'https://uptimerobot.com' },
-            ],
+            links: sponsors.map((sponsor) => ({
+                label: sponsor.name,
+                href: sponsor.url('footer'),
+            })),
         },
     ],
 ];

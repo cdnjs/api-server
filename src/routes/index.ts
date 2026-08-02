@@ -2,7 +2,9 @@ import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { env } from 'cloudflare:workers';
 import type { Context, Hono } from 'hono';
 
-import { withCache } from '../utils/respond.ts';
+import respond, { isHuman, withCache } from '../utils/respond.ts';
+
+import IndexPage from './index.page.tsx';
 
 /**
  * Handle GET / requests.
@@ -10,6 +12,14 @@ import { withCache } from '../utils/respond.ts';
  * @param ctx Request context.
  */
 const handleGet = (ctx: Context) => {
+    // Render a human-readable page
+    if (isHuman(ctx)) {
+        // Set a 6 hour life on this response
+        withCache(ctx, 6 * 60 * 60);
+
+        return respond<undefined>(ctx, undefined, IndexPage);
+    }
+
     // Set a 355 day (same as CDN) life on this response
     // This is also immutable
     withCache(ctx, 355 * 24 * 60 * 60, true);

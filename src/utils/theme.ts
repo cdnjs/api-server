@@ -9,10 +9,8 @@ export default {
         brand: '#d9643a',
     },
     background: {
-        body: '#454647',
-        navigation: '#343535',
-        header: '#3a3c3c',
-        footer: '#242525',
+        primary: '#454647',
+        elevated: '#242525',
         brand: '#d9643a',
     },
     status: {
@@ -42,6 +40,15 @@ export default {
         small: {
             size: '0.875rem',
             weight: 400,
+        },
+        tiny: {
+            size: '0.75rem',
+            weight: 400,
+        },
+        families: {
+            home: '"Space Grotesk", system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
+            body: '"Inter", system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
+            mono: '"JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace',
         },
     },
     radius: '4px',
