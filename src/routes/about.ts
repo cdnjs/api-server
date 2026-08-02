@@ -16,7 +16,12 @@ const handleGetAbout = (ctx: Context) => {
         // Set a 6 hour life on this response
         withCache(ctx, 6 * 60 * 60);
 
-        return respond<undefined>(ctx, undefined, AboutPage);
+        return respond<undefined>(ctx, undefined, AboutPage, {
+            title: 'About',
+            description:
+                'Learn more about cdnjs, how libraries are added, the team behind it, and the sponsors that make it possible to run this service for free.',
+            keywords: ['about', 'team', 'sponsors'],
+        });
     }
 
     // Set a 355 day (same as CDN) life on this response

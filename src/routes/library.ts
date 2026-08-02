@@ -137,10 +137,24 @@ const handleGetLibraryVersion = async (ctx: Context) => {
     }
 
     // Send the response
-    return respond<LibraryVersionResponse>(ctx, response, async ({ data }) => {
-        const versions = await libraryVersions(lib.name);
-        return LibraryPage({ library: { ...lib, versions }, version: data });
-    });
+    return respond<LibraryVersionResponse>(
+        ctx,
+        response,
+        async ({ data }) => {
+            const versions = await libraryVersions(lib.name);
+            return LibraryPage({
+                library: { ...lib, versions },
+                version: data,
+            });
+        },
+        {
+            title: `${lib.name} @ ${params.version} - Libraries`,
+            description: lib.description,
+            keywords: [lib.name, lib.name.replace(/[-_]/g, ' ')].concat(
+                lib.keywords.filter((x) => !!x),
+            ),
+        },
+    );
 };
 
 /**

@@ -84,7 +84,10 @@ describe.skipIf(externalApiUrl)('/error', () => {
             expect(body).to.be.an('object');
             expect(body).to.have.property('error', true);
             expect(body).to.have.property('status', 500);
-            expect(body).to.have.property('message', 'Test error');
+            expect(body).to.have.property(
+                'message',
+                'An unexpected error occurred',
+            );
         });
     });
 
