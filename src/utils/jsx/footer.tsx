@@ -97,7 +97,7 @@ const sections: Section[][] = [
         {
             title: 'Info',
             links: [
-                { label: 'About Us', href: 'https://cdnjs.com/about' },
+                { label: 'About Us', href: '/about' },
                 {
                     label: 'Privacy Policy',
                     href: 'https://www.cloudflare.com/privacypolicy',
@@ -124,9 +124,9 @@ const sections: Section[][] = [
             links: [
                 {
                     label: 'Search Libraries',
-                    href: 'https://cdnjs.com/libraries',
+                    href: '/libraries',
                 },
-                { label: 'API Documentation', href: 'https://cdnjs.com/api' },
+                { label: 'API Documentation', href: '/api' },
             ],
         },
         {
