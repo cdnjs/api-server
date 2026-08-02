@@ -3,94 +3,70 @@ import { createServer } from 'node:net';
 import { defineConfig } from 'vitest/config';
 
 const host = '127.0.0.1';
+const fallbackWorkerTarget =
+    process.env.VITEST_EXTERNAL_API_URL?.replace(/\/+$/, '') ??
+    `http://${host}`;
+const resolveWorkerTarget = () =>
+    process.env.VITEST_BROWSER_WORKER_URL ?? fallbackWorkerTarget;
+const proxyToWorker: typeof fetch = async (input, init) => {
+    const sourceUrl = new URL(input instanceof Request ? input.url : input);
+    const targetUrl = new URL(
+        `${sourceUrl.pathname}${sourceUrl.search}`,
+        resolveWorkerTarget(),
+    );
+    const headers = new Headers(init?.headers);
+    // Node fetch decodes compressed bodies while preserving their encoding header.
+    // Request identity encoding so the browser receives bytes matching the headers.
+    headers.set('accept-encoding', 'identity');
 
-const findAvailablePorts = async (count: number) => {
-    const ports = new Set<number>();
-
-    while (ports.size < count) {
-        const port = await new Promise<number>((resolve, reject) => {
-            const server = createServer();
-            server.unref();
-            server.once('error', reject);
-            server.listen(0, host, () => {
-                const address = server.address();
-                if (!address || typeof address === 'string') {
-                    server.close();
-                    reject(
-                        new Error('Unable to allocate a browser test port.'),
-                    );
-                    return;
-                }
-
-                server.close((error) => {
-                    if (error) {
-                        reject(error);
-                        return;
-                    }
-
-                    resolve(address.port);
-                });
-            });
-        });
-
-        ports.add(port);
-    }
-
-    return [...ports];
+    return fetch(targetUrl, { ...init, headers });
 };
 
-const readConfiguredPorts = (keys: string[]) => {
-    const ports = keys.map((key) => {
-        const port = Number(process.env[key]);
-        return Number.isInteger(port) && port > 0 && port <= 65_535
-            ? port
-            : undefined;
-    });
+const configuredPort = Number(process.env.VITEST_BROWSER_API_PORT);
+const browserPort =
+    Number.isInteger(configuredPort) &&
+    configuredPort > 0 &&
+    configuredPort <= 65_535
+        ? configuredPort
+        : await new Promise<number>((resolve, reject) => {
+              const server = createServer();
+              server.unref();
+              server.once('error', reject);
+              server.listen(0, host, () => {
+                  const address = server.address();
+                  if (!address || typeof address === 'string') {
+                      server.close();
+                      reject(
+                          new Error('Unable to allocate a browser test port.'),
+                      );
+                      return;
+                  }
 
-    return ports.every((port): port is number => port !== undefined)
-        ? ports
-        : null;
-};
+                  server.close((error) => {
+                      if (error) {
+                          reject(error);
+                          return;
+                      }
 
-const externalApiUrl = process.env.VITEST_EXTERNAL_API_URL?.replace(/\/+$/, '');
-const portEnvironmentKeys = externalApiUrl
-    ? ['VITEST_BROWSER_API_PORT']
-    : [
-          'VITEST_BROWSER_API_PORT',
-          'VITEST_BROWSER_WORKER_PORT',
-          'VITEST_BROWSER_INSPECTOR_PORT',
-      ];
-const ports =
-    readConfiguredPorts(portEnvironmentKeys) ??
-    (await findAvailablePorts(portEnvironmentKeys.length));
-portEnvironmentKeys.forEach((key, index) => {
-    process.env[key] = String(ports[index]);
-});
-
-const [browserPort, workerPort, inspectorPort] = ports;
-
-if (!browserPort) {
-    throw new Error('Unable to allocate the browser server port.');
-}
-
-if (!externalApiUrl && (!workerPort || !inspectorPort)) {
-    throw new Error('Unable to allocate the local Worker ports.');
-}
-
-const workerTarget = externalApiUrl ?? `http://${host}:${String(workerPort)}`;
+                      resolve(address.port);
+                  });
+              });
+          });
 
 export default defineConfig({
     server: {
         host,
         proxy: {
             '/__worker': {
-                target: workerTarget,
+                target: fallbackWorkerTarget,
                 changeOrigin: true,
+                fetch: proxyToWorker,
                 rewrite: (path: string) => path.replace(/^\/__worker/, ''),
             },
             '/islands': {
-                target: workerTarget,
+                target: fallbackWorkerTarget,
                 changeOrigin: true,
+                fetch: proxyToWorker,
             },
         },
     },

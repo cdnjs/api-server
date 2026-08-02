@@ -1,40 +1,34 @@
-import { unstable_dev } from 'wrangler';
-
-const host = '127.0.0.1';
+import { createTestHarness } from 'wrangler';
 
 /**
  * Start a local Worker for the browser test project.
  */
 export default async function setup() {
-    if (process.env.VITEST_EXTERNAL_API_URL) return;
-
-    const workerPort = Number(process.env.VITEST_BROWSER_WORKER_PORT);
-    const inspectorPort = Number(process.env.VITEST_BROWSER_INSPECTOR_PORT);
-    if (!workerPort || !inspectorPort) {
-        throw new Error('Browser test Worker ports were not configured.');
+    const externalApiUrl = process.env.VITEST_EXTERNAL_API_URL?.replace(
+        /\/+$/,
+        '',
+    );
+    if (externalApiUrl) {
+        process.env.VITEST_BROWSER_WORKER_URL = externalApiUrl;
+        return;
     }
 
-    const worker = await unstable_dev('src/index.ts', {
-        config: './wrangler.toml',
-        ip: host,
-        port: workerPort,
-        inspectorPort,
-        local: true,
-        logLevel: 'error',
-        experimental: {
-            disableExperimentalWarning: true,
-            showInteractiveDevSession: false,
-            watch: false,
-        },
+    const server = createTestHarness({
+        workers: [{ configPath: './wrangler.toml' }],
     });
+    const { url } = await server.listen();
 
-    const response = await worker.fetch('/api');
+    const response = await server.fetch('/health');
     if (!response.ok) {
-        await worker.stop();
+        await server.close();
         throw new Error(
             `Local Worker health check failed with status ${String(response.status)}.`,
         );
     }
 
-    return () => worker.stop();
+    process.env.VITEST_BROWSER_WORKER_URL = url.origin;
+    return async () => {
+        delete process.env.VITEST_BROWSER_WORKER_URL;
+        await server.close();
+    };
 }
