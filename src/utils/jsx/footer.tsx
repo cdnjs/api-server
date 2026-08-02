@@ -161,7 +161,7 @@ export default ({ className }: { className?: string }) => (
     <footer className={cx(styles.footer, className)}>
         <dl className={cx(styles.list, styles.copyright)}>
             <dt>
-                <a href="https://cdnjs.com" rel="noopener" aria-label="cdnjs">
+                <a href="/" rel="noopener" aria-label="cdnjs">
                     <Logo className={styles.logo} />
                 </a>
             </dt>

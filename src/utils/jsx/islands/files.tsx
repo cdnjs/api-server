@@ -118,7 +118,7 @@ const Versions = ({
                     const changed = e.target.value;
                     if (changed === selected) return;
                     setSelected(changed);
-                    window.location.href = `/libraries/${encodeURIComponent(name)}/${encodeURIComponent(changed)}?output=human`;
+                    window.location.href = `/libraries/${encodeURIComponent(name)}/${encodeURIComponent(changed)}`;
                 }}
             >
                 {versions.map((ver) => (

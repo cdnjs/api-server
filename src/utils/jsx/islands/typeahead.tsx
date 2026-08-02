@@ -219,8 +219,8 @@ const Typeahead = ({ className }: { className?: string }) => {
                 onBlur={() => setActive(false)}
                 onSubmit={() => {
                     window.location.href = query.length
-                        ? `/libraries?search=${encodeURIComponent(query)}&output=human`
-                        : '/libraries?output=human';
+                        ? `/libraries?search=${encodeURIComponent(query)}`
+                        : '/libraries';
                 }}
                 state={state}
                 elevated
@@ -253,8 +253,8 @@ const Typeahead = ({ className }: { className?: string }) => {
                                 <a
                                     href={
                                         queried.length
-                                            ? `/libraries?search=${encodeURIComponent(queried)}&output=human`
-                                            : '/libraries?output=human'
+                                            ? `/libraries?search=${encodeURIComponent(queried)}`
+                                            : '/libraries'
                                     }
                                 >
                                     View all
@@ -278,7 +278,7 @@ const Typeahead = ({ className }: { className?: string }) => {
                                             className={styles.result}
                                         >
                                             <a
-                                                href={`/libraries/${encodeURIComponent(name)}/${encodeURIComponent(version)}?output=human`}
+                                                href={`/libraries/${encodeURIComponent(name)}/${encodeURIComponent(version)}`}
                                             >
                                                 <p>
                                                     <strong>{name}</strong>{' '}

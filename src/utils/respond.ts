@@ -6,7 +6,6 @@ import { prerender } from 'react-dom/static';
 
 import type { ErrorResponse } from '../routes/errors.schema.ts';
 
-import event from './event.ts';
 import { createIslandProvider } from './jsx/island.tsx';
 import Json from './jsx/json.tsx';
 import Layout from './jsx/layout.tsx';
@@ -73,26 +72,26 @@ export const withCache = (ctx: Context, age: number, immutable = false) => {
 };
 
 /**
- * Check if the request is asking for human-readable output (HTML) instead of the regular JSON response.
+ * Check if the request is from the website base URL, and should get a React response, instead of a JSON response for API requests.
  *
  * @param ctx Request context.
  */
-export const isHuman = (ctx: Context) => ctx.req.query('output') === 'human';
+export const isWebsite = (ctx: Context) =>
+    env.WEBSITE_BASE && ctx.req.url.startsWith(env.WEBSITE_BASE);
 
 /**
- * Respond to a request with data, handling if it should be returned as JSON or pretty-printed in HTML.
+ * Respond to a request with data, handling if it should be returned as JSON or rendered as a React response.
  *
  * @param ctx Request context.
  * @param data Data to be included in the response.
- * @param component Optional custom component to use for human-readable output (defaults to Json).
+ * @param component Optional custom component to use for website React output (defaults to Json).
  */
 const respond = async <T = never>(
     ctx: Context,
     data: NoInfer<T>,
     component: ComponentType<{ data: NoInfer<T> }> = Json,
 ) => {
-    if (isHuman(ctx)) {
-        event('human-output', { ctx });
+    if (isWebsite(ctx)) {
         ctx.header('X-Robots-Tag', 'noindex');
 
         const Provider = await createIslandProvider();

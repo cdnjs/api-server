@@ -8,7 +8,7 @@
     "scripts": {
         "prepare": "npm run prepare:husky && npm run prepare:types",
         "prepare:husky": "husky",
-        "prepare:types": "wrangler types",
+        "prepare:types": "wrangler types --strict-vars false",
         "lint": "eslint",
         "lint:fix": "eslint --fix",
         "format": "prettier --check .",
@@ -16,7 +16,8 @@
         "test": "vitest run",
         "test:browser": "vitest run --config vitest.browser.config.ts",
         "types": "tsc --noEmit",
-        "dev": "wrangler dev"
+        "dev": "wrangler dev",
+        "dev:web": "wrangler dev --var WEBSITE_BASE:http://localhost:8787"
     },
     "repository": {
         "type": "git",

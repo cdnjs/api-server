@@ -1,15 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
 import testCors from '../utils/spec/cors.ts';
-import testHuman from '../utils/spec/human.ts';
 import { beforeRequest, externalApiUrl } from '../utils/spec/request.ts';
+import testWebsite from '../utils/spec/website.ts';
 
 import type { ErrorResponse } from './errors.schema.ts';
 
 describe('/this-route-doesnt-exist', () => {
+    const path = '/this-route-doesnt-exist';
+
     describe('No query params', () => {
         // Fetch the endpoint
-        const path = '/this-route-doesnt-exist';
         const response = beforeRequest(path);
 
         // Test the endpoint
@@ -35,10 +36,10 @@ describe('/this-route-doesnt-exist', () => {
         });
     });
 
-    describe('Requesting human response (?output=human)', () => {
+    // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
+    describe.skipIf(externalApiUrl)('Website React output', () => {
         // Fetch the endpoint
-        const path = '/this-route-doesnt-exist?output=human';
-        const response = beforeRequest(path);
+        const response = beforeRequest(path, {}, true);
 
         // Test the endpoint
         testCors(path, response);
@@ -47,15 +48,16 @@ describe('/this-route-doesnt-exist', () => {
                 'public, max-age=3600',
             ); // 1 hour
         });
-        testHuman(response);
+        testWebsite(response);
     });
 });
 
 // Don't run these tests against an external API Worker as we don't want to create noise
 describe.skipIf(externalApiUrl)('/error', () => {
+    const path = '/error';
+
     describe('No query params', () => {
         // Fetch the endpoint
-        const path = '/error';
         const response = beforeRequest(path);
 
         // Test the endpoint
@@ -83,10 +85,10 @@ describe.skipIf(externalApiUrl)('/error', () => {
         });
     });
 
-    describe('Requesting human response (?output=human)', () => {
+    // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
+    describe.skipIf(externalApiUrl)('Website React output', () => {
         // Fetch the endpoint
-        const path = '/error?output=human';
-        const response = beforeRequest(path);
+        const response = beforeRequest(path, {}, true);
 
         // Test the endpoint
         testCors(path, response);
@@ -97,6 +99,6 @@ describe.skipIf(externalApiUrl)('/error', () => {
                 'no-cache, no-store, must-revalidate',
             );
         });
-        testHuman(response);
+        testWebsite(response);
     });
 });

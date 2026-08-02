@@ -1,15 +1,20 @@
 import { describe, expect, it } from 'vitest';
 
 import testCors from '../utils/spec/cors.ts';
-import testHuman from '../utils/spec/human.ts';
-import { beforeRequest, request } from '../utils/spec/request.ts';
+import {
+    beforeRequest,
+    externalApiUrl,
+    request,
+} from '../utils/spec/request.ts';
+import testWebsite from '../utils/spec/website.ts';
 
 import type { WhitelistResponse } from './whitelist.schema.ts';
 
 describe('/whitelist', () => {
+    const path = '/whitelist';
+
     describe('No query params', () => {
         // Fetch the endpoint
-        const path = '/whitelist';
         const response = beforeRequest(path);
 
         // Test the endpoint
@@ -71,10 +76,10 @@ describe('/whitelist', () => {
         });
     });
 
-    describe('Requesting human response (?output=human)', () => {
+    // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
+    describe.skipIf(externalApiUrl)('Website React output', () => {
         // Fetch the endpoint
-        const path = '/whitelist?output=human';
-        const response = beforeRequest(path);
+        const response = beforeRequest(path, {}, true);
 
         // Test the endpoint
         testCors(path, response);
@@ -83,13 +88,12 @@ describe('/whitelist', () => {
                 'public, max-age=21600',
             ); // 6 hours
         });
-        testHuman(response);
+        testWebsite(response);
     });
 
     describe('Requesting a field (?fields=extensions)', () => {
         // Fetch the endpoint
-        const path = '/whitelist?fields=extensions';
-        const response = beforeRequest(path);
+        const response = beforeRequest(`${path}?fields=extensions`);
 
         // Test the endpoint
         testCors(path, response);
@@ -120,8 +124,9 @@ describe('/whitelist', () => {
     describe('Requesting multiple fields', () => {
         describe('through comma-separated string (?fields=extensions,categories)', () => {
             // Fetch the endpoint
-            const path = '/whitelist?fields=extensions,categories';
-            const response = beforeRequest(path);
+            const response = beforeRequest(
+                `${path}?fields=extensions,categories`,
+            );
 
             // Test the endpoint
             testCors(path, response);
@@ -154,8 +159,9 @@ describe('/whitelist', () => {
 
         describe('through space-separated string (?fields=extensions categories)', () => {
             // Fetch the endpoint
-            const path = '/whitelist?fields=extensions categories';
-            const response = beforeRequest(path);
+            const response = beforeRequest(
+                `${path}?fields=extensions categories`,
+            );
 
             // Test the endpoint
             testCors(path, response);
@@ -188,8 +194,9 @@ describe('/whitelist', () => {
 
         describe('through multiple query parameters (?fields=extensions&fields=categories)', () => {
             // Fetch the endpoint
-            const path = '/whitelist?fields=extensions&fields=categories';
-            const response = beforeRequest(path);
+            const response = beforeRequest(
+                `${path}?fields=extensions&fields=categories`,
+            );
 
             // Test the endpoint
             testCors(path, response);
@@ -223,8 +230,7 @@ describe('/whitelist', () => {
 
     describe('Requesting all fields (?fields=*)', () => {
         // Fetch the endpoint
-        const path = '/whitelist?fields=*';
-        const response = beforeRequest(path);
+        const response = beforeRequest(`${path}?fields=*`);
 
         // Test the endpoint
         testCors(path, response);

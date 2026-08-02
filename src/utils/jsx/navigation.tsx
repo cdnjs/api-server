@@ -110,9 +110,9 @@ interface Link {
 }
 
 const links: Link[] = [
-    { label: 'About', href: 'https://cdnjs.com/about' },
-    { label: 'Libraries', href: 'https://cdnjs.com/libraries' },
-    { label: 'API', href: 'https://cdnjs.com/api' },
+    { label: 'About', href: '/about' },
+    { label: 'Libraries', href: '/libraries' },
+    { label: 'API', href: '/api' },
     { label: 'GitHub', href: 'https://github.com/cdnjs' },
     {
         label: (
@@ -135,7 +135,7 @@ export default ({ className }: { className?: string }) => (
     <nav className={cx(styles.navigation, className)}>
         <ul className={styles.list}>
             <li>
-                <a href="https://cdnjs.com" rel="noopener" aria-label="cdnjs">
+                <a href="/" rel="noopener" aria-label="cdnjs">
                     <Logo className={styles.logo} />
                 </a>
             </li>

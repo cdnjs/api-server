@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
 import testCors from '../utils/spec/cors.ts';
-import testHuman from '../utils/spec/human.ts';
-import { beforeRequest, request } from '../utils/spec/request.ts';
+import {
+    beforeRequest,
+    externalApiUrl,
+    request,
+} from '../utils/spec/request.ts';
+import testWebsite from '../utils/spec/website.ts';
 
 import type { ErrorResponse } from './errors.schema.ts';
 import type {
@@ -13,9 +17,10 @@ import type {
 describe('/libraries/:library/:version', () => {
     describe('Requesting a valid library (:library = backbone.js)', () => {
         describe('Requesting a valid version (:version = 1.1.0)', () => {
+            const path = '/libraries/backbone.js/1.1.0';
+
             describe('No query params', () => {
                 // Fetch the endpoint
-                const path = '/libraries/backbone.js/1.1.0';
                 const response = beforeRequest(path);
 
                 // Test the endpoint
@@ -73,10 +78,10 @@ describe('/libraries/:library/:version', () => {
                 });
             });
 
-            describe('Requesting human response (?output=human)', () => {
+            // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
+            describe.skipIf(externalApiUrl)('Website React output', () => {
                 // Fetch the endpoint
-                const path = '/libraries/backbone.js/1.1.0?output=human';
-                const response = beforeRequest(path);
+                const response = beforeRequest(path, {}, true);
 
                 // Test the endpoint
                 testCors(path, response);
@@ -85,13 +90,12 @@ describe('/libraries/:library/:version', () => {
                         'public, max-age=30672000, immutable',
                     ); // 355 days
                 });
-                testHuman(response);
+                testWebsite(response);
             });
 
             describe('Requesting a field (?fields=files)', () => {
                 // Fetch the endpoint
-                const path = '/libraries/backbone.js/1.1.0?fields=files';
-                const response = beforeRequest(path);
+                const response = beforeRequest(`${path}?fields=files`);
 
                 // Test the endpoint
                 testCors(path, response);
@@ -130,9 +134,7 @@ describe('/libraries/:library/:version', () => {
             describe('Requesting multiple fields', () => {
                 describe('through comma-separated string (?fields=files,sri)', () => {
                     // Fetch the endpoint
-                    const path =
-                        '/libraries/backbone.js/1.1.0?fields=files,sri';
-                    const response = beforeRequest(path);
+                    const response = beforeRequest(`${path}?fields=files,sri`);
 
                     // Test the endpoint
                     testCors(path, response);
@@ -175,9 +177,7 @@ describe('/libraries/:library/:version', () => {
 
                 describe('through space-separated string (?fields=files sri)', () => {
                     // Fetch the endpoint
-                    const path =
-                        '/libraries/backbone.js/1.1.0?fields=files sri';
-                    const response = beforeRequest(path);
+                    const response = beforeRequest(`${path}?fields=files sri`);
 
                     // Test the endpoint
                     testCors(path, response);
@@ -220,9 +220,9 @@ describe('/libraries/:library/:version', () => {
 
                 describe('through multiple query parameters (?fields=files&fields=sri)', () => {
                     // Fetch the endpoint
-                    const path =
-                        '/libraries/backbone.js/1.1.0?fields=files&fields=sri';
-                    const response = beforeRequest(path);
+                    const response = beforeRequest(
+                        `${path}?fields=files&fields=sri`,
+                    );
 
                     // Test the endpoint
                     testCors(path, response);
@@ -266,8 +266,7 @@ describe('/libraries/:library/:version', () => {
 
             describe('Requesting all fields (?fields=*)', () => {
                 // Fetch the endpoint
-                const path = '/libraries/backbone.js/1.1.0?fields=*';
-                const response = beforeRequest(path);
+                const response = beforeRequest(`${path}?fields=*`);
 
                 // Test the endpoint
                 testCors(path, response);
@@ -315,9 +314,10 @@ describe('/libraries/:library/:version', () => {
         });
 
         describe('Requesting a non-existent version (:version = this-version-doesnt-exist)', () => {
+            const path = '/libraries/backbone.js/this-version-doesnt-exist';
+
             describe('No query params', () => {
                 // Fetch the endpoint
-                const path = '/libraries/backbone.js/this-version-doesnt-exist';
                 const response = beforeRequest(path);
 
                 // Test the endpoint
@@ -346,11 +346,10 @@ describe('/libraries/:library/:version', () => {
                 });
             });
 
-            describe('Requesting human response (?output=human)', () => {
+            // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
+            describe.skipIf(externalApiUrl)('Website React output', () => {
                 // Fetch the endpoint
-                const path =
-                    '/libraries/backbone.js/this-version-doesnt-exist?output=human';
-                const response = beforeRequest(path);
+                const response = beforeRequest(path, {}, true);
 
                 // Test the endpoint
                 testCors(path, response);
@@ -359,16 +358,17 @@ describe('/libraries/:library/:version', () => {
                         'public, max-age=3600',
                     ); // 1 hour
                 });
-                testHuman(response);
+                testWebsite(response);
             });
         });
     });
 
     describe('Requesting a non-existent library (:library = this-library-doesnt-exist, :version = this-version-doesnt-exist)', () => {
+        const path =
+            '/libraries/this-library-doesnt-exist/this-version-doesnt-exist';
+
         describe('No query params', () => {
             // Fetch the endpoint
-            const path =
-                '/libraries/this-library-doesnt-exist/this-version-doesnt-exist';
             const response = beforeRequest(path);
 
             // Test the endpoint
@@ -394,11 +394,10 @@ describe('/libraries/:library/:version', () => {
             });
         });
 
-        describe('Requesting human response (?output=human)', () => {
+        // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
+        describe.skipIf(externalApiUrl)('Website React output', () => {
             // Fetch the endpoint
-            const path =
-                '/libraries/this-library-doesnt-exist/this-version-doesnt-exist?output=human';
-            const response = beforeRequest(path);
+            const response = beforeRequest(path, {}, true);
 
             // Test the endpoint
             testCors(path, response);
@@ -407,16 +406,17 @@ describe('/libraries/:library/:version', () => {
                     'public, max-age=3600',
                 ); // 1 hour
             });
-            testHuman(response);
+            testWebsite(response);
         });
     });
 });
 
 describe('/libraries/:library', () => {
     describe('Requesting a valid library (:library = backbone.js)', () => {
+        const path = '/libraries/backbone.js';
+
         describe('No query params', () => {
             // Fetch the endpoint
-            const path = '/libraries/backbone.js';
             const response = beforeRequest(path);
 
             // Test the endpoint
@@ -534,10 +534,10 @@ describe('/libraries/:library', () => {
             });
         });
 
-        describe('Requesting human response (?output=human)', () => {
+        // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
+        describe.skipIf(externalApiUrl)('Website React output', () => {
             // Fetch the endpoint
-            const path = '/libraries/backbone.js?output=human';
-            const response = beforeRequest(path, { redirect: 'manual' });
+            const response = beforeRequest(path, { redirect: 'manual' }, true);
 
             // Test the endpoint
             testCors(path, response);
@@ -556,8 +556,7 @@ describe('/libraries/:library', () => {
 
         describe('Requesting a field (?fields=assets)', () => {
             // Fetch the endpoint
-            const path = '/libraries/backbone.js?fields=assets';
-            const response = beforeRequest(path);
+            const response = beforeRequest(`${path}?fields=assets`);
 
             // Test the endpoint
             testCors(path, response);
@@ -594,8 +593,7 @@ describe('/libraries/:library', () => {
         describe('Requesting multiple fields', () => {
             describe('through comma-separated string (?fields=name,assets)', () => {
                 // Fetch the endpoint
-                const path = '/libraries/backbone.js?fields=name,assets';
-                const response = beforeRequest(path);
+                const response = beforeRequest(`${path}?fields=name,assets`);
 
                 // Test the endpoint
                 testCors(path, response);
@@ -635,8 +633,7 @@ describe('/libraries/:library', () => {
 
             describe('through space-separated string (?fields=name assets)', () => {
                 // Fetch the endpoint
-                const path = '/libraries/backbone.js?fields=name assets';
-                const response = beforeRequest(path);
+                const response = beforeRequest(`${path}?fields=name assets`);
 
                 // Test the endpoint
                 testCors(path, response);
@@ -676,8 +673,9 @@ describe('/libraries/:library', () => {
 
             describe('through multiple query parameters (?fields=name&fields=assets)', () => {
                 // Fetch the endpoint
-                const path = '/libraries/backbone.js?fields=name&fields=assets';
-                const response = beforeRequest(path);
+                const response = beforeRequest(
+                    `${path}?fields=name&fields=assets`,
+                );
 
                 // Test the endpoint
                 testCors(path, response);
@@ -718,8 +716,7 @@ describe('/libraries/:library', () => {
 
         describe('Requesting all fields (?fields=*)', () => {
             // Fetch the endpoint
-            const path = '/libraries/backbone.js?fields=*';
-            const response = beforeRequest(path);
+            const response = beforeRequest(`${path}?fields=*`);
 
             // Test the endpoint
             testCors(path, response);
@@ -781,9 +778,10 @@ describe('/libraries/:library', () => {
     });
 
     describe('Requesting a non-existent library (:library = this-library-doesnt-exist)', () => {
+        const path = '/libraries/this-library-doesnt-exist';
+
         describe('No query params', () => {
             // Fetch the endpoint
-            const path = '/libraries/this-library-doesnt-exist';
             const response = beforeRequest(path);
 
             // Test the endpoint
@@ -809,10 +807,10 @@ describe('/libraries/:library', () => {
             });
         });
 
-        describe('Requesting human response (?output=human)', () => {
+        // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
+        describe.skipIf(externalApiUrl)('Website React output', () => {
             // Fetch the endpoint
-            const path = '/libraries/this-library-doesnt-exist?output=human';
-            const response = beforeRequest(path);
+            const response = beforeRequest(path, {}, true);
 
             // Test the endpoint
             testCors(path, response);
@@ -821,7 +819,7 @@ describe('/libraries/:library', () => {
                     'public, max-age=3600',
                 ); // 1 hour
             });
-            testHuman(response);
+            testWebsite(response);
         });
     });
 });

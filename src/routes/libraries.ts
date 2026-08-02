@@ -5,7 +5,7 @@ import * as z from 'zod';
 import { libraries } from '../utils/algolia.ts';
 import filter from '../utils/filter.ts';
 import { queryArray, queryCheck } from '../utils/query.ts';
-import respond, { isHuman, withCache } from '../utils/respond.ts';
+import respond, { isWebsite, withCache } from '../utils/respond.ts';
 
 import LibrariesPage from './libraries.page.tsx';
 import {
@@ -41,11 +41,11 @@ const handleGetLibraries = async (ctx: Context) => {
                   hit.filename
                 : null,
         // Send back whatever else was requested, only send all if '*' explicitly included
-        // But, always include some fields for the human-readable page
+        // But, always include some fields for website requests
         ...filter(
             hit,
             (field) =>
-                (isHuman(ctx) &&
+                (isWebsite(ctx) &&
                     ['version', 'description', 'sri'].includes(field)) ||
                 requestedFields(field),
         ),
