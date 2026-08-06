@@ -103,8 +103,8 @@ export interface Meta {
  * Standard cdnjs HTML layout.
  *
  * @param props Component props.
- * @param props.path Path of the page being rendered (used for canonical link).
- * @param props.meta Metadata for the page being rendered (used for meta tags).
+ * @param props.path Path of the page being rendered.
+ * @param props.meta Metadata for the page being rendered.
  * @param props.children Content to be included in the body of the page.
  */
 export default ({
@@ -201,7 +201,7 @@ export default ({
         </head>
         <body className={cx(styles.body, styles.background)}>
             <main className={styles.main}>
-                <Navigation className={styles.container} />
+                <Navigation path={path} className={styles.container} />
                 <div className={cx(styles.content, styles.container)}>
                     {children}
                 </div>
