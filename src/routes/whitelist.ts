@@ -5,7 +5,7 @@ import * as z from 'zod';
 import files from '../utils/files.ts';
 import filter from '../utils/filter.ts';
 import { queryCheck } from '../utils/query.ts';
-import respond, { withCache } from '../utils/respond.ts';
+import respond, { isWebsite, notFound, withCache } from '../utils/respond.ts';
 
 import {
     type WhitelistResponse,
@@ -18,6 +18,11 @@ import {
  * @param ctx Request context.
  */
 const handleGetWhitelist = (ctx: Context) => {
+    // Make this an API-only endpoint, no React page
+    if (isWebsite(ctx)) {
+        return notFound(ctx, 'Endpoint');
+    }
+
     // Generate the filtered response
     const response: WhitelistResponse = filter(
         {

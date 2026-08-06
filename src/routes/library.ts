@@ -99,7 +99,9 @@ const handleGetLibraryVersion = async (ctx: Context) => {
     if (!version) return notFound(ctx, 'Version');
 
     // Generate the initial filtered response (without SRI data)
-    const requestedFields = queryCheck(ctx.req.queries('fields'));
+    const requestedFields = isWebsite(ctx)
+        ? (field: string) => ['version', 'files', 'sri'].includes(field)
+        : queryCheck(ctx.req.queries('fields'));
     const response: LibraryVersionResponse = filter(
         {
             name: lib.name,
@@ -125,9 +127,14 @@ const handleGetLibraryVersion = async (ctx: Context) => {
         );
     }
 
-    // Set a 355 day (same as CDN) life on this response
-    // This is also immutable as a version will never change
-    withCache(ctx, 355 * 24 * 60 * 60, true);
+    if (isWebsite(ctx)) {
+        // Set a 6 hour life on this response
+        withCache(ctx, 6 * 60 * 60);
+    } else {
+        // Set a 355 day (same as CDN) life on this response
+        // This is also immutable as a version will never change
+        withCache(ctx, 355 * 24 * 60 * 60, true);
+    }
 
     // Send the response
     return respond<LibraryVersionResponse>(ctx, response, async ({ data }) => {
@@ -152,6 +159,14 @@ const handleGetLibrary = async (ctx: Context) => {
         throw err;
     });
     if (!lib) return notFound(ctx, 'Library');
+
+    // Redirect to the version endpoint for website requests
+    if (isWebsite(ctx)) {
+        // Set a 6 hour life on this response
+        withCache(ctx, 6 * 60 * 60);
+
+        return ctx.redirect(`/libraries/${lib.name}/${lib.version}`);
+    }
 
     // Generate the initial filtered response (without SRI, versions or assets data)
     const requestedFields = queryCheck(ctx.req.queries('fields'));
@@ -242,11 +257,6 @@ const handleGetLibrary = async (ctx: Context) => {
 
     // Set a 6 hour life on this response
     withCache(ctx, 6 * 60 * 60);
-
-    // Redirect to the version endpoint for website requests
-    if (isWebsite(ctx)) {
-        return ctx.redirect(`/libraries/${lib.name}/${lib.version}`);
-    }
 
     // Send the response
     return respond<LibraryResponse>(ctx, response);

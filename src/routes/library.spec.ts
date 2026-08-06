@@ -87,8 +87,11 @@ describe('/libraries/:library/:version', () => {
                 testCors(path, response);
                 it('returns the correct Cache headers', () => {
                     expect(response.headers.get('Cache-Control')).to.eq(
-                        'public, max-age=30672000, immutable',
-                    ); // 355 days
+                        'public, max-age=21600',
+                    ); // 6 hours
+                });
+                it('returns the correct status code', () => {
+                    expect(response.status).to.eq(200);
                 });
                 testWebsite(response);
             });
@@ -358,6 +361,9 @@ describe('/libraries/:library/:version', () => {
                         'public, max-age=3600',
                     ); // 1 hour
                 });
+                it('returns the correct status code', () => {
+                    expect(response.status).to.eq(404);
+                });
                 testWebsite(response);
             });
         });
@@ -405,6 +411,9 @@ describe('/libraries/:library/:version', () => {
                 expect(response.headers.get('Cache-Control')).to.eq(
                     'public, max-age=3600',
                 ); // 1 hour
+            });
+            it('returns the correct status code', () => {
+                expect(response.status).to.eq(404);
             });
             testWebsite(response);
         });
@@ -818,6 +827,9 @@ describe('/libraries/:library', () => {
                 expect(response.headers.get('Cache-Control')).to.eq(
                     'public, max-age=3600',
                 ); // 1 hour
+            });
+            it('returns the correct status code', () => {
+                expect(response.status).to.eq(404);
             });
             testWebsite(response);
         });

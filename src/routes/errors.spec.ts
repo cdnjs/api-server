@@ -48,6 +48,9 @@ describe('/this-route-doesnt-exist', () => {
                 'public, max-age=3600',
             ); // 1 hour
         });
+        it('returns the correct status code', () => {
+            expect(response.status).to.eq(404);
+        });
         testWebsite(response);
     });
 });

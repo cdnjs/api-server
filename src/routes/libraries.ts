@@ -19,15 +19,19 @@ import {
  * @param ctx Request context.
  */
 const handleGetLibraries = async (ctx: Context) => {
-    // Get the index results
-    const searchFields = queryArray(ctx.req.queries('search_fields'));
+    // Get the index results, allowing search fields to be specified if this is an API request
+    const searchFields = isWebsite(ctx)
+        ? []
+        : queryArray(ctx.req.queries('search_fields'));
     const results = await libraries(
         ctx.req.query('search') || '',
         searchFields.includes('*') ? [] : searchFields,
     );
 
-    // Transform the results into our filtered array
-    const requestedFields = queryCheck(ctx.req.queries('fields'), false);
+    // Transform the results, allowing filtering to be applied if this is an API request
+    const requestedFields = isWebsite(ctx)
+        ? (field: string) => ['version', 'description', 'sri'].includes(field)
+        : queryCheck(ctx.req.queries('fields'), false);
     const response = results.map((hit) => ({
         // Always send back name & latest
         name: hit.name,
@@ -41,18 +45,14 @@ const handleGetLibraries = async (ctx: Context) => {
                   hit.filename
                 : null,
         // Send back whatever else was requested, only send all if '*' explicitly included
-        // But, always include some fields for website requests
-        ...filter(
-            hit,
-            (field) =>
-                (isWebsite(ctx) &&
-                    ['version', 'description', 'sri'].includes(field)) ||
-                requestedFields(field),
-        ),
+        ...filter(hit, requestedFields),
     }));
 
-    // If they want less data, allow that
-    const limit = ctx.req.query('limit') && Number(ctx.req.query('limit'));
+    // Get the trimmed response, allowing a limit to be applied if this is an API request
+    const limit =
+        !isWebsite(ctx) &&
+        ctx.req.query('limit') &&
+        Number(ctx.req.query('limit'));
     const trimmed = limit ? response.slice(0, limit) : response;
 
     // Set a 6 hour life on this response
