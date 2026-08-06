@@ -41,7 +41,19 @@ const hydrateIsland = <T extends Record<string, unknown>>(
             continue;
         }
 
-        hydrateRoot(node, createElement(component, props));
+        hydrateRoot(node, createElement(component, props), {
+            onRecoverableError(error, errorInfo) {
+                console.error(
+                    `[island:${name}] hydration recoverable error`,
+                    error,
+                    errorInfo.componentStack,
+                    {
+                        props,
+                        node,
+                    },
+                );
+            },
+        });
     }
 };
 
