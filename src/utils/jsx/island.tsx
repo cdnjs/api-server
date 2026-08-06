@@ -1,4 +1,4 @@
-import { css } from '@emotion/css';
+import { cache, css } from '@emotion/css';
 import { env } from 'cloudflare:workers';
 import { type ComponentType, createContext, useContext, useId } from 'react';
 import { renderToString } from 'react-dom/server';
@@ -48,6 +48,43 @@ const serializeProps = (props: object) =>
         .replaceAll('\u2028', '\\u2028')
         .replaceAll('\u2029', '\\u2029');
 
+const renderIsland = <T extends object>(
+    Component: ComponentType<T>,
+    props: T,
+    identifierPrefix: string,
+) => {
+    const classNames =
+        'className' in props && typeof props.className === 'string'
+            ? props.className
+                  .split(/\s+/)
+                  .map((value) => value.trim())
+                  .filter((value) => value.length > 0)
+            : [];
+    const masked = new Map<string, string>();
+
+    // Isolated island bundles do not register parent-level Emotion classes, so mask
+    // those registrations during island SSR to keep cx() class merging behavior aligned.
+    for (const className of classNames) {
+        const cssText = cache.registered[className];
+        if (typeof cssText !== 'string') {
+            continue;
+        }
+
+        masked.set(className, cssText);
+        cache.registered[className] = undefined;
+    }
+
+    try {
+        return renderToString(<Component {...props} />, {
+            identifierPrefix,
+        });
+    } finally {
+        for (const [className, cssText] of masked.entries()) {
+            cache.registered[className] = cssText;
+        }
+    }
+};
+
 const styles = {
     island: css`
         display: contents;
@@ -87,9 +124,7 @@ const Island = <T extends object>({
         throw new Error(`Missing manifest entry for island "${name}"`);
     }
 
-    const islandHtml = renderToString(<Component {...props} />, {
-        identifierPrefix,
-    });
+    const islandHtml = renderIsland(Component, props, identifierPrefix);
 
     return (
         <>
