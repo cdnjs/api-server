@@ -1,6 +1,7 @@
 import { css } from '@emotion/css';
 import { env } from 'cloudflare:workers';
 import { type ComponentType, createContext, useContext, useId } from 'react';
+import { renderToString } from 'react-dom/server';
 import * as z from 'zod';
 
 const manifestSchema = z.record(
@@ -72,6 +73,7 @@ const Island = <T extends object>({
 }) => {
     const instanceId = useId().replaceAll(':', '');
     const propsScriptId = `island-props-${name}-${instanceId}`;
+    const identifierPrefix = `island-${name}-${instanceId}-`;
 
     const { manifest } = useContext(IslandContext) ?? {};
     if (!manifest) {
@@ -85,15 +87,19 @@ const Island = <T extends object>({
         throw new Error(`Missing manifest entry for island "${name}"`);
     }
 
+    const islandHtml = renderToString(<Component {...props} />, {
+        identifierPrefix,
+    });
+
     return (
         <>
             <div
                 className={styles.island}
                 data-island={name}
                 data-island-props={propsScriptId}
-            >
-                <Component {...props} />
-            </div>
+                data-island-prefix={identifierPrefix}
+                dangerouslySetInnerHTML={{ __html: islandHtml }}
+            />
 
             <script
                 id={propsScriptId}

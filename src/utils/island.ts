@@ -19,6 +19,11 @@ const parseIslandProps = <T>(root: Element): T | undefined => {
     }
 };
 
+const parseIslandPrefix = (root: Element): string | undefined => {
+    const prefix = root.getAttribute('data-island-prefix');
+    return prefix ? prefix : undefined;
+};
+
 /**
  * Hydrate every server-rendered instance of an island by name.
  *
@@ -41,7 +46,13 @@ const hydrateIsland = <T extends Record<string, unknown>>(
             continue;
         }
 
+        const identifierPrefix = parseIslandPrefix(node);
+        if (identifierPrefix === undefined) {
+            continue;
+        }
+
         hydrateRoot(node, createElement(component, props), {
+            identifierPrefix,
             onRecoverableError(error, errorInfo) {
                 console.error(
                     `[island:${name}] hydration recoverable error`,
@@ -50,6 +61,7 @@ const hydrateIsland = <T extends Record<string, unknown>>(
                     {
                         props,
                         node,
+                        identifierPrefix,
                     },
                 );
             },
