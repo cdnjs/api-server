@@ -1,5 +1,4 @@
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { env } from 'cloudflare:workers';
 import type { Context, Hono } from 'hono';
 
 import bannerPng from '../assets/banner.png';
@@ -40,11 +39,6 @@ const handleGet = (ctx: Context) => {
 const handleGetHealth = (ctx: Context) => {
     // Don't cache health, ensure its always live
     withCache(ctx, -1);
-
-    // If we have a known release, include a header for it
-    if (env.SENTRY_RELEASE) {
-        ctx.header('X-Release', env.SENTRY_RELEASE);
-    }
 
     // Respond
     return ctx.text('OK');

@@ -42,7 +42,6 @@ describe('/this-route-doesnt-exist', () => {
         const response = beforeRequest(path, {}, true);
 
         // Test the endpoint
-        testCors(path, response);
         it('returns the correct Cache headers', () => {
             expect(response.headers.get('Cache-Control')).to.eq(
                 'public, max-age=3600',
@@ -97,7 +96,6 @@ describe.skipIf(externalApiUrl)('/error', () => {
         const response = beforeRequest(path, {}, true);
 
         // Test the endpoint
-        testCors(path, response);
         it('returns the correct Cache headers', () => {
             expect(response.headers.get('Expires')).to.eq('0');
             expect(response.headers.get('Pragma')).to.eq('no-cache');

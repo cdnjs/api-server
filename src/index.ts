@@ -17,12 +17,21 @@ import libraryRoutes from './routes/library.ts';
 import statsRoutes from './routes/stats.ts';
 import whitelistRoutes from './routes/whitelist.ts';
 import corsOptions from './utils/cors.ts';
+import { isWebsite } from './utils/respond.ts';
 
 // Create the base app
 const app = new Hono();
 const registry = new OpenAPIRegistry();
 if (!env.DISABLE_LOGGING) app.use('*', logger());
-app.use('*', cors(corsOptions));
+app.use('*', (ctx, next) => {
+    // If we have a known release, include a header for it
+    if (env.SENTRY_RELEASE) {
+        ctx.header('X-Release', env.SENTRY_RELEASE);
+    }
+
+    // If we're an API request, not a website request, enable CORS
+    return isWebsite(ctx) ? next() : cors(corsOptions)(ctx, next);
+});
 
 // Load the routes
 indexRoutes(app, registry);
