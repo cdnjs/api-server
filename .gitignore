@@ -2,6 +2,7 @@ node_modules/
 
 .idea/
 .vscode/
+.DS_Store
 
 dist-worker/
 dist-client/

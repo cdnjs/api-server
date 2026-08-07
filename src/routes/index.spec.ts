@@ -157,3 +157,171 @@ describe('/robots.txt', () => {
         });
     });
 });
+
+describe('/favicon.ico', () => {
+    // Fetch the endpoint
+    const path = '/favicon.ico';
+
+    describe('No query params', () => {
+        const response = beforeRequest(path);
+
+        // Test the endpoint
+        testCors(path, response);
+        it('returns the correct Cache headers', () => {
+            expect(response.headers.get('Cache-Control')).to.eq(
+                'public, max-age=30672000, immutable',
+            ); // 355 days
+        });
+        it('returns the correct status code', () => {
+            expect(response.status).to.eq(200);
+        });
+        it('returns the correct content type', () => {
+            expect(response.headers.get('Content-Type')).to.eq('image/x-icon');
+        });
+    });
+
+    // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
+    describe.skipIf(externalApiUrl)('Website React output', () => {
+        // Fetch the endpoint
+        const response = beforeRequest(path, {}, true);
+
+        // Test the endpoint
+        it('returns the correct Cache headers', () => {
+            expect(response.headers.get('Cache-Control')).to.eq(
+                'public, max-age=30672000, immutable',
+            ); // 355 days
+        });
+        it('returns the correct status code', () => {
+            expect(response.status).to.eq(200);
+        });
+        it('returns the correct content type', () => {
+            expect(response.headers.get('Content-Type')).to.eq('image/x-icon');
+        });
+    });
+});
+
+describe('/favicon.png', () => {
+    // Fetch the endpoint
+    const path = '/favicon.png';
+
+    describe('No query params', () => {
+        const response = beforeRequest(path);
+
+        // Test the endpoint
+        testCors(path, response);
+        it('returns the correct Cache headers', () => {
+            expect(response.headers.get('Cache-Control')).to.eq(
+                'public, max-age=30672000, immutable',
+            ); // 355 days
+        });
+        it('returns the correct status code', () => {
+            expect(response.status).to.eq(200);
+        });
+        it('returns the correct content type', () => {
+            expect(response.headers.get('Content-Type')).to.eq('image/png');
+        });
+    });
+
+    // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
+    describe.skipIf(externalApiUrl)('Website React output', () => {
+        // Fetch the endpoint
+        const response = beforeRequest(path, {}, true);
+
+        // Test the endpoint
+        it('returns the correct Cache headers', () => {
+            expect(response.headers.get('Cache-Control')).to.eq(
+                'public, max-age=30672000, immutable',
+            ); // 355 days
+        });
+        it('returns the correct status code', () => {
+            expect(response.status).to.eq(200);
+        });
+        it('returns the correct content type', () => {
+            expect(response.headers.get('Content-Type')).to.eq('image/png');
+        });
+    });
+});
+
+describe('/favicon.svg', () => {
+    // Fetch the endpoint
+    const path = '/favicon.svg';
+
+    describe('No query params', () => {
+        const response = beforeRequest(path);
+
+        // Test the endpoint
+        testCors(path, response);
+        it('returns the correct Cache headers', () => {
+            expect(response.headers.get('Cache-Control')).to.eq(
+                'public, max-age=30672000, immutable',
+            ); // 355 days
+        });
+        it('returns the correct status code', () => {
+            expect(response.status).to.eq(200);
+        });
+        it('returns the correct content type', () => {
+            expect(response.headers.get('Content-Type')).to.eq('image/svg+xml');
+        });
+    });
+
+    // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
+    describe.skipIf(externalApiUrl)('Website React output', () => {
+        // Fetch the endpoint
+        const response = beforeRequest(path, {}, true);
+
+        // Test the endpoint
+        it('returns the correct Cache headers', () => {
+            expect(response.headers.get('Cache-Control')).to.eq(
+                'public, max-age=30672000, immutable',
+            ); // 355 days
+        });
+        it('returns the correct status code', () => {
+            expect(response.status).to.eq(200);
+        });
+        it('returns the correct content type', () => {
+            expect(response.headers.get('Content-Type')).to.eq('image/svg+xml');
+        });
+    });
+});
+
+describe('/banner.png', () => {
+    // Fetch the endpoint
+    const path = '/banner.png';
+
+    describe('No query params', () => {
+        const response = beforeRequest(path);
+
+        // Test the endpoint
+        testCors(path, response);
+        it('returns the correct Cache headers', () => {
+            expect(response.headers.get('Cache-Control')).to.eq(
+                'public, max-age=30672000, immutable',
+            ); // 355 days
+        });
+        it('returns the correct status code', () => {
+            expect(response.status).to.eq(200);
+        });
+        it('returns the correct content type', () => {
+            expect(response.headers.get('Content-Type')).to.eq('image/png');
+        });
+    });
+
+    // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
+    describe.skipIf(externalApiUrl)('Website React output', () => {
+        // Fetch the endpoint
+        const response = beforeRequest(path, {}, true);
+
+        // Test the endpoint
+        it('returns the correct Cache headers', () => {
+            expect(response.headers.get('Cache-Control')).to.eq(
+                'public, max-age=30672000, immutable',
+            ); // 355 days
+        });
+        it('returns the correct status code', () => {
+            expect(response.status).to.eq(200);
+        });
+        it('returns the correct content type', () => {
+            expect(response.headers.get('Content-Type')).to.eq('image/png');
+        });
+    });
+});

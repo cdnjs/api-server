@@ -142,8 +142,10 @@ export default ({
             <meta name="twitter:url" content={`${env.WEBSITE_BASE}${path}`} />
             <meta name="twitter:site" content="@cdnjs" />
             <meta name="twitter:creator" content="@MattIPv4" />
-            {/* <meta name="twitter:image" content="" /> */}
-            {/* <meta name="twitter:image:alt" content="cdnjs banner image" /> */}
+            <meta
+                name="twitter:image"
+                content={`${env.WEBSITE_BASE}/banner.png`}
+            />
 
             <meta property="og:title" content={meta.title} />
             <meta property="og:description" content={meta.description} />
@@ -151,12 +153,20 @@ export default ({
             <meta property="og:site_name" content="cdnjs" />
             <meta property="og:type" content="website" />
             <meta property="og:locale" content="en_US" />
-            {/* <meta property="og:image" content="" /> */}
-            {/* <meta property="og:image:url" content="" /> */}
+            <meta
+                property="og:image"
+                content={`${env.WEBSITE_BASE}/banner.png`}
+            />
+            <meta
+                property="og:image:secure_url"
+                content={`${env.WEBSITE_BASE}/banner.png`}
+            />
 
-            {/* <link rel="icon" type="image/png" href="/favicon.png" /> */}
-            {/* <link rel="shortcut-icon" type="image/png" href="/favicon.png" /> */}
-            {/* <link rel="apple-touch-icon" type="image/png" href="/favicon.png" /> */}
+            <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+            <link rel="icon" type="image/png" href="/favicon.png" />
+            <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+            <link rel="shortcut-icon" type="image/png" href="/favicon.png" />
+            <link rel="apple-touch-icon" type="image/png" href="/favicon.png" />
 
             <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
             <link

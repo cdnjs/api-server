@@ -2,6 +2,10 @@ import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { env } from 'cloudflare:workers';
 import type { Context, Hono } from 'hono';
 
+import bannerPng from '../assets/banner.png';
+import faviconIco from '../assets/favicon.ico';
+import faviconPng from '../assets/favicon.png';
+import faviconSvg from '../assets/favicon.svg';
 import respond, { isWebsite, withCache } from '../utils/respond.ts';
 
 import IndexPage from './index.page.tsx';
@@ -61,6 +65,70 @@ const handleGetRobotsTxt = (ctx: Context) => {
 };
 
 /**
+ * Handle GET /favicon.ico requests.
+ *
+ * @param ctx Request context.
+ */
+const handleGetFaviconIco = (ctx: Context) => {
+    // Set a 355 day (same as CDN) life on this response
+    // This is also immutable
+    withCache(ctx, 355 * 24 * 60 * 60, true);
+
+    // Respond
+    return ctx.body(faviconIco, 200, {
+        'Content-Type': 'image/x-icon',
+    });
+};
+
+/**
+ * Handle GET /favicon.png requests.
+ *
+ * @param ctx Request context.
+ */
+const handleGetFaviconPng = (ctx: Context) => {
+    // Set a 355 day (same as CDN) life on this response
+    // This is also immutable
+    withCache(ctx, 355 * 24 * 60 * 60, true);
+
+    // Respond
+    return ctx.body(faviconPng, 200, {
+        'Content-Type': 'image/png',
+    });
+};
+
+/**
+ * Handle GET /favicon.svg requests.
+ *
+ * @param ctx Request context.
+ */
+const handleGetFaviconSvg = (ctx: Context) => {
+    // Set a 355 day (same as CDN) life on this response
+    // This is also immutable
+    withCache(ctx, 355 * 24 * 60 * 60, true);
+
+    // Respond
+    return ctx.body(faviconSvg, 200, {
+        'Content-Type': 'image/svg+xml',
+    });
+};
+
+/**
+ * Handle GET /banner.png requests.
+ *
+ * @param ctx Request context.
+ */
+const handleGetBannerPng = (ctx: Context) => {
+    // Set a 355 day (same as CDN) life on this response
+    // This is also immutable
+    withCache(ctx, 355 * 24 * 60 * 60, true);
+
+    // Respond (only used by the website but accessible via the API as well)
+    return ctx.body(bannerPng, 200, {
+        'Content-Type': 'image/png',
+    });
+};
+
+/**
  * Register core routes.
  *
  * @param app App instance.
@@ -76,4 +144,10 @@ export default (app: Hono, _registry: OpenAPIRegistry) => {
 
     // Don't ever index anything on the API
     app.get('/robots.txt', handleGetRobotsTxt);
+
+    // Serve the favicon assets
+    app.get('/favicon.ico', handleGetFaviconIco);
+    app.get('/favicon.png', handleGetFaviconPng);
+    app.get('/favicon.svg', handleGetFaviconSvg);
+    app.get('/banner.png', handleGetBannerPng);
 };
