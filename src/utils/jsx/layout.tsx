@@ -162,6 +162,13 @@ export default ({
                 content={`${env.WEBSITE_BASE}/banner.png`}
             />
 
+            <link
+                title="cdnjs"
+                type="application/opensearchdescription+xml"
+                href="/opensearch.xml"
+                rel="search"
+            />
+
             <link rel="icon" type="image/x-icon" href="/favicon.ico" />
             <link rel="icon" type="image/png" href="/favicon.png" />
             <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

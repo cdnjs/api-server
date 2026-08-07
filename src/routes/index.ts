@@ -59,6 +59,36 @@ const handleGetRobotsTxt = (ctx: Context) => {
 };
 
 /**
+ * Handle GET /opensearch.xml requests.
+ *
+ * @param ctx Request context.
+ */
+const handleGetOpenSearchXml = (ctx: Context) => {
+    // Set a 355 day (same as CDN) life on this response
+    // This is also immutable
+    withCache(ctx, 355 * 24 * 60 * 60, true);
+
+    // Respond
+    const origin = new URL(ctx.req.url).origin;
+    return ctx.body(
+        `<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
+    <ShortName>cdnjs</ShortName>
+    <Description>cdnjs is the free, open-source CDN for the web's most popular libraries. JavaScript, CSS, and font resources, globally cached on Cloudflare's network. Trusted by 12.5% of all websites, serving 250 billion requests per month.</Description>
+    <InputEncoding>UTF-8</InputEncoding>
+    <Image type="image/x-icon">${origin}/favicon.ico</Image>
+    <Image type="image/png">${origin}/favicon.png</Image>
+    <Image type="image/svg+xml">${origin}/favicon.svg</Image>
+    <Url type="text/html" method="GET" template="${origin}/libraries?search={searchTerms}"/>
+</OpenSearchDescription>`,
+        200,
+        {
+            'Content-Type': 'application/opensearchdescription+xml',
+        },
+    );
+};
+
+/**
  * Handle GET /favicon.ico requests.
  *
  * @param ctx Request context.
@@ -138,6 +168,9 @@ export default (app: Hono, _registry: OpenAPIRegistry) => {
 
     // Don't ever index anything on the API
     app.get('/robots.txt', handleGetRobotsTxt);
+
+    // Provide OpenSearch support for the website
+    app.get('/opensearch.xml', handleGetOpenSearchXml);
 
     // Serve the favicon assets
     app.get('/favicon.ico', handleGetFaviconIco);
