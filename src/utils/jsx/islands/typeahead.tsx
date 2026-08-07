@@ -281,8 +281,8 @@ const Typeahead = ({ className }: { className?: string }) => {
                                                 href={`/libraries/${encodeURIComponent(name)}/${encodeURIComponent(version)}`}
                                             >
                                                 <p>
-                                                    <strong>{name}</strong>{' '}
-                                                    <small>{version}</small>
+                                                    <strong>{name}</strong>
+                                                    <small> @ {version}</small>
                                                 </p>
                                                 <p>{description}</p>
                                             </a>

@@ -68,6 +68,12 @@ const handleGetLibraries = async (ctx: Context) => {
         },
         ({ data }) =>
             LibrariesPage({ data, search: ctx.req.query('search') || '' }),
+        {
+            title: 'Libraries',
+            description:
+                'Browse all libraries available on cdnjs, or search for a specific library by name.',
+            keywords: ['libraries', 'search', 'browse'],
+        },
     );
 };
 

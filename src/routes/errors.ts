@@ -3,6 +3,7 @@ import * as Sentry from '@sentry/cloudflare';
 import type { Hono } from 'hono';
 
 import event from '../utils/event.ts';
+import Json from '../utils/jsx/json.tsx';
 import respond, { notFound, withCache } from '../utils/respond.ts';
 
 import type { ErrorResponse } from './errors.schema.ts';
@@ -61,11 +62,16 @@ export default (app: Hono, _registry: OpenAPIRegistry) => {
 
         // Send the error response
         ctx.status(500);
-        return respond<ErrorResponse>(ctx, {
-            error: true,
-            status: 500,
-            message: err.message,
-            ref: sentry,
-        });
+        return respond<ErrorResponse>(
+            ctx,
+            {
+                error: true,
+                status: 500,
+                message: 'An unexpected error occurred',
+                ref: sentry,
+            },
+            Json,
+            { title: 'Unexpected Error' },
+        );
     });
 };

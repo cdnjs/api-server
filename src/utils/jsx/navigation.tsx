@@ -64,6 +64,9 @@ const styles = {
             text-decoration: underline;
         }
     `,
+    active: css`
+        color: ${theme.text.brand};
+    `,
     logo: css`
         display: block;
         max-width: 100%;
@@ -107,12 +110,17 @@ const styles = {
 interface Link {
     label: ReactNode;
     href: string;
+    active?: (path: string) => boolean;
 }
 
 const links: Link[] = [
-    { label: 'About', href: '/about' },
-    { label: 'Libraries', href: '/libraries' },
-    { label: 'API', href: '/api' },
+    { label: 'About', href: '/about', active: (path) => path === '/about' },
+    {
+        label: 'Libraries',
+        href: '/libraries',
+        active: (path) => /^\/libraries($|\/)/.test(path),
+    },
+    { label: 'API', href: '/api', active: (path) => path === '/api' },
     { label: 'GitHub', href: 'https://github.com/cdnjs' },
     {
         label: (
@@ -129,9 +137,10 @@ const links: Link[] = [
  * Standard cdnjs HTML layout for the page navigation.
  *
  * @param props Component props.
+ * @param props.path The current path of the page.
  * @param props.className Optional additional class name(s) to apply to the navigation.
  */
-export default ({ className }: { className?: string }) => (
+export default ({ path, className }: { path: string; className?: string }) => (
     <nav className={cx(styles.navigation, className)}>
         <ul className={styles.list}>
             <li>
@@ -142,7 +151,14 @@ export default ({ className }: { className?: string }) => (
 
             {links.map((link) => (
                 <li key={link.href}>
-                    <a href={link.href} rel="noopener" className={styles.link}>
+                    <a
+                        href={link.href}
+                        rel="noopener"
+                        className={cx(
+                            styles.link,
+                            link.active?.(path) && styles.active,
+                        )}
+                    >
                         {link.label}
                     </a>
                 </li>
@@ -163,7 +179,10 @@ export default ({ className }: { className?: string }) => (
                                 <a
                                     href={link.href}
                                     rel="noopener"
-                                    className={styles.link}
+                                    className={cx(
+                                        styles.link,
+                                        link.active?.(path) && styles.active,
+                                    )}
                                 >
                                     {link.label}
                                 </a>

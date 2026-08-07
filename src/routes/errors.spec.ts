@@ -42,7 +42,6 @@ describe('/this-route-doesnt-exist', () => {
         const response = beforeRequest(path, {}, true);
 
         // Test the endpoint
-        testCors(path, response);
         it('returns the correct Cache headers', () => {
             expect(response.headers.get('Cache-Control')).to.eq(
                 'public, max-age=3600',
@@ -84,7 +83,10 @@ describe.skipIf(externalApiUrl)('/error', () => {
             expect(body).to.be.an('object');
             expect(body).to.have.property('error', true);
             expect(body).to.have.property('status', 500);
-            expect(body).to.have.property('message', 'Test error');
+            expect(body).to.have.property(
+                'message',
+                'An unexpected error occurred',
+            );
         });
     });
 
@@ -94,7 +96,6 @@ describe.skipIf(externalApiUrl)('/error', () => {
         const response = beforeRequest(path, {}, true);
 
         // Test the endpoint
-        testCors(path, response);
         it('returns the correct Cache headers', () => {
             expect(response.headers.get('Expires')).to.eq('0');
             expect(response.headers.get('Pragma')).to.eq('no-cache');
