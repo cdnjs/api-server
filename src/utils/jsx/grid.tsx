@@ -1,5 +1,5 @@
 import { css, keyframes } from '@emotion/css';
-import { useId, useMemo } from 'react';
+import { useId, useMemo, useState } from 'react';
 
 const size = 75;
 const cols = 16;
@@ -26,12 +26,7 @@ const path = (points: number[]) =>
         })
         .join(' L ')}`;
 
-const grid = (id: string) => {
-    // Hash the id from React to generate a numeric seed for randomness.
-    const seed =
-        id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) %
-        (2 ** 31 - 1);
-
+const grid = (seed: number) => {
     // Decide which points are active and will be connected to their neighbours.
     const active = Array.from({ length: cols * rows }, (_, point) => {
         const col = point % cols;
@@ -238,12 +233,27 @@ export default ({
     height?: number;
     className?: string;
 }) => {
-    const id = useId();
-    const { connections, requests, vias } = useMemo(() => grid(id), [id]);
+    const id = `grid-${useId()}`;
+
+    const [seed] = useState(() => {
+        // During hydration, reuse the seed already rendered into the DOM.
+        const fromDom =
+            typeof document !== 'undefined'
+                ? document.getElementById(id)?.getAttribute('data-seed')
+                : null;
+        const parsed = Number.parseInt(fromDom ?? '', 10);
+        return Number.isInteger(parsed)
+            ? parsed
+            : Math.floor(Math.random() * 2 ** 31 - 1);
+    });
+
+    const { connections, requests, vias } = useMemo(() => grid(seed), [seed]);
 
     return (
         <svg
+            id={id}
             xmlns="http://www.w3.org/2000/svg"
+            data-seed={seed}
             // The base viewBox would be `0 0 ${cols * size} ${rows * size}`
             // But, we want to center that around whatever width and height are passed in
             viewBox={`${(cols * size - width * size) / 2} ${(rows * size - height * size) / 2} ${width * size} ${height * size}`}
