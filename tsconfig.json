@@ -16,5 +16,5 @@
         "types": ["@cloudflare/vitest-pool-workers"]
     },
     "include": ["**/*.ts", "**/*.tsx", "**/*.js"],
-    "exclude": ["node_modules", "dist-worker"]
+    "exclude": ["node_modules", "dist-worker", "dist-client"]
 }

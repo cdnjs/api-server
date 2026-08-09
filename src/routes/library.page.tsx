@@ -124,8 +124,8 @@ export default ({
             <Header
                 title={
                     <>
-                        <strong>{library.name}</strong>{' '}
-                        <small>{library.version}</small>
+                        <strong>{library.name}</strong>
+                        <small> @ {library.version}</small>
                     </>
                 }
                 prose={library.description}

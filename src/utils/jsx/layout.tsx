@@ -1,4 +1,5 @@
 import { css, cx } from '@emotion/css';
+import { env } from 'cloudflare:workers';
 import { Fragment, type ReactNode } from 'react';
 
 import theme from '../theme.ts';
@@ -92,16 +93,96 @@ const stylesheets = [
     },
 ];
 
+export interface Meta {
+    title: string;
+    description: string;
+    keywords: string[];
+}
+
 /**
  * Standard cdnjs HTML layout.
  *
  * @param props Component props.
- * @param props.path Path of the page being rendered (used for canonical link).
+ * @param props.path Path of the page being rendered.
+ * @param props.meta Metadata for the page being rendered.
  * @param props.children Content to be included in the body of the page.
  */
-export default ({ path, children }: { path: string; children?: ReactNode }) => (
+export default ({
+    path,
+    meta,
+    children,
+}: {
+    path: string;
+    meta: Meta;
+    children?: ReactNode;
+}) => (
     <html lang="en" className={styles.background}>
         <head>
+            <title>{meta.title}</title>
+            <meta charSet="utf-8" />
+            <meta
+                name="viewport"
+                content="width=device-width, initial-scale=1"
+            />
+            <meta name="theme-color" content={theme.background.elevated} />
+            <meta name="title" content={meta.title} />
+            <meta name="description" content={meta.description} />
+            <meta name="keywords" content={meta.keywords.join(', ')} />
+
+            {/* Always set the canonical to production site at cdnjs.com */}
+            <link rel="canonical" href={`https://cdnjs.com${path}`} />
+            {/* Only allow indexing of the production site at cdnjs.com */}
+            {env.WEBSITE_BASE !== 'https://cdnjs.com' && (
+                <meta name="robots" content="noindex" />
+            )}
+
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:title" content={meta.title} />
+            <meta name="twitter:description" content={meta.description} />
+            <meta name="twitter:url" content={`${env.WEBSITE_BASE}${path}`} />
+            <meta name="twitter:site" content="@cdnjs" />
+            <meta name="twitter:creator" content="@MattIPv4" />
+            <meta
+                name="twitter:image"
+                content={`${env.WEBSITE_BASE}/banner.png`}
+            />
+
+            <meta property="og:title" content={meta.title} />
+            <meta property="og:description" content={meta.description} />
+            <meta property="og:url" content={`${env.WEBSITE_BASE}${path}`} />
+            <meta property="og:site_name" content="cdnjs" />
+            <meta property="og:type" content="website" />
+            <meta property="og:locale" content="en_US" />
+            <meta
+                property="og:image"
+                content={`${env.WEBSITE_BASE}/banner.png`}
+            />
+            <meta
+                property="og:image:secure_url"
+                content={`${env.WEBSITE_BASE}/banner.png`}
+            />
+
+            <link
+                title="cdnjs"
+                type="application/opensearchdescription+xml"
+                href="/opensearch.xml"
+                rel="search"
+            />
+
+            <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+            <link rel="icon" type="image/png" href="/favicon.png" />
+            <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+            <link rel="shortcut-icon" type="image/png" href="/favicon.png" />
+            <link rel="apple-touch-icon" type="image/png" href="/favicon.png" />
+
+            <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
+            <link
+                rel="preconnect"
+                href="https://cdnjs.cloudflare.com"
+                crossOrigin="anonymous"
+                referrerPolicy="no-referrer"
+            />
+
             {stylesheets.map((sheet) => (
                 <Fragment key={sheet.href}>
                     <link
@@ -132,16 +213,12 @@ export default ({ path, children }: { path: string; children?: ReactNode }) => (
                     />
                 </Fragment>
             ))}
-            <link rel="canonical" href={`https://cdnjs.com${path}`} />
-            <meta name="robots" content="noindex" />
-            <meta
-                name="viewport"
-                content="width=device-width, initial-scale=1"
-            />
+
+            <script defer src="https://api.radar.cloudflare.com/beacon.js" />
         </head>
         <body className={cx(styles.body, styles.background)}>
             <main className={styles.main}>
-                <Navigation className={styles.container} />
+                <Navigation path={path} className={styles.container} />
                 <div className={cx(styles.content, styles.container)}>
                     {children}
                 </div>
@@ -151,7 +228,7 @@ export default ({ path, children }: { path: string; children?: ReactNode }) => (
             <script
                 defer
                 dangerouslySetInnerHTML={{
-                    __html: 'console.log("%cThanks for using cdnjs! 😊", "font-size: 5em; color: #e95420;");',
+                    __html: `console.log("%cThanks for using cdnjs! 😊", "font-family: ${theme.font.families.home.replace(/"/g, '\\"')}; font-size: 5em; color: ${theme.text.brand};");`,
                 }}
             />
         </body>

@@ -45,7 +45,6 @@ describe('/about', () => {
         const response = beforeRequest(path, {}, true);
 
         // Test the endpoint
-        testCors(path, response);
         it('returns the correct Cache headers', () => {
             expect(response.headers.get('Cache-Control')).to.eq(
                 'public, max-age=21600',

@@ -22,9 +22,10 @@ const styles = {
         height: 100%;
         left: 50%;
         transform: translateX(-50%);
-        top: 0;
-        bottom: 0;
+        top: ${theme.spacing(-2)};
+        bottom: ${theme.spacing(-2)};
         z-index: -1;
+        pointer-events: none;
     `,
     content: css`
         display: flex;

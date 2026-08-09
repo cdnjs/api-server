@@ -1,3 +1,4 @@
+import MagicString from 'magic-string';
 import { existsSync, globSync, mkdirSync, rmSync } from 'node:fs';
 import { basename, extname, resolve } from 'node:path';
 import { defineConfig, normalizePath } from 'vite';
@@ -5,6 +6,8 @@ import { defineConfig, normalizePath } from 'vite';
 const outputDirectory = resolve('dist-client');
 const virtualEntryPrefix = 'virtual:island-entry:';
 const hydrationRuntimePath = resolve('src/utils/island.ts');
+
+const isDev = process.env.WRANGLER_COMMAND === 'dev';
 
 const isCssImport = (source: string) => /\.css(?:$|\?)/.test(source);
 
@@ -49,6 +52,11 @@ const parseCreateIslandDeclaration = (source: string) => {
 
 export default defineConfig({
     publicDir: false,
+    define: {
+        'process.env.NODE_ENV': JSON.stringify(
+            isDev ? 'development' : 'production',
+        ),
+    },
     plugins: [
         {
             name: 'raw-css-imports',
@@ -99,15 +107,40 @@ export default defineConfig({
                     );
                 }
 
-                return code
-                    .replace(
-                        declaration.fullMatch,
-                        `export default ${declaration.componentReference};`,
-                    )
-                    .replace(
-                        /import\s+(?:createIsland\s+)?from\s+['"]\.\.\/island\.tsx['"];?\n?/g,
-                        '',
+                const transformed = new MagicString(code);
+                const declarationStart = code.indexOf(declaration.fullMatch);
+                if (declarationStart === -1) {
+                    throw new Error(
+                        `Failed to locate createIsland declaration in "${id}" for sourcemap transform.`,
                     );
+                }
+
+                transformed.overwrite(
+                    declarationStart,
+                    declarationStart + declaration.fullMatch.length,
+                    `export default ${declaration.componentReference};`,
+                );
+
+                for (const match of code.matchAll(
+                    /import\s+(?:createIsland\s+)?from\s+['"]\.\.\/island\.tsx['"];?\n?/g,
+                )) {
+                    if (match.index === undefined) {
+                        continue;
+                    }
+                    transformed.remove(
+                        match.index,
+                        match.index + match[0].length,
+                    );
+                }
+
+                return {
+                    code: transformed.toString(),
+                    map: transformed.generateMap({
+                        hires: true,
+                        source: id,
+                        includeContent: true,
+                    }),
+                };
             },
             // Generate one virtual hydration entry per island source file.
             load(id) {
@@ -137,6 +170,7 @@ export default defineConfig({
         outDir: outputDirectory,
         emptyOutDir: true,
         sourcemap: true,
+        minify: isDev ? false : undefined,
         manifest: 'islands/manifest.json',
         rollupOptions: {
             // Generate a separate client entry for each island, based on the file name.

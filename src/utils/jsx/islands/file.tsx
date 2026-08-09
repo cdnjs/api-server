@@ -57,12 +57,14 @@ const File = ({
                 {`https://cdnjs.cloudflare.com/ajax/libs/${name}/${version}/${file ?? '...'}`}
             </code>
 
-            <Copy
-                name={name}
-                version={version}
-                file={file ?? '...'}
-                sri={file ? sri[file] : undefined}
-            />
+            {file && (
+                <Copy
+                    name={name}
+                    version={version}
+                    file={file}
+                    sri={sri[file]}
+                />
+            )}
         </div>
     );
 };

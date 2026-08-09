@@ -132,7 +132,12 @@ const createHandleGetApi = (registry: OpenAPIRegistry) => {
         // Set a 6 hour life on this response
         withCache(ctx, 6 * 60 * 60);
 
-        return respond<OpenApiResponse>(ctx, getOrGenerateSpec(), ApiPage);
+        return respond<OpenApiResponse>(ctx, getOrGenerateSpec(), ApiPage, {
+            title: 'API',
+            description:
+                'Query cdnjs programmatically with our OpenAPI specification to access information about the libraries we host and the files they contain.',
+            keywords: ['api', 'openapi', 'specification', 'programmatic'],
+        });
     };
 
     return handleGetApi;
