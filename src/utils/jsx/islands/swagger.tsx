@@ -544,7 +544,7 @@ const plugin = (system: System) => ({
                                     system.getComponent('ModelWrapper');
 
                                 return (
-                                    <Wrapper>
+                                    <Wrapper key={fullPath.join('/')}>
                                         <Summary
                                             system={system}
                                             badge="SCHEMA"
