@@ -1,20 +1,21 @@
-import { describe, expect, it } from 'vitest';
+import { expect, test } from '../utils/spec/playwright.ts';
 
-import openWebsiteRoute from '../utils/spec/browser.ts';
+test.describe('/api website output', () => {
+    test('renders accessible navigation and documentation', async ({
+        page,
+    }) => {
+        const response = await page.goto('/api');
+        expect(response?.ok()).toBe(true);
 
-describe('/api website output', () => {
-    it('renders accessible navigation and documentation', async () => {
-        const frame = await openWebsiteRoute('/api');
-
-        await expect.element(frame.getByRole('navigation')).toBeInTheDocument();
-        await expect
-            .element(frame.getByRole('link', { name: 'cdnjs' }).first())
-            .toBeInTheDocument();
-        await expect
-            .element(frame.getByText('Loading OpenAPI specification...'))
-            .not.toBeInTheDocument();
-        await expect
-            .element(frame.getByRole('heading', { name: 'Libraries' }))
-            .toBeInTheDocument();
+        await expect(page.getByRole('navigation')).toBeVisible();
+        await expect(
+            page.getByRole('link', { name: 'cdnjs' }).first(),
+        ).toBeVisible();
+        await expect(
+            page.getByText('Loading OpenAPI specification...'),
+        ).toHaveCount(0);
+        await expect(
+            page.getByRole('heading', { name: 'Libraries' }),
+        ).toBeVisible();
     });
 });

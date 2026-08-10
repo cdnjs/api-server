@@ -1,39 +1,38 @@
-import { describe, expect, it } from 'vitest';
+import { expect, test } from '../utils/spec/playwright.ts';
 
-import openWebsiteRoute from '../utils/spec/browser.ts';
+test.describe('/libraries/:library/:version website output', () => {
+    test('renders an immutable version and hydrates its file filter', async ({
+        page,
+    }) => {
+        const response = await page.goto('/libraries/backbone.js/1.1.0');
+        expect(response?.ok()).toBe(true);
 
-describe('/libraries/:library/:version website output', () => {
-    it('renders an immutable version and hydrates its file filter', async () => {
-        const frame = await openWebsiteRoute('/libraries/backbone.js/1.1.0');
+        await expect(
+            page.getByRole('heading', {
+                name: /^backbone\.js /,
+            }),
+        ).toBeVisible();
 
-        await expect
-            .element(
-                frame.getByRole('heading', {
-                    name: /^backbone\.js /,
-                }),
-            )
-            .toBeInTheDocument();
+        const version = page.getByRole('combobox', { name: 'Version:' });
+        const filter = page.getByRole('combobox', { name: 'Filter:' });
+        await expect(version).toHaveValue('1.1.0');
+        await expect(filter).toHaveValue('');
 
-        const version = frame.getByRole('combobox', { name: 'Version:' });
-        const filter = frame.getByRole('combobox', { name: 'Filter:' });
-        await expect.element(version).toHaveValue('1.1.0');
-        await expect.element(filter).toHaveDisplayValue('All assets');
-
-        const script = frame.getByRole('link', {
+        const script = page.getByRole('link', {
             name: 'backbone-min.js',
             exact: true,
         });
-        const sourceMap = frame.getByRole('link', {
+        const sourceMap = page.getByRole('link', {
             name: 'backbone-min.map',
             exact: true,
         });
-        await expect.element(script).toBeInTheDocument();
-        await expect.element(sourceMap).toBeInTheDocument();
+        await expect(script).toBeVisible();
+        await expect(sourceMap).toBeVisible();
 
-        await filter.selectOptions('Source Maps');
+        await filter.selectOption({ label: 'Source Maps' });
 
-        await expect.element(filter).toHaveDisplayValue('Source Maps');
-        await expect.element(sourceMap).toBeInTheDocument();
-        await expect.element(script).not.toBeInTheDocument();
+        await expect(filter).toHaveValue('Source Maps');
+        await expect(sourceMap).toBeVisible();
+        await expect(script).toHaveCount(0);
     });
 });
