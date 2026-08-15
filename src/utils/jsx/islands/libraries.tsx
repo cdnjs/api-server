@@ -147,9 +147,7 @@ const Result = ({
     return (
         <li className={styles.card}>
             <div className={styles.name}>
-                <a
-                    href={`/libraries/${encodeURIComponent(name)}/${encodeURIComponent(version)}`}
-                >
+                <a href={`/libraries/${encodeURIComponent(name)}`}>
                     {name}
                     <small> @ {version}</small>
                 </a>

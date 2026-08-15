@@ -75,12 +75,12 @@ const whitelisted = (file: string) =>
  * Handle GET /libraries/:library/:version requests.
  *
  * @param ctx Request context.
+ * @param latest If true, will return the latest version of the library.
  */
-const handleGetLibraryVersion = async (ctx: Context) => {
+const handleGetLibraryVersion = async (ctx: Context, latest = false) => {
     // Validate params (Hono already did this, but this keeps TypeScript happy)
     const params = ctx.req.param();
-    if (!params.library || !params.version)
-        throw new Error('Missing library or version param');
+    if (!params.library) throw new Error('Missing library param');
 
     // Get the library
     const lib = await library(params.library).catch((err) => {
@@ -88,6 +88,13 @@ const handleGetLibraryVersion = async (ctx: Context) => {
         throw err;
     });
     if (!lib) return notFound(ctx, 'Library');
+
+    // When the request comes from the /libraries/:library endpoint,
+    //  we want to return the latest version of the library
+    if (latest) params.version = lib.version;
+
+    // Validate params (Hono already did this, but this keeps TypeScript happy)
+    if (!params.version) throw new Error('Missing version param');
 
     // Get the version
     const version = await libraryVersion(lib.name, params.version).catch(
@@ -153,6 +160,7 @@ const handleGetLibraryVersion = async (ctx: Context) => {
             keywords: [lib.name, lib.name.replace(/[-_]/g, ' ')].concat(
                 lib.keywords.filter((x) => !!x),
             ),
+            canonical: `/libraries/${encodeURIComponent(lib.name)}`,
         },
     );
 };
@@ -163,6 +171,9 @@ const handleGetLibraryVersion = async (ctx: Context) => {
  * @param ctx Request context.
  */
 const handleGetLibrary = async (ctx: Context) => {
+    // For website requests, we want to return the page for the most recent version
+    if (isWebsite(ctx)) return handleGetLibraryVersion(ctx, true);
+
     // Validate params (Hono already did this, but this keeps TypeScript happy)
     const params = ctx.req.param();
     if (!params.library) throw new Error('Missing library or version param');
@@ -173,14 +184,6 @@ const handleGetLibrary = async (ctx: Context) => {
         throw err;
     });
     if (!lib) return notFound(ctx, 'Library');
-
-    // Redirect to the version endpoint for website requests
-    if (isWebsite(ctx)) {
-        // Set a 6 hour life on this response
-        withCache(ctx, 6 * 60 * 60);
-
-        return ctx.redirect(`/libraries/${lib.name}/${lib.version}`);
-    }
 
     // Generate the initial filtered response (without SRI, versions or assets data)
     const requestedFields = queryCheck(ctx.req.queries('fields'));
@@ -284,8 +287,12 @@ const handleGetLibrary = async (ctx: Context) => {
  */
 export default (app: Hono, registry: OpenAPIRegistry) => {
     // Library version
-    app.get('/libraries/:library/:version', handleGetLibraryVersion);
-    app.get('/libraries/:library/:version/', handleGetLibraryVersion);
+    app.get('/libraries/:library/:version', (ctx) =>
+        handleGetLibraryVersion(ctx),
+    );
+    app.get('/libraries/:library/:version/', (ctx) =>
+        handleGetLibraryVersion(ctx),
+    );
 
     registry.registerPath({
         method: 'get',
