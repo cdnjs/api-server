@@ -92,6 +92,11 @@ describe('/libraries/:library/:version', () => {
                 it('returns the correct status code', () => {
                     expect(response.status).to.eq(200);
                 });
+                it('returns the non-versioned canonical link', async () => {
+                    expect(await response.text()).to.match(
+                        /<link\s+rel=["']canonical["']\s+href=["']https:\/\/cdnjs\.com\/libraries\/backbone\.js["']\s*\/?>/,
+                    );
+                });
                 testWebsite(response);
             });
 
@@ -551,12 +556,15 @@ describe('/libraries/:library', () => {
                     'public, max-age=21600',
                 ); // 6 hours
             });
-            it('returns a redirect to the latest version', () => {
-                expect(response.status).to.eq(302);
-                expect(response.headers.get('Location')).to.match(
-                    /^\/libraries\/backbone\.js\/[^/]+$/,
+            it('returns the correct status code', () => {
+                expect(response.status).to.eq(200);
+            });
+            it('returns the non-versioned canonical link', async () => {
+                expect(await response.text()).to.match(
+                    /<link\s+rel=["']canonical["']\s+href=["']https:\/\/cdnjs\.com\/libraries\/backbone\.js["']\s*\/?>/,
                 );
             });
+            testWebsite(response);
         });
 
         describe('Requesting a field (?fields=assets)', () => {

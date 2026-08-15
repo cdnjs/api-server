@@ -97,25 +97,17 @@ export interface Meta {
     title: string;
     description: string;
     keywords: string[];
+    canonical: string;
 }
 
 /**
  * Standard cdnjs HTML layout.
  *
  * @param props Component props.
- * @param props.path Path of the page being rendered.
  * @param props.meta Metadata for the page being rendered.
  * @param props.children Content to be included in the body of the page.
  */
-export default ({
-    path,
-    meta,
-    children,
-}: {
-    path: string;
-    meta: Meta;
-    children?: ReactNode;
-}) => (
+export default ({ meta, children }: { meta: Meta; children?: ReactNode }) => (
     <html lang="en" className={styles.background}>
         <head>
             <title>{meta.title}</title>
@@ -130,7 +122,7 @@ export default ({
             <meta name="keywords" content={meta.keywords.join(', ')} />
 
             {/* Always set the canonical to production site at cdnjs.com */}
-            <link rel="canonical" href={`https://cdnjs.com${path}`} />
+            <link rel="canonical" href={`https://cdnjs.com${meta.canonical}`} />
             {/* Only allow indexing of the production site at cdnjs.com */}
             {env.WEBSITE_BASE !== 'https://cdnjs.com' && (
                 <meta name="robots" content="noindex" />
@@ -139,7 +131,10 @@ export default ({
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:title" content={meta.title} />
             <meta name="twitter:description" content={meta.description} />
-            <meta name="twitter:url" content={`${env.WEBSITE_BASE}${path}`} />
+            <meta
+                name="twitter:url"
+                content={`${env.WEBSITE_BASE}${meta.canonical}`}
+            />
             <meta name="twitter:site" content="@cdnjs" />
             <meta name="twitter:creator" content="@MattIPv4" />
             <meta
@@ -149,7 +144,10 @@ export default ({
 
             <meta property="og:title" content={meta.title} />
             <meta property="og:description" content={meta.description} />
-            <meta property="og:url" content={`${env.WEBSITE_BASE}${path}`} />
+            <meta
+                property="og:url"
+                content={`${env.WEBSITE_BASE}${meta.canonical}`}
+            />
             <meta property="og:site_name" content="cdnjs" />
             <meta property="og:type" content="website" />
             <meta property="og:locale" content="en_US" />
@@ -218,7 +216,10 @@ export default ({
         </head>
         <body className={cx(styles.body, styles.background)}>
             <main className={styles.main}>
-                <Navigation path={path} className={styles.container} />
+                <Navigation
+                    path={meta.canonical}
+                    className={styles.container}
+                />
                 <div className={cx(styles.content, styles.container)}>
                     {children}
                 </div>
