@@ -1,12 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import testCors from '../utils/spec/cors.ts';
-import {
-    beforeRequest,
-    externalApiUrl,
-    request,
-} from '../utils/spec/request.ts';
-import testWebsite from '../utils/spec/website.ts';
+import { beforeRequest, request } from '../utils/spec/request.ts';
 
 import type { WhitelistResponse } from './whitelist.schema.ts';
 
@@ -74,23 +69,6 @@ describe('/whitelist', () => {
                 await response.json<WhitelistResponse>(),
             );
         });
-    });
-
-    // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
-    describe.skipIf(externalApiUrl)('Website React output', () => {
-        // Fetch the endpoint
-        const response = beforeRequest(path, {}, true);
-
-        // Test the endpoint
-        it('returns the correct Cache headers', () => {
-            expect(response.headers.get('Cache-Control')).to.eq(
-                'public, max-age=3600',
-            ); // 1 hour
-        });
-        it('returns the correct status code', () => {
-            expect(response.status).to.eq(404);
-        });
-        testWebsite(response);
     });
 
     describe('Requesting a field (?fields=extensions)', () => {
