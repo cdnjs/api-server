@@ -102,6 +102,16 @@ any commit pushed to GitHub, for any pull requests, and prior to any staging/pro
 `VITEST_EXTERNAL_API_URL` can be set to target a deployed version of the API instead, which is used
 as the last step in our staging/production deployment workflows to verify the updated API worker.
 
+The project also uses Playwright to run end-to-end tests against the website React output. These are
+also run on each commit pushed to GitHub, for pull requests, and during deployments. These can be
+run locally with:
+
+```sh
+npm run test:web
+```
+
+`PLAYWRIGHT_EXTERNAL_WEB_URL` can be set to target a deployed version of the website instead.
+
 ### Type-Checking
 
 The API server is written in TypeScript, and the types are checked as part of the test suite. If you

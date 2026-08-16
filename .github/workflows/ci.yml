@@ -21,8 +21,14 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium --only-shell
+
       - name: Run Tests
         run: npm test
+
+      - name: Run Web Tests
+        run: npm run test:web
 
   types:
     runs-on: ubuntu-latest

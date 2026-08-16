@@ -29,8 +29,14 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium --only-shell
+
       - name: Run Tests (local)
         run: npm test
+
+      - name: Run Web Tests (local)
+        run: npm run test:web
 
       - name: Deploy to ${{ github.ref_name }}
         run: npx wrangler deploy --env ${{ github.ref_name }} --outdir dist-worker --minify --var SENTRY_DSN:${{ secrets.SENTRY_DSN }} --var SENTRY_RELEASE:${{ github.sha }}
@@ -67,3 +73,9 @@ jobs:
         run: npm test
         env:
           VITEST_EXTERNAL_API_URL: ${{ github.ref_name == 'production' && 'https://api.cdnjs.com' || 'https://api.cdnjs.dev' }}
+
+      - name: Run Web Tests (deployed)
+        if: github.ref_name == 'staging'
+        run: npm run test:web
+        env:
+          PLAYWRIGHT_EXTERNAL_WEB_URL: ${{ github.ref_name == 'production' && 'https://cdnjs.com' || 'https://cdnjs.dev' }}
