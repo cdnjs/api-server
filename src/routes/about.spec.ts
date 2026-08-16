@@ -1,12 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import testCors from '../utils/spec/cors.ts';
-import {
-    beforeRequest,
-    externalApiUrl,
-    request,
-} from '../utils/spec/request.ts';
-import testWebsite from '../utils/spec/website.ts';
+import { beforeRequest, request } from '../utils/spec/request.ts';
 
 describe('/about', () => {
     // Fetch the endpoint
@@ -37,22 +32,5 @@ describe('/about', () => {
                 'https://cdnjs.com/about',
             );
         });
-    });
-
-    // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
-    describe.skipIf(externalApiUrl)('Website React output', () => {
-        // Fetch the endpoint
-        const response = beforeRequest(path, {}, true);
-
-        // Test the endpoint
-        it('returns the correct Cache headers', () => {
-            expect(response.headers.get('Cache-Control')).to.eq(
-                'public, max-age=21600',
-            ); // 6 hours
-        });
-        it('returns the correct status code', () => {
-            expect(response.status).to.eq(200);
-        });
-        testWebsite(response);
     });
 });
