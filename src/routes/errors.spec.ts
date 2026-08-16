@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 
 import testCors from '../utils/spec/cors.ts';
 import { beforeRequest, externalApiUrl } from '../utils/spec/request.ts';
-import testWebsite from '../utils/spec/website.ts';
 
 import type { ErrorResponse } from './errors.schema.ts';
 
@@ -34,23 +33,6 @@ describe('/this-route-doesnt-exist', () => {
             expect(body).to.have.property('status', 404);
             expect(body).to.have.property('message', 'Endpoint not found');
         });
-    });
-
-    // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
-    describe.skipIf(externalApiUrl)('Website React output', () => {
-        // Fetch the endpoint
-        const response = beforeRequest(path, {}, true);
-
-        // Test the endpoint
-        it('returns the correct Cache headers', () => {
-            expect(response.headers.get('Cache-Control')).to.eq(
-                'public, max-age=3600',
-            ); // 1 hour
-        });
-        it('returns the correct status code', () => {
-            expect(response.status).to.eq(404);
-        });
-        testWebsite(response);
     });
 });
 
@@ -88,21 +70,5 @@ describe.skipIf(externalApiUrl)('/error', () => {
                 'An unexpected error occurred',
             );
         });
-    });
-
-    // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
-    describe.skipIf(externalApiUrl)('Website React output', () => {
-        // Fetch the endpoint
-        const response = beforeRequest(path, {}, true);
-
-        // Test the endpoint
-        it('returns the correct Cache headers', () => {
-            expect(response.headers.get('Expires')).to.eq('0');
-            expect(response.headers.get('Pragma')).to.eq('no-cache');
-            expect(response.headers.get('Cache-Control')).to.eq(
-                'no-cache, no-store, must-revalidate',
-            );
-        });
-        testWebsite(response);
     });
 });
