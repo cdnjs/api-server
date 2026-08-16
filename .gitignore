@@ -7,4 +7,5 @@ node_modules/
 dist-worker/
 dist-client/
 .wrangler/
+.playwright/
 worker-configuration.d.ts
