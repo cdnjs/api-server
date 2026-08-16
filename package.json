@@ -14,7 +14,7 @@
         "format": "prettier --check .",
         "format:fix": "prettier --write .",
         "test": "vitest run",
-        "test:browser": "playwright test",
+        "test:web": "playwright test",
         "types": "tsc --noEmit",
         "dev": "wrangler dev",
         "dev:web": "wrangler dev --var WEBSITE_BASE:http://localhost:8787"

@@ -11,7 +11,7 @@ interface TestFixtures {
 }
 
 interface WorkerFixtures {
-    server: TestHarness;
+    server?: TestHarness;
 }
 
 export const test = base.extend<TestFixtures, WorkerFixtures>({
@@ -21,6 +21,11 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
                 throw new Error(
                     `Browser tests require Chromium, received ${browserName}.`,
                 );
+            }
+
+            if (process.env.PLAYWRIGHT_EXTERNAL_WEB_URL) {
+                await use(undefined);
+                return;
             }
 
             const server = createTestHarness({
@@ -41,12 +46,21 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
         { scope: 'worker', timeout: 120_000 },
     ],
     baseURL: async ({ server }, use) => {
+        if (!server) {
+            await use(process.env.PLAYWRIGHT_EXTERNAL_WEB_URL);
+            return;
+        }
+
         const { url } = await server.listen();
         await use(url.href);
     },
     reset: [
         async ({ server }, use, testInfo) => {
             await use(undefined);
+
+            if (!server) {
+                return;
+            }
 
             if (testInfo.status !== testInfo.expectedStatus) {
                 server.debug();
