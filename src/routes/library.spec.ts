@@ -1,12 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import testCors from '../utils/spec/cors.ts';
-import {
-    beforeRequest,
-    externalApiUrl,
-    request,
-} from '../utils/spec/request.ts';
-import testWebsite from '../utils/spec/website.ts';
+import { beforeRequest, request } from '../utils/spec/request.ts';
 
 import type { ErrorResponse } from './errors.schema.ts';
 import type {
@@ -76,28 +71,6 @@ describe('/libraries/:library/:version', () => {
                         await response.json<LibraryVersionResponse>(),
                     );
                 });
-            });
-
-            // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
-            describe.skipIf(externalApiUrl)('Website React output', () => {
-                // Fetch the endpoint
-                const response = beforeRequest(path, {}, true);
-
-                // Test the endpoint
-                it('returns the correct Cache headers', () => {
-                    expect(response.headers.get('Cache-Control')).to.eq(
-                        'public, max-age=21600',
-                    ); // 6 hours
-                });
-                it('returns the correct status code', () => {
-                    expect(response.status).to.eq(200);
-                });
-                it('returns the non-versioned canonical link', async () => {
-                    expect(await response.text()).to.match(
-                        /<link\s+rel=["']canonical["']\s+href=["']https:\/\/cdnjs\.com\/libraries\/backbone\.js["']\s*\/?>/,
-                    );
-                });
-                testWebsite(response);
             });
 
             describe('Requesting a field (?fields=files)', () => {
@@ -352,23 +325,6 @@ describe('/libraries/:library/:version', () => {
                     );
                 });
             });
-
-            // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
-            describe.skipIf(externalApiUrl)('Website React output', () => {
-                // Fetch the endpoint
-                const response = beforeRequest(path, {}, true);
-
-                // Test the endpoint
-                it('returns the correct Cache headers', () => {
-                    expect(response.headers.get('Cache-Control')).to.eq(
-                        'public, max-age=3600',
-                    ); // 1 hour
-                });
-                it('returns the correct status code', () => {
-                    expect(response.status).to.eq(404);
-                });
-                testWebsite(response);
-            });
         });
     });
 
@@ -401,23 +357,6 @@ describe('/libraries/:library/:version', () => {
                 expect(body).to.have.property('status', 404);
                 expect(body).to.have.property('message', 'Library not found');
             });
-        });
-
-        // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
-        describe.skipIf(externalApiUrl)('Website React output', () => {
-            // Fetch the endpoint
-            const response = beforeRequest(path, {}, true);
-
-            // Test the endpoint
-            it('returns the correct Cache headers', () => {
-                expect(response.headers.get('Cache-Control')).to.eq(
-                    'public, max-age=3600',
-                ); // 1 hour
-            });
-            it('returns the correct status code', () => {
-                expect(response.status).to.eq(404);
-            });
-            testWebsite(response);
         });
     });
 });
@@ -543,28 +482,6 @@ describe('/libraries/:library', () => {
                     await response.json<LibraryResponse>(),
                 );
             });
-        });
-
-        // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
-        describe.skipIf(externalApiUrl)('Website React output', () => {
-            // Fetch the endpoint
-            const response = beforeRequest(path, { redirect: 'manual' }, true);
-
-            // Test the endpoint
-            it('returns the correct Cache headers', () => {
-                expect(response.headers.get('Cache-Control')).to.eq(
-                    'public, max-age=21600',
-                ); // 6 hours
-            });
-            it('returns the correct status code', () => {
-                expect(response.status).to.eq(200);
-            });
-            it('returns the non-versioned canonical link', async () => {
-                expect(await response.text()).to.match(
-                    /<link\s+rel=["']canonical["']\s+href=["']https:\/\/cdnjs\.com\/libraries\/backbone\.js["']\s*\/?>/,
-                );
-            });
-            testWebsite(response);
         });
 
         describe('Requesting a field (?fields=assets)', () => {
@@ -818,23 +735,6 @@ describe('/libraries/:library', () => {
                 expect(body).to.have.property('status', 404);
                 expect(body).to.have.property('message', 'Library not found');
             });
-        });
-
-        // Don't run these tests against an external API Worker as can't set WEBSITE_BASE
-        describe.skipIf(externalApiUrl)('Website React output', () => {
-            // Fetch the endpoint
-            const response = beforeRequest(path, {}, true);
-
-            // Test the endpoint
-            it('returns the correct Cache headers', () => {
-                expect(response.headers.get('Cache-Control')).to.eq(
-                    'public, max-age=3600',
-                ); // 1 hour
-            });
-            it('returns the correct status code', () => {
-                expect(response.status).to.eq(404);
-            });
-            testWebsite(response);
         });
     });
 });

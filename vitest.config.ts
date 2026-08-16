@@ -8,8 +8,8 @@ export default defineConfig({
         silent: 'passed-only',
         reporters: [
             'tree',
-            process.env.GITHUB_ACTIONS && 'github-actions',
-        ].filter((x): x is string => !!x),
+            ...(process.env.GITHUB_ACTIONS ? ['github-actions'] : []),
+        ],
     },
     plugins: [
         cloudflareTest({

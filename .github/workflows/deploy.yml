@@ -36,6 +36,7 @@ jobs:
         run: npm test
 
       - name: Run Web Tests (local)
+        id: web-tests-local
         run: npm run test:web
 
       - name: Deploy to ${{ github.ref_name }}
@@ -75,7 +76,16 @@ jobs:
           VITEST_EXTERNAL_API_URL: ${{ github.ref_name == 'production' && 'https://api.cdnjs.com' || 'https://api.cdnjs.dev' }}
 
       - name: Run Web Tests (deployed)
+        id: web-tests-deployed
         if: github.ref_name == 'staging'
         run: npm run test:web
         env:
           PLAYWRIGHT_EXTERNAL_WEB_URL: ${{ github.ref_name == 'production' && 'https://cdnjs.com' || 'https://cdnjs.dev' }}
+
+      - name: Upload Test Results
+        if: always() && (steps.web-tests-local.outcome == 'failure' || steps.web-tests-local.outcome == 'success' || steps.web-tests-deployed.outcome == 'failure' || steps.web-tests-deployed.outcome == 'success')
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: playwright-report-${{ github.run_id }}
+          path: .playwright/report
+          retention-days: ${{ case(steps.web-tests-local.outcome == 'success' && steps.web-tests-deployed.outcome == 'success', 1, 3) }}

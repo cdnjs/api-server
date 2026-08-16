@@ -3,7 +3,12 @@ import { defineConfig } from '@playwright/test';
 export default defineConfig({
     testDir: './src',
     testMatch: '**/*.browser.spec.ts',
-    outputDir: '.wrangler/playwright-results',
+    outputDir: '.playwright/results',
+    reporter: [
+        ['list', { printSteps: true }],
+        ['html', { outputFolder: '.playwright/report' }],
+        ...(process.env.GITHUB_ACTIONS ? [['github'] as const] : []),
+    ],
     workers: 1,
     timeout: 30_000,
     expect: {
@@ -12,5 +17,8 @@ export default defineConfig({
     use: {
         browserName: 'chromium',
         headless: true,
+        viewport: { width: 1920, height: 1080 },
+        video: 'retain-on-failure',
+        trace: 'retain-on-failure',
     },
 });

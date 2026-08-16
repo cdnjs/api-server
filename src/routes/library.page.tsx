@@ -125,7 +125,7 @@ export default ({
                 title={
                     <>
                         <strong>{library.name}</strong>
-                        <small> @ {library.version}</small>
+                        <small> @ {version.version}</small>
                     </>
                 }
                 prose={library.description}

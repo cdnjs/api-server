@@ -1,5 +1,5 @@
 import { env, exports } from 'cloudflare:workers';
-import { afterAll, beforeAll } from 'vitest';
+import { beforeAll } from 'vitest';
 
 // Allow tests to run against an external API Worker by setting VITEST_EXTERNAL_API_URL.
 export const externalApiUrl =
@@ -59,34 +59,17 @@ export const request = async (route: string, opts: RequestInit = {}) => {
  *
  * @param route Route to request in API Worker.
  * @param opts Options to set for fetch request.
- * @param website Whether to set WEBSITE_BASE to simulate the website React output.
  */
-export const beforeRequest = (
-    route: string,
-    opts: RequestInit = {},
-    website = false,
-) => {
+export const beforeRequest = (route: string, opts: RequestInit = {}) => {
     let response: Response;
-    let base: string;
 
     beforeAll(
         async () => {
-            if (website) {
-                base = env.WEBSITE_BASE;
-                env.WEBSITE_BASE = 'http://local';
-            }
-
             response = await request(route, opts);
         },
         // Allow time for the worker to compile when running against the Miniflare instance
         externalApiUrl ? 5_000 : 30_000,
     );
-
-    if (website) {
-        afterAll(() => {
-            env.WEBSITE_BASE = base;
-        });
-    }
 
     return new Proxy({} as Response, {
         get: (_, prop) => Reflect.get(response, prop, response),
