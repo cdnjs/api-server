@@ -107,7 +107,6 @@ const respond = async <T = never>(
                 createElement(
                     Layout,
                     {
-                        path: ctx.req.path,
                         meta: {
                             title: [meta?.title, 'cdnjs']
                                 .filter((x) => !!x)
@@ -144,6 +143,7 @@ const respond = async <T = never>(
                                     'github',
                                 ]),
                             ],
+                            canonical: meta?.canonical ?? ctx.req.path,
                         },
                     },
                     createElement(component, { data }),

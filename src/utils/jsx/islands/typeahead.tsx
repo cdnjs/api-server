@@ -278,7 +278,7 @@ const Typeahead = ({ className }: { className?: string }) => {
                                             className={styles.result}
                                         >
                                             <a
-                                                href={`/libraries/${encodeURIComponent(name)}/${encodeURIComponent(version)}`}
+                                                href={`/libraries/${encodeURIComponent(name)}`}
                                             >
                                                 <p>
                                                     <strong>{name}</strong>
