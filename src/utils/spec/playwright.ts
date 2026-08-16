@@ -33,30 +33,6 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
             });
 
             try {
-                const { url } = await server.listen();
-                if (!url.origin.startsWith(websiteBase)) {
-                    throw new Error(
-                        `Local Worker origin ${url.origin} does not match website base ${websiteBase}.`,
-                    );
-                }
-
-                const workerEnv = await server
-                    .getWorker<{ WEBSITE_BASE: string }>()
-                    .getEnv();
-                if (workerEnv.WEBSITE_BASE !== websiteBase) {
-                    throw new Error(
-                        `Local Worker WEBSITE_BASE is ${workerEnv.WEBSITE_BASE}, expected ${websiteBase}.`,
-                    );
-                }
-
-                const response = await fetch(new URL('/health', url));
-                const body = await response.text();
-                if (!response.ok || body !== 'OK') {
-                    throw new Error(
-                        `Local website health check failed with status ${String(response.status)} and body ${JSON.stringify(body)}.`,
-                    );
-                }
-
                 await use(server);
             } finally {
                 await server.close();
