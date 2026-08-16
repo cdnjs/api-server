@@ -37,7 +37,16 @@ jobs:
           VITEST_EXTERNAL_API_URL: ${{ matrix.worker == 'production' && 'https://api.cdnjs.com' || 'https://api.cdnjs.dev' }}
 
       - name: Run Web Tests
+        id: web-tests
         if: matrix.worker == 'staging'
         run: npm run test:web
         env:
           PLAYWRIGHT_EXTERNAL_WEB_URL: ${{ matrix.worker == 'production' && 'https://cdnjs.com' || 'https://cdnjs.dev' }}
+
+      - name: Upload Test Results
+        if: always() && (steps.web-tests.outcome == 'failure' || steps.web-tests.outcome == 'success')
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: playwright-report-${{ github.run_id }}
+          path: .playwright/report
+          retention-days: ${{ case(steps.web-tests.outcome == 'success', 1, 3) }}

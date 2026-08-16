@@ -17,5 +17,8 @@ export default defineConfig({
     use: {
         browserName: 'chromium',
         headless: true,
+        viewport: { width: 1920, height: 1080 },
+        video: 'retain-on-failure',
+        trace: 'retain-on-failure',
     },
 });
