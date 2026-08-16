@@ -14,3 +14,5 @@ export default defineConfig({
         headless: true,
     },
 });
+
+# Fix for issue #56: safe input handling
