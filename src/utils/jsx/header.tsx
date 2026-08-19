@@ -19,7 +19,7 @@ const styles = {
         color: ${theme.background.brand};
         position: absolute;
         width: 100vw;
-        height: 100%;
+        height: calc(100% + ${theme.spacing(4)});
         left: 50%;
         transform: translateX(-50%);
         top: ${theme.spacing(-2)};

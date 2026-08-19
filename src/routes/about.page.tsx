@@ -4,13 +4,6 @@ import Header from '../utils/jsx/header.tsx';
 import sponsors from '../utils/sponsors.ts';
 import theme from '../utils/theme.ts';
 
-declare module 'csstype' {
-    // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
-    interface Properties {
-        [index: `--${string}`]: string;
-    }
-}
-
 const styles = {
     container: css`
         display: flex;
@@ -336,9 +329,10 @@ export default () => {
 
                         <p>
                             Launched in 2011, it is one of the longest-running
-                            public CDNs on the web. cdnjs believes in the power
-                            of open source, with all the package configurations
-                            and code behind the service available on GitHub.
+                            and most popular public CDNs on the web. cdnjs
+                            believes in the power of open source, with all the
+                            package configurations and code behind the service
+                            available on GitHub.
                         </p>
 
                         <p>
@@ -378,13 +372,13 @@ export default () => {
                             cdnjs is different from some other public CDNs that
                             support on-demand pull-through access to libraries.
                             Instead, cdnjs is a curated CDN that only serves
-                            libraries that have been added to the service to by
-                            the community.
+                            libraries that have been added to the service by the
+                            community.
                         </p>
 
                         <p>
                             Adding a library to cdnjs is straightforward: open a
-                            pull request to the{' '}
+                            pull request in the{' '}
                             <a
                                 href="https://github.com/cdnjs/packages"
                                 rel="noopener"
@@ -392,9 +386,9 @@ export default () => {
                                 cdnjs/packages repository
                             </a>{' '}
                             with a small JSON file describing the library. Once
-                            approved and merged, cdnjs automation takes over —
-                            new versions are picked up automatically as they are
-                            published to npm or GitHub.
+                            approved and merged, cdnjs automation takes over
+                            &mdash; new versions are picked up automatically as
+                            they are published to npm or GitHub.
                         </p>
 
                         <p>
