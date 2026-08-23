@@ -1,4 +1,13 @@
+import { XMLParser } from 'fast-xml-parser';
+
 import { expect, test } from '../utils/spec/playwright.ts';
+
+interface Sitemap {
+    urlset?: {
+        '@_xmlns'?: string;
+        url?: { loc?: string } | { loc?: string }[];
+    };
+}
 
 test.describe('/', () => {
     test('renders page', async ({ page }) => {
@@ -92,6 +101,43 @@ test.describe('/opensearch.xml', () => {
         );
         expect(await response?.text()).toContain(
             '/libraries?search={searchTerms}',
+        );
+    });
+});
+
+test.describe('/sitemap.xml', () => {
+    test('valid response', async ({ page }) => {
+        const response = await page.request.get('/sitemap.xml');
+        expect(response?.ok()).toBe(true);
+        expect(response?.status()).toBe(200);
+        expect(response?.headers()['cache-control']).toBe(
+            'public, max-age=21600',
+        ); // 6 hours
+        expect(response?.headers()['content-type']).toMatch(
+            /^application\/xml(;|$)/,
+        );
+
+        const body = await response.text();
+        const origin = new URL(response.url()).origin;
+        const sitemap = new XMLParser({
+            ignoreAttributes: false,
+        }).parse(body) as unknown as Sitemap;
+        const urls = sitemap.urlset?.url;
+
+        expect(sitemap.urlset?.['@_xmlns']).toBe(
+            'http://www.sitemaps.org/schemas/sitemap/0.9',
+        );
+        expect(Array.isArray(urls)).toBe(true);
+        if (!Array.isArray(urls)) throw new Error('Missing sitemap URLs');
+
+        const locations = urls.map((url) => url.loc);
+        expect(locations).toContain(`${origin}/`);
+        expect(locations).toContain(`${origin}/about`);
+        expect(locations).toContain(`${origin}/api`);
+        expect(locations).toContain(`${origin}/libraries`);
+        expect(locations).toContain(`${origin}/libraries/backbone.js`);
+        expect(locations).not.toContain(
+            `${origin}/libraries/backbone.js/1.1.0`,
         );
     });
 });

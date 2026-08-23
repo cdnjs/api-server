@@ -115,6 +115,28 @@ describe('/opensearch.xml', () => {
     });
 });
 
+describe('/sitemap.xml', () => {
+    const path = '/sitemap.xml';
+
+    describe('No query params', () => {
+        const response = beforeRequest(path);
+
+        testCors(path, response);
+        it('returns the correct status code', () => {
+            expect(response.status).to.eq(404);
+        });
+        it('does not return a sitemap', async () => {
+            expect(response.headers.get('Content-Type')).to.match(
+                /application\/json/,
+            );
+            expect(await response.json()).to.have.property(
+                'message',
+                'Endpoint not found',
+            );
+        });
+    });
+});
+
 describe('/favicon.ico', () => {
     // Fetch the endpoint
     const path = '/favicon.ico';
