@@ -96,20 +96,16 @@ describe('/opensearch.xml', () => {
 
         // Test the endpoint
         testCors(path, response);
-        it('returns the correct Cache headers', () => {
-            expect(response.headers.get('Cache-Control')).to.eq(
-                'public, max-age=30672000, immutable',
-            ); // 355 days
-        });
         it('returns the correct status code', () => {
-            expect(response.status).to.eq(200);
+            expect(response.status).to.eq(404);
         });
-        it('includes the libraries endpoint for searching', async () => {
+        it('does not return an OpenSearch description', async () => {
             expect(response.headers.get('Content-Type')).to.match(
-                /application\/opensearchdescription\+xml/,
+                /application\/json/,
             );
-            expect(await response.text()).to.include(
-                `/libraries?search={searchTerms}`,
+            expect(await response.json()).to.have.property(
+                'message',
+                'Endpoint not found',
             );
         });
     });

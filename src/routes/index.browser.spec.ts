@@ -9,6 +9,19 @@ interface Sitemap {
     };
 }
 
+interface OpenSearch {
+    OpenSearchDescription?: {
+        '@_xmlns'?: string;
+        '@_xmlns:moz'?: string;
+        ShortName?: string;
+        Url?: {
+            '@_type'?: string;
+            '@_method'?: string;
+            '@_template'?: string;
+        };
+    };
+}
+
 test.describe('/', () => {
     test('renders page', async ({ page }) => {
         const response = await page.goto('/');
@@ -99,8 +112,25 @@ test.describe('/opensearch.xml', () => {
         expect(response?.headers()['content-type']).toMatch(
             /^application\/opensearchdescription\+xml(;|$)/,
         );
-        expect(await response?.text()).toContain(
-            '/libraries?search={searchTerms}',
+
+        const body = await response.text();
+        const origin = new URL(response.url()).origin;
+        const opensearch = new XMLParser({
+            ignoreAttributes: false,
+        }).parse(body) as unknown as OpenSearch;
+        const description = opensearch.OpenSearchDescription;
+
+        expect(description?.['@_xmlns']).toBe(
+            'http://a9.com/-/spec/opensearch/1.1/',
+        );
+        expect(description?.['@_xmlns:moz']).toBe(
+            'http://www.mozilla.org/2006/browser/search/',
+        );
+        expect(description?.ShortName).toBe('cdnjs');
+        expect(description?.Url?.['@_type']).toBe('text/html');
+        expect(description?.Url?.['@_method']).toBe('GET');
+        expect(description?.Url?.['@_template']).toBe(
+            `${origin}/libraries?search={searchTerms}`,
         );
     });
 });

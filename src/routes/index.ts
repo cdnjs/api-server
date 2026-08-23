@@ -66,28 +66,57 @@ const handleGetRobotsTxt = (ctx: Context) => {
  * @param ctx Request context.
  */
 const handleGetOpenSearchXml = (ctx: Context) => {
+    // Only serve OpenSearch for website requests
+    if (!isWebsite(ctx)) {
+        return notFound(ctx, 'Endpoint');
+    }
+
     // Set a 355 day (same as CDN) life on this response
     // This is also immutable
     withCache(ctx, 355 * 24 * 60 * 60, true);
 
-    // Respond
     const origin = new URL(ctx.req.url).origin;
-    return ctx.body(
-        `<?xml version="1.0" encoding="UTF-8"?>
-<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
-    <ShortName>cdnjs</ShortName>
-    <Description>cdnjs is the free, open-source CDN for the web's most popular libraries. JavaScript, CSS, and font resources, globally cached on Cloudflare's network. Trusted by 12.5% of all websites, serving 250 billion requests per month.</Description>
-    <InputEncoding>UTF-8</InputEncoding>
-    <Image type="image/x-icon">${origin}/favicon.ico</Image>
-    <Image type="image/png">${origin}/favicon.png</Image>
-    <Image type="image/svg+xml">${origin}/favicon.svg</Image>
-    <Url type="text/html" method="GET" template="${origin}/libraries?search={searchTerms}"/>
-</OpenSearchDescription>`,
-        200,
-        {
-            'Content-Type': 'application/opensearchdescription+xml',
+    const opensearch = new XMLBuilder({
+        format: true,
+        ignoreAttributes: false,
+        suppressEmptyNode: true,
+    }).build({
+        '?xml': {
+            '@_version': '1.0',
+            '@_encoding': 'UTF-8',
         },
-    );
+        OpenSearchDescription: {
+            '@_xmlns': 'http://a9.com/-/spec/opensearch/1.1/',
+            '@_xmlns:moz': 'http://www.mozilla.org/2006/browser/search/',
+            ShortName: 'cdnjs',
+            Description:
+                "cdnjs is the free, open-source CDN for the web's most popular libraries. JavaScript, CSS, and font resources, globally cached on Cloudflare's network. Trusted by 12.5% of all websites, serving 250 billion requests per month.",
+            InputEncoding: 'UTF-8',
+            Image: [
+                {
+                    '@_type': 'image/x-icon',
+                    '#text': `${origin}/favicon.ico`,
+                },
+                {
+                    '@_type': 'image/png',
+                    '#text': `${origin}/favicon.png`,
+                },
+                {
+                    '@_type': 'image/svg+xml',
+                    '#text': `${origin}/favicon.svg`,
+                },
+            ],
+            Url: {
+                '@_type': 'text/html',
+                '@_method': 'GET',
+                '@_template': `${origin}/libraries?search={searchTerms}`,
+            },
+        },
+    });
+
+    return ctx.body(opensearch, 200, {
+        'Content-Type': 'application/opensearchdescription+xml',
+    });
 };
 
 /**
