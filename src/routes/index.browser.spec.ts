@@ -1,6 +1,6 @@
 import { XMLParser } from 'fast-xml-parser';
 
-import { expect, test } from '../utils/spec/playwright.ts';
+import { createServer, expect, test } from '../utils/spec/playwright.ts';
 
 interface Sitemap {
     urlset?: {
@@ -87,8 +87,17 @@ test.describe('/health', () => {
 });
 
 test.describe('/robots.txt', () => {
-    test('valid response', async ({ page }) => {
-        const response = await page.request.get('/robots.txt');
+    const isProduction =
+        process.env.PLAYWRIGHT_EXTERNAL_WEB_URL?.replace(/\/+$/, '') ===
+        'https://cdnjs.com';
+
+    test('blocks indexing on non-production websites', async ({ page }) => {
+        test.skip(
+            isProduction,
+            'Production website robots.txt does not block indexing',
+        );
+
+        const response = await page.goto('/robots.txt');
         expect(response?.ok()).toBe(true);
         expect(response?.status()).toBe(200);
         expect(response?.headers()['cache-control']).toBe(
@@ -98,6 +107,49 @@ test.describe('/robots.txt', () => {
             /^text\/plain(;|$)/,
         );
         expect(await response?.text()).toBe('User-agent: *\nDisallow: /');
+    });
+
+    test('allows indexing on production website', async ({ page }) => {
+        // If we're not running against production, map the /robots.txt request
+        //  to a test server that simulates the production environment
+        let cleanup = () => Promise.resolve();
+        if (!isProduction) {
+            const server = createServer({ WEBSITE_BASE: 'https://cdnjs.com' });
+            await server.listen();
+
+            const route = await page.route('/robots.txt', async (route) => {
+                const response = await server
+                    .getWorker()
+                    .fetch('https://cdnjs.com/robots.txt');
+                route.fulfill({
+                    status: response.status,
+                    headers: Object.fromEntries(response.headers.entries()),
+                    body: await response.text(),
+                });
+            });
+
+            cleanup = async () => {
+                await route.dispose();
+                await server.close();
+            };
+        }
+
+        try {
+            const response = await page.goto('/robots.txt');
+            expect(response?.ok()).toBe(true);
+            expect(response?.status()).toBe(200);
+            expect(response?.headers()['cache-control']).toBe(
+                'public, max-age=30672000, immutable',
+            ); // 355 days
+            expect(response?.headers()['content-type']).toMatch(
+                /^text\/plain(;|$)/,
+            );
+            expect(await response?.text()).toBe(
+                'User-agent: *\nAllow: /\nSitemap: https://cdnjs.com/sitemap.xml',
+            );
+        } finally {
+            await cleanup();
+        }
     });
 });
 

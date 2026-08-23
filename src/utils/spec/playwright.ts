@@ -14,6 +14,16 @@ interface WorkerFixtures {
     server?: TestHarness;
 }
 
+export const createServer = (vars?: Record<string, string>) =>
+    createTestHarness({
+        workers: [
+            {
+                configPath,
+                vars: { WEBSITE_BASE: websiteBase, ...vars },
+            },
+        ],
+    });
+
 export const test = base.extend<TestFixtures, WorkerFixtures>({
     server: [
         async ({ browserName }, use) => {
@@ -28,14 +38,7 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
                 return;
             }
 
-            const server = createTestHarness({
-                workers: [
-                    {
-                        configPath,
-                        vars: { WEBSITE_BASE: websiteBase },
-                    },
-                ],
-            });
+            const server = createServer();
 
             try {
                 await use(server);

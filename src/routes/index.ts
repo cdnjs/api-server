@@ -1,4 +1,5 @@
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import { env } from 'cloudflare:workers';
 import XMLBuilder from 'fast-xml-builder';
 import type { Context, Hono } from 'hono';
 
@@ -55,6 +56,13 @@ const handleGetRobotsTxt = (ctx: Context) => {
     // Set a 355 day (same as CDN) life on this response
     // This is also immutable
     withCache(ctx, 355 * 24 * 60 * 60, true);
+
+    // Only the production site at cdnjs.com should ever be indexable
+    if (env.WEBSITE_BASE === 'https://cdnjs.com' && isWebsite(ctx)) {
+        return ctx.text(
+            'User-agent: *\nAllow: /\nSitemap: https://cdnjs.com/sitemap.xml',
+        );
+    }
 
     // Disallow all robots
     return ctx.text('User-agent: *\nDisallow: /');
