@@ -1,11 +1,13 @@
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import XMLBuilder from 'fast-xml-builder';
 import type { Context, Hono } from 'hono';
 
 import bannerPng from '../assets/banner.png';
 import faviconIco from '../assets/favicon.ico';
 import faviconPng from '../assets/favicon.png';
 import faviconSvg from '../assets/favicon.svg';
-import respond, { isWebsite, withCache } from '../utils/respond.ts';
+import { libraries } from '../utils/metadata.ts';
+import respond, { isWebsite, notFound, withCache } from '../utils/respond.ts';
 
 import IndexPage from './index.page.tsx';
 
@@ -86,6 +88,48 @@ const handleGetOpenSearchXml = (ctx: Context) => {
             'Content-Type': 'application/opensearchdescription+xml',
         },
     );
+};
+
+/**
+ * Handle GET /sitemap.xml requests.
+ *
+ * @param ctx Request context.
+ */
+const handleGetSitemapXml = async (ctx: Context) => {
+    // Only serve a sitemap for website requests
+    if (!isWebsite(ctx)) {
+        return notFound(ctx, 'Endpoint');
+    }
+
+    // Set a 6 hour life on this response
+    withCache(ctx, 6 * 60 * 60);
+
+    const origin = new URL(ctx.req.url).origin;
+    const libraryPaths = (await libraries()).map(
+        (name) => `/libraries/${encodeURIComponent(name)}`,
+    );
+    const sitemap = new XMLBuilder({
+        format: true,
+        ignoreAttributes: false,
+        suppressEmptyNode: true,
+    }).build({
+        '?xml': {
+            '@_version': '1.0',
+            '@_encoding': 'UTF-8',
+        },
+        urlset: {
+            '@_xmlns': 'http://www.sitemaps.org/schemas/sitemap/0.9',
+            url: ['/', '/about', '/api', '/libraries', ...libraryPaths].map(
+                (path) => ({
+                    loc: `${origin}${path}`,
+                }),
+            ),
+        },
+    });
+
+    return ctx.body(sitemap, 200, {
+        'Content-Type': 'application/xml',
+    });
 };
 
 /**
@@ -171,6 +215,9 @@ export default (app: Hono, _registry: OpenAPIRegistry) => {
 
     // Provide OpenSearch support for the website
     app.get('/opensearch.xml', handleGetOpenSearchXml);
+
+    // Provide a sitemap for the website
+    app.get('/sitemap.xml', handleGetSitemapXml);
 
     // Serve the favicon assets
     app.get('/favicon.ico', handleGetFaviconIco);
