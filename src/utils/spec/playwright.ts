@@ -2,9 +2,6 @@ import { test as base, expect } from '@playwright/test';
 import { type TestHarness, createTestHarness } from 'wrangler';
 
 const configPath = './wrangler.jsonc';
-// isWebsite() uses startsWith(), so the trailing colon matches every
-// dynamically allocated loopback port without matching another host.
-const websiteBase = 'http://127.0.0.1:';
 
 interface TestFixtures {
     reset: undefined;
@@ -19,7 +16,10 @@ export const createServer = (vars?: Record<string, string>) =>
         workers: [
             {
                 configPath,
-                vars: { WEBSITE_BASE: websiteBase, ...vars },
+                vars: {
+                    WEBSITE_BASE: 'http://127.0.0.1:*',
+                    ...vars,
+                },
             },
         ],
     });
@@ -55,7 +55,7 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
         }
 
         const { url } = await server.listen();
-        await use(url.href);
+        await use(url.origin);
     },
     reset: [
         async ({ server }, use, testInfo) => {
