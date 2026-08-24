@@ -61,6 +61,7 @@ const styles = {
         display: flex;
         flex-wrap: wrap;
         align-items: baseline;
+        justify-content: center;
         gap: ${theme.spacing(1, 2)};
     `,
     name: css`
