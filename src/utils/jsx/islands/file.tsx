@@ -21,6 +21,7 @@ const styles = {
         font-weight: ${theme.font.small.weight};
         padding: ${theme.spacing(0.5, 1)};
         flex: 1;
+        word-break: break-word;
     `,
 };
 
