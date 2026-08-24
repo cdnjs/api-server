@@ -1,4 +1,26 @@
-import { expect, test } from '../utils/spec/playwright.ts';
+import { XMLParser } from 'fast-xml-parser';
+
+import { createServer, expect, test } from '../utils/spec/playwright.ts';
+
+interface Sitemap {
+    urlset?: {
+        '@_xmlns'?: string;
+        url?: { loc?: string } | { loc?: string }[];
+    };
+}
+
+interface OpenSearch {
+    OpenSearchDescription?: {
+        '@_xmlns'?: string;
+        '@_xmlns:moz'?: string;
+        ShortName?: string;
+        Url?: {
+            '@_type'?: string;
+            '@_method'?: string;
+            '@_template'?: string;
+        };
+    };
+}
 
 test.describe('/', () => {
     test('renders page', async ({ page }) => {
@@ -65,8 +87,17 @@ test.describe('/health', () => {
 });
 
 test.describe('/robots.txt', () => {
-    test('valid response', async ({ page }) => {
-        const response = await page.request.get('/robots.txt');
+    const isProduction =
+        process.env.PLAYWRIGHT_EXTERNAL_WEB_URL?.replace(/\/+$/, '') ===
+        'https://cdnjs.com';
+
+    test('blocks indexing on non-production websites', async ({ page }) => {
+        test.skip(
+            isProduction,
+            'Production website robots.txt does not block indexing',
+        );
+
+        const response = await page.goto('/robots.txt');
         expect(response?.ok()).toBe(true);
         expect(response?.status()).toBe(200);
         expect(response?.headers()['cache-control']).toBe(
@@ -76,6 +107,49 @@ test.describe('/robots.txt', () => {
             /^text\/plain(;|$)/,
         );
         expect(await response?.text()).toBe('User-agent: *\nDisallow: /');
+    });
+
+    test('allows indexing on production website', async ({ page }) => {
+        // If we're not running against production, map the /robots.txt request
+        //  to a test server that simulates the production environment
+        let cleanup = () => Promise.resolve();
+        if (!isProduction) {
+            const server = createServer({ WEBSITE_BASE: 'https://cdnjs.com' });
+            await server.listen();
+
+            const route = await page.route('/robots.txt', async (route) => {
+                const response = await server
+                    .getWorker()
+                    .fetch('https://cdnjs.com/robots.txt');
+                route.fulfill({
+                    status: response.status,
+                    headers: Object.fromEntries(response.headers.entries()),
+                    body: await response.text(),
+                });
+            });
+
+            cleanup = async () => {
+                await route.dispose();
+                await server.close();
+            };
+        }
+
+        try {
+            const response = await page.goto('/robots.txt');
+            expect(response?.ok()).toBe(true);
+            expect(response?.status()).toBe(200);
+            expect(response?.headers()['cache-control']).toBe(
+                'public, max-age=30672000, immutable',
+            ); // 355 days
+            expect(response?.headers()['content-type']).toMatch(
+                /^text\/plain(;|$)/,
+            );
+            expect(await response?.text()).toBe(
+                'User-agent: *\nAllow: /\nSitemap: https://cdnjs.com/sitemap.xml',
+            );
+        } finally {
+            await cleanup();
+        }
     });
 });
 
@@ -90,8 +164,62 @@ test.describe('/opensearch.xml', () => {
         expect(response?.headers()['content-type']).toMatch(
             /^application\/opensearchdescription\+xml(;|$)/,
         );
-        expect(await response?.text()).toContain(
-            '/libraries?search={searchTerms}',
+
+        const body = await response.text();
+        const origin = new URL(response.url()).origin;
+        const opensearch = new XMLParser({
+            ignoreAttributes: false,
+        }).parse(body) as unknown as OpenSearch;
+        const description = opensearch.OpenSearchDescription;
+
+        expect(description?.['@_xmlns']).toBe(
+            'http://a9.com/-/spec/opensearch/1.1/',
+        );
+        expect(description?.['@_xmlns:moz']).toBe(
+            'http://www.mozilla.org/2006/browser/search/',
+        );
+        expect(description?.ShortName).toBe('cdnjs');
+        expect(description?.Url?.['@_type']).toBe('text/html');
+        expect(description?.Url?.['@_method']).toBe('GET');
+        expect(description?.Url?.['@_template']).toBe(
+            `${origin}/libraries?search={searchTerms}`,
+        );
+    });
+});
+
+test.describe('/sitemap.xml', () => {
+    test('valid response', async ({ page }) => {
+        const response = await page.request.get('/sitemap.xml');
+        expect(response?.ok()).toBe(true);
+        expect(response?.status()).toBe(200);
+        expect(response?.headers()['cache-control']).toBe(
+            'public, max-age=21600',
+        ); // 6 hours
+        expect(response?.headers()['content-type']).toMatch(
+            /^application\/xml(;|$)/,
+        );
+
+        const body = await response.text();
+        const origin = new URL(response.url()).origin;
+        const sitemap = new XMLParser({
+            ignoreAttributes: false,
+        }).parse(body) as unknown as Sitemap;
+        const urls = sitemap.urlset?.url;
+
+        expect(sitemap.urlset?.['@_xmlns']).toBe(
+            'http://www.sitemaps.org/schemas/sitemap/0.9',
+        );
+        expect(Array.isArray(urls)).toBe(true);
+        if (!Array.isArray(urls)) throw new Error('Missing sitemap URLs');
+
+        const locations = urls.map((url) => url.loc);
+        expect(locations).toContain(`${origin}/`);
+        expect(locations).toContain(`${origin}/about`);
+        expect(locations).toContain(`${origin}/api`);
+        expect(locations).toContain(`${origin}/libraries`);
+        expect(locations).toContain(`${origin}/libraries/backbone.js`);
+        expect(locations).not.toContain(
+            `${origin}/libraries/backbone.js/1.1.0`,
         );
     });
 });

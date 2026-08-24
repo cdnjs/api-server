@@ -74,10 +74,21 @@ export const withCache = (ctx: Context, age: number, immutable = false) => {
 /**
  * Check if the request is from the website base URL, and should get a React response, instead of a JSON response for API requests.
  *
+ * Supports a wildcard port to be used for local development.
+ *
  * @param ctx Request context.
  */
-export const isWebsite = (ctx: Context) =>
-    env.WEBSITE_BASE && ctx.req.url.startsWith(env.WEBSITE_BASE);
+export const isWebsite = (ctx: Context) => {
+    if (!env.WEBSITE_BASE) return false;
+
+    const { origin } = new URL(ctx.req.url);
+    return (
+        origin === env.WEBSITE_BASE ||
+        (env.WEBSITE_BASE.endsWith(':*') &&
+            origin.replace(/:\d+$/, '') ===
+                env.WEBSITE_BASE.replace(/:\*$/, ''))
+    );
+};
 
 /**
  * Respond to a request with data, handling if it should be returned as JSON or rendered as a React response.

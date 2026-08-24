@@ -1,11 +1,14 @@
 import type { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import { env } from 'cloudflare:workers';
+import XMLBuilder from 'fast-xml-builder';
 import type { Context, Hono } from 'hono';
 
 import bannerPng from '../assets/banner.png';
 import faviconIco from '../assets/favicon.ico';
 import faviconPng from '../assets/favicon.png';
 import faviconSvg from '../assets/favicon.svg';
-import respond, { isWebsite, withCache } from '../utils/respond.ts';
+import { libraries } from '../utils/metadata.ts';
+import respond, { isWebsite, notFound, withCache } from '../utils/respond.ts';
 
 import IndexPage from './index.page.tsx';
 
@@ -54,6 +57,13 @@ const handleGetRobotsTxt = (ctx: Context) => {
     // This is also immutable
     withCache(ctx, 355 * 24 * 60 * 60, true);
 
+    // Only the production site at cdnjs.com should ever be indexable
+    if (env.WEBSITE_BASE === 'https://cdnjs.com' && isWebsite(ctx)) {
+        return ctx.text(
+            'User-agent: *\nAllow: /\nSitemap: https://cdnjs.com/sitemap.xml',
+        );
+    }
+
     // Disallow all robots
     return ctx.text('User-agent: *\nDisallow: /');
 };
@@ -64,28 +74,99 @@ const handleGetRobotsTxt = (ctx: Context) => {
  * @param ctx Request context.
  */
 const handleGetOpenSearchXml = (ctx: Context) => {
+    // Only serve OpenSearch for website requests
+    if (!isWebsite(ctx)) {
+        return notFound(ctx, 'Endpoint');
+    }
+
     // Set a 355 day (same as CDN) life on this response
     // This is also immutable
     withCache(ctx, 355 * 24 * 60 * 60, true);
 
-    // Respond
     const origin = new URL(ctx.req.url).origin;
-    return ctx.body(
-        `<?xml version="1.0" encoding="UTF-8"?>
-<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
-    <ShortName>cdnjs</ShortName>
-    <Description>cdnjs is the free, open-source CDN for the web's most popular libraries. JavaScript, CSS, and font resources, globally cached on Cloudflare's network. Trusted by 12.5% of all websites, serving 250 billion requests per month.</Description>
-    <InputEncoding>UTF-8</InputEncoding>
-    <Image type="image/x-icon">${origin}/favicon.ico</Image>
-    <Image type="image/png">${origin}/favicon.png</Image>
-    <Image type="image/svg+xml">${origin}/favicon.svg</Image>
-    <Url type="text/html" method="GET" template="${origin}/libraries?search={searchTerms}"/>
-</OpenSearchDescription>`,
-        200,
-        {
-            'Content-Type': 'application/opensearchdescription+xml',
+    const opensearch = new XMLBuilder({
+        format: true,
+        ignoreAttributes: false,
+        suppressEmptyNode: true,
+    }).build({
+        '?xml': {
+            '@_version': '1.0',
+            '@_encoding': 'UTF-8',
         },
+        OpenSearchDescription: {
+            '@_xmlns': 'http://a9.com/-/spec/opensearch/1.1/',
+            '@_xmlns:moz': 'http://www.mozilla.org/2006/browser/search/',
+            ShortName: 'cdnjs',
+            Description:
+                "cdnjs is the free, open-source CDN for the web's most popular libraries. JavaScript, CSS, and font resources, globally cached on Cloudflare's network. Trusted by 12.5% of all websites, serving 250 billion requests per month.",
+            InputEncoding: 'UTF-8',
+            Image: [
+                {
+                    '@_type': 'image/x-icon',
+                    '#text': `${origin}/favicon.ico`,
+                },
+                {
+                    '@_type': 'image/png',
+                    '#text': `${origin}/favicon.png`,
+                },
+                {
+                    '@_type': 'image/svg+xml',
+                    '#text': `${origin}/favicon.svg`,
+                },
+            ],
+            Url: {
+                '@_type': 'text/html',
+                '@_method': 'GET',
+                '@_template': `${origin}/libraries?search={searchTerms}`,
+            },
+        },
+    });
+
+    return ctx.body(opensearch, 200, {
+        'Content-Type': 'application/opensearchdescription+xml',
+    });
+};
+
+/**
+ * Handle GET /sitemap.xml requests.
+ *
+ * @param ctx Request context.
+ */
+const handleGetSitemapXml = async (ctx: Context) => {
+    // Only serve a sitemap for website requests
+    if (!isWebsite(ctx)) {
+        return notFound(ctx, 'Endpoint');
+    }
+
+    // Set a 6 hour life on this response
+    withCache(ctx, 6 * 60 * 60);
+
+    const origin = new URL(ctx.req.url).origin;
+    const libraryPaths = (await libraries()).map(
+        (name) => `/libraries/${encodeURIComponent(name)}`,
     );
+    const sitemap = new XMLBuilder({
+        format: true,
+        ignoreAttributes: false,
+        suppressEmptyNode: true,
+    }).build({
+        '?xml': {
+            '@_version': '1.0',
+            '@_encoding': 'UTF-8',
+        },
+        urlset: {
+            '@_xmlns': 'http://www.sitemaps.org/schemas/sitemap/0.9',
+            url: ['/', '/about', '/api', '/libraries', ...libraryPaths].map(
+                (path) => ({
+                    loc: `${origin}${path}`,
+                }),
+            ),
+        },
+    });
+
+    return ctx.body(sitemap, 200, {
+        'Content-Type': 'application/xml',
+    });
 };
 
 /**
@@ -171,6 +252,9 @@ export default (app: Hono, _registry: OpenAPIRegistry) => {
 
     // Provide OpenSearch support for the website
     app.get('/opensearch.xml', handleGetOpenSearchXml);
+
+    // Provide a sitemap for the website
+    app.get('/sitemap.xml', handleGetSitemapXml);
 
     // Serve the favicon assets
     app.get('/favicon.ico', handleGetFaviconIco);
