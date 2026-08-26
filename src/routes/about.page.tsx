@@ -1,6 +1,7 @@
 import { css } from '@emotion/css';
 
 import Header from '../utils/jsx/header.tsx';
+import Section from '../utils/jsx/section.tsx';
 import sponsors from '../utils/sponsors.ts';
 import theme from '../utils/theme.ts';
 
@@ -42,43 +43,6 @@ const styles = {
             font-family: ${theme.font.families.home};
             font-size: ${theme.font.large.size};
             font-weight: ${theme.font.large.weight};
-        }
-    `,
-    heading: css`
-        font-size: ${theme.font.large.size};
-        font-weight: ${theme.font.large.weight};
-        display: flex;
-        align-items: center;
-        gap: ${theme.spacing(2)};
-        margin: 0;
-
-        &::after {
-            content: '';
-            flex-grow: 1;
-            height: ${theme.spacing(0.125)};
-            background: ${theme.text.primary};
-            margin: ${theme.spacing(0.25, 0, 0)};
-            opacity: 0.125;
-        }
-    `,
-    section: css`
-        margin: ${theme.spacing(4, 0, 0)};
-
-        p {
-            color: ${theme.text.secondary};
-            font-size: ${theme.font.body.size};
-            font-weight: ${theme.font.body.weight};
-            margin: ${theme.spacing(2, 0, 0)};
-
-            a {
-                color: ${theme.text.brand};
-                text-decoration: underline;
-
-                &:hover,
-                &:focus {
-                    text-decoration: none;
-                }
-            }
         }
     `,
     split: css`
@@ -313,11 +277,7 @@ export default () => {
                 </ul>
             </Header>
 
-            <div className={styles.section}>
-                <h2 className={styles.heading} id="what-is-cdnjs">
-                    What is cdnjs?
-                </h2>
-
+            <Section id="what-is-cdnjs" title="What is cdnjs?">
                 <div className={styles.split}>
                     <div>
                         <p>
@@ -359,13 +319,9 @@ export default () => {
                         </p>
                     </div>
                 </div>
-            </div>
+            </Section>
 
-            <div className={styles.section}>
-                <h2 className={styles.heading} id="adding-a-library">
-                    Adding a library
-                </h2>
-
+            <Section id="adding-a-library" title="Adding a library">
                 <div className={styles.split}>
                     <div>
                         <p>
@@ -406,13 +362,9 @@ export default () => {
                         </pre>
                     </div>
                 </div>
-            </div>
+            </Section>
 
-            <div className={styles.section}>
-                <h2 className={styles.heading} id="team">
-                    Team
-                </h2>
-
+            <Section id="team" title="Team">
                 <div className={styles.team}>
                     <p>Maintained by</p>
                     <div />
@@ -469,13 +421,9 @@ export default () => {
                         </li>
                     </ul>
                 </div>
-            </div>
+            </Section>
 
-            <div className={styles.section}>
-                <h2 className={styles.heading} id="sponsors">
-                    Sponsors
-                </h2>
-
+            <Section id="sponsors" title="Sponsors">
                 <p>
                     cdnjs is free to use because of the generosity of these
                     organisations. Their support covers infrastructure, tooling,
@@ -501,7 +449,7 @@ export default () => {
                         </li>
                     ))}
                 </ul>
-            </div>
+            </Section>
         </div>
     );
 };

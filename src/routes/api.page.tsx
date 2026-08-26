@@ -2,11 +2,18 @@ import { css } from '@emotion/css';
 
 import Header from '../utils/jsx/header.tsx';
 import Swagger from '../utils/jsx/islands/swagger.tsx';
+import Section from '../utils/jsx/section.tsx';
 import theme from '../utils/theme.ts';
 
 import type { OpenApiResponse } from './api.schema.ts';
 
 const styles = {
+    container: css`
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        padding: ${theme.spacing(0, 0, 2)};
+    `,
     header: css`
         display: flex;
         align-items: center;
@@ -45,7 +52,7 @@ const styles = {
  */
 export default ({ data }: { data: OpenApiResponse }) => {
     return (
-        <>
+        <div className={styles.container}>
             <Header
                 title={
                     <>
@@ -62,6 +69,18 @@ export default ({ data }: { data: OpenApiResponse }) => {
             </Header>
 
             <Swagger spec={data} />
-        </>
+
+            <Section id="operating-a-mirror" title="Operating a mirror?">
+                <p>
+                    If you run a mirror of cdnjs and would like read-only S3
+                    credentials to our Cloudflare R2 bucket for faster syncing,
+                    please open an issue in the{' '}
+                    <a href="https://github.com/cdnjs/cdnjs" rel="noopener">
+                        cdnjs/cdnjs repository
+                    </a>{' '}
+                    and we'll be happy to help.
+                </p>
+            </Section>
+        </div>
     );
 };
