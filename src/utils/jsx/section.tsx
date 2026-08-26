@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 
 import theme from '../theme.ts';
 
-const styles = {
+export const styles = {
     section: css`
         margin: ${theme.spacing(4, 0, 0)};
 

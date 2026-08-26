@@ -6,6 +6,7 @@ import swaggerStyles from 'swagger-ui-react/swagger-ui.css';
 
 import theme from '../../theme.ts';
 import createIsland from '../island.tsx';
+import { styles as sectionStyles } from '../section.tsx';
 
 const mixins = {
     pre: css`
@@ -43,7 +44,9 @@ const mixins = {
 
 const styles = {
     container: css`
-        margin: ${theme.spacing(2, 0, 0)};
+        position: relative;
+        min-height: ${theme.spacing(5)};
+        margin: ${theme.spacing(2, 0, -2)};
 
         .swagger-ui {
             pre {
@@ -235,12 +238,8 @@ const styles = {
         }
     `,
     header: css`
-        display: flex;
-        align-items: center;
-        gap: ${theme.spacing(1)};
-        font-size: ${theme.font.large.size};
-        font-weight: bold;
-        padding: ${theme.spacing(1.25, 2, 1.25, 1.25)};
+        ${sectionStyles.heading};
+        padding: ${theme.spacing(1.25, 2, 1.25, 0)};
         margin: 0 0 ${theme.spacing(0.625)};
         cursor: pointer;
         color: inherit;
@@ -248,6 +247,7 @@ const styles = {
         > svg:last-child {
             margin-left: auto;
             flex-shrink: 0;
+            order: 1;
         }
     `,
     path: css`
@@ -665,12 +665,12 @@ const Swagger = ({ spec }: { spec: object }) => {
                     tryItOutEnabled
                     displayRequestDuration
                 />
+                {loading && (
+                    <div className={styles.loader}>
+                        Loading OpenAPI specification...
+                    </div>
+                )}
             </div>
-            {loading && (
-                <div className={styles.loader}>
-                    Loading OpenAPI specification...
-                </div>
-            )}
         </>
     );
 };
