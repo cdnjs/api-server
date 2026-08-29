@@ -87,6 +87,19 @@ test.describe('/libraries/:library/:version', () => {
 
         const version = page.getByRole('combobox', { name: 'Version:' });
         await expect(version).toHaveValue('1.1.0');
+
+        const groups = version.getByRole('group', { includeHidden: true });
+
+        const versions = groups.and(page.locator('[label="Versions"]'));
+        await expect(
+            versions.getByRole('option', { name: '1.1.0' }),
+        ).toBeAttached();
+
+        const prereleases = groups.and(page.locator('[label="Prereleases"]'));
+        await expect(
+            prereleases.getByRole('option', { name: '0.9.9-amdjs' }),
+        ).toBeAttached();
+
         await version.selectOption({ label: '1.0.0' });
         await expect(page).toHaveURL('/libraries/backbone.js/1.0.0');
     });
