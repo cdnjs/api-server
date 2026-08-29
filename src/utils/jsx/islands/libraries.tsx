@@ -174,51 +174,60 @@ const Libraries = ({
 }: {
     initial: {
         results: Result[];
+        total: number;
         search: string;
     };
 }) => {
-    const [state, setState] = useState<'idle' | 'loading' | 'failed'>('idle');
+    const [state, setState] = useState<'idle' | 'loading' | 'failed'>(
+        'loading',
+    );
     const [results, setResults] = useState(initial.results);
     const [search, setSearch] = useState(initial.search);
     const abortRef = useRef<AbortController | null>(null);
 
     useEffect(() => {
-        const timer = setTimeout(async () => {
-            const controller = new AbortController();
-            abortRef.current?.abort();
-            abortRef.current = controller;
+        const timer = setTimeout(
+            async () => {
+                const controller = new AbortController();
+                abortRef.current?.abort();
+                abortRef.current = controller;
 
-            try {
-                setState('loading');
-                setResults(
-                    search === initial.search
-                        ? initial.results
-                        : await getResults(search, controller.signal),
-                );
-                setState('idle');
+                try {
+                    setState('loading');
+                    setResults(await getResults(search, controller.signal));
+                    setState('idle');
 
-                const url = new URL(window.location.href);
-                if (search === '') {
-                    url.searchParams.delete('search');
-                } else {
-                    url.searchParams.set('search', search);
+                    const url = new URL(window.location.href);
+                    if (search === '') {
+                        url.searchParams.delete('search');
+                    } else {
+                        url.searchParams.set('search', search);
+                    }
+                    window.history.replaceState({}, '', url.toString());
+                } catch (err) {
+                    if (!controller.signal.aborted) {
+                        console.error(err);
+                        setState('failed');
+                    }
                 }
-                window.history.replaceState({}, '', url.toString());
-            } catch (err) {
-                if (!controller.signal.aborted) {
-                    console.error(err);
-                    setState('failed');
-                }
-            }
-        }, 300);
+            },
+            // First search on page load should happen immediately to populate the full results
+            abortRef.current ? 300 : 0,
+        );
 
         return () => clearTimeout(timer);
     }, [search, initial.search, initial.results]);
 
-    const [total, setTotal] = useState(results.length.toLocaleString('en-US'));
+    const [total, setTotal] = useState(initial.total.toLocaleString('en-US'));
     useEffect(() => {
-        setTotal(results.length.toLocaleString());
-    }, [results.length]);
+        setTotal(
+            // Initial results are truncated so use the initial total rather than length
+            (results === initial.results
+                ? initial.total
+                : results.length
+            ).toLocaleString(),
+        );
+    }, [results]);
 
     const [columns, setColumns] = useState(2);
     const listRef = useRef<HTMLUListElement | null>(null);

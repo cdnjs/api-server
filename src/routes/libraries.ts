@@ -49,10 +49,10 @@ const handleGetLibraries = async (ctx: Context) => {
     }));
 
     // Get the trimmed response, allowing a limit to be applied if this is an API request
-    const limit =
-        !isWebsite(ctx) &&
-        ctx.req.query('limit') &&
-        Number(ctx.req.query('limit'));
+    // If this is a website request then truncate the results to reduce HTML payload
+    const limit = isWebsite(ctx)
+        ? 100
+        : ctx.req.query('limit') && Number(ctx.req.query('limit'));
     const trimmed = limit ? response.slice(0, limit) : response;
 
     // Set a 6 hour life on this response

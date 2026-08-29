@@ -33,5 +33,9 @@ export default ({
         throw new Error('Results data is missing required fields');
     }
 
-    return <Libraries initial={{ results: data.results, search }} />;
+    return (
+        <Libraries
+            initial={{ results: data.results, total: data.available, search }}
+        />
+    );
 };
