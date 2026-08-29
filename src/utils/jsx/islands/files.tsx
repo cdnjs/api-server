@@ -9,11 +9,14 @@ import {
     useRef,
     useState,
 } from 'react';
+import semver from 'semver';
 
 import fileTypes from '../../files.ts';
 import theme from '../../theme.ts';
 import Copy from '../copy.tsx';
 import createIsland from '../island.tsx';
+
+const isPre = (version: string) => semver.prerelease(version) !== null;
 
 const styles = {
     toolbar: css`
@@ -107,6 +110,18 @@ const Versions = ({
     versions: string[];
 }) => {
     const [selected, setSelected] = useState(version);
+    const grouped = useMemo(
+        () =>
+            versions.reduce<{ rel: string[]; pre: string[] }>(
+                (groups, ver) => {
+                    groups[isPre(ver) ? 'pre' : 'rel'].push(ver);
+                    return groups;
+                },
+                { rel: [], pre: [] },
+            ),
+        [versions],
+    );
+
     return (
         <div className={styles.dropdown}>
             <label htmlFor="version">Version:</label>
@@ -121,11 +136,24 @@ const Versions = ({
                     window.location.href = `/libraries/${encodeURIComponent(name)}/${encodeURIComponent(changed)}`;
                 }}
             >
-                {versions.map((ver) => (
-                    <option key={ver} value={ver}>
-                        {ver}
-                    </option>
-                ))}
+                {!!grouped.rel.length && (
+                    <optgroup label="Versions">
+                        {grouped.rel.map((ver) => (
+                            <option key={ver} value={ver}>
+                                {ver}
+                            </option>
+                        ))}
+                    </optgroup>
+                )}
+                {!!grouped.pre.length && (
+                    <optgroup label="Prereleases">
+                        {grouped.pre.map((ver) => (
+                            <option key={ver} value={ver}>
+                                {ver}
+                            </option>
+                        ))}
+                    </optgroup>
+                )}
             </select>
         </div>
     );
