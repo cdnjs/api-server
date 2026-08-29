@@ -1,7 +1,7 @@
 {
     "name": "api-server",
     "version": "1.0.0",
-    "description": "The new API server for api.cdnjs.com",
+    "description": "The Cloudflare worker powering cdnjs.com + api.cdnjs.com",
     "private": true,
     "type": "module",
     "main": "src/index.ts",
