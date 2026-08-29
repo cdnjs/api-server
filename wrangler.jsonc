@@ -89,10 +89,16 @@
             },
         },
         "production": {
-            "route": {
-                "pattern": "api.cdnjs.com/*",
-                "zone_name": "cdnjs.com",
-            },
+            "routes": [
+                {
+                    "pattern": "api.cdnjs.com/*",
+                    "zone_name": "cdnjs.com",
+                },
+                {
+                    "pattern": "cdnjs.com/*",
+                    "zone_name": "cdnjs.com",
+                },
+            ],
             "kv_namespaces": [
                 {
                     "binding": "CACHE",

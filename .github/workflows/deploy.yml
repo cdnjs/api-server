@@ -77,7 +77,6 @@ jobs:
 
       - name: Run Web Tests (deployed)
         id: web-tests-deployed
-        if: github.ref_name == 'staging'
         run: npm run test:web
         env:
           PLAYWRIGHT_EXTERNAL_WEB_URL: ${{ github.ref_name == 'production' && 'https://cdnjs.com' || 'https://cdnjs.dev' }}

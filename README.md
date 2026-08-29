@@ -6,7 +6,7 @@
 
 ---
 
-## cdnjs API Server
+## cdnjs API + Website Worker
 
 Looking for the documentation on our API?
 
@@ -38,9 +38,9 @@ This command will run the worker entirely locally, and you can access the API at
 
 ### Website React Output
 
-The same API server worker also powers the [cdnjs.com](https://cdnjs.com) website, returning
+The same Cloudflare worker also powers the [cdnjs.com](https://cdnjs.com) website, returning
 rendered React responses. This done by setting the `WEBSITE_BASE` Worker environment variable, which
-will cause the API server to return HTML instead of JSON when a request has a matching base URL.
+will cause the worker to return HTML instead of JSON when a request has a matching base URL.
 While the worker cannot be served from multiple base URLs in development mode, you can run the
 worker with the `WEBSITE_BASE` environment variable set to `http://localhost:8787` to test locally:
 
@@ -114,7 +114,7 @@ npm run test:web
 
 ### Type-Checking
 
-The API server is written in TypeScript, and the types are checked as part of the test suite. If you
+The worker is written in TypeScript, and the types are checked as part of the test suite. If you
 want to run the type-checking separately, you can use:
 
 ```sh
@@ -132,7 +132,7 @@ npm run prepare:types
 ### Linting
 
 Included in this repository is an [eslint config file](eslint.config.js) to help with ensuring a
-consistent style and safely written codebase for the API server. To run eslint at any time, which
+consistent style and safely written codebase for the worker. To run eslint at any time, which
 checks all the TypeScript files, you can use:
 
 ```sh
@@ -164,19 +164,19 @@ npm run format:fix
 
 ## Error Logging
 
-We use Sentry to handle our error logging. To enable Sentry in the API server, set the `SENTRY_DSN`
-environment variable in the [Wrangler config file](wrangler.jsonc) for the appropriate environment to
-a valid DSN URL from Sentry. The `SENTRY_RELEASE` environment variable can also be set to identify a
-specific release of the worker (our GitHub Actions workflows for deployments set this to the current
-commit hash).
+We use Sentry to handle our error logging. To enable Sentry in the worker, set the `SENTRY_DSN`
+environment variable in the [Wrangler config file](wrangler.jsonc) for the appropriate environment
+to a valid DSN URL from Sentry. The `SENTRY_RELEASE` environment variable can also be set to
+identify a specific release of the worker (our GitHub Actions workflows for deployments set this to
+the current commit hash).
 
 ## Deployment
 
-As this API server is written as a Cloudflare Worker, you can deploy it using the Wrangler CLI. This
-can be done manually, but this repository uses [GitHub Actions](.github/workflows) to handle
-deploying to staging (api.cdnjs.dev) and production (api.cdnjs.com) based on commits to the
-staging/production branches, automatically handling not only deploying the worker but also creating
-a Sentry release with full source maps.
+As this API + web server is written as a Cloudflare Worker, it can be deployed via the Wrangler CLI.
+This can be done manually, but this repository uses [GitHub Actions](.github/workflows) to handle
+deploying to staging (`cdnjs.dev`) and production (`cdnjs.com`) based on commits to the
+`staging`/`production` branches, automatically handling not only deploying the worker but also
+creating a Sentry release with full source maps.
 
 Before deploying, ensure that you generate the required KV namespace for the environment you are
 deploying to and update [`wrangler.jsonc`](wrangler.jsonc) to use the correct ID:
