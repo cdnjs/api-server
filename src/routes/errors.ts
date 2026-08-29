@@ -57,7 +57,7 @@ export default (app: Hono, _registry: OpenAPIRegistry) => {
             data: { message: err.message, stack: err.stack, sentry },
         });
 
-        // Never cache this
+        // Never cache this, including for website responses
         withCache(ctx, -1);
 
         // Send the error response

@@ -6,8 +6,8 @@ test.describe('/libraries', () => {
         expect(response?.ok()).toBe(true);
         expect(response?.status()).toBe(200);
         expect(response?.headers()['cache-control']).toBe(
-            'public, max-age=21600',
-        ); // 6 hours
+            'public, max-age=0, must-revalidate',
+        );
 
         await expect(page).toHaveTitle('Libraries - cdnjs');
         await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(

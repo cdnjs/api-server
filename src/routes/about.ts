@@ -13,9 +13,6 @@ import AboutPage from './about.page.tsx';
 const handleGetAbout = (ctx: Context) => {
     // Render the React page for website requests
     if (isWebsite(ctx)) {
-        // Set a 6 hour life on this response
-        withCache(ctx, 6 * 60 * 60);
-
         return respond<undefined>(ctx, undefined, AboutPage, {
             title: 'About',
             description:

@@ -5,7 +5,7 @@ import {
 import type { Context, Hono } from 'hono';
 import * as z from 'zod';
 
-import respond, { withCache } from '../utils/respond.ts';
+import respond, { isWebsite, withCache } from '../utils/respond.ts';
 
 import ApiPage from './api.page.tsx';
 import { type OpenApiResponse, openApiResponseSchema } from './api.schema.ts';
@@ -130,7 +130,9 @@ const createHandleGetApi = (registry: OpenAPIRegistry) => {
      */
     const handleGetApi = (ctx: Context) => {
         // Set a 6 hour life on this response
-        withCache(ctx, 6 * 60 * 60);
+        if (!isWebsite(ctx)) {
+            withCache(ctx, 6 * 60 * 60);
+        }
 
         return respond<OpenApiResponse>(ctx, getOrGenerateSpec(), ApiPage, {
             title: 'API',
