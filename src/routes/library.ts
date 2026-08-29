@@ -134,10 +134,7 @@ const handleGetLibraryVersion = async (ctx: Context, latest = false) => {
         );
     }
 
-    if (isWebsite(ctx)) {
-        // Set a 6 hour life on this response
-        withCache(ctx, 6 * 60 * 60);
-    } else {
+    if (!isWebsite(ctx)) {
         // Set a 355 day (same as CDN) life on this response
         // This is also immutable as a version will never change
         withCache(ctx, 355 * 24 * 60 * 60, true);

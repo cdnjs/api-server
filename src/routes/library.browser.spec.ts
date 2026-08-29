@@ -19,8 +19,8 @@ test.describe('/libraries/:library/:version', () => {
         expect(response?.ok()).toBe(true);
         expect(response?.status()).toBe(200);
         expect(response?.headers()['cache-control']).toBe(
-            'public, max-age=21600',
-        ); // 6 hours
+            'public, max-age=0, must-revalidate',
+        );
 
         await expect(page).toHaveTitle(
             'backbone.js @ 1.1.0 - Libraries - cdnjs',
@@ -111,8 +111,8 @@ test.describe('/libraries/:library/:version', () => {
         expect(response?.ok()).toBe(false);
         expect(response?.status()).toBe(404);
         expect(response?.headers()['cache-control']).toBe(
-            'public, max-age=3600',
-        ); // 1 hour
+            'public, max-age=0, must-revalidate',
+        );
 
         await expect(page).toHaveTitle('Version Not Found - cdnjs');
         await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
@@ -128,8 +128,8 @@ test.describe('/libraries/:library', () => {
         expect(response?.ok()).toBe(true);
         expect(response?.status()).toBe(200);
         expect(response?.headers()['cache-control']).toBe(
-            'public, max-age=21600',
-        ); // 6 hours
+            'public, max-age=0, must-revalidate',
+        );
 
         await expect(page).toHaveTitle(
             /^backbone\.js @ .+ - Libraries - cdnjs$/,
@@ -170,8 +170,8 @@ test.describe('/libraries/:library', () => {
         expect(response?.ok()).toBe(false);
         expect(response?.status()).toBe(404);
         expect(response?.headers()['cache-control']).toBe(
-            'public, max-age=3600',
-        ); // 1 hour
+            'public, max-age=0, must-revalidate',
+        );
 
         await expect(page).toHaveTitle('Library Not Found - cdnjs');
         await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(

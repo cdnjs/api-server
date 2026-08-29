@@ -20,9 +20,6 @@ import IndexPage from './index.page.tsx';
 const handleGet = (ctx: Context) => {
     // Render the React page for website requests
     if (isWebsite(ctx)) {
-        // Set a 6 hour life on this response
-        withCache(ctx, 6 * 60 * 60);
-
         return respond<undefined>(ctx, undefined, IndexPage);
     }
 

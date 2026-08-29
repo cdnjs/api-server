@@ -56,7 +56,9 @@ const handleGetLibraries = async (ctx: Context) => {
     const trimmed = limit ? response.slice(0, limit) : response;
 
     // Set a 6 hour life on this response
-    withCache(ctx, 6 * 60 * 60);
+    if (!isWebsite(ctx)) {
+        withCache(ctx, 6 * 60 * 60);
+    }
 
     // Send the response
     return respond<LibrariesResponse>(

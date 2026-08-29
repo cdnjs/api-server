@@ -48,7 +48,7 @@ const getCriticalEmotionCss = (html: string) => {
 };
 
 /**
- * Set cache headers on a response.
+ * Set cache headers on an API response.
  *
  * @param ctx Request context.
  * @param age Age in seconds to cache response for (pass -1 to set no-cache headers).
@@ -105,6 +105,20 @@ const respond = async <T = never>(
     meta?: Partial<Meta>,
 ) => {
     if (isWebsite(ctx)) {
+        // Browsers are able to cache website pages, but should always revalidate to ensure fresh content
+        // For error responses, we set a no-cache cache-control header, so don't override that here
+        if (!ctx.res.headers.has('Cache-Control')) {
+            if (env.DISABLE_CACHING) {
+                withCache(ctx, -1);
+            } else {
+                ctx.header('Expires', '0');
+                ctx.header(
+                    'Cache-Control',
+                    'public, max-age=0, must-revalidate',
+                );
+            }
+        }
+
         // Only the production site at cdnjs.com should ever be indexable
         if (env.WEBSITE_BASE !== 'https://cdnjs.com') {
             ctx.header('X-Robots-Tag', 'noindex');
@@ -183,8 +197,10 @@ export default respond;
  * @param resource Resource that was not found.
  */
 export const notFound = (ctx: Context, resource: string) => {
-    // Set a 1 hour on this response
-    withCache(ctx, 60 * 60);
+    // Set a 1 hour life on this response
+    if (!isWebsite(ctx)) {
+        withCache(ctx, 60 * 60);
+    }
 
     // Send the error response
     ctx.status(404);
