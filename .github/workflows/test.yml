@@ -38,7 +38,6 @@ jobs:
 
       - name: Run Web Tests
         id: web-tests
-        if: matrix.worker == 'staging'
         run: npm run test:web
         env:
           PLAYWRIGHT_EXTERNAL_WEB_URL: ${{ matrix.worker == 'production' && 'https://cdnjs.com' || 'https://cdnjs.dev' }}
