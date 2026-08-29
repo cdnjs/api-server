@@ -75,4 +75,24 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
     ],
 });
 
+export const wait = <T>(
+    callback: () => Promise<T> | T,
+    timeout = 1000,
+    interval = 50,
+): Promise<T> =>
+    new Promise<T>(
+        // eslint-disable-next-line no-async-promise-executor
+        async (resolve, reject) => {
+            const signal = AbortSignal.timeout(timeout);
+            while (true) {
+                try {
+                    return resolve(await callback());
+                } catch (err) {
+                    if (signal.aborted) return reject(err);
+                    await new Promise((r) => setTimeout(r, interval));
+                }
+            }
+        },
+    );
+
 export { expect };

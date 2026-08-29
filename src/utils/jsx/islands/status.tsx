@@ -1,5 +1,5 @@
 import { css, cx } from '@emotion/css';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import * as z from 'zod/mini';
 
 import theme from '../../theme.ts';
@@ -32,24 +32,20 @@ const styles: Record<Indicator | 'dot', string> = {
         width: ${theme.spacing(1.25)};
         height: ${theme.spacing(1.25)};
         border-radius: 50%;
-        opacity: 0;
-        transition: opacity ${theme.transition};
+        background-color: ${theme.background.primary};
+        transition: background-color ${theme.transition};
     `,
     none: css`
         background-color: ${theme.status.none};
-        opacity: 1;
     `,
     minor: css`
         background-color: ${theme.status.minor};
-        opacity: 1;
     `,
     major: css`
         background-color: ${theme.status.major};
-        opacity: 1;
     `,
     critical: css`
         background-color: ${theme.status.critical};
-        opacity: 1;
     `,
 };
 
@@ -59,13 +55,29 @@ const Status = () => {
         description: string;
     } | null>(null);
 
-    useEffect(() => {
-        getStatus()
-            .then(setStatus)
-            .catch((err) => {
-                console.error('Error fetching status:', err);
-            });
+    const [visible, setVisible] = useState(false);
+    const ref = useCallback((node: HTMLDivElement) => {
+        const observer = new IntersectionObserver(([entry]) =>
+            setVisible(entry?.isIntersecting ?? false),
+        );
+        observer.observe(node);
+        return () => observer.disconnect();
     }, []);
+
+    useEffect(() => {
+        if (!visible) return;
+
+        const update = () =>
+            getStatus()
+                .then(setStatus)
+                .catch((err) => {
+                    console.error('Error fetching status:', err);
+                });
+
+        update();
+        const interval = setInterval(update, 5 * 60 * 1000);
+        return () => clearInterval(interval);
+    }, [visible]);
 
     return (
         <div
@@ -74,6 +86,7 @@ const Status = () => {
                 status?.indicator && styles[status.indicator],
             )}
             title={status?.description}
+            ref={ref}
         />
     );
 };
