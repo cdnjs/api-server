@@ -211,8 +211,6 @@ export default ({ meta, children }: { meta: Meta; children?: ReactNode }) => (
                     />
                 </Fragment>
             ))}
-
-            <script defer src="https://api.radar.cloudflare.com/beacon.js" />
         </head>
         <body className={cx(styles.body, styles.background)}>
             <main className={styles.main}>
