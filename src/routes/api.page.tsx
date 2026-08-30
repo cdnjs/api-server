@@ -42,6 +42,9 @@ const styles = {
             margin: ${theme.spacing(0, 0.25)};
         }
     `,
+    swagger: css`
+        min-height: ${theme.spacing(90)};
+    `,
 };
 
 /**
@@ -68,7 +71,7 @@ export default ({ data }: { data: OpenApiResponse }) => {
                 </div>
             </Header>
 
-            <Swagger spec={data} />
+            <Swagger spec={data} className={styles.swagger} />
 
             <Section id="operating-a-mirror" title="Operating a mirror?">
                 <p>

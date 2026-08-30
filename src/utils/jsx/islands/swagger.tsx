@@ -1,4 +1,4 @@
-import { css } from '@emotion/css';
+import { css, cx } from '@emotion/css';
 import { Collection, List, Map } from 'immutable';
 import { type ComponentType, Fragment, type ReactNode, useState } from 'react';
 import SwaggerUI from 'swagger-ui-react';
@@ -645,8 +645,9 @@ const scopedSwaggerStyles = swaggerStyles
  *
  * @param props Component props.
  * @param props.spec OpenAPI specification to render.
+ * @param props.className Optional additional class name for the container.
  */
-const Swagger = ({ spec }: { spec: object }) => {
+const Swagger = ({ spec, className }: { spec: object; className?: string }) => {
     const [loading, setLoading] = useState(true);
 
     return (
@@ -656,7 +657,7 @@ const Swagger = ({ spec }: { spec: object }) => {
                     __html: `@layer { ${scopedSwaggerStyles} }`,
                 }}
             />
-            <div className={styles.container}>
+            <div className={cx(styles.container, className)}>
                 <SwaggerUI
                     spec={spec}
                     onComplete={() => setLoading(false)}
