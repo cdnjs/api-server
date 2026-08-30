@@ -357,10 +357,10 @@ const Header = ({
     );
 
     return (
-        <h3 className={styles.header} onClick={onClick}>
+        <h2 className={styles.header} onClick={onClick}>
             <span>{children}</span>
             <ArrowIcon />
-        </h3>
+        </h2>
     );
 };
 
