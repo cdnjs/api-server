@@ -1,6 +1,13 @@
 import { css } from '@emotion/css';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import {
+    type Ref,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import * as z from 'zod/mini';
 
 import theme from '../../theme.ts';
@@ -56,23 +63,20 @@ const styles = {
         }
     `,
     results: css`
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: ${theme.spacing(2)};
         padding: 0;
         margin: ${theme.spacing(2, 0, 0)};
         list-style: none;
         transition: opacity ${theme.transition};
 
-        @starting-style {
-            opacity: 0;
-        }
-    `,
-    row: css`
-        width: 100%;
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: ${theme.spacing(2)};
-
         ${theme.breakpoints.medium} {
             grid-template-columns: 1fr;
+        }
+
+        @starting-style {
+            opacity: 0;
         }
     `,
     card: css`
@@ -137,15 +141,19 @@ const Result = ({
     description,
     latest,
     sri,
+    index,
+    ref,
 }: {
     name: string;
     version: string;
     description: string;
     latest: string | null;
     sri: string;
+    index: number;
+    ref?: Ref<HTMLLIElement>;
 }) => {
     return (
-        <li className={styles.card}>
+        <li className={styles.card} data-index={index} ref={ref}>
             <div className={styles.name}>
                 <a href={`/libraries/${encodeURIComponent(name)}`}>
                     {name}
@@ -285,6 +293,16 @@ const Libraries = ({
         initialRect: { width: 0, height: 1000 },
     });
 
+    const virtualItems = virtualizer.getVirtualItems();
+    const firstVirtualItem = virtualItems.at(0);
+    const paddingTop = firstVirtualItem
+        ? Math.max(0, firstVirtualItem.start - virtualizer.options.scrollMargin)
+        : 0;
+    const lastVirtualItem = virtualItems.at(-1);
+    const paddingBottom = lastVirtualItem
+        ? Math.max(0, virtualizer.getTotalSize() - lastVirtualItem.end)
+        : 0;
+
     return (
         <>
             <Header
@@ -307,36 +325,27 @@ const Libraries = ({
             <ul
                 ref={listRef}
                 style={{
-                    height: `${virtualizer.getTotalSize()}px`,
-                    position: 'relative',
+                    paddingTop,
+                    paddingBottom,
                 }}
                 className={styles.results}
             >
-                {virtualizer.getVirtualItems().map((item) => {
+                {virtualItems.map((item) => {
                     const row = rows[item.index];
                     if (!row) return null;
 
-                    return (
-                        <div
-                            key={item.key}
-                            className={styles.row}
-                            style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                transform: `translateY(${item.start - virtualizer.options.scrollMargin}px)`,
-                            }}
-                            data-index={item.index}
-                            ref={virtualizer.measureElement}
-                        >
-                            {row.values.map((result) => (
-                                <Result
-                                    key={`${result.name}:${result.version}`}
-                                    {...result}
-                                />
-                            ))}
-                        </div>
-                    );
+                    return row.values.map((result, col) => (
+                        <Result
+                            key={`${result.name}:${result.version}`}
+                            {...result}
+                            index={item.index}
+                            ref={
+                                col === 0
+                                    ? virtualizer.measureElement
+                                    : undefined
+                            }
+                        />
+                    ));
                 })}
             </ul>
         </>
