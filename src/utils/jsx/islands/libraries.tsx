@@ -2,6 +2,7 @@ import { css } from '@emotion/css';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import {
     type Ref,
+    startTransition,
     useEffect,
     useLayoutEffect,
     useMemo,
@@ -38,7 +39,9 @@ const getResults = async (search: string, signal?: AbortSignal) => {
     }
 
     const data = await res.json();
-    return z.object({ results: z.array(resultSchema) }).parse(data).results;
+    return z
+        .object({ results: z.array(resultSchema), available: z.number() })
+        .parse(data);
 };
 
 const styles = {
@@ -194,48 +197,45 @@ const Libraries = ({
     const abortRef = useRef<AbortController | null>(null);
 
     useEffect(() => {
-        const timer = setTimeout(
-            async () => {
-                const controller = new AbortController();
-                abortRef.current?.abort();
-                abortRef.current = controller;
+        const controller = new AbortController();
+        abortRef.current?.abort();
+        abortRef.current = controller;
 
-                try {
-                    setState('loading');
-                    setResults(await getResults(search, controller.signal));
+        const update = async () => {
+            try {
+                setState('loading');
+                const { results, available } = await getResults(
+                    search,
+                    controller.signal,
+                );
+                startTransition(() => {
+                    setResults(results);
+                    setTotal(available.toLocaleString());
                     setState('idle');
+                });
 
-                    const url = new URL(window.location.href);
-                    if (search === '') {
-                        url.searchParams.delete('search');
-                    } else {
-                        url.searchParams.set('search', search);
-                    }
-                    window.history.replaceState({}, '', url.toString());
-                } catch (err) {
-                    if (!controller.signal.aborted) {
-                        console.error(err);
-                        setState('failed');
-                    }
+                const url = new URL(window.location.href);
+                if (search === '') {
+                    url.searchParams.delete('search');
+                } else {
+                    url.searchParams.set('search', search);
                 }
-            },
-            // First search on page load should happen immediately to populate the full results
-            abortRef.current ? 300 : 0,
-        );
+                window.history.replaceState({}, '', url.toString());
+            } catch (err) {
+                if (!controller.signal.aborted) {
+                    console.error(err);
+                    setState('failed');
+                }
+            }
+        };
 
-        return () => clearTimeout(timer);
+        // First search on page load should happen immediately to populate the full results
+        void update();
+
+        return () => controller.abort();
     }, [search, initial.search, initial.results]);
 
     const [total, setTotal] = useState(initial.total.toLocaleString('en-US'));
-    useEffect(() => {
-        setTotal(
-            // Initial results are truncated so use the initial total rather than length
-            (results === initial.results
-                ? initial.total
-                : results.length
-            ).toLocaleString(),
-        );
-    }, [results]);
 
     const [columns, setColumns] = useState(2);
     const listRef = useRef<HTMLUListElement | null>(null);
@@ -313,7 +313,11 @@ const Libraries = ({
                 }
             >
                 <div className={styles.header}>
-                    <Search value={search} onChange={setSearch} state={state} />
+                    <Search
+                        initial={initial.search}
+                        onSearch={setSearch}
+                        state={state}
+                    />
 
                     <p className={styles.found}>
                         Found <strong>{total}</strong> libraries available on

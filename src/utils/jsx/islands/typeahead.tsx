@@ -1,5 +1,11 @@
 import { css, cx } from '@emotion/css';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+    startTransition,
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 import * as z from 'zod/mini';
 
@@ -150,10 +156,8 @@ const Typeahead = ({ className }: { className?: string }) => {
     const [results, setResults] = useState<Result[]>([]);
     const [total, setTotal] = useState('0');
     const [queried, setQueried] = useState('');
-    const [query, setQuery] = useState('');
     const [active, setActive] = useState(false);
     const abortRef = useRef<AbortController | null>(null);
-    const mountedRef = useRef(false);
 
     const runSearch = useCallback(async (search: string) => {
         const controller = new AbortController();
@@ -166,10 +170,12 @@ const Typeahead = ({ className }: { className?: string }) => {
                 search,
                 controller.signal,
             );
-            setResults(results);
-            setTotal(available.toLocaleString());
-            setQueried(search);
-            setState('idle');
+            startTransition(() => {
+                setResults(results);
+                setTotal(available.toLocaleString());
+                setQueried(search);
+                setState('idle');
+            });
         } catch (err) {
             if (!controller.signal.aborted) {
                 console.error(err);
@@ -177,16 +183,6 @@ const Typeahead = ({ className }: { className?: string }) => {
             }
         }
     }, []);
-
-    useEffect(() => {
-        if (!mountedRef.current) {
-            mountedRef.current = true;
-            return;
-        }
-
-        const timer = setTimeout(() => runSearch(query), 300);
-        return () => clearTimeout(timer);
-    }, [runSearch, query]);
 
     const containerRef = useRef<HTMLDivElement | null>(null);
     const popoverRef = useRef<HTMLDivElement | null>(null);
@@ -209,15 +205,14 @@ const Typeahead = ({ className }: { className?: string }) => {
     return (
         <div ref={containerRef} className={cx(styles.container, className)}>
             <Search
-                value={query}
-                onChange={setQuery}
-                onFocus={() => {
+                onSearch={runSearch}
+                onFocus={(query) => {
                     setActive(true);
                     runSearch(query);
                     popover();
                 }}
                 onBlur={() => setActive(false)}
-                onSubmit={() => {
+                onSubmit={(query) => {
                     window.location.href = query.length
                         ? `/libraries?search=${encodeURIComponent(query)}`
                         : '/libraries';

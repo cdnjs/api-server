@@ -1,4 +1,5 @@
 import { css, cx } from '@emotion/css';
+import { useEffect, useRef, useState } from 'react';
 
 import theme from '../theme.ts';
 
@@ -37,36 +38,51 @@ const styles = {
 };
 
 const Search = ({
-    value,
-    onChange,
+    initial = '',
+    debounce = 300,
+    onSearch,
     onFocus,
     onBlur,
     onSubmit,
     state,
     elevated,
 }: {
-    value: string;
-    onChange: (value: string) => void;
-    onFocus?: () => void;
+    initial?: string;
+    debounce?: number;
+    onSearch: (value: string) => void;
+    onFocus?: (value: string) => void;
     onBlur?: () => void;
-    onSubmit?: () => void;
+    onSubmit?: (value: string) => void;
     state?: 'idle' | 'loading' | 'failed';
     elevated?: boolean;
 }) => {
+    const [value, setValue] = useState(initial);
+    const mountedRef = useRef(false);
+
+    useEffect(() => {
+        if (!mountedRef.current) {
+            mountedRef.current = true;
+            return;
+        }
+
+        const timer = setTimeout(() => onSearch(value), debounce);
+        return () => clearTimeout(timer);
+    }, [debounce, onSearch, value]);
+
     return (
         <form
             className={styles.form}
             onSubmit={(e) => {
                 e.preventDefault();
-                onSubmit?.();
+                onSubmit?.(value);
             }}
         >
             <input
                 type="text"
                 name="search"
                 value={value}
-                onChange={(e) => onChange(e.target.value)}
-                onFocus={onFocus}
+                onChange={(e) => setValue(e.target.value)}
+                onFocus={() => onFocus?.(value)}
                 onBlur={onBlur}
                 placeholder="Search libraries on cdnjs..."
                 autoComplete="off"
