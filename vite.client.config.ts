@@ -6,6 +6,7 @@ import { defineConfig, normalizePath } from 'vite';
 const outputDirectory = resolve('dist-client');
 const virtualEntryPrefix = 'virtual:island-entry:';
 const hydrationRuntimePath = resolve('src/utils/island.ts');
+const islandMetaKey = 'island';
 
 const isDev = process.env.WRANGLER_COMMAND === 'dev';
 
@@ -37,16 +38,17 @@ const islandEntryByPath = new Map(
 
 const parseCreateIslandDeclaration = (source: string) => {
     const match = source.match(
-        /export\s+default\s+createIsland\(\s*([^,]+)\s*,\s*['"]([^'"]+)['"]\s*\)\s*;?/,
+        /export\s+default\s+createIsland\(\s*([^,]+)\s*,\s*['"]([^'"]+)['"]\s*(?:,\s*['"]([^'"]+)['"]\s*)?\)\s*;?/,
     );
     if (!match || !match[1] || !match[2]) {
         return null;
     }
 
     return {
-        componentReference: match[1].trim(),
-        declaredFile: match[2],
-        fullMatch: match[0],
+        component: match[1].trim(),
+        file: match[2],
+        hydration: match[3],
+        full: match[0],
     };
 };
 
@@ -97,18 +99,18 @@ export default defineConfig({
                     );
                 }
 
-                if (declaration.declaredFile !== `${entry.name}.tsx`) {
+                if (declaration.file !== `${entry.name}.tsx`) {
                     throw new Error(
                         [
                             `Island filename mismatch for "${entry.path}".`,
-                            `createIsland declares "${declaration.declaredFile}", but the actual file builds as "${entry.name}.tsx".`,
+                            `createIsland declares "${declaration.file}", but the actual file builds as "${entry.name}.tsx".`,
                             'Keep these names aligned so SSR script tags match generated client bundles.',
                         ].join(' '),
                     );
                 }
 
                 const transformed = new MagicString(code);
-                const declarationStart = code.indexOf(declaration.fullMatch);
+                const declarationStart = code.indexOf(declaration.full);
                 if (declarationStart === -1) {
                     throw new Error(
                         `Failed to locate createIsland declaration in "${id}" for sourcemap transform.`,
@@ -117,8 +119,8 @@ export default defineConfig({
 
                 transformed.overwrite(
                     declarationStart,
-                    declarationStart + declaration.fullMatch.length,
-                    `export default ${declaration.componentReference};`,
+                    declarationStart + declaration.full.length,
+                    `export default ${declaration.component};`,
                 );
 
                 for (const match of code.matchAll(
@@ -140,10 +142,15 @@ export default defineConfig({
                         source: id,
                         includeContent: true,
                     }),
+                    meta: {
+                        [islandMetaKey]: {
+                            hydration: declaration.hydration,
+                        },
+                    },
                 };
             },
             // Generate one virtual hydration entry per island source file.
-            load(id) {
+            async load(id) {
                 if (!id.startsWith(`\0${virtualEntryPrefix}`)) {
                     return null;
                 }
@@ -154,6 +161,33 @@ export default defineConfig({
                     throw new Error(
                         `Missing island component for virtual entry "${islandName}"`,
                     );
+                }
+
+                // Ensure the entry module is loaded to check if it should be idle hydrated.
+                const module = await this.load({ id: entry.path });
+                const meta = module.meta[islandMetaKey];
+                const hydration =
+                    typeof meta === 'object' &&
+                    meta !== null &&
+                    'hydration' in meta
+                        ? meta.hydration
+                        : undefined;
+                if (hydration === 'idle') {
+                    return [
+                        'const hydrate = async () => {',
+                        '    const [{ default: Component }, { default: hydrateIsland }] = await Promise.all([',
+                        `        import(${JSON.stringify(entry.path)}),`,
+                        `        import(${JSON.stringify(hydrationRuntimePath)}),`,
+                        '    ]);',
+                        `    hydrateIsland(${JSON.stringify(islandName)}, Component);`,
+                        '};',
+                        '',
+                        "if ('requestIdleCallback' in window) {",
+                        '    window.requestIdleCallback(hydrate, { timeout: 2000 });',
+                        '} else {',
+                        '    setTimeout(hydrate, 0);',
+                        '}',
+                    ].join('\n');
                 }
 
                 return [
