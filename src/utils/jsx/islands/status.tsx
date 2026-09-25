@@ -91,4 +91,4 @@ const Status = () => {
     );
 };
 
-export default createIsland(Status, 'status.tsx');
+export default createIsland(Status, 'status.tsx', 'idle');

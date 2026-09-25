@@ -156,11 +156,13 @@ const Island = <T extends object>({
  *
  * @param component Island component.
  * @param file Island file name (used to infer client entrypoint).
+ * @param _hydration Island hydration strategy (used to build client entrypoint).
  */
 const createIsland =
     <T extends object>(
         component: ComponentType<T>,
         file: `${string}.tsx`,
+        _hydration: 'eager' | 'idle' = 'eager',
     ): ComponentType<T> =>
     (props: T) => (
         <Island
