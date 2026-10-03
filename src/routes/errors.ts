@@ -24,8 +24,8 @@ export default (app: Hono, _registry: OpenAPIRegistry) => {
             requestId: crypto.randomUUID(),
             userAgent: ctx.req.header('user-agent'),
             ray: ctx.req.header('cf-ray'),
-            country: stringOrUndefined(ctx.req.header('cf-country')),
-            colo: stringOrUndefined(ctx.req.header('cf-colo')),
+            country: stringOrUndefined(ctx.req.raw.cf?.country),
+            colo: stringOrUndefined(ctx.req.raw.cf?.colo),
         });
 
         Sentry.setUser({
