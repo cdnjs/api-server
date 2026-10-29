@@ -48,7 +48,7 @@
         "semver": "^7.7.4",
         "spdx-license-ids": "^3.0.24",
         "swagger-ui-react": "^5.33.0",
-        "zod": "^4.6.5"
+        "zod": "^4.6.6"
     },
     "devDependencies": {
         "@cloudflare/vitest-pool-workers": "^0.22.0",
