@@ -21,7 +21,7 @@ jobs:
           fetch-depth: 0 # Get the full history for the Sentry release commit log
 
       - name: Install Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -46,7 +46,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ github.ref_name == 'production' && secrets.CLOUDFLARE_ACCOUNT_ID_PRODUCTION || secrets.CLOUDFLARE_ACCOUNT_ID_STAGING }}
 
       - name: Create Sentry Release
-        uses: getsentry/action-release@ff07929a6537bac57790c3451cf4d364aca38528 # v3.7.0
+        uses: getsentry/action-release@e6703d0b00208e0b3687ba660d18ab5af7892821 # v3.7.2
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: cdnjs
@@ -83,7 +83,7 @@ jobs:
 
       - name: Upload Test Results
         if: always() && (steps.web-tests-local.outcome == 'failure' || steps.web-tests-local.outcome == 'success' || steps.web-tests-deployed.outcome == 'failure' || steps.web-tests-deployed.outcome == 'success')
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: playwright-report-${{ github.run_id }}
           path: .playwright/report
