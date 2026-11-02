@@ -13,7 +13,7 @@
         "noEmit": true,
         "strict": true,
         "skipLibCheck": true,
-        "types": ["@cloudflare/vitest-pool-workers"]
+        "types": ["@cloudflare/vitest-plugin/types"]
     },
     "include": ["**/*.ts", "**/*.tsx", "**/*.js"],
     "exclude": ["node_modules", "dist-worker", "dist-client"]
