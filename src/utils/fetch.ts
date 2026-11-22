@@ -1,7 +1,3 @@
-import isDeflate from 'is-deflate';
-import isGzip from 'is-gzip';
-import { inflate } from 'pako';
-
 class FetchError extends Error {
     method: string;
     url: RequestInfo;
@@ -81,23 +77,14 @@ export default async (
         });
     }
 
-    // Get the raw data, inflate it (packages/:package/all returns double-gzip'ed data), and parse the JSON
-    return resp
-        .arrayBuffer()
-        .then((raw) => new Uint8Array(raw))
-        .then((raw) =>
-            isGzip(raw) || isDeflate(raw)
-                ? inflate(raw, { toText: true })
-                : new TextDecoder('utf-8').decode(raw),
-        )
-        .then((text) => JSON.parse(text))
-        .catch((error) => {
-            throw new FetchError(error.message, {
-                method: options?.method || 'GET',
-                url,
-                status: resp.status,
-                statusText: resp.statusText,
-                cause: error,
-            });
+    // Parse the JSON response
+    return resp.json().catch((error) => {
+        throw new FetchError(error.message, {
+            method: options?.method || 'GET',
+            url,
+            status: resp.status,
+            statusText: resp.statusText,
+            cause: error,
         });
+    });
 };
